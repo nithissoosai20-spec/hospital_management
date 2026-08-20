@@ -20,7 +20,7 @@
 
     <menuitem
         id="menu_hospital_dashboard"
-        name="Dashboard"
+        name="Dashbosard"
         parent="menu_hospital_management"
         action="action_hospital_dashboard_admin"
         sequence="10"
