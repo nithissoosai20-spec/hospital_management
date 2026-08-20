@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template id="hospital_login_logo"
+              inherit_id="web.login"
+              name="RIALKG Login">
+
+        <xpath expr="//form[@t-attf-action='/web/login']"
+               position="before">
+
+            <div class="hospital-login-logo">
+                <img src="/hospital_management/static/src/img/rialkg_login_logo.png"
+                     alt="RIALKG Medical Center &amp; Hospital"/>
+            </div>
+
+        </xpath>
+
+    </template>
+
+</odoo>

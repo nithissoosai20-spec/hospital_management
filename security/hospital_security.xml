@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ================================================= -->
+    <!-- HOSPITAL MANAGEMENT CATEGORY -->
+    <!-- ================================================= -->
+
+    <record
+        id="module_category_hospital_management"
+        model="ir.module.category"
+    >
+        <field name="name">Hospital Management</field>
+        <field name="sequence">20</field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- HOSPITAL MANAGEMENT PRIVILEGE -->
+    <!-- ================================================= -->
+
+    <record
+        id="privilege_hospital_management"
+        model="res.groups.privilege"
+    >
+        <field name="name">Hospital Management</field>
+        <field name="sequence">10</field>
+        <field
+            name="category_id"
+            ref="module_category_hospital_management"
+        />
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- HOSPITAL USER -->
+    <!-- Base group for normal hospital employees -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_user"
+        model="res.groups"
+    >
+        <field name="name">Hospital User</field>
+        <field name="sequence">20</field>
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('base.group_user'))]"
+        />
+
+        <field name="comment">
+            Standard hospital employee with basic hospital access.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- HOSPITAL ADMINISTRATOR -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_admin"
+        model="res.groups"
+    >
+        <field name="name">Hospital Administrator</field>
+        <field name="sequence">10</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Hospital administrator with full hospital management access.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- SUPER ADMIN -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_super_admin"
+        model="res.groups"
+    >
+        <field name="name">Super Admin</field>
+        <field name="sequence">1</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_admin'))]"
+        />
+
+        <field name="comment">
+            Full hospital system administrator.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- DOCTOR -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_doctor"
+        model="res.groups"
+    >
+        <field name="name">Doctor</field>
+        <field name="sequence">30</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Doctor with access to doctor-related hospital operations.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- NURSE -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_nurse"
+        model="res.groups"
+    >
+        <field name="name">Nurse</field>
+        <field name="sequence">40</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Nurse with access to nursing-related hospital operations.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- RECEPTIONIST -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_receptionist"
+        model="res.groups"
+    >
+        <field name="name">Receptionist</field>
+        <field name="sequence">50</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Receptionist with access to patients, doctors and appointments.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- PHARMACIST -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_pharmacist"
+        model="res.groups"
+    >
+        <field name="name">Pharmacist</field>
+        <field name="sequence">60</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Pharmacist with access to pharmacy-related operations.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- LAB TECHNICIAN -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_lab_technician"
+        model="res.groups"
+    >
+        <field name="name">Lab Technician</field>
+        <field name="sequence">70</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Laboratory technician with laboratory-related access.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- BILLING EXECUTIVE -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_billing"
+        model="res.groups"
+    >
+        <field name="name">Billing Executive</field>
+        <field name="sequence">80</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            Billing executive with billing-related access.
+        </field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- HR EXECUTIVE -->
+    <!-- ================================================= -->
+
+    <record
+        id="group_hospital_hr"
+        model="res.groups"
+    >
+        <field name="name">HR Executive</field>
+        <field name="sequence">90</field>
+
+        <field
+            name="privilege_id"
+            ref="privilege_hospital_management"
+        />
+
+        <field
+            name="implied_ids"
+            eval="[(4, ref('group_hospital_user'))]"
+        />
+
+        <field name="comment">
+            HR executive with human resources-related access.
+        </field>
+    </record>
+
+    <record id="access_hospital_lab_appointment_admin"
+            model="ir.model.access">
+
+        <field name="name">hospital.lab.appointment.admin</field>
+
+        <field name="model_id"
+            ref="model_hospital_lab_appointment"/>
+
+        <field name="group_id"
+            ref="group_hospital_admin"/>
+
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">1</field>
+
+    </record>
+
+
+    <record id="access_hospital_lab_appointment_receptionist"
+            model="ir.model.access">
+
+        <field name="name">hospital.lab.appointment.receptionist</field>
+
+        <field name="model_id"
+            ref="model_hospital_lab_appointment"/>
+
+        <field name="group_id"
+            ref="group_hospital_receptionist"/>
+
+        <field name="perm_read">1</field>
+        <field name="perm_write">1</field>
+        <field name="perm_create">1</field>
+        <field name="perm_unlink">0</field>
+
+    </record>
+
+</odoo>

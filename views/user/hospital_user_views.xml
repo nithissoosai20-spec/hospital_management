@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ================================================= -->
+    <!-- USERS LIST -->
+    <!-- ================================================= -->
+
+    <record id="view_hospital_user_list" model="ir.ui.view">
+
+        <field name="name">hospital.user.list</field>
+        <field name="model">hospital.user</field>
+
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="employee_id"/>
+                <field name="name"/>
+                <field name="login"/>
+                <field name="role_id"/>
+                <field name="department_id"/>
+                <field name="designation_id"/>
+                <field name="email"/>
+                <field name="status"/>
+                <field name="active"/>
+
+            </list>
+
+        </field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- USER FORM -->
+    <!-- ================================================= -->
+
+    <record id="view_hospital_user_form" model="ir.ui.view">
+
+        <field name="name">hospital.user.form</field>
+        <field name="model">hospital.user</field>
+
+        <field name="arch" type="xml">
+
+            <form>
+
+                <sheet>
+
+                    <!-- ================================= -->
+                    <!-- PERSONAL INFORMATION -->
+                    <!-- ================================= -->
+
+                    <group string="Personal Information">
+
+                        <group>
+
+                            <field name="name"/>
+                            <field name="employee_id"/>
+                            <field name="login"/>
+                            <field name="email"/>
+                            <field
+                                name="password"
+                                string="Password"
+                                password="True"
+                            />
+                            <field name="mobile"/>
+
+                        </group>
+
+                        <group>
+
+                            <field name="date_of_birth"/>
+                            <field name="gender"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ================================= -->
+                    <!-- WORK INFORMATION -->
+                    <!-- ================================= -->
+
+                    <group string="Work Information">
+
+                        <group>
+
+                            <field name="role_id"/>
+
+                            <field
+                                name="allowed_department_ids"
+                                invisible="1"
+                            />
+
+                            <field
+                                name="department_id"
+                                domain="[('id', 'in', allowed_department_ids)]"
+                            />
+
+                            <field
+                                name="designation_id"
+                                domain="[('department_id', '=', department_id)]"
+                            />
+
+                        </group>
+
+                        <group>
+
+                            <field
+                                name="reporting_to_id"
+                                domain="[
+                                    ('id', '!=', id),
+                                    ('role_id', '=', role_id),
+                                    ('department_id', '=', department_id)
+                                ]"
+                            />
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ================================= -->
+                    <!-- ACCESS INFORMATION -->
+                    <!-- ================================= -->
+
+                    <group string="Access Information">
+
+                        <group>
+
+                            <field name="active"/>
+
+                            <field
+                                name="password"
+                                password="True"
+                                string="Password / New Password"
+                            />
+
+                        </group>
+
+                        <group>
+
+                            <field
+                                name="account_created"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="odoo_user_id"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ================================= -->
+                    <!-- AUTHENTICATION INFORMATION -->
+                    <!-- ================================= -->
+
+                    <group string="Authentication Information">
+
+                        <group>
+
+                            <field
+                                name="last_login"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="password_last_changed"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                        <group>
+
+                            <field
+                                name="two_factor_enabled"
+                                readonly="1"
+                            />
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ================================= -->
+                    <!-- PERSONAL ADDRESS -->
+                    <!-- ================================= -->
+
+                    <group string="Address">
+
+                        <field name="address"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- ALL USERS -->
+    <!-- ================================================= -->
+
+    <record id="action_hospital_users" model="ir.actions.act_window">
+
+        <field name="name">User Management</field>
+        <field name="res_model">hospital.user</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">[]</field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- DOCTORS -->
+    <!-- ================================================= -->
+
+    <record id="action_hospital_doctors" model="ir.actions.act_window">
+
+        <field name="name">Doctors</field>
+        <field name="res_model">hospital.user</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">[('role_id.name', '=', 'Doctor')]</field>
+
+    </record>
+
+   
+</odoo>

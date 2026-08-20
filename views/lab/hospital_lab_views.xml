@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ================================================= -->
+    <!-- LAB TEST MASTER -->
+    <!-- ================================================= -->
+
+    <record id="view_hospital_lab_test_list"
+            model="ir.ui.view">
+
+        <field name="name">hospital.lab.test.list</field>
+        <field name="model">hospital.lab.test</field>
+
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="sample_type"/>
+                <field name="price"/>
+                <field name="turnaround_time"/>
+                <field name="active"/>
+
+            </list>
+
+        </field>
+
+    </record>
+
+
+    <record id="view_hospital_lab_test_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.lab.test.form</field>
+        <field name="model">hospital.lab.test</field>
+
+        <field name="arch" type="xml">
+
+            <form>
+
+                <sheet>
+
+                    <div class="oe_title">
+
+                        <label for="name"/>
+
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+
+                    </div>
+
+                    <group>
+
+                        <group string="Test Information">
+
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="sample_type"/>
+
+                        </group>
+
+                        <group string="Pricing">
+
+                            <field name="price"/>
+                            <field name="turnaround_time"/>
+                            <field name="active"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Notes">
+
+                        <field name="notes"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- LAB APPOINTMENT LIST -->
+    <!-- ================================================= -->
+
+    <record id="view_hospital_lab_appointment_list"
+            model="ir.ui.view">
+
+        <field name="name">hospital.lab.appointment.list</field>
+
+        <field name="model">hospital.lab.appointment</field>
+
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="lab_test_id"/>
+                <field name="appointment_date"/>
+                <field name="appointment_time"
+                       widget="float_time"/>
+
+                <field name="doctor_id"/>
+                <field name="priority"
+                       widget="badge"/>
+
+                <field name="amount"/>
+
+                <field name="payment_status"
+                       widget="badge"/>
+
+                <field name="state"
+                       widget="badge"/>
+
+            </list>
+
+        </field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- LAB APPOINTMENT FORM -->
+    <!-- ================================================= -->
+
+    <record id="view_hospital_lab_appointment_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.lab.appointment.form</field>
+
+        <field name="model">hospital.lab.appointment</field>
+
+        <field name="arch" type="xml">
+
+            <form>
+
+                <header>
+
+                    <button name="action_schedule"
+                            type="object"
+                            string="Schedule"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_collect_sample"
+                            type="object"
+                            string="Collect Sample"
+                            invisible="state != 'scheduled'"/>
+
+                    <button name="action_start_processing"
+                            type="object"
+                            string="Start Processing"
+                            invisible="state != 'sample_collected'"/>
+
+                    <button name="action_complete"
+                            type="object"
+                            string="Complete"
+                            class="btn-success"
+                            invisible="state != 'processing'"/>
+
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-secondary"
+                            invisible="state in ('completed', 'cancelled')"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,scheduled,sample_collected,processing,completed"/>
+
+                </header>
+
+                <sheet>
+
+                    <div class="oe_title">
+
+                        <label for="name"/>
+
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+
+                    </div>
+
+                    <group>
+
+                        <group string="Patient Information">
+
+                            <field name="patient_id"/>
+
+                            <field name="lab_test_id"/>
+
+                            <field name="doctor_id"/>
+
+                        </group>
+
+                        <group string="Appointment">
+
+                            <field name="appointment_date"/>
+
+                            <field name="appointment_time"
+                                   widget="float_time"/>
+
+                            <field name="priority"/>
+
+                            <field name="sample_type"/>
+
+                        </group>
+
+                    </group>
+
+                    <group string="Payment">
+
+                        <field name="amount"
+                               readonly="1"/>
+
+                        <field name="payment_status"/>
+
+                    </group>
+
+                    <group string="Laboratory Result">
+
+                        <field name="result"/>
+
+                        <field name="remarks"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- ACTIONS -->
+    <!-- ================================================= -->
+
+    <record id="action_hospital_lab_appointments"
+            model="ir.actions.act_window">
+
+        <field name="name">Lab Appointments</field>
+
+        <field name="res_model">hospital.lab.appointment</field>
+
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+
+    <record id="action_hospital_lab_tests"
+            model="ir.actions.act_window">
+
+        <field name="name">Lab Test Master</field>
+
+        <field name="res_model">hospital.lab.test</field>
+
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+</odoo>

@@ -1,0 +1,244 @@
+/* ================================
+ RIALKG HEADER
+   ================================ */
+.hospital-real-header {
+    width: 100%;
+    height: 130px;
+    display: flex;
+    align-items: stretch;
+    background: #ffffff;
+    overflow: hidden;
+    border-bottom: 2px solid #29398f;
+}
+/* ================================
+   LEFT IMAGE
+   Logo + RIALKG
+   ================================ */
+.hospital-header-left-image {
+    width: 45%;
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.hospital-header-left-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: left center;
+}
+/* ================================
+   RIGHT IMAGE
+   Address + Mobile + Email
+   ================================ */
+.hospital-header-right-image {
+    width: 55%;
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-left: 2px solid #29398f;
+}
+
+.hospital-header-right-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    object-position: center center;
+}
+/* ================================
+   FOOTER
+   ================================ */
+.hospital-real-footer {
+    width: 100%;
+    height: 90px;
+    background: #29398f;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.hospital-real-footer img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: fill;
+}
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
+.admin-dashboard {
+    width: 100%;
+    padding: 10px 15px 35px 15px;
+    background: #ffffff;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   DASHBOARD TITLE
+   ========================================================= */
+
+.admin-dashboard-title {
+    text-align: center;
+    padding: 10px 0 25px 0;
+}
+
+.admin-dashboard-title h1 {
+    margin: 0;
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    color: #111111;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.admin-section {
+    margin-bottom: 28px;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.admin-section-heading {
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #29398f;
+
+    padding: 8px 4px;
+
+    margin-bottom: 12px;
+
+    border-bottom: 1px solid #e1e4eb;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   STAT GRID
+   ========================================================= */
+
+.admin-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 14px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.admin-stat-card {
+    background: #ffffff;
+
+    border: 1px solid #e1e4eb;
+
+    border-radius: 6px;
+
+    min-height: 105px;
+
+    padding: 18px 20px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================================
+   CARD LABEL
+   ========================================================= */
+
+.admin-stat-label {
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #555555;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   CARD NUMBER
+   ========================================================= */
+
+.admin-stat-number {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #29398f;
+
+    line-height: 1;
+}
+
+
+/* Odoo field itself */
+
+.admin-stat-number .o_field_widget {
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: #29398f;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .admin-stat-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .admin-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-dashboard-title h1 {
+        font-size: 28px;
+    }
+
+}

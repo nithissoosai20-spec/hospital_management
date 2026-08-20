@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="lab_test_cbc" model="hospital.lab.test">
+
+        <field name="name">
+            Complete Blood Count
+        </field>
+
+        <field name="code">CBC001</field>
+
+        <field name="category">hematology</field>
+
+        <field name="sample_type">blood</field>
+
+        <field name="price">450</field>
+
+        <field name="turnaround_time">
+            4 Hours
+        </field>
+
+    </record>
+
+
+    <record id="lab_test_blood_sugar" model="hospital.lab.test">
+
+        <field name="name">
+            Blood Sugar
+        </field>
+
+        <field name="code">BS001</field>
+
+        <field name="category">biochemistry</field>
+
+        <field name="sample_type">blood</field>
+
+        <field name="price">150</field>
+
+        <field name="turnaround_time">
+            2 Hours
+        </field>
+
+    </record>
+
+
+    <record id="lab_test_lipid_profile" model="hospital.lab.test">
+
+        <field name="name">
+            Lipid Profile
+        </field>
+
+        <field name="code">LP001</field>
+
+        <field name="category">biochemistry</field>
+
+        <field name="sample_type">blood</field>
+
+        <field name="price">700</field>
+
+        <field name="turnaround_time">
+            6 Hours
+        </field>
+
+    </record>
+
+
+    <record id="lab_test_lft" model="hospital.lab.test">
+
+        <field name="name">
+            Liver Function Test
+        </field>
+
+        <field name="code">LFT001</field>
+
+        <field name="category">biochemistry</field>
+
+        <field name="sample_type">blood</field>
+
+        <field name="price">900</field>
+
+        <field name="turnaround_time">
+            8 Hours
+        </field>
+
+    </record>
+
+
+    <record id="lab_test_kft" model="hospital.lab.test">
+
+        <field name="name">
+            Kidney Function Test
+        </field>
+
+        <field name="code">KFT001</field>
+
+        <field name="category">biochemistry</field>
+
+        <field name="sample_type">blood</field>
+
+        <field name="price">850</field>
+
+        <field name="turnaround_time">
+            8 Hours
+        </field>
+
+    </record>
+
+
+    <record id="lab_test_urine" model="hospital.lab.test">
+
+        <field name="name">
+            Urine Routine Examination
+        </field>
+
+        <field name="code">UR001</field>
+
+        <field name="category">pathology</field>
+
+        <field name="sample_type">urine</field>
+
+        <field name="price">200</field>
+
+        <field name="turnaround_time">
+            3 Hours
+        </field>
+
+    </record>
+
+</odoo>

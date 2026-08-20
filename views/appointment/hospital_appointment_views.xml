@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- Appointment List View -->
+    <!-- ===================================================== -->
+
+    <record id="view_hospital_appointment_list" model="ir.ui.view">
+
+        <field name="name">hospital.appointment.list</field>
+        <field name="model">hospital.appointment</field>
+
+        <field name="arch" type="xml">
+
+            <list>
+
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <field name="department_id"/>
+                <field name="appointment_date"/>
+                <field name="appointment_time"
+                       widget="float_time"/>
+                <field name="visit_type"/>
+                <field name="priority"/>
+                <field name="token_number"/>
+                <field name="net_amount"/>
+                <field name="payment_status"/>
+                <field name="state"/>
+
+            </list>
+
+        </field>
+
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- Appointment Form View -->
+    <!-- ===================================================== -->
+
+    <record id="view_hospital_appointment_form" model="ir.ui.view">
+
+        <field name="name">hospital.appointment.form</field>
+        <field name="model">hospital.appointment</field>
+
+        <field name="arch" type="xml">
+
+            <form>
+
+                <!-- ========================= -->
+                <!-- WORKFLOW BUTTONS -->
+                <!-- ========================= -->
+
+                <header>
+
+                    <!-- Draft → Booked -->
+
+                    <button
+                        name="action_book"
+                        string="Book Appointment"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'draft'"
+                    />
+
+                    <!-- Booked → Completed -->
+
+                    <button
+                        name="action_complete"
+                        string="Mark Completed"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state != 'booked'"
+                    />
+
+                    <!-- Draft/Booked → Cancelled -->
+
+                    <button
+                        name="action_cancel"
+                        string="Cancel"
+                        type="object"
+                        invisible="state not in ('draft', 'booked')"
+                    />
+
+                    <!-- Cancelled → Draft -->
+
+                    <button
+                        name="action_reset_to_draft"
+                        string="Reset to Draft"
+                        type="object"
+                        invisible="state != 'cancelled'"
+                    />
+
+                    <!-- Status -->
+
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="draft,booked,completed,cancelled"
+                    />
+
+                </header>
+
+
+                <sheet>
+
+                    <!-- ========================= -->
+                    <!-- APPOINTMENT REFERENCE -->
+                    <!-- ========================= -->
+
+                    <div class="oe_title">
+
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+
+                    </div>
+
+
+                    <!-- ========================= -->
+                    <!-- PATIENT & DOCTOR -->
+                    <!-- ========================= -->
+
+                    <group string="Patient &amp; Doctor">
+
+                        <!-- LEFT: Patient selection -->
+                        <group string="Patient">
+
+                            <field name="patient_id"
+                                placeholder="Search Patient by Name, ID or Mobile"/>
+
+                            <separator string="Patient Preview"/>
+
+                            <field name="patient_code"
+                                readonly="1"/>
+
+                            <field name="patient_name"
+                                readonly="1"/>
+
+                            <field name="patient_age"
+                                readonly="1"/>
+
+                            <field name="patient_date_of_birth"
+                                readonly="1"/>
+
+                            <field name="patient_gender"
+                                readonly="1"/>
+
+                            <field name="patient_phone"
+                                readonly="1"/>
+
+                        </group>
+
+
+                        <!-- RIGHT: Doctor + appointment -->
+                        <group string="Appointment">
+
+                            <field name="doctor_id"/>
+
+                            <field name="department_id"
+                                readonly="1"/>
+
+                            <field name="appointment_date"/>
+
+                            <field name="appointment_time"
+                                widget="float_time"/>
+
+                            <field name="token_number"
+                                readonly="1"/>
+
+                        </group>
+
+                    </group>
+
+                    <!-- ========================= -->
+                    <!-- APPOINTMENT DETAILS -->
+                    <!-- ========================= -->
+
+                    <group string="Appointment Details">
+
+                        <group>
+
+                            <field name="visit_type"/>
+
+                            <field name="priority"/>
+
+                        </group>
+
+
+                        <group>
+
+                            <field name="appointment_mode"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ========================= -->
+                    <!-- REASON / SYMPTOMS -->
+                    <!-- ========================= -->
+
+                    <group string="Reason / Symptoms">
+
+                        <field name="reason"/>
+
+                    </group>
+
+
+                    <!-- ========================= -->
+                    <!-- FEE & PAYMENT -->
+                    <!-- ========================= -->
+
+                    <group string="Fee &amp; Payment">
+
+                        <group>
+
+                            <field name="consultation_fee"/>
+
+                            <field name="discount"/>
+
+                            <field
+                                name="net_amount"
+                                readonly="1"
+                            />
+
+                        </group>
+
+
+                        <group>
+
+                            <field name="payment_mode"/>
+
+                            <field name="payment_status"/>
+
+                        </group>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- Appointment Action -->
+    <!-- ===================================================== -->
+
+    <record
+        id="action_hospital_appointment"
+        model="ir.actions.act_window"
+    >
+
+        <field name="name">Appointments</field>
+
+        <field name="res_model">hospital.appointment</field>
+
+        <field name="view_mode">list,form</field>
+
+    </record>
+
+</odoo>

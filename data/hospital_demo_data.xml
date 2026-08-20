@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ================================================= -->
+    <!-- DEPARTMENTS -->
+    <!-- ================================================= -->
+
+    <record id="department_general_medicine" model="hospital.department">
+        <field name="name">General Medicine</field>
+    </record>
+
+    <record id="department_administration" model="hospital.department">
+        <field name="name">Administration</field>
+    </record>
+
+    <record id="department_pharmacy" model="hospital.department">
+        <field name="name">Pharmacy</field>
+    </record>
+
+    <record id="department_nursing" model="hospital.department">
+        <field name="name">Nursing</field>
+    </record>
+
+    <record id="department_operations" model="hospital.department">
+        <field name="name">Operations</field>
+    </record>
+
+    <record id="department_cardiology" model="hospital.department">
+        <field name="name">Cardiology</field>
+    </record>
+
+    <record id="department_pediatrics" model="hospital.department">
+        <field name="name">Pediatrics</field>
+    </record>
+
+    <record id="department_orthopedics" model="hospital.department">
+        <field name="name">Orthopedics</field>
+    </record>
+
+    <record id="department_ent" model="hospital.department">
+        <field name="name">ENT</field>
+    </record>
+
+    <record id="department_dermatology" model="hospital.department">
+        <field name="name">Dermatology</field>
+    </record>
+
+    <record id="department_laboratory" model="hospital.department">
+        <field name="name">Laboratory</field>
+    </record>
+
+    <record id="department_radiology" model="hospital.department">
+        <field name="name">Radiology</field>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- ROLES -->
+    <!-- ================================================= -->
+
+    <record id="role_doctor" model="hospital.role">
+        <field name="name">Doctor</field>
+
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_general_medicine'),
+            ref('department_cardiology'),
+            ref('department_pediatrics'),
+            ref('department_orthopedics'),
+            ref('department_ent'),
+            ref('department_dermatology'),
+            ref('department_radiology')
+        ])]"/>
+    </record>
+
+
+    <record id="role_nurse" model="hospital.role">
+        <field name="name">Nurse</field>
+
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_nursing')
+        ])]"/>
+    </record>
+
+
+    <record id="role_receptionist" model="hospital.role">
+        <field name="name">Receptionist</field>
+
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_administration')
+        ])]"/>
+    </record>
+
+
+    <record id="role_pharmacist" model="hospital.role">
+        <field name="name">Pharmacist</field>
+
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_pharmacy')
+        ])]"/>
+    </record>
+
+
+    <record id="role_staff" model="hospital.role">
+        <field name="name">Staff</field>
+
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_operations'),
+            ref('department_laboratory')
+        ])]"/>
+    </record>
+
+    <!-- ================================================= -->
+    <!-- DESIGNATIONS -->
+    <!-- ================================================= -->
+
+    <!-- General Medicine -->
+
+    <record id="designation_senior_doctor" model="hospital.designation">
+        <field name="name">Senior Doctor</field>
+        <field name="department_id" ref="department_general_medicine"/>
+    </record>
+
+    <record id="designation_junior_doctor" model="hospital.designation">
+        <field name="name">Junior Doctor</field>
+        <field name="department_id" ref="department_general_medicine"/>
+    </record>
+
+
+    <!-- Cardiology -->
+
+    <record id="designation_consultant_cardiologist" model="hospital.designation">
+        <field name="name">Consultant Cardiologist</field>
+        <field name="department_id" ref="department_cardiology"/>
+    </record>
+
+    <record id="designation_junior_cardiologist" model="hospital.designation">
+        <field name="name">Junior Cardiologist</field>
+        <field name="department_id" ref="department_cardiology"/>
+    </record>
+
+
+    <!-- Pediatrics -->
+
+    <record id="designation_consultant_pediatrician" model="hospital.designation">
+        <field name="name">Consultant Pediatrician</field>
+        <field name="department_id" ref="department_pediatrics"/>
+    </record>
+
+    <record id="designation_junior_pediatrician" model="hospital.designation">
+        <field name="name">Junior Pediatrician</field>
+        <field name="department_id" ref="department_pediatrics"/>
+    </record>
+
+
+    <!-- Orthopedics -->
+
+    <record id="designation_consultant_orthopedic" model="hospital.designation">
+        <field name="name">Consultant Orthopedic</field>
+        <field name="department_id" ref="department_orthopedics"/>
+    </record>
+
+    <record id="designation_junior_orthopedic" model="hospital.designation">
+        <field name="name">Junior Orthopedic</field>
+        <field name="department_id" ref="department_orthopedics"/>
+    </record>
+
+
+    <!-- ENT -->
+
+    <record id="designation_consultant_ent" model="hospital.designation">
+        <field name="name">Consultant ENT Specialist</field>
+        <field name="department_id" ref="department_ent"/>
+    </record>
+
+    <record id="designation_junior_ent" model="hospital.designation">
+        <field name="name">Junior ENT Specialist</field>
+        <field name="department_id" ref="department_ent"/>
+    </record>
+
+
+    <!-- Dermatology -->
+
+    <record id="designation_consultant_dermatologist" model="hospital.designation">
+        <field name="name">Consultant Dermatologist</field>
+        <field name="department_id" ref="department_dermatology"/>
+    </record>
+
+    <record id="designation_junior_dermatologist" model="hospital.designation">
+        <field name="name">Junior Dermatologist</field>
+        <field name="department_id" ref="department_dermatology"/>
+    </record>
+
+
+    <!-- Radiology -->
+
+    <record id="designation_radiologist" model="hospital.designation">
+        <field name="name">Radiologist</field>
+        <field name="department_id" ref="department_radiology"/>
+    </record>
+
+    <record id="designation_radiology_specialist" model="hospital.designation">
+        <field name="name">Radiology Specialist</field>
+        <field name="department_id" ref="department_radiology"/>
+    </record>
+
+
+    <!-- Administration / Reception -->
+
+    <record id="designation_reception_manager" model="hospital.designation">
+        <field name="name">Reception Manager</field>
+        <field name="department_id" ref="department_administration"/>
+    </record>
+
+    <record id="designation_receptionist" model="hospital.designation">
+        <field name="name">Reception Executive</field>
+        <field name="department_id" ref="department_administration"/>
+    </record>
+
+
+    <!-- Pharmacy -->
+
+    <record id="designation_chief_pharmacist" model="hospital.designation">
+        <field name="name">Chief Pharmacist</field>
+        <field name="department_id" ref="department_pharmacy"/>
+    </record>
+
+    <record id="designation_pharmacist" model="hospital.designation">
+        <field name="name">Pharmacist</field>
+        <field name="department_id" ref="department_pharmacy"/>
+    </record>
+
+
+    <!-- Nursing -->
+
+    <record id="designation_head_nurse" model="hospital.designation">
+        <field name="name">Head Nurse</field>
+        <field name="department_id" ref="department_nursing"/>
+    </record>
+
+    <record id="designation_staff_nurse" model="hospital.designation">
+        <field name="name">Staff Nurse</field>
+        <field name="department_id" ref="department_nursing"/>
+    </record>
+
+
+    <!-- Operations -->
+
+    <record id="designation_admin_officer" model="hospital.designation">
+        <field name="name">Admin Officer</field>
+        <field name="department_id" ref="department_operations"/>
+    </record>
+
+    <record id="designation_office_assistant" model="hospital.designation">
+        <field name="name">Office Assistant</field>
+        <field name="department_id" ref="department_operations"/>
+    </record>
+
+
+    <!-- Laboratory -->
+
+    <record id="designation_lab_manager" model="hospital.designation">
+        <field name="name">Lab Manager</field>
+        <field name="department_id" ref="department_laboratory"/>
+    </record>
+
+    <record id="designation_lab_technician" model="hospital.designation">
+        <field name="name">Lab Technician</field>
+        <field name="department_id" ref="department_laboratory"/>
+    </record>
+
+
+    <!-- ================================================= -->
+    <!-- REPORTING PERSONS -->
+    <!-- ================================================= -->
+
+    <record id="reporting_doctor_arun" model="hospital.reporting.person">
+        <field name="name">Dr. Arun</field>
+        <field name="department_id" ref="department_general_medicine"/>
+    </record>
+
+    <record id="reporting_doctor_priya" model="hospital.reporting.person">
+        <field name="name">Dr. Priya</field>
+        <field name="department_id" ref="department_general_medicine"/>
+    </record>
+
+    <record id="reporting_reception_manager" model="hospital.reporting.person">
+        <field name="name">Reception Manager</field>
+        <field name="department_id" ref="department_administration"/>
+    </record>
+
+    <record id="reporting_front_office_manager" model="hospital.reporting.person">
+        <field name="name">Front Office Manager</field>
+        <field name="department_id" ref="department_administration"/>
+    </record>
+
+    <record id="reporting_chief_pharmacist" model="hospital.reporting.person">
+        <field name="name">Chief Pharmacist</field>
+        <field name="department_id" ref="department_pharmacy"/>
+    </record>
+
+    <record id="reporting_pharmacy_manager" model="hospital.reporting.person">
+        <field name="name">Pharmacy Manager</field>
+        <field name="department_id" ref="department_pharmacy"/>
+    </record>
+
+    <record id="reporting_head_nurse" model="hospital.reporting.person">
+        <field name="name">Head Nurse</field>
+        <field name="department_id" ref="department_nursing"/>
+    </record>
+
+    <record id="reporting_nursing_supervisor" model="hospital.reporting.person">
+        <field name="name">Nursing Supervisor</field>
+        <field name="department_id" ref="department_nursing"/>
+    </record>
+
+    <record id="reporting_admin_manager" model="hospital.reporting.person">
+        <field name="name">Admin Manager</field>
+        <field name="department_id" ref="department_operations"/>
+    </record>
+
+    <record id="reporting_operations_manager" model="hospital.reporting.person">
+        <field name="name">Operations Manager</field>
+        <field name="department_id" ref="department_operations"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-inherit="web.WebClient" t-inherit-mode="extension">
+
+        <!-- ================= HEADER ================= -->
+
+        <xpath expr="//NavBar" position="before">
+
+            <div class="hospital-real-header">
+
+                <!-- LEFT SIDE -->
+                <div class="hospital-header-left-image">
+
+                    <img
+                        src="/hospital_management/static/src/img/hospital_header_left.png"
+                        alt="RIALKG Medical Center &amp; Hospital"
+                    />
+
+                </div>
+
+
+                <!-- RIGHT SIDE -->
+                <div class="hospital-header-right-image">
+
+                    <img
+                        src="/hospital_management/static/src/img/hospital_header_right.png"
+                        alt="Hospital Contact Information"
+                    />
+
+                </div>
+
+            </div>
+
+        </xpath>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <xpath expr="//MainComponentsContainer" position="after">
+
+            <div class="hospital-real-footer">
+
+                <img
+                    src="/hospital_management/static/src/img/hospital_footer.png"
+                    alt="Care Compassion Cure"
+                />
+
+            </div>
+
+        </xpath>
+
+    </t>
+
+</templates>

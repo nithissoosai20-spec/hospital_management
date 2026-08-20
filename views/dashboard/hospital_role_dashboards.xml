@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ===================================================== -->
+    <!-- ADMIN DASHBOARD -->
+    <!-- ===================================================== -->
+
+    <record id="admin_dashboard_record"
+            model="hospital.admin.dashboard">
+
+        <field name="name">Admin Dashboard</field>
+
+    </record>
+
+
+    <record id="view_hospital_admin_dashboard_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.admin.dashboard.form</field>
+        <field name="model">hospital.admin.dashboard</field>
+
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+
+                <sheet>
+
+                    <div class="admin-dashboard">
+
+                        <!-- ============================= -->
+                        <!-- TITLE -->
+                        <!-- ============================= -->
+
+                        <!-- ============================= -->
+                        <!-- USER SUMMARY -->
+                        <!-- ============================= -->
+
+                        <div class="admin-section">
+
+                            <div class="admin-section-heading">
+                                User Summary
+                            </div>
+
+                            <div class="admin-stat-grid">
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Total Users
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="total_users" nolabel="1"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Active Users
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="active_users" nolabel="1"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Inactive Users
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="inactive_users" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- STAFF SUMMARY -->
+                        <!-- ============================= -->
+
+                        <div class="admin-section">
+
+                            <div class="admin-section-heading">
+                                Staff Summary
+                            </div>
+
+                            <div class="admin-stat-grid">
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Super Admins
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="super_admin_count" nolabel="1"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Doctors
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="doctor_count" nolabel="1"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Receptionists
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="receptionist_count" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ============================= -->
+                        <!-- HOSPITAL SUMMARY -->
+                        <!-- ============================= -->
+
+                        <div class="admin-section">
+
+                            <div class="admin-section-heading">
+                                Hospital Summary
+                            </div>
+
+                            <div class="admin-stat-grid">
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Total Patients
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="patient_count" nolabel="1"/>
+                                    </div>
+                                </div>
+
+
+                                <div class="admin-stat-card">
+                                    <div class="admin-stat-label">
+                                        Total Appointments
+                                    </div>
+
+                                    <div class="admin-stat-number">
+                                        <field name="appointment_count" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </sheet>
+
+            </form>
+        </field>
+
+    </record>
+
+
+    <record id="action_hospital_dashboard_admin"
+            model="ir.actions.act_window">
+
+        <field name="name">Admin Dashboard</field>
+
+        <field name="res_model">hospital.admin.dashboard</field>
+
+        <field name="view_mode">form</field>
+
+        <field name="res_id"
+               ref="admin_dashboard_record"/>
+
+        <field name="target">current</field>
+
+    </record>
+
+
+    <!-- ===================================================== -->
+    <!-- DOCTOR DASHBOARD -->
+    <!-- ===================================================== -->
+
+    <record id="doctor_dashboard_record"
+            model="hospital.doctor.dashboard">
+
+        <field name="name">Doctor Dashboard</field>
+
+    </record>
+
+
+    <record id="view_hospital_doctor_dashboard_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.doctor.dashboard.form</field>
+        <field name="model">hospital.doctor.dashboard</field>
+
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+
+                <sheet>
+
+                    <h1>Doctor Dashboard</h1>
+
+                    <group>
+
+                        <field name="my_appointments"/>
+
+                        <field name="today_appointments"/>
+
+                        <field name="completed_appointments"/>
+
+                        <field name="pending_appointments"/>
+
+                        <field name="my_patients"/>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+    <record id="action_hospital_dashboard_doctor"
+            model="ir.actions.act_window">
+
+        <field name="name">Doctor Dashboard</field>
+
+        <field name="res_model">hospital.doctor.dashboard</field>
+
+        <field name="view_mode">form</field>
+
+        <field name="res_id"
+               ref="doctor_dashboard_record"/>
+
+        <field name="target">current</field>
+
+    </record>
+
+
+   <!-- ===================================================== -->
+    <!-- RECEPTION DASHBOARD -->
+    <!-- ===================================================== -->
+
+    <record id="reception_dashboard_record"
+            model="hospital.reception.dashboard">
+
+        <field name="name">Reception Dashboard</field>
+
+    </record>
+
+
+    <record id="view_hospital_reception_dashboard_form"
+        model="ir.ui.view">
+
+        <field name="name">hospital.reception.dashboard.form</field>
+        <field name="model">hospital.reception.dashboard</field>
+
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+
+                <sheet>
+
+                    <h1>Reception Dashboard</h1>
+
+                    <!-- ===================================== -->
+                    <!-- TODAY'S SUMMARY -->
+                    <!-- ===================================== -->
+
+                    <separator string="Today's Summary"/>
+
+                    <group col="4">
+
+                        <group string="Patients">
+                            <field name="total_patients"
+                                readonly="1"/>
+                        </group>
+
+                        <group string="Appointments">
+                            <field name="today_appointments"
+                                readonly="1"/>
+                        </group>
+
+                        <group string="Booked">
+                            <field name="booked_appointments"
+                                readonly="1"/>
+                        </group>
+
+                        <group string="Completed">
+                            <field name="completed_appointments"
+                                readonly="1"/>
+                        </group>
+
+                    </group>
+
+
+                    <!-- ===================================== -->
+                    <!-- APPOINTMENT STATUS -->
+                    <!-- ===================================== -->
+
+                    <separator string="Appointment Status"/>
+
+                    <group col="3">
+
+                        <group string="Waiting">
+                            <field name="waiting_patients"
+                                readonly="1"/>
+                        </group>
+
+                        <group string="Pending Payments">
+                            <field name="pending_payments"
+                                readonly="1"/>
+                        </group>
+
+                        <group string="Cancelled">
+                            <field name="cancelled_appointments"
+                                readonly="1"/>
+                        </group>
+
+                    </group>
+
+
+                    <!-- ===================================== -->
+                    <!-- RECEPTION INFORMATION -->
+                    <!-- ===================================== -->
+
+                    <separator string="Reception Information"/>
+
+                    <group col="3">
+
+                        <group string="Patients">
+
+                            <separator string="Patient Registration"/>
+
+                            <field name="total_patients"
+                                string="Registered Patients"
+                                readonly="1"/>
+
+                        </group>
+
+
+                        <group string="Doctors">
+
+                            <separator string="Doctor Status"/>
+
+                            <field name="inactive_doctors"
+                                string="Inactive Doctors"
+                                readonly="1"/>
+
+                        </group>
+
+
+                        <group string="Appointments">
+
+                            <separator string="Appointment Management"/>
+
+                            <field name="total_appointments"
+                                string="Total Appointments"
+                                readonly="1"/>
+
+                        </group>
+
+                    </group>
+
+
+                    <!-- ===================================== -->
+                    <!-- DOCTORS -->
+                    <!-- ===================================== -->
+
+                    <separator string="Doctors"/>
+
+                    <group>
+
+                        <group string="Doctor Availability">
+
+                            <field name="available_doctors"
+                                string="Available Doctors"
+                                readonly="1"/>
+
+                        </group>
+
+                    </group>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+    <record id="action_hospital_dashboard_receptionist"
+            model="ir.actions.act_window">
+
+        <field name="name">Reception Dashboard</field>
+
+        <field name="res_model">hospital.reception.dashboard</field>
+
+        <field name="view_mode">form</field>
+
+        <field name="res_id"
+            ref="reception_dashboard_record"/>
+
+        <field name="target">current</field>
+
+    </record>
+</odoo>

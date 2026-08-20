@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- ================================================= -->
+    <!-- HOSPITAL MANAGEMENT -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_management"
+        name="Hospital Management"
+        sequence="10"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+    />
+
+
+    <!-- ================================================= -->
+    <!-- ADMIN DASHBOARD -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_dashboard"
+        name="Dashboard"
+        parent="menu_hospital_management"
+        action="action_hospital_dashboard_admin"
+        sequence="10"
+        groups="hospital_management.group_hospital_admin"
+    />
+
+
+    <!-- RECEPTION DASHBOARD -->
+    <menuitem
+        id="menu_hospital_dashboard_reception"
+        name="Dashboard"
+        parent="menu_hospital_management"
+        action="action_hospital_dashboard_receptionist"
+        sequence="10"
+        groups="hospital_management.group_hospital_receptionist"
+    />
+
+    <!-- ================================================= -->
+    <!-- USERS -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_users"
+        name="Users"
+        parent="menu_hospital_management"
+        action="action_hospital_users"
+        sequence="20"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
+
+    <!-- ================================================= -->
+    <!-- USER ACTIVITIES -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_user_activity"
+        name="User Activities"
+        parent="menu_hospital_management"
+        action="action_hospital_user_activity"
+        sequence="25"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
+
+    <!-- ================================================= -->
+    <!-- PATIENTS -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_patients"
+        name="Patients"
+        parent="menu_hospital_management"
+        action="action_hospital_patient"
+        sequence="30"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+    />
+
+
+        <!-- Doctors Submenu -->
+    <menuitem
+        id="menu_hospital_doctors"
+        name="Doctors"
+        parent="menu_hospital_management"
+        action="action_hospital_doctors"
+        sequence="35"
+        groups="hospital_management.group_hospital_receptionist,hospital_management.group_hospital_doctor,hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
+
+    <!-- ================================================= -->
+    <!-- APPOINTMENTS -->
+    <!-- ================================================= -->
+
+    <menuitem
+        id="menu_hospital_appointments"
+        name="Appointments"
+        parent="menu_hospital_management"
+        action="action_hospital_appointment"
+        sequence="40"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+    />
+    <!-- ===================================================== -->
+    <!-- LAB -->
+    <!-- ===================================================== -->
+
+    <menuitem
+        id="menu_hospital_lab"
+        name="Lab"
+        parent="menu_hospital_management"
+        sequence="50"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+    />
+
+
+    <menuitem
+        id="menu_hospital_lab_appointments"
+        name="Lab Appointments"
+        parent="menu_hospital_lab"
+        action="action_hospital_lab_appointments"
+        sequence="10"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+    />
+
+
+    <menuitem
+        id="menu_hospital_lab_tests"
+        name="Lab Test Master"
+        parent="menu_hospital_lab"
+        action="action_hospital_lab_tests"
+        sequence="20"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+    />
+</odoo>

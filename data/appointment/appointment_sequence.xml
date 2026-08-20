@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- Appointment Reference -->
+    <record id="seq_hospital_appointment" model="ir.sequence">
+
+        <field name="name">Hospital Appointment</field>
+        <field name="code">hospital.appointment</field>
+        <field name="prefix">APT</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+
+    </record>
+
+
+    <!-- Appointment Token -->
+    <record id="seq_hospital_appointment_token" model="ir.sequence">
+
+        <field name="name">Hospital Appointment Token</field>
+        <field name="code">hospital.appointment.token</field>
+        <field name="prefix">TOKEN</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+
+    </record>
+
+</odoo>

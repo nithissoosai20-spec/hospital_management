@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Hospital Dashboard Action -->
+    <record id="action_hospital_dashboard" model="ir.actions.act_window">
+        <field name="name">Hospital Dashboard</field>
+        <field name="res_model">hospital.dashboard</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Hospital Management Dashboard
+            </p>
+        </field>
+    </record>
+
+</odoo>
