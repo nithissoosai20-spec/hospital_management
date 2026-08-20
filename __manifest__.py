@@ -49,6 +49,7 @@
         'views/login/login_page.xml',
 
         'views/menus/hospital_menu.xml',
+        
 
         
     ],
