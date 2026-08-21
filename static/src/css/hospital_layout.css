@@ -1,73 +1,86 @@
 /* ================================
- RIALKG HEADER
+   RIALKG HEADER
    ================================ */
 .hospital-real-header {
     width: 100%;
-    height: 130px;
+    height: 160px;              /* header size increase panniruken (130px -> 160px) */
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: space-between;
     background: #ffffff;
     overflow: hidden;
     border-bottom: 2px solid #29398f;
 }
+
 /* ================================
    LEFT IMAGE
    Logo + RIALKG
    ================================ */
 .hospital-header-left-image {
     width: 45%;
-    height: 125px;
+    height: 100%;
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start;   /* left corner */
     overflow: hidden;
 }
 
 .hospital-header-left-image img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     display: block;
     object-fit: contain;
     object-position: left center;
 }
+
 /* ================================
    RIGHT IMAGE
    Address + Mobile + Email
    ================================ */
 .hospital-header-right-image {
     width: 55%;
-    height: 125px;
+    height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;     /* right corner */
     overflow: hidden;
-    border-left: 2px solid #29398f;
+    /* border-left remove panniruken - center line pogum */
 }
 
 .hospital-header-right-image img {
-    width: 100%;
-    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     display: block;
     object-fit: contain;
-    object-position: center center;
+    object-position: right center;
 }
+
 /* ================================
    FOOTER
    ================================ */
 .hospital-real-footer {
     width: 100%;
-    height: 90px;
+    height: 70px;               /* konjam reduce - 90px -> 70px */
     background: #29398f;
     overflow: hidden;
     padding: 0;
     margin: 0;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hospital-real-footer img {
     width: 100%;
     height: 100%;
     display: block;
-    object-fit: fill;
+    object-fit: contain;        /* crop aagathu, image full ah proper ah kaatum */
+    object-position: center;
 }
 
 /* =========================================================
@@ -214,6 +227,102 @@
     font-weight: 700;
 
     color: #29398f;
+}
+
+
+/* =========================================================
+   CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
+   ========================================================= */
+
+/* =========================================================
+   CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
+   ========================================================= */
+
+.admin-stat-card-btn {
+    border: none;
+    border-radius: 10px;
+    min-height: 78px;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.15s ease, transform 0.15s ease, filter 0.15s ease;
+}
+
+.admin-stat-card-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    filter: brightness(0.97);
+}
+
+.admin-stat-card-btn:focus,
+.admin-stat-card-btn:focus-visible {
+    outline: 2px solid #111111;
+    outline-offset: 2px;
+}
+
+.admin-stat-card-btn:active {
+    transform: translateY(0);
+}
+
+.admin-stat-card-btn .admin-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0;
+    opacity: 0.85;
+}
+
+.admin-stat-card-btn .admin-stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Unique RGB backgrounds - card position vachu cycle aagum */
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+1) {
+    background: rgb(224, 236, 255);
+}
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+1) .admin-stat-label,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+1) .admin-stat-number,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+1) .admin-stat-number .o_field_widget {
+    color: rgb(29, 78, 216);
+}
+
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+2) {
+    background: rgb(220, 248, 235);
+}
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+2) .admin-stat-label,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+2) .admin-stat-number,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+2) .admin-stat-number .o_field_widget {
+    color: rgb(4, 120, 87);
+}
+
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+3) {
+    background: rgb(255, 235, 220);
+}
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+3) .admin-stat-label,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+3) .admin-stat-number,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+3) .admin-stat-number .o_field_widget {
+    color: rgb(194, 65, 12);
+}
+
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+4) {
+    background: rgb(243, 224, 255);
+}
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+4) .admin-stat-label,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+4) .admin-stat-number,
+.admin-stat-grid .admin-stat-card-btn:nth-child(4n+4) .admin-stat-number .o_field_widget {
+    color: rgb(126, 34, 206);
 }
 
 
