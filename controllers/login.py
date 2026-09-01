@@ -45,57 +45,81 @@ class HospitalLoginController(http.Controller):
 
         error = None
 
-        # Handle Login button
+        # Handle login
         if request.httprequest.method == 'POST':
 
-            email = (kwargs.get('email') or '').strip()
+            username = (kwargs.get('username') or '').strip()
             password = kwargs.get('password') or ''
 
-            if not email or not password:
-                error = 'Please enter email and password.'
+            if not username or not password:
+
+                error = 'Please enter username and password.'
 
             else:
 
                 credential = {
-                    'login': email,
+                    'login': username,
                     'password': password,
                     'type': 'password',
                 }
 
                 try:
+
                     request.session.authenticate(
                         request.env,
                         credential,
                     )
 
                     # Authentication succeeded
-                    user = request.env.user
+                    odoo_user = request.env.user
+
+                    # Find corresponding hospital user
+                    hospital_user = request.env[
+                        'hospital.user'
+                    ].sudo().search(
+                        [
+                            (
+                                'odoo_user_id',
+                                '=',
+                                odoo_user.id,
+                            )
+                        ],
+                        limit=1,
+                    )
 
                     self._log_activity(
-                        user=user,
+                        user=hospital_user,
                         action='login_success',
                         status='success',
-                        description='User logged in successfully.',
+                        description=(
+                            'User logged in successfully.'
+                        ),
                     )
 
                     return request.redirect('/web')
 
                 except AccessDenied:
 
-                    # Try to identify the account that attempted login
-                    user = request.env['res.users'].sudo().search(
-                        [('login', '=', email)],
+                    # Find hospital user by username
+                    hospital_user = request.env[
+                        'hospital.user'
+                    ].sudo().search(
+                        [
+                            ('login', '=', username),
+                        ],
                         limit=1,
                     )
 
                     self._log_activity(
-                        user=user if user else None,
+                        user=hospital_user if hospital_user else None,
                         action='login_failed',
                         status='failed',
-                        description='Invalid email or password.',
+                        description=(
+                            'Invalid username or password.'
+                        ),
                     )
 
-                    error = 'Invalid email or password.'
+                    error = 'Invalid username or password.'
 
         return request.render(
             'hospital_management.login_page',

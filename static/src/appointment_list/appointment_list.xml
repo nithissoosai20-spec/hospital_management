@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t
+        t-name="hospital_management.HospitalAppointmentListView"
+        t-inherit="web.ListView"
+        t-inherit-mode="primary"
+    >
+
+        <xpath
+            expr="//t[@t-set-slot='control-panel-create-button']"
+            position="replace"
+        >
+            <t t-set-slot="control-panel-create-button">
+
+                <div class="ha_toolbar">
+
+                    <!-- NEW APPOINTMENT -->
+                    <button
+                        type="button"
+                        class="btn btn-primary ha_new_btn"
+                        t-on-click="onNewAppointment"
+                    >
+                        New Appointment
+                    </button>
+
+                    <!-- FROM DATE -->
+                    <div class="ha_date_group">
+                        <label class="ha_date_lbl">From</label>
+                        <input
+                            type="date"
+                            class="ha_date_input"
+                            t-att-value="filterState.fromDate"
+                            t-on-change="onFromDateChange"
+                        />
+                    </div>
+
+                    <!-- TO DATE -->
+                    <div class="ha_date_group">
+                        <label class="ha_date_lbl">To</label>
+                        <input
+                            type="date"
+                            class="ha_date_input"
+                            t-att-value="filterState.toDate"
+                            t-on-change="onToDateChange"
+                        />
+                    </div>
+
+                    <!-- SEARCH -->
+                    <div class="ha_search_group">
+                        <span class="ha_search_icon">🔍</span>
+                        <input
+                            type="text"
+                            class="ha_search_input"
+                            placeholder="Name / Patient ID / Phone  (press Enter)"
+                            t-att-value="filterState.search"
+                            t-on-input="onSearchInput"
+                            t-on-keydown="onSearchKeydown"
+                        />
+                    </div>
+
+<!-- FILTER BUTTON -->
+                    <button
+                        type="button"
+                        class="btn btn-success ha_filter_btn"
+                        t-on-click="onFilterClick"
+                    >
+                        🔎 Filter
+                    </button>
+
+                </div>
+
+            </t>
+        </xpath>
+
+
+        <!-- Remove default Odoo search bar -->
+        <xpath
+            expr="//t[@t-set-slot='layout-actions']"
+            position="replace"
+        >
+            <t t-set-slot="layout-actions"/>
+        </xpath>
+
+    </t>
+
+</templates>

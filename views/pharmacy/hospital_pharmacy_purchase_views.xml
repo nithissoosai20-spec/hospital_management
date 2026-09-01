@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- PURCHASE INTENT ACTION -->
+<record id="view_hospital_pharmacy_purchase_intent_list" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.purchase.intent.list</field>
+        <field name="model">hospital.pharmacy.purchase</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Intent List">
+                <field name="name" string="Purchase No."/>
+                <field name="medicine_names" string="Product Name"/>
+                <field name="supplier_id" string="Supplier Name"/>
+                <field name="invoice_date"/>
+                <field name="purchase_type"/>
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'successful'" decoration-warning="invoice_status == 'pending'" invisible="state != 'done'"/>
+
+                
+            </list>
+        </field>
+    </record>
+
+    <record id="action_hospital_purchase_intent_new" model="ir.actions.act_window">
+        <field name="name">Purchase Intent (New)</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'intent')]</field>
+        <field name="context">{'default_state': 'intent'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_intent_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
+    </record>
+
+    <record id="action_hospital_purchase_intent_existing" model="ir.actions.act_window">
+        <field name="name">Purchase Intent (Existing)</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ('draft', 'done', 'cancelled'))]</field>
+    </record>
+
+        <record id="action_hospital_pharmacy_purchase_list_new" model="ir.actions.act_window">
+        <field name="name">Purchase Orders (New)</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'draft')]</field>
+        <field name="context">{'default_state': 'draft'}</field>
+    </record>
+
+    <record id="action_hospital_pharmacy_purchase_list_existing" model="ir.actions.act_window">
+        <field name="name">Purchase Orders (Existing)</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'done')]</field>
+        <field name="context">{'default_state': 'done'}</field>
+    </record>
+
+    <record id="view_hospital_pharmacy_purchase_list" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.purchase.list</field>
+        <field name="model">hospital.pharmacy.purchase</field>
+        <field name="arch" type="xml">
+            <list string="Purchase List" >
+                <field name="name" string="Purchase No."/>
+                <field name="medicine_names" string="Product Name"/>
+                <field name="supplier_id" string="Supplier Name"/>
+                <field name="invoice_date"/>
+                <field name="purchase_type"/>
+
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'successful'" decoration-warning="invoice_status == 'pending'" invisible="state != 'done'"/>
+                
+                                </list>
+        </field>
+    </record>
+
+    <record id="view_hospital_pharmacy_purchase_form" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.purchase.form</field>
+        <field name="model">hospital.pharmacy.purchase</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Entry">
+                
+                <sheet>
+                    <field name="state" invisible="1"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoice_count == 0">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
+
+                    <style>
+                        .custom-section-title {
+                            color: #1e3a8a;
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-top: 5px;
+                            margin-bottom: 5px;
+                            border-bottom: 1px solid #e2e8f0;
+                            padding-bottom: 2px;
+                        }
+                        .custom-label {
+                            font-weight: 600;
+                            font-size: 11px;
+                            color: #475569;
+                            margin-bottom: 0px;
+                            display: block;
+                        }
+                        .custom-field-container {
+                            margin-bottom: 5px;
+                        }
+                        /* Make input fields smaller */
+                        .custom-field-container input, .custom-field-container select {
+                            padding: 2px 5px !important;
+                            font-size: 12px !important;
+                            height: auto !important;
+                            min-height: 24px !important;
+                        }
+                    </style>
+
+                    <div class="custom-section-title">1. Supplier &amp; Invoice Details</div>
+                    <div class="row">
+                        <div class="col-md-3 custom-field-container">
+                            <label for="supplier_id" class="custom-label">Supplier *</label>
+                            <field name="supplier_id" class="w-100" placeholder="Select supplier..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True}"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="invoice_no" class="custom-label">Invoice No. *</label>
+                            <field name="invoice_no" class="w-100" placeholder="Enter invoice number"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="invoice_date" class="custom-label">Invoice Date *</label>
+                            <field name="invoice_date" class="w-100"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="purchase_type" class="custom-label">Purchase Type *</label>
+                            <field name="purchase_type" class="w-100"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 custom-field-container">
+                            <label for="mobile_number" class="custom-label">Mobile Number</label>
+                            <field name="mobile_number" class="w-100" placeholder="Enter mobile number"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="due_date" class="custom-label">Due Date</label>
+                            <field name="due_date" class="w-100"/>
+                        </div>
+                        <div class="col-md-6 custom-field-container">
+                            <label for="address" class="custom-label">Address</label>
+                            <field name="address" class="w-100" placeholder="Enter supplier address" rows="1"/>
+                        </div>
+                    </div>
+
+                    <div class="custom-section-title">2. Item Details</div>
+                    <field name="line_ids" class="w-100" mode="list">
+                        <list editable="bottom">
+                            <control><create string="Add items"/></control>
+                            <field name="medicine_code"/><field name="medicine_id"/>
+                            <field name="batch_no"/>
+                            <field name="qty"/>
+                            <field name="unit"/>
+                            <field name="purchase_price"/>
+                            <field name="discount_percent"/>
+                            <field name="cgst_percent"/>
+                            <field name="sgst_percent"/>
+                            <field name="igst_percent"/>
+                            <field name="amount" readonly="1"/>
+                            
+                            
+                            
+                            
+                            
+                              
+                              
+                              
+                        </list>
+                    </field>
+                    <div class="row justify-content-end mt-2">
+                        <div class="col-md-4 text-end">
+                            <span class="custom-label d-inline me-2">Total Items:</span> <field name="total_items" class="fw-bold d-inline me-4"/>
+                            
+                        </div>
+                    </div>
+
+
+
+                    <div class="d-flex justify-content-end mt-4 mb-2">
+                        <button name="action_create_order" string="Create Order" type="object" class="btn-primary me-2" invisible="state != 'intent'"/>
+                        <button name="%(hospital_management.action_hospital_pharmacy_purchase_list_new)d" string="Open Orders List" type="action" class="btn-info me-2" invisible="state != 'draft' or context.get('default_state') != 'intent'"/>
+                        <button name="action_confirm" string="Confirm &amp; Generate Invoice" type="object" class="btn-primary me-2" invisible="state != 'draft' or context.get('default_state') == 'intent'"/>
+                        <button name="action_view_invoices" string="Open Pending Invoice" type="object" class="btn-warning me-2" invisible="state != 'done' or invoice_status != 'pending'"/>
+                        <button name="action_print_order" string="Print Order" type="object" class="btn-secondary me-2" invisible="(state != 'draft' and state != 'done') or context.get('default_state') == 'intent'"/>
+                        <button name="action_print_invoice" string="Print Invoice" type="object" class="btn-secondary me-2" invisible="state != 'done' or invoice_status != 'successful'"/>
+                        <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'successful'" decoration-warning="invoice_status == 'pending'" invisible="state != 'done'"/>
+                
+                                        </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

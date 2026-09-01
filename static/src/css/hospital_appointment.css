@@ -1,0 +1,4141 @@
+   HOSPITAL APPOINTMENT
+   CLEAN / COMPACT CSS
+   ODOO 19
+
+   NOTE:
+   Header and footer styles are NOT included here.
+   They remain untouched in hospital_layout.css.
+   ========================================================= */
+
+
+   1. APPOINTMENT FORM
+   ========================================================= */
+
+.hospital_appointment_form {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.hospital_appointment_form .o_form_sheet_bg,
+.hospital_appointment_form .o_form_sheet {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_form .o_form_sheet_bg {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.hospital_appointment_form .o_form_sheet {
+    padding: 10px !important;
+    box-shadow: none !important;
+    border: 0 !important;
+}
+
+.hospital_appointment_form .o_form_renderer,
+.hospital_appointment_form .o_form_view_container {
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_form .o_form_sheet > div {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.hospital_appointment_form .o_form_sheet > .oe_title {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* Hide standard Odoo New button only inside appointment form */
+
+body:has(.hospital_appointment_form)
+.o_control_panel
+.o_form_button_create {
+    display: none !important;
+}
+
+
+/* Hide the extra control-panel action menu on appointment form */
+
+body:has(.hospital_appointment_form)
+.o_control_panel
+.o_cp_action_menus {
+    display: none !important;
+}
+
+body:has(.hospital_appointment_form) .o_control_panel {
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+body:has(.hospital_appointment_form)
+.o_control_panel .breadcrumb {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+   2. APPOINTMENT FORM SEARCH
+   ========================================================= */
+
+.hospital_appointment_search_toolbar {
+    width: 100% !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    margin: 0 !important;
+    padding: 6px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #ffffff !important;
+    border-bottom: 1.5px solid #000000 !important;
+}
+
+.hospital_appointment_search_box {
+    width: 520px !important;
+    max-width: 60% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+.hospital_appointment_search_box .o_field_widget {
+    flex: 1 1 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_appointment_search_box input {
+    height: 34px !important;
+    padding: 5px 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #7565a6 !important;
+    border-radius: 0 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+}
+
+.hospital_search_button {
+    height: 34px !important;
+    margin-left: 6px !important;
+    padding: 4px 13px !important;
+    font-size: 13px !important;
+    border-radius: 4px !important;
+}
+
+
+   3. FORM SHEET / SECTIONS
+   ========================================================= */
+
+.hospital_appointment_sheet {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_sheet .hospital_section,
+.hospital_appointment_sheet .hospital_new_patient,
+.hospital_appointment_sheet .hospital_patient_found {
+    width: 100% !important;
+    margin: 4px 0 !important;
+    padding: 7px 9px !important;
+    border: 1.5px solid #000000 !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+}
+
+.hospital_section_title {
+    margin: 0 0 5px 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 18px !important;
+}
+
+
+   4. FORM GRIDS
+   ========================================================= */
+
+.hospital_patient_grid,
+.hospital_new_patient_grid,
+.hospital_appointment_grid,
+.hospital_payment_grid {
+    width: 100% !important;
+    display: grid !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_patient_grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 6px 12px !important;
+}
+
+.hospital_new_patient_grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 5px 12px !important;
+}
+
+.hospital_appointment_grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 6px 14px !important;
+}
+
+.hospital_payment_grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 6px 12px !important;
+}
+
+.hospital_patient_grid > div,
+.hospital_new_patient_grid > div,
+.hospital_appointment_grid > div,
+.hospital_payment_grid > div {
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_address_field {
+    margin-top: 5px !important;
+    padding: 0 !important;
+}
+
+
+   5. FORM LABELS / FIELDS
+   ========================================================= */
+
+.hospital_appointment_sheet label,
+.hospital_appointment_form label {
+    display: block !important;
+    margin: 0 0 3px 0 !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 16px !important;
+}
+
+.hospital_appointment_sheet .o_field_widget {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_appointment_sheet input,
+.hospital_appointment_sheet select,
+.hospital_appointment_sheet textarea {
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 4px 7px !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_form input.o_input,
+.hospital_appointment_form textarea.o_input,
+.hospital_appointment_form select.o_input,
+.hospital_appointment_form .o_field_widget input,
+.hospital_appointment_form .o_field_widget textarea,
+.hospital_appointment_form .o_field_widget select {
+    border: 1px solid #cfcfcf !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+    padding: 4px 7px !important;
+    min-height: 30px !important;
+}
+
+.hospital_appointment_form .o_field_widget.o_readonly_modifier .o_input {
+    border: 1.5px solid #000000 !important;
+    background: #f7f7f7 !important;
+    color: #555555 !important;
+}
+
+.hospital_appointment_form .o_field_many2one .o_input,
+.hospital_appointment_form .o_field_date .o_input,
+.hospital_appointment_form .o_field_datetime .o_input {
+    border: 1px solid #cfcfcf !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
+}
+
+.hospital_appointment_form .o_field_widget .o_input:focus {
+    border-color: #7565a6 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px rgba(117, 101, 166, 0.15) !important;
+}
+
+.hospital_appointment_form textarea {
+    border: 1px solid #cfcfcf !important;
+    border-radius: 4px !important;
+    background: #ffffff !important;
+    padding: 5px 7px !important;
+    resize: none !important;
+}
+
+.hospital_reason_section {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}
+
+.hospital_reason_section textarea {
+    height: 42px !important;
+    min-height: 42px !important;
+    resize: none !important;
+}
+
+
+   6. RECEIPT / ACTION BUTTONS IN FORM
+   ========================================================= */
+
+.hospital_receipt_preference {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+    margin: 3px 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_receipt_preference label {
+    margin: 0 !important;
+}
+
+.hospital_action_buttons {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 7px !important;
+    margin: 6px 0 2px 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_action_buttons button {
+    height: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 4px 12px !important;
+    font-size: 12px !important;
+    line-height: 22px !important;
+    border-radius: 4px !important;
+}
+
+7. APPOINTMENT LIST
+========================================================= */
+.hospital_appointment_list {
+width: 100% !important;
+}
+.hospital_appointment_list .o_list_table {
+width: 100% !important;
+table-layout: auto !important;
+}
+.hospital_appointment_list .o_list_table th,
+.hospital_appointment_list .o_list_table td {
+padding: 5px 6px !important;
+font-size: 13px !important;
+white-space: nowrap !important;
+overflow: hidden !important;
+text-overflow: ellipsis !important;
+}
+.hospital_appointment_list .o_list_table td button {
+padding: 2px 5px !important;
+margin: 0 1px !important;
+}
+body:has(.hospital_appointment_list) .o_list_renderer {
+overflow-x: hidden !important;
+}
+8. APPOINTMENT LIST CONTROL BAR
+========================================================= */
+/* New Appointment */
+.hospital_new_appointment_button {
+height: 36px !important;
+padding: 6px 14px !important;
+white-space: nowrap !important;
+font-weight: 600 !important;
+}
+/* Dates */
+.hospital_appointment_date_filters {
+display: flex !important;
+align-items: center !important;
+gap: 10px !important;
+flex: 0 0 auto !important;
+white-space: nowrap !important;
+}
+.hospital_date_filter {
+display: flex !important;
+align-items: center !important;
+gap: 6px !important;
+white-space: nowrap !important;
+}
+.hospital_date_label {
+margin: 0 !important;
+font-size: 13px !important;
+font-weight: 500 !important;
+color: #444 !important;
+white-space: nowrap !important;
+}
+.hospital_date_input {
+width: 145px !important;
+min-width: 145px !important;
+height: 36px !important;
+padding: 5px 8px !important;
+border: 1px solid #ced4da !important;
+border-radius: 4px !important;
+background: #fff !important;
+font-size: 13px !important;
+color: #333 !important;
+box-sizing: border-box !important;
+}
+.hospital_date_input:focus {
+border-color: #71639e !important;
+outline: none !important;
+box-shadow: 0 0 0 2px rgba(113, 99, 158, 0.15) !important;
+}
+/* Search */
+.hospital_appointment_search_wrapper .o_searchview {
+position: relative !important;
+display: flex !important;
+align-items: center !important;
+width: 100% !important;
+height: 36px !important;
+min-height: 36px !important;
+box-sizing: border-box !important;
+border: 1px solid #ced4da !important;
+border-radius: 4px !important;
+background: #fff !important;
+padding-right: 36px !important;
+}
+.hospital_appointment_search_wrapper .o_searchview_input_container {
+display: flex !important;
+align-items: center !important;
+flex: 1 1 auto !important;
+width: auto !important;
+min-width: 0 !important;
+}
+.hospital_appointment_search_wrapper .o_searchview_input {
+width: 100% !important;
+height: 34px !important;
+border: none !important;
+outline: none !important;
+box-shadow: none !important;
+padding-left: 10px !important;
+padding-right: 5px !important;
+}
+.hospital_appointment_search_wrapper .o_searchview_icon {
+flex: 0 0 auto !important;
+margin-left: 8px !important;
+}
+/* Keep dropdown arrow INSIDE search box on same line */
+.hospital_appointment_search_wrapper .o_searchview_dropdown_toggler {
+position: absolute !important;
+top: 0 !important;
+right: 0 !important;
+width: 36px !important;
+height: 34px !important;
+display: flex !important;
+align-items: center !important;
+justify-content: center !important;
+margin: 0 !important;
+border: none !important;
+border-left: 1.5px solid #000000 !important;
+background: transparent !important;
+z-index: 5 !important;
+flex-shrink: 0 !important;
+}
+.hospital_appointment_search_wrapper
+.o_searchview_dropdown_toggler button {
+width: 100% !important;
+height: 100% !important;
+border: none !important;
+background: transparent !important;
+}
+9. LIST ACTIONS
+========================================================= */
+/* View / Edit / Print stay together on one line */
+.hospital_appointment_list .o_list_record_actions,
+.hospital_appointment_list .o_list_button {
+white-space: nowrap !important;
+width: 110px !important;
+min-width: 110px !important;
+max-width: 110px !important;
+padding-left: 4px !important;
+padding-right: 4px !important;
+}
+.hospital_appointment_list .o_list_record_actions button,
+.hospital_appointment_list .o_list_button button {
+display: inline-flex !important;
+vertical-align: middle !important;
+white-space: nowrap !important;
+margin: 0 2px !important;
+}
+/* Hide optional-column controls if present */
+.hospital_appointment_list .o_list_optional_columns,
+.hospital_appointment_list .o_optional_columns_dropdown {
+display: none !important;
+}
+10. RESPONSIVE
+========================================================= */
+@media (max-width: 1200px) {
+}
+@media (max-width: 1100px) {
+.hospital_appointment_date_filters {
+gap: 6px !important;
+}
+.hospital_date_filter {
+gap: 4px !important;
+}
+.hospital_date_input {
+width: 125px !important;
+min-width: 125px !important;
+max-width: 125px !important;
+}
+}
+@media (max-width: 950px) {
+}
+@media (max-width: 850px) {
+.hospital_appointment_search_wrapper .o_searchview {
+width: 100% !important;
+max-width: 100% !important;
+}
+}
+@media (max-height: 800px) {
+.hospital_appointment_sheet {
+padding: 5px !important;
+}
+.hospital_appointment_sheet .hospital_section,
+.hospital_appointment_sheet .hospital_new_patient,
+.hospital_appointment_sheet .hospital_patient_found {
+margin: 2px 0 !important;
+padding: 5px 7px !important;
+}
+}
+
+   APPOINTMENT LIST TOOLBAR
+   New Appointment | Dates | Search
+   ========================================================= */
+
+.hospital_appointment_control_area {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-height: 60px !important;
+    padding: 0 16px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    gap: 0 !important;
+}
+
+.hospital_new_appointment_wrapper {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    margin: 0 45px 0 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_new_appointment_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 36px !important;
+    padding: 6px 14px !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    flex: 0 0 auto !important;
+}
+
+.hospital_appointment_date_filters {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+    gap: 10px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+}
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    white-space: nowrap !important;
+}
+
+.hospital_date_label {
+    margin: 0 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+}
+
+.hospital_date_input {
+    width: 145px !important;
+    min-width: 145px !important;
+    height: 36px !important;
+    padding: 5px 8px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_search_wrapper {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 1 320px !important;
+    width: 320px !important;
+    min-width: 280px !important;
+    height: 36px !important;
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_search_wrapper .o_searchview {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 36px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.hospital_appointment_search_wrapper .o_searchview_input_container {
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 100% !important;
+}
+
+.hospital_appointment_search_wrapper .o_searchview_dropdown_toggler {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-left: 1.5px solid #000000 !important;
+    border-top: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+    background: transparent !important;
+}
+
+.hospital_appointment_search_wrapper .o_searchview_dropdown_toggler button {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    background: transparent !important;
+}
+
+
+   APPOINTMENT LIST ACTIONS
+   View | Edit | Print
+   ========================================================= */
+
+.hospital_appointment_list td.o_list_button,
+.hospital_appointment_list td.o_list_record_actions {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+    padding: 0 4px !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+}
+
+.hospital_appointment_list td.o_list_button > div,
+.hospital_appointment_list td.o_list_record_actions > div {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-width: 84px !important;
+    white-space: nowrap !important;
+}
+
+.hospital_appointment_list td.o_list_button > div > button,
+.hospital_appointment_list td.o_list_record_actions > div > button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 24px !important;
+    width: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    height: 28px !important;
+    margin: 0 2px !important;
+    padding: 3px !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+
+   DESKTOP
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .hospital_new_appointment_wrapper {
+        margin-right: 30px !important;
+    }
+
+    .hospital_appointment_search_wrapper {
+        flex-basis: 300px !important;
+        width: 300px !important;
+        min-width: 260px !important;
+    }
+}
+
+@media (max-width: 950px) {
+    .hospital_appointment_control_area {
+        gap: 8px !important;
+    }
+
+    .hospital_new_appointment_wrapper {
+        margin-right: 15px !important;
+    }
+
+    .hospital_appointment_date_filters {
+        gap: 6px !important;
+    }
+
+    .hospital_date_input {
+        width: 125px !important;
+        min-width: 125px !important;
+    }
+
+    .hospital_appointment_search_wrapper {
+        flex-basis: 260px !important;
+        width: 260px !important;
+        min-width: 220px !important;
+    }
+}
+
+
+   FINAL DATE POSITION
+   Keep From / To beside New Appointment
+   ========================================================= */
+
+.hospital_appointment_control_area {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    min-height: 60px !important;
+}
+
+
+/* ---------------------------------------------------------
+   New Appointment stays at the left
+   --------------------------------------------------------- */
+
+.hospital_new_appointment_wrapper {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+}
+
+   FINAL APPOINTMENT TOOLBAR
+   New Appointment -> Dates -> Search
+   ========================================================= */
+
+.hospital_appointment_control_area {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    width: 100% !important;
+    min-height: 60px !important;
+
+    margin: 0 !important;
+    padding: 0 16px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   NEW APPOINTMENT
+   ========================================================= */
+
+.hospital_new_appointment_wrapper {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hospital_new_appointment_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    height: 36px !important;
+
+    margin: 0 !important;
+    padding: 6px 14px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATES
+   DIRECTLY BESIDE NEW APPOINTMENT
+   ========================================================= */
+
+.hospital_appointment_date_filters {
+    position: static !important;
+    transform: none !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    gap: 10px !important;
+
+    margin: 0 0 0 35px !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* From / To */
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    gap: 6px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* Labels */
+
+.hospital_date_label {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* Date inputs */
+
+.hospital_date_input {
+    display: block !important;
+
+    height: 36px !important;
+
+    width: 145px !important;
+    min-width: 145px !important;
+    max-width: 145px !important;
+
+    box-sizing: border-box !important;
+
+    margin: 0 !important;
+}
+
+
+   SEARCH
+   PUSH SEARCH TO RIGHT
+   ========================================================= */
+
+.hospital_appointment_search_wrapper {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 320px !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+
+    height: 36px !important;
+
+    margin-left: auto !important;
+    margin-right: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_search_wrapper .o_searchview {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 36px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* Search input */
+
+.hospital_appointment_search_wrapper
+.o_searchview_input_container {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    height: 100% !important;
+}
+
+
+/* Search dropdown arrow stays INSIDE the search */
+
+.hospital_appointment_search_wrapper
+.o_searchview_dropdown_toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+
+    width: 36px !important;
+    height: 36px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: static !important;
+}
+
+
+   NEW APPOINTMENT FORM
+   Hide Odoo's top breadcrumb/action controls
+   Keep hospital header, footer and form untouched
+   ========================================================= */
+
+/* Hide the "New" breadcrumb/title */
+.o_form_view .o_control_panel .o_breadcrumb {
+    display: none !important;
+}
+
+
+/* Hide the form Save/Discard style action buttons
+   if Odoo renders them in the control panel */
+.o_form_view .o_control_panel .o_form_button_save,
+.o_form_view .o_control_panel .o_form_button_cancel {
+    display: none !important;
+}
+
+   NEW APPOINTMENT FORM - TOOLBAR SPACING
+   ========================================================= */
+
+/* Reduce empty space left by hidden Odoo control panel */
+.o_form_view .o_control_panel .o_breadcrumb {
+    display: none !important;
+}
+
+/* Reduce the control panel height */
+.o_form_view .o_control_panel {
+    min-height: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+   PATIENT SEARCH + NEW APPOINTMENT
+   ========================================================= */
+
+/* Add space between Search and New Appointment */
+.hospital_appointment_search_box {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+
+/* Search input */
+.hospital_appointment_search_box > input {
+    margin-right: 4px !important;
+}
+
+
+/* New Appointment button */
+.hospital_appointment_search_box
+.hospital_new_appointment_button {
+    margin-left: 8px !important;
+}
+
+   APPOINTMENT FORM - REQUIRED FIELD ERROR
+   ========================================================= */
+
+.hospital_appointment_form
+.hospital_required_error
+.o_field_widget {
+
+    border: 2px solid #dc3545 !important;
+
+    border-radius: 5px !important;
+
+    background-color: #fff5f5 !important;
+
+}
+
+
+.hospital_appointment_form
+.hospital_required_error
+input,
+.hospital_appointment_form
+.hospital_required_error
+textarea,
+.hospital_appointment_form
+.hospital_required_error
+select {
+
+    border-color: #dc3545 !important;
+
+    background-color: #fff5f5 !important;
+
+}
+
+
+.hospital_appointment_form
+.hospital_required_error:focus-within {
+
+    box-shadow:
+        0 0 0 2px rgba(220, 53, 69, 0.15) !important;
+
+}
+
+   TOKEN NUMBER - GENERATED TOKEN HIGHLIGHT
+   ========================================================= */
+
+.hospital_appointment_form
+.hospital_token_number {
+
+    font-weight: 700 !important;
+
+    font-size: 18px !important;
+
+    color: #6f42c1 !important;
+
+}
+
+
+.hospital_appointment_form
+.hospital_token_number
+input {
+
+    font-weight: 700 !important;
+
+    font-size: 18px !important;
+
+    color: #6f42c1 !important;
+
+    background-color: #f3efff !important;
+
+    border: 2px solid #6f42c1 !important;
+
+    border-radius: 6px !important;
+
+    text-align: center !important;
+
+    padding: 5px 10px !important;
+
+}
+
+   APPOINTMENT LIST TOOLBAR
+   LEFT ALIGN: NEW APPOINTMENT + DATES
+   SEARCH: RIGHT
+   ========================================================= */
+
+.hospital_appointment_control_area {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-height: 72px !important;
+
+    margin: 0 !important;
+    padding: 0 16px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   NEW APPOINTMENT
+   ========================================================= */
+
+.hospital_new_appointment_wrapper {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    margin: 0 28px 0 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_new_appointment_button {
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 7px 16px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE FILTERS
+   Keep them directly beside New Appointment
+   ========================================================= */
+
+.hospital_appointment_date_filters {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    gap: 14px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 7px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_date_label {
+    margin: 0 !important;
+
+    font-weight: 500 !important;
+
+    white-space: nowrap !important;
+}
+
+
+.hospital_date_input {
+    width: 145px !important;
+    min-width: 145px !important;
+    height: 40px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   SEARCH
+   Push search to the RIGHT
+   ========================================================= */
+
+.hospital_appointment_search_wrapper {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 320px !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+
+    height: 40px !important;
+
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_search_wrapper .o_searchview {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_search_wrapper
+.o_searchview_input_container {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    height: 100% !important;
+}
+
+
+.hospital_appointment_search_wrapper
+.o_searchview_dropdown_toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+
+    width: 36px !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: static !important;
+}
+
+
+   MOBILE / SMALL WIDTH
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .hospital_appointment_control_area {
+        flex-wrap: wrap !important;
+
+        gap: 10px !important;
+
+        padding: 10px 16px !important;
+    }
+
+    .hospital_new_appointment_wrapper {
+        margin-right: 10px !important;
+    }
+
+    .hospital_appointment_date_filters {
+        gap: 8px !important;
+    }
+
+    .hospital_appointment_search_wrapper {
+        flex: 1 1 100% !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+
+        margin-left: 0 !important;
+    }
+}
+
+   FINAL APPOINTMENT TOOLBAR POSITION
+   ========================================================= */
+
+.hospital_appointment_control_area {
+    position: relative !important;
+
+    display: block !important;
+
+    width: 100% !important;
+    height: 72px !important;
+    min-height: 72px !important;
+
+    margin: 0 !important;
+    padding: 0 16px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* ---------------------------------------------------------
+   NEW APPOINTMENT
+   --------------------------------------------------------- */
+
+.hospital_new_appointment_wrapper {
+    position: absolute !important;
+
+    left: 16px !important;
+    top: 16px !important;
+
+    display: block !important;
+
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_new_appointment_button {
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 7px 16px !important;
+
+    white-space: nowrap !important;
+}
+
+
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    width: auto !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 7px !important;
+
+    white-space: nowrap !important;
+}
+
+
+.hospital_date_label {
+    margin: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+.hospital_date_input {
+    width: 145px !important;
+    min-width: 145px !important;
+    max-width: 145px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 5px 8px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH
+   Fixed on right
+   --------------------------------------------------------- */
+
+.hospital_appointment_search_wrapper {
+    position: absolute !important;
+
+    right: 16px !important;
+    top: 16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_search_wrapper .o_searchview {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_search_wrapper
+.o_searchview_input_container {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    height: 40px !important;
+}
+
+
+.hospital_appointment_search_wrapper
+.o_searchview_dropdown_toggler {
+    position: static !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* ---------------------------------------------------------
+   SMALL SCREEN
+   --------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+
+    .hospital_appointment_date_filters {
+        left: 190px !important;
+    }
+
+    .hospital_appointment_search_wrapper {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+
+    .hospital_appointment_search_wrapper .o_searchview {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+}
+
+
+   APPOINTMENT TOOLBAR - FINAL POSITION
+   NEW APPOINTMENT -> DATE FILTERS -> SEARCH
+   ========================================================= */
+
+.hospital_appointment_search_toolbar {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-height: 70px !important;
+
+    margin: 0 !important;
+    padding: 0 17px !important;
+
+    box-sizing: border-box !important;
+
+    position: static !important;
+}
+
+
+   SEARCH BOX
+   ========================================================= */
+
+.hospital_appointment_search_box {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: static !important;
+}
+
+
+   NEW APPOINTMENT BUTTON
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_new_appointment_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 158px !important;
+
+    height: 40px !important;
+
+    margin: 0 35px 0 0 !important;
+    padding: 6px 14px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE FILTERS
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_appointment_date_filters {
+    position: static !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 10px !important;
+
+    transform: none !important;
+
+    white-space: nowrap !important;
+}
+
+
+   INDIVIDUAL DATE
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 6px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE LABEL
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_date_filter label {
+    display: inline-block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE INPUT
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_date_input {
+    display: inline-block !important;
+
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 6px 10px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   SEARCH
+   PUSH IT TO RIGHT
+   ========================================================= */
+
+.hospital_appointment_search_box
+.hospital_appointment_search_wrapper {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 320px !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    margin: 0 0 0 auto !important;
+    padding: 0 !important;
+
+    position: static !important;
+}
+
+
+   REMOVE ANY OLD ABSOLUTE DATE POSITION
+   ========================================================= */
+
+.hospital_appointment_search_toolbar
+.hospital_appointment_date_filters {
+    position: static !important;
+
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+}
+
+
+   DESKTOP
+   ========================================================= */
+
+@media (min-width: 1201px) {
+
+    .hospital_appointment_search_toolbar {
+        justify-content: flex-start !important;
+    }
+
+    .hospital_appointment_search_box {
+        justify-content: flex-start !important;
+    }
+
+    .hospital_appointment_search_box
+    .hospital_appointment_date_filters {
+        margin-left: 0 !important;
+    }
+
+    .hospital_appointment_search_box
+    .hospital_appointment_search_wrapper {
+        margin-left: auto !important;
+    }
+}
+
+   APPOINTMENT LIST TOOLBAR - FINAL
+   NEW APPOINTMENT + DATES ON LEFT
+   SEARCH ON RIGHT
+   ========================================================= */
+
+
+   CREATE AREA
+   ========================================================= */
+
+.hospital_appointment_create_area {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 0 !important;
+
+    position: static !important;
+}
+
+
+   NEW APPOINTMENT
+   ========================================================= */
+
+.hospital_appointment_create_area
+.hospital_new_appointment_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 158px !important;
+
+    height: 40px !important;
+
+    margin: 0 30px 0 0 !important;
+    padding: 6px 14px !important;
+
+    white-space: nowrap !important;
+
+    position: static !important;
+}
+
+
+   DATE FILTERS
+   ========================================================= */
+
+.hospital_appointment_create_area
+.hospital_appointment_date_filters {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 12px !important;
+
+    position: static !important;
+
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+
+    transform: none !important;
+
+    white-space: nowrap !important;
+}
+
+
+   INDIVIDUAL DATE FILTER
+   ========================================================= */
+
+.hospital_appointment_create_area
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    gap: 6px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE LABEL
+   ========================================================= */
+
+.hospital_appointment_create_area
+.hospital_date_label {
+    display: inline-block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+   DATE INPUT
+   ========================================================= */
+
+.hospital_appointment_create_area
+.hospital_date_input {
+    display: inline-block !important;
+
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 6px 10px !important;
+
+    box-sizing: border-box !important;
+
+    position: static !important;
+}
+
+
+   SEARCH AREA
+   PUSH TO RIGHT
+   ========================================================= */
+
+.hospital_appointment_search_area {
+    display: flex !important;
+    align-items: center !important;
+
+    margin-left: auto !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    position: static !important;
+}
+
+
+   SEARCH VIEW
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .hospital_appointment_create_area
+    .hospital_new_appointment_button {
+        min-width: 145px !important;
+
+        margin-right: 20px !important;
+    }
+
+    .hospital_appointment_create_area
+    .hospital_date_input {
+        width: 135px !important;
+        min-width: 135px !important;
+        max-width: 135px !important;
+    }
+
+    .hospital_appointment_search_area {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+}
+
+
+@media (max-width: 900px) {
+
+    .hospital_appointment_create_area {
+        flex-wrap: wrap !important;
+    }
+
+    .hospital_appointment_search_area {
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+}
+
+   ODOO SEARCH BAR
+   SEARCH INPUT + DROPDOWN ARROW
+   SAME LINE
+   ========================================================= */
+
+.hospital_appointment_search_area {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    margin-left: auto !important;
+    padding: 0 !important;
+
+    position: relative !important;
+}
+
+
+   ODOO SEARCH VIEW
+   ========================================================= */
+
+.hospital_appointment_search_area .o_searchview {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    position: relative !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    overflow: visible !important;
+}
+
+
+   SEARCH INPUT CONTAINER
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview_input_container {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    overflow: hidden !important;
+}
+
+
+   SEARCH INPUT
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview_input {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 6px 10px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   DROPDOWN ARROW
+   KEEP IT BESIDE SEARCH
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview_dropdown_toggler {
+    position: static !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+
+    transform: none !important;
+
+    white-space: nowrap !important;
+}
+
+
+   ARROW BUTTON
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview_dropdown_toggler button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 36px !important;
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+}
+
+
+   CARET
+   ========================================================= */
+
+.hospital_appointment_search_area
+.o_searchview_dropdown_toggler::after {
+    position: static !important;
+
+    display: inline-block !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+}
+
+
+   FINAL FIX
+   ODOO SEARCH + DROPDOWN MUST STAY ON ONE ROW
+   ========================================================= */
+
+.hospital_appointment_search_area .o_searchview.input-group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    position: relative !important;
+    overflow: visible !important;
+}
+
+
+/* SEARCH INPUT CONTAINER */
+
+.hospital_appointment_search_area
+.o_searchview.input-group
+.o_searchview_input_container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT */
+
+.hospital_appointment_search_area
+.o_searchview.input-group
+.o_searchview_input {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+}
+
+
+/* DROPDOWN TO THE RIGHT */
+
+.hospital_appointment_search_area
+.o_searchview.input-group
+.o_searchview_dropdown_toggler {
+    position: static !important;
+
+    display: flex !important;
+    flex: 0 0 36px !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    border: 0 !important;
+    background: transparent !important;
+}
+
+
+/* BUTTON INSIDE TOGGLER */
+
+.hospital_appointment_search_area
+.o_searchview_dropdown_toggler button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    background: transparent !important;
+}
+
+   HOSPITAL APPOINTMENT SEARCH BAR
+   ========================================================= */
+
+.hospital_appointment_search_area {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.hospital_searchbar_container {
+    margin-left: 120px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+}
+
+
+/* ODOO SEARCH ROOT */
+
+.hospital_searchbar_container .o_searchview {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+
+    height: 40px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    position: relative !important;
+}
+
+
+/* INPUT AREA */
+
+.hospital_searchbar_container
+.o_searchview_input_container {
+    display: flex !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: 40px !important;
+}
+
+
+/* DROPDOWN */
+
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 36px !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+
+    height: 40px !important;
+
+    position: static !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    transform: none !important;
+}
+
+
+/* IMPORTANT:
+   prevent Odoo dropdown from becoming a second row
+*/
+
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler::after {
+    position: static !important;
+    display: inline-block !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+}
+
+
+   APPOINTMENT LIST - SEARCH BAR
+   Keep search input and dropdown arrow on ONE LINE
+   ========================================================= */
+
+.hospital_searchbar_container {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    width: auto !important;
+    min-width: 0 !important;
+}
+
+
+/* Odoo SearchBar outer container */
+
+.hospital_searchbar_container .o_searchview {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
+
+    height: 40px !important;
+}
+
+
+/* Search input area */
+
+.hospital_searchbar_container .o_searchview_input_container {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+}
+
+
+/* Search input */
+
+.hospital_searchbar_container .o_searchview_input {
+    width: 100% !important;
+}
+
+
+/* THE ARROW BUTTON */
+
+.hospital_searchbar_container .o_searchview_dropdown_toggler {
+    display: flex !important;
+
+    position: static !important;
+
+    flex: 0 0 32px !important;
+
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+
+    height: 32px !important;
+
+    margin: 0 !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    float: none !important;
+}
+
+
+/* Make sure the arrow button stays beside the input */
+
+.hospital_searchbar_container .o_searchview > * {
+    flex-shrink: 0 !important;
+}
+
+.hospital_searchbar_container .o_searchview > .o_searchview_input_container {
+    flex: 1 1 auto !important;
+    flex-shrink: 1 !important;
+}
+
+
+/* Remove any accidental positioning from old CSS */
+
+.hospital_searchbar_container .o_searchview_dropdown_toggler {
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+}
+
+
+   FINAL SEARCH BAR FIX
+   Odoo .o_cp_searchview is also .input-group
+   .input-group uses flex-wrap: wrap
+   This makes the dropdown arrow move to the next line.
+   ========================================================= */
+
+.hospital_searchbar_container .o_cp_searchview {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+
+    align-items: center !important;
+
+    width: 345px !important;
+    min-width: 345px !important;
+    max-width: 345px !important;
+
+    height: 40px !important;
+}
+
+
+/* Search input/form must take available space */
+
+.hospital_searchbar_container .o_cp_searchview .o_searchview_form {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    width: auto !important;
+
+    flex-wrap: nowrap !important;
+}
+
+
+/* Search input container */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_input_container {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+}
+
+
+/* Dropdown arrow stays beside search */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_dropdown_toggler {
+    position: static !important;
+
+    flex: 0 0 auto !important;
+
+    width: 36px !important;
+    min-width: 36px !important;
+
+    height: 36px !important;
+
+    margin: 0 !important;
+
+    transform: none !important;
+
+    float: none !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+   APPOINTMENT LIST - FINAL COMPACT TOOLBAR
+   Reduce Date + Search box height
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   DATE FILTERS
+   --------------------------------------------------------- */
+
+.hospital_appointment_create_area
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 6px !important;
+
+    height: 34px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* DATE INPUT */
+
+.hospital_appointment_create_area
+.hospital_date_input {
+    width: 145px !important;
+    min-width: 145px !important;
+    max-width: 145px !important;
+
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+
+    padding: 4px 8px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    line-height: 24px !important;
+}
+
+
+/* DATE LABEL */
+
+.hospital_appointment_create_area
+.hospital_date_label {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 34px !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH BAR
+   --------------------------------------------------------- */
+
+.hospital_searchbar_container {
+    display: flex !important;
+    align-items: center !important;
+
+    height: 34px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* ODOO SEARCH CONTAINER */
+
+.hospital_searchbar_container
+.o_cp_searchview {
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    flex-wrap: nowrap !important;
+
+    align-items: center !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* SEARCH FORM */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_form {
+    display: flex !important;
+
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    height: 34px !important;
+
+    padding: 0 4px 0 8px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* SEARCH INPUT CONTAINER */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_input_container {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+
+    height: 34px !important;
+}
+
+
+/* SEARCH INPUT */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_input {
+    height: 34px !important;
+
+    min-height: 34px !important;
+
+    padding: 4px 8px !important;
+
+    margin: 0 !important;
+
+    box-sizing: border-box !important;
+
+    line-height: 24px !important;
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH DROPDOWN ARROW
+   --------------------------------------------------------- */
+
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_dropdown_toggler {
+    position: static !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 34px !important;
+
+    width: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    float: none !important;
+
+    transform: none !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* ---------------------------------------------------------
+   KEEP EVERYTHING CENTERED VERTICALLY
+   --------------------------------------------------------- */
+
+.hospital_appointment_create_area {
+    display: flex !important;
+
+    align-items: center !important;
+
+    flex-wrap: nowrap !important;
+
+    gap: 12px !important;
+
+    min-height: 34px !important;
+}
+
+   FINAL APPOINTMENT TOOLBAR SIZE FIX
+   Search box + arrow in one compact line
+   ========================================================= */
+
+/* SEARCH BAR CONTAINER */
+.hospital_searchbar_container {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* ODOO SEARCH VIEW */
+.hospital_searchbar_container .o_searchview {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT GROUP */
+.hospital_searchbar_container .o_searchview_input_group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT AREA */
+.hospital_searchbar_container
+.o_searchview_input_container {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    height: 38px !important;
+}
+
+
+/* SEARCH INPUT */
+.hospital_searchbar_container
+.o_searchview_input {
+    height: 38px !important;
+
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+
+    margin: 0 !important;
+}
+
+
+/* SEARCH ICON */
+.hospital_searchbar_container
+.o_searchview_input_container .o_searchview_facet {
+    height: 38px !important;
+}
+
+
+/* ARROW BUTTON */
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 38px !important;
+
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 1 !important;
+}
+
+
+/* ARROW ICON */
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler .o_dropdown_caret {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+   DATE BOXES
+   Keep them compact and aligned with search
+   ========================================================= */
+
+.hospital_appointment_date_filters {
+    display: flex !important;
+    align-items: center !important;
+
+    height: 38px !important;
+
+    gap: 10px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    white-space: nowrap !important;
+}
+
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+
+    height: 38px !important;
+
+    gap: 6px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_date_input {
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 4px 8px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* DATE LABEL */
+.hospital_date_label {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 38px !important;
+}
+
+
+   SEARCH AREA
+   Keep everything horizontally aligned
+   ========================================================= */
+
+.hospital_appointment_search_area {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    gap: 20px !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+   FINAL SEARCH BAR WIDTH + HEIGHT
+   TARGET THE ACTUAL ODOO CONTROL PANEL SEARCH
+   ========================================================= */
+
+/* OUTER SEARCH CONTAINER */
+.hospital_searchbar_container {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 360px !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* ODOO CONTROL PANEL SEARCH */
+.hospital_searchbar_container .o_cp_searchview {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 360px !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH VIEW */
+.hospital_searchbar_container .o_cp_searchview .o_searchview {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    flex: 0 0 360px !important;
+
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT GROUP */
+.hospital_searchbar_container
+.o_cp_searchview
+.o_searchview_input_group {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT CONTAINER */
+.hospital_searchbar_container
+.o_searchview_input_container {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* SEARCH INPUT */
+.hospital_searchbar_container
+.o_searchview_input {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 4px 8px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* ARROW BUTTON */
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 38px !important;
+
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* ARROW */
+.hospital_searchbar_container
+.o_searchview_dropdown_toggler
+.o_dropdown_caret {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+   KEEP TOOLBAR IN ONE LINE
+   ========================================================= */
+
+.hospital_appointment_search_area {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    width: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+   DATE FILTERS
+   ========================================================= */
+
+.hospital_appointment_date_filters {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    height: 38px !important;
+
+    gap: 10px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_date_filter {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+
+    height: 38px !important;
+
+    gap: 6px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+.hospital_date_input {
+    width: 155px !important;
+    min-width: 155px !important;
+    max-width: 155px !important;
+
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+
+    margin: 0 !important;
+    padding: 4px 8px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   CLEAR BUTTON
+   ========================================================= */
+
+.hospital_clear_button {
+    height: 38px !important;
+    min-height: 38px !important;
+
+    padding: 6px 14px !important;
+
+    margin-left: 4px !important;
+
+    white-space: nowrap !important;
+}
+
+   LAB APPOINTMENT BUTTON
+   ========================================================= */
+
+.hospital_lab_appointment_button {
+    height: 38px !important;
+    min-height: 38px !important;
+
+    padding: 6px 14px !important;
+
+    margin-left: 4px !important;
+
+    white-space: nowrap !important;
+}
+
+   HORIZONTAL APPOINTMENT WORKFLOW
+   Patient | Appointment | Payment
+   ========================================================= */
+
+.hospital_appointment_columns {
+    display: grid !important;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr) !important;
+
+    gap: 12px !important;
+
+    width: 100% !important;
+
+    margin: 6px 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    align-items: stretch !important;
+}
+
+
+   EACH COLUMN
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_appointment_column {
+
+    min-width: 0 !important;
+
+    padding: 8px 10px !important;
+
+    margin: 0 !important;
+
+    border: 1.5px solid #000000 !important;
+
+    border-radius: 4px !important;
+
+    background: #ffffff !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   SECTION TITLE
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_section_title {
+
+    margin: 0 0 8px 0 !important;
+
+    padding: 0 0 6px 0 !important;
+
+    border-bottom: 1.5px solid #000000 !important;
+
+    font-size: 14px !important;
+
+    font-weight: 600 !important;
+
+    line-height: 18px !important;
+}
+
+
+   INNER GRIDS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_patient_grid,
+
+.hospital_appointment_columns
+.hospital_new_patient_grid,
+
+.hospital_appointment_columns
+.hospital_appointment_grid,
+
+.hospital_appointment_columns
+.hospital_payment_grid {
+
+    display: grid !important;
+
+    grid-template-columns: 1fr !important;
+
+    gap: 7px !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+   GRID ITEMS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_patient_grid > div,
+
+.hospital_appointment_columns
+.hospital_new_patient_grid > div,
+
+.hospital_appointment_columns
+.hospital_appointment_grid > div,
+
+.hospital_appointment_columns
+.hospital_payment_grid > div {
+
+    min-width: 0 !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+}
+
+
+   LABELS
+   ========================================================= */
+
+.hospital_appointment_columns label {
+
+    display: block !important;
+
+    margin: 0 0 3px 0 !important;
+
+    padding: 0 !important;
+
+    font-size: 12px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 16px !important;
+}
+
+
+   FIELDS
+   ========================================================= */
+
+.hospital_appointment_columns
+.o_field_widget {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   INPUTS
+   ========================================================= */
+
+.hospital_appointment_columns
+input,
+
+.hospital_appointment_columns
+select,
+
+.hospital_appointment_columns
+textarea {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   TOKEN NUMBER
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_token_number {
+
+    font-weight: 700 !important;
+
+    font-size: 18px !important;
+
+    color: #6f42c1 !important;
+
+    text-align: center !important;
+}
+
+
+   HISTORY BUTTON
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_history_button {
+
+    display: flex !important;
+
+    align-items: flex-end !important;
+
+    padding-top: 19px !important;
+}
+
+
+   PAYMENT COLUMN
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_payment_column {
+
+    min-width: 0 !important;
+}
+
+
+   PAYMENT FIELDS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_payment_field {
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+}
+
+
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .hospital_appointment_columns {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr) !important;
+
+    }
+
+    .hospital_appointment_columns
+    .hospital_payment_column {
+
+        grid-column: 1 / -1 !important;
+    }
+}
+
+
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .hospital_appointment_columns {
+
+        grid-template-columns: 1fr !important;
+
+        gap: 8px !important;
+    }
+
+    .hospital_appointment_columns
+    .hospital_payment_column {
+
+        grid-column: auto !important;
+    }
+}
+
+   APPOINTMENT FORM
+   HORIZONTAL 3-COLUMN LAYOUT
+
+   Patient Details | Appointment Details | Fee & Payment
+   ========================================================= */
+
+.hospital_appointment_columns {
+    display: grid !important;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr)
+        minmax(0, 1fr) !important;
+
+    gap: 12px !important;
+
+    width: 100% !important;
+
+    margin: 6px 0 !important;
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+
+    align-items: start !important;
+}
+
+
+   EACH COLUMN
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_appointment_column {
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    margin: 0 !important;
+
+    padding: 9px 10px !important;
+
+    box-sizing: border-box !important;
+
+    border: 1.5px solid #000000 !important;
+
+    border-radius: 5px !important;
+
+    background: #ffffff !important;
+}
+
+
+   SECTION TITLES
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_section_title {
+
+    width: 100% !important;
+
+    margin: 0 0 8px 0 !important;
+
+    padding: 0 0 6px 0 !important;
+
+    border-bottom: 1.5px solid #000000 !important;
+
+    font-size: 14px !important;
+
+    font-weight: 600 !important;
+
+    line-height: 18px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   PATIENT DETAILS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_patient_column {
+
+    min-width: 0 !important;
+}
+
+
+/* Existing patient */
+
+.hospital_patient_column
+.hospital_patient_found {
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* New patient */
+
+.hospital_patient_column
+.hospital_new_patient {
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+}
+
+
+   PATIENT GRID
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_patient_grid,
+
+.hospital_appointment_columns
+.hospital_new_patient_grid {
+
+    display: grid !important;
+
+    grid-template-columns: 1fr 1fr !important;
+
+    gap: 7px 10px !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   APPOINTMENT DETAILS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_appointment_column_middle {
+
+    min-width: 0 !important;
+}
+
+
+.hospital_appointment_columns
+.hospital_appointment_grid {
+
+    display: grid !important;
+
+    grid-template-columns: 1fr 1fr !important;
+
+    gap: 7px 10px !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   PAYMENT COLUMN
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_payment_column {
+
+    min-width: 0 !important;
+
+    width: 100% !important;
+}
+
+
+   PAYMENT GROUP
+   Your XML uses .hospital_payment_group
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_payment_group {
+
+    display: grid !important;
+
+    grid-template-columns: 1fr 1fr !important;
+
+    gap: 7px 10px !important;
+
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+.hospital_appointment_columns
+.hospital_payment_field {
+
+    width: 100% !important;
+
+    min-width: 0 !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   LABELS
+   ========================================================= */
+
+.hospital_appointment_columns
+label {
+
+    display: block !important;
+
+    width: 100% !important;
+
+    margin: 0 0 3px 0 !important;
+
+    padding: 0 !important;
+
+    font-size: 12px !important;
+
+    font-weight: 500 !important;
+
+    line-height: 16px !important;
+}
+
+
+   FIELD CONTAINERS
+   ========================================================= */
+
+.hospital_appointment_columns
+.o_field_widget {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    min-width: 0 !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   INPUTS
+   ========================================================= */
+
+.hospital_appointment_columns
+input,
+
+.hospital_appointment_columns
+select,
+
+.hospital_appointment_columns
+textarea {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   ADDRESS
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_address_field {
+
+    width: 100% !important;
+
+    margin-top: 7px !important;
+
+    padding: 0 !important;
+}
+
+
+   HISTORY BUTTON
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_history_button {
+
+    display: flex !important;
+
+    align-items: flex-end !important;
+
+    justify-content: flex-start !important;
+
+    padding-top: 19px !important;
+}
+
+
+.hospital_appointment_columns
+.hospital_history_button button {
+
+    height: 30px !important;
+
+    padding: 4px 10px !important;
+
+    font-size: 12px !important;
+
+    white-space: nowrap !important;
+}
+
+
+   TOKEN NUMBER
+   ========================================================= */
+
+.hospital_appointment_columns
+.hospital_token_number input {
+
+    font-weight: 700 !important;
+
+    font-size: 18px !important;
+
+    color: #6f42c1 !important;
+
+    background-color: #f3efff !important;
+
+    border: 2px solid #6f42c1 !important;
+
+    border-radius: 6px !important;
+
+    text-align: center !important;
+
+    padding: 5px 10px !important;
+}
+
+
+   RESPONSIVE
+   ========================================================= */
+
+/* Tablet */
+
+@media (max-width: 1100px) {
+
+    .hospital_appointment_columns {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr) !important;
+
+    }
+
+    .hospital_appointment_columns
+    .hospital_payment_column {
+
+        grid-column: 1 / -1 !important;
+    }
+}
+
+
+/* Small screen */
+
+@media (max-width: 750px) {
+
+    .hospital_appointment_columns {
+
+        grid-template-columns: 1fr !important;
+
+        gap: 8px !important;
+    }
+
+    .hospital_appointment_columns
+    .hospital_payment_column {
+
+        grid-column: auto !important;
+    }
+
+    .hospital_appointment_columns
+    .hospital_patient_grid,
+
+    .hospital_appointment_columns
+    .hospital_new_patient_grid,
+
+    .hospital_appointment_columns
+    .hospital_appointment_grid,
+
+    .hospital_appointment_columns
+    .hospital_payment_group {
+
+        grid-template-columns: 1fr !important;
+    }
+}
+
+   APPOINTMENT TOKEN HIGHLIGHT
+   ========================================================= */
+
+.appointment-token-highlight {
+    margin-top: 12px;
+    padding: 14px 18px;
+    min-height: 78px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        135deg,
+        #f4f0ff 0%,
+        #ffffff 100%
+    );
+
+    border: 2px solid #7554c7;
+    border-radius: 10px;
+
+    box-shadow:
+        0 4px 12px rgba(77, 48, 150, 0.15);
+}
+
+
+/* TOKEN NUMBER LABEL */
+
+.appointment-token-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+
+    color: #5f5f6b;
+
+    margin-bottom: 2px;
+}
+
+
+/* TOKEN NUMBER */
+
+.appointment-token-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+}
+
+
+/* ODOO FIELD */
+
+.appointment-token-number .o_field_widget {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+}
+
+
+/* ACTUAL TOKEN TEXT */
+
+.appointment-token-number input,
+.appointment-token-number .o_field_char,
+.appointment-token-number .o_field_widget input,
+.appointment-token-number span {
+    font-size: 30px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px;
+
+    text-align: center !important;
+
+    color: #5b35b5 !important;
+
+    border: none !important;
+    background: transparent !important;
+
+    box-shadow: none !important;
+}
+
+
+/* WHEN TOKEN EXISTS */
+
+.appointment-token-highlight:has(
+    .appointment-token-number input:not([value=""])
+) {
+    border-color: #6542c1;
+    background: linear-gradient(
+        135deg,
+        #eee8ff 0%,
+        #ffffff 100%
+    );
+}
+
+
+/* SMALL SCREEN */
+
+@media (max-width: 768px) {
+
+    .appointment-token-highlight {
+        margin-top: 10px;
+        padding: 12px;
+    }
+
+    .appointment-token-number input,
+    .appointment-token-number .o_field_char,
+    .appointment-token-number .o_field_widget input,
+    .appointment-token-number span {
+        font-size: 24px !important;
+    }
+}
+
+   TOKEN NUMBER - HIGHLIGHTED DISPLAY
+   ========================================================= */
+
+.hospital-token-wrapper {
+    width: 100%;
+    margin-top: 8px;
+}
+
+
+/* Label */
+
+.hospital-token-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+
+/* Token box */
+
+.hospital-token-box {
+    width: 100%;
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f3e8ff !important;
+
+    border: 2px solid #7c3aed !important;
+    border-radius: 10px;
+
+    box-sizing: border-box;
+
+    padding: 8px 12px;
+
+    box-shadow: 0 2px 6px rgba(124, 58, 237, 0.15);
+}
+
+
+/* Actual token field */
+
+.hospital-token-box .hospital_token_number {
+    width: 100% !important;
+
+    color: #6d28d9 !important;
+
+    font-size: 26px !important;
+    font-weight: 800 !important;
+
+    text-align: center !important;
+
+    letter-spacing: 1px;
+}
+
+
+/* Odoo field container */
+
+.hospital-token-box .o_field_widget {
+    color: #6d28d9 !important;
+
+    font-size: 26px !important;
+    font-weight: 800 !important;
+
+    text-align: center !important;
+
+    border: none !important;
+    background: transparent !important;
+
+    box-shadow: none !important;
+}
+
+
+/* Input if Odoo renders the field as input */
+
+.hospital-token-box input {
+    color: #6d28d9 !important;
+
+    font-size: 26px !important;
+    font-weight: 800 !important;
+
+    text-align: center !important;
+
+    border: none !important;
+    background: transparent !important;
+
+    box-shadow: none !important;
+}
+
+
+/* Hover */
+
+.hospital-token-box:hover {
+    background: #ede9fe !important;
+    border-color: #6d28d9 !important;
+}
+
+/* FIX SEARCH BAR PADDING AND HEIGHT */
+.hospital_searchbar_container .o_searchview { padding: 0 !important; min-height: 38px !important; height: 38px !important; }
+.hospital_searchbar_container .o_searchview_input_container { padding: 0 4px !important; }
+.hospital_searchbar_container .o_searchview_input { padding: 0 !important; height: 100% !important; border: none !important; margin: 0 !important; min-height: unset !important; line-height: 38px !important; }
+
+/* ALIGN ACTION BUTTONS */
+.hospital_appointment_list .hospital_appointment_action.d-none, .hospital_appointment_list .hospital_appointment_action[style*="display: none"] { display: inline-block !important; visibility: hidden !important; width: 28px !important; }
+.hospital_appointment_list .hospital_appointment_action { display: inline-block !important; width: 28px !important; text-align: center !important; }
+
+
+
+   APPOINTMENT LIST — NEW COMPACT TOOLBAR
+   New Appointment | From | To | Search
+   ========================================================= */
+
+.ha_toolbar {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* NEW APPOINTMENT BUTTON */
+.ha_new_btn {
+    height: 34px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    margin-right: 8px !important;
+}
+
+/* DATE GROUP */
+.ha_date_group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+}
+
+.ha_date_lbl {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: #444 !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+}
+
+.ha_date_input {
+    height: 34px !important;
+    width: 140px !important;
+    min-width: 140px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    box-sizing: border-box !important;
+    color: #333 !important;
+}
+
+.ha_date_input:focus {
+    border-color: #71639e !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(113,99,158,0.15) !important;
+}
+
+/* FILTER BUTTON */
+.ha_filter_btn {
+    height: 34px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+}
+
+/* SEARCH GROUP */
+.ha_search_group {
+    display: flex !important;
+    align-items: center !important;
+    height: 34px !important;
+    width: 460px !important;
+    min-width: 320px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
+    cursor: text !important;
+}
+
+.ha_search_icon {
+    font-size: 13px !important;
+    line-height: 1 !important;
+    flex-shrink: 0 !important;
+    opacity: 0.6 !important;
+}
+
+.ha_search_input {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+    background: transparent !important;
+    padding: 0 !important;
+    min-width: 0 !important;
+}
+
+.ha_search_group:focus-within {
+    border-color: #71639e !important;
+    box-shadow: 0 0 0 2px rgba(113,99,158,0.15) !important;
+}
+
+
+   ACTION BUTTONS — 4 ICONS PERFECTLY ALIGNED
+   ========================================================= */
+
+.hospital_appointment_list .o_list_table td.o_list_button,
+.hospital_appointment_list .o_list_table td.o_list_record_actions {
+    width: 116px !important;
+    min-width: 116px !important;
+    max-width: 116px !important;
+    padding: 0 4px !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+}
+
+.hospital_appointment_list .o_list_table td.o_list_button > *,
+.hospital_appointment_list .o_list_table td.o_list_record_actions > * {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    gap: 2px !important;
+    width: 100% !important;
+}
+
+/* Each icon button — fixed 26px square */
+.hospital_appointment_list .hospital_appointment_action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 26px !important;
+    min-width: 26px !important;
+    max-width: 26px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    margin: 0 1px !important;
+    border-radius: 4px !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+}
+
+/* Invisible buttons still take space so alignment stays fixed */
+.hospital_appointment_list .hospital_appointment_action[style*="display: none"],
+.hospital_appointment_list .hospital_appointment_action.d-none {
+    display: inline-flex !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Force text cursor on all search group elements to ensure consistency */
+.ha_search_group, .ha_search_group *, .ha_search_input, .ha_search_icon {
+    cursor: text !important;
+}
+
+/* Ensure buttons have pointers */
+.ha_filter_btn {
+    cursor: pointer !important;
+}

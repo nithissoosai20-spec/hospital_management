@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FORM VIEW -->
+    <record id="view_hospital_pharmacy_payment_form" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.payment.form</field>
+        <field name="model">hospital.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <form string="Vendor Payment">
+                <sheet>
+                    <style>
+                        .custom-section-title {
+                            background-color: #f8fafc;
+                            border-left: 4px solid #1e3a8a;
+                            padding: 6px 10px;
+                            font-weight: 700;
+                            color: #1e3a8a;
+                            margin-top: 15px;
+                            margin-bottom: 12px;
+                            font-size: 14px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                        }
+                        .custom-label {
+                            font-size: 11px;
+                            color: #64748b;
+                            font-weight: 700;
+                            margin-bottom: 2px;
+                            display: block;
+                            text-transform: uppercase;
+                        }
+                        .custom-field-container {
+                            margin-bottom: 15px;
+                        }
+                        .custom-field-container input {
+                            border: 1px solid #cbd5e1 !important;
+                            padding: 4px 8px !important;
+                            border-radius: 4px !important;
+                        }
+                    </style>
+                    
+                    <widget name="web_ribbon" title="Paid" bg_color="bg-success" invisible="state != 'done'"/>
+
+                    <div class="row align-items-center mb-3 pb-2 border-bottom">
+                        <div class="col-md-6">
+                            <span class="custom-label">Payment Reference</span>
+                            <h2 style="color:#1e3a8a; margin:0; font-weight:800;"><field name="name" readonly="1"/></h2>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span class="custom-label">Payment Date</span>
+                            <div class="fs-5 fw-bold text-muted"><field name="date" readonly="state == 'done'"/></div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <!-- Left side: Vendor & Invoice -->
+                        <div class="col-md-6 border-end pe-4">
+                            <div class="custom-section-title">1. Payment Source</div>
+                            <div class="row">
+                                <div class="col-12 custom-field-container">
+                                    <label for="vendor_id" class="custom-label">Vendor Name *</label>
+                                    <field name="vendor_id" class="w-100" readonly="state == 'done'" options="{'no_create': True}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 custom-field-container">
+                                    <label for="invoice_id" class="custom-label">Link to Invoice</label>
+                                    <field name="invoice_id" class="w-100" readonly="state == 'done'" options="{'no_create': True}"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right side: Payment Details -->
+                        <div class="col-md-6 ps-4">
+                            <div class="custom-section-title">2. Transaction Details</div>
+                            <div class="row">
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="payment_method" class="custom-label">Method *</label>
+                                    <field name="payment_method" class="w-100" readonly="state == 'done'"/>
+                                </div>
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="reference" class="custom-label">Reference No.</label>
+                                    <field name="reference" class="w-100" readonly="state == 'done'" placeholder="Cheque / Txn ID"/>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3 p-3 bg-light rounded border">
+                                <div class="col-md-6 text-center border-end">
+                                    <label for="invoice_balance" class="custom-label text-danger">Invoice Balance</label>
+                                    <div class="fs-5 fw-bold text-danger"><field name="invoice_balance" readonly="1"/></div>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <label for="amount" class="custom-label text-success">Amount Paid *</label>
+                                    <div class="fs-4 fw-bold text-success"><field name="amount" readonly="state == 'done'"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button name="action_confirm" string="Confirm Payment" type="object" class="btn-success btn-lg" invisible="state == 'done'"/>
+                        <field name="state" invisible="1"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW -->
+    <record id="view_hospital_pharmacy_payment_list" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.payment.list</field>
+        <field name="model">hospital.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <list string="Payments">
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="invoice_id" widget="many2one"/>
+                <field name="date"/>
+                <field name="invoice_total" optional="show" sum="Total Invoiced"/>
+                <field name="amount" sum="Total Paid" string="Payment Amount"/>
+                <field name="invoice_balance" sum="Total Pending" decoration-danger="invoice_balance &gt; 0" string="Pending Balance"/>
+                <field name="payment_method"/>
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'paid'" decoration-warning="invoice_status == 'partial'" decoration-danger="invoice_status == 'unpaid'"/>
+                <field name="state" string="Payment Status" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_hospital_pharmacy_payment_search" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.payment.search</field>
+        <field name="model">hospital.pharmacy.payment</field>
+        <field name="arch" type="xml">
+            <search string="Search Payments">
+                <field name="name"/>
+                <field name="vendor_id"/>
+                <field name="invoice_id"/>
+                <filter string="Vendor" name="group_vendor" context="{'group_by':'vendor_id'}"/>
+                <filter string="Invoice" name="group_invoice" context="{'group_by':'invoice_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_hospital_pharmacy_payment" model="ir.actions.act_window">
+        <field name="name">Vendor Payments</field>
+        <field name="res_model">hospital.pharmacy.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_vendor': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new vendor payment!
+            </p>
+        </field>
+    </record>
+
+</odoo>

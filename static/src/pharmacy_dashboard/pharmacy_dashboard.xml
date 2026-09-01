@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-name="hospital_management.PharmacyDashboard">
+
+        <div class="o_pharmacy_dashboard p-4">
+
+            <h2 class="mb-4">Pharmacy Dashboard</h2>
+
+            <div class="row">
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div
+                        class="card p-4"
+                        t-on-click="openBilling"
+                        style="cursor:pointer;"
+                    >
+                        <h4>Billing</h4>
+                        <p>Pharmacy billing</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div
+                        class="card p-4"
+                        t-on-click="openPurchase"
+                        style="cursor:pointer;"
+                    >
+                        <h4>Purchase</h4>
+                        <p>Purchase management</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div
+                        class="card p-4"
+                        t-on-click="openStock"
+                        style="cursor:pointer;"
+                    >
+                        <h4>Stock in Hand</h4>
+                        <p>Medicine stock</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div
+                        class="card p-4"
+                        t-on-click="openDetails"
+                        style="cursor:pointer;"
+                    >
+                        <h4>Details</h4>
+                        <p>Pharmacy details</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </t>
+
+    <!-- PHARMACY BILLING -->
+
+    <t t-name="hospital_management.PharmacyBilling">
+<div class="o_pharmacy_billing" style="padding:10px 15px; background:white; min-height:calc(100vh - 60px); font-family:sans-serif; font-size:11px; color:#1e293b; display:flex; flex-direction:column;">
+    
+    <!-- SECTION 1: Patient / Customer Details -->
+    <div style="margin-bottom:4px;">
+        <h4 style="margin:0 0 8px 0; color:#2563eb; font-size:14px; font-weight:700;">1. Patient / Customer Details</h4>
+        <div t-if="state.customerType === 'patient'">
+            <div style="display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1fr 1.2fr; gap:10px; margin-bottom:8px;">
+                <!-- Row 1 -->
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Customer Type</label>
+                    <div style="display:flex; gap:10px; font-weight:600; color:#2563eb; align-items:center; height:28px;">
+                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="radio" name="custTypePatient" t-model="state.customerType" value="patient"/> Patient</label>
+                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer; color:#64748b;"><input type="radio" name="custTypePatient" t-model="state.customerType" value="walk-in"/> Walk-in</label>
+                    </div>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">UHID / Patient No.</label>
+                    <div style="display:flex;">
+                        <input type="text" class="form-control form-control-sm" t-model="state.patientSearchTerm" t-on-keydown="(ev) => this.onPatientSearchKeyDown(ev)" placeholder="UHID..." style="height:28px; font-size:11px;"/>
+                        <button class="btn btn-sm btn-primary" t-on-click="searchPatient" style="height:28px; border-radius:0 4px 4px 0; background:#2563eb; border:none; padding:0 10px;"><i class="fa fa-search"></i></button>
+                        </div>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Patient Name</label>
+                    <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? state.patient.name : ''" readonly="readonly" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Gender / Age</label>
+                    <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? (state.patient.gender + ' / ' + state.patient.age + ' Yrs') : ''" readonly="readonly" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Doctor</label>
+                    <select class="form-select form-select-sm" t-att-value="state.selectedDoctor" t-on-change="(ev) => this.onDoctorChange(ev.target.value)" style="height:28px; font-size:11px; background:transparent;">
+                        <option value="">-- Select Doctor --</option>
+                        <t t-foreach="state.doctors || []" t-as="doc" t-key="doc.id">
+                            <option t-att-value="doc.id">Dr. <t t-esc="doc.name"/></option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:2.5fr 1fr 1fr 1.2fr; gap:10px;">
+                <!-- Row 2 -->
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Address</label>
+                    <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? state.patient.address : ''" readonly="readonly" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Department</label>
+                    <select class="form-select form-select-sm" t-model="state.selectedDepartment" style="height:28px; font-size:11px; background:transparent;">
+                        <option value="">-- Select Department --</option>
+                        <t t-foreach="state.departments || []" t-as="dept" t-key="dept.id">
+                            <option t-att-value="dept.id"><t t-esc="dept.name"/></option>
+                        </t>
+                    </select>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Bill Date <span style="color:red;">*</span></label>
+                    <input type="date" class="form-control form-control-sm" t-model="state.billDate" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Bill Time</label>
+                    <input type="time" class="form-control form-control-sm" t-model="state.billTime" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+            </div>
+        </div>
+
+        <div t-if="state.customerType === 'walk-in'">
+            <div style="display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1fr 1.2fr; gap:10px; margin-bottom:8px;">
+                <!-- Row 1 -->
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Customer Type</label>
+                    <div style="display:flex; gap:10px; font-weight:600; color:#2563eb; align-items:center; height:28px;">
+                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer; color:#64748b;"><input type="radio" name="custTypeWalkin" t-model="state.customerType" value="patient"/> Patient</label>
+                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer;"><input type="radio" name="custTypeWalkin" t-model="state.customerType" value="walk-in"/> Walk-in</label>
+                    </div>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Name <span style="color:red;">*</span></label>
+                    <input type="text" class="form-control form-control-sm" t-model="state.walkinName" placeholder="Enter name" style="height:28px; font-size:11px;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Phone No.</label>
+                    <input type="text" class="form-control form-control-sm" t-model="state.walkinPhone" placeholder="Enter phone" style="height:28px; font-size:11px;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Bill Date <span style="color:red;">*</span></label>
+                    <input type="date" class="form-control form-control-sm" t-model="state.billDate" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Bill Time</label>
+                    <input type="time" class="form-control form-control-sm" t-model="state.billTime" style="height:28px; font-size:11px; background:transparent;"/>
+                </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns:1fr; gap:10px;">
+                <!-- Row 2 -->
+                <div>
+                    <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Address</label>
+                    <input type="text" class="form-control form-control-sm" t-model="state.walkinAddress" placeholder="Enter address" style="height:28px; font-size:11px;"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <hr style="margin:5px 0 10px 0; border-color:#e2e8f0; border-style:solid; border-width:1px 0 0 0;"/>
+
+    <!-- SECTION 2: Add Medicines -->
+    <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <h4 style="margin:0 0 8px 0; color:#2563eb; font-size:14px; font-weight:700;">2. Add Medicines</h4>
+        
+        <!-- LOWER GRIDS (Table + Remarks on Left | Summary on Right) -->
+        <div style="display:grid; grid-template-columns:3.5fr 1fr; gap:15px; flex:1; min-height:0;">
+            
+            <!-- LEFT COLUMN -->
+            <div style="display:flex; flex-direction:column; gap:10px; min-height:0;" t-attf-style="{{ state.isReadOnly ? 'pointer-events: none; opacity: 0.8;' : '' }}">
+                <!-- Search Bar Row -->
+        <div style="display:flex; gap:10px; align-items:flex-end; margin-bottom:4px;">
+            <div style="flex:2; position:relative;">
+                <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Item (By Name / Code)</label>
+                <div style="display:flex;">
+                    <input type="text" class="form-control form-control-sm" t-att-value="state.medicineSearchTerm" t-on-input="(ev) => this.onMedicineSearchInput(ev)" t-on-keydown="(ev) => this.onMedicineSearchKeyDown(ev)" placeholder="Search medicine by name or code..." style="height:28px; font-size:11px;"/>
+                    
+                </div>
+                <div t-if="state.showMedicineSuggestions and state.medicineSuggestions.length > 0" 
+                     style="position:absolute; top:100%; left:0; width:100%; background:white; border:1px solid #cfcfcf; z-index:1000; max-height:200px; overflow-y:auto; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+                     <ul style="list-style:none; margin:0; padding:0;">
+                         <li t-foreach="state.medicineSuggestions" t-as="sugg" t-key="sugg.id" 
+                             t-att-style="sugg_index === state.focusedSuggestionIndex ? 'padding:6px 10px; cursor:pointer; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; background-color:#e0e7ff;' : 'padding:6px 10px; cursor:pointer; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between;'"
+                             t-on-click="() => this.selectMedicine(sugg)">
+                             <strong><t t-esc="sugg.medicine_name"/></strong> 
+                             <span style="color:#64748b; font-size:10px;"><t t-esc="sugg.medicine_code"/> | MRP: INR <t t-esc="sugg.selling_price"/></span>
+                         </li>
+                     </ul>
+                </div>
+            </div>
+            
+
+
+            <div style="flex:1;">
+                <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Batch No.</label>
+                <select class="form-select form-select-sm" style="height:28px; font-size:11px;">
+                    <option><t t-esc="state.selectedMedicine ? state.selectedMedicine.batch : 'Select Batch'"/></option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Expiry</label>
+                <input type="text" class="form-control form-control-sm" t-att-value="state.selectedMedicine ? state.selectedMedicine.expiry : ''" placeholder="dd/mm/yyyy" disabled="disabled" style="height:28px; font-size:11px;"/>
+            </div>
+            <div style="flex:0.5;">
+                <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Stock in Hand</label>
+                <input type="text" class="form-control form-control-sm" t-att-value="state.selectedMedicine ? state.selectedMedicine.stock : ''" placeholder="--" disabled="disabled" style="height:28px; font-size:11px;"/>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-primary" style="height:28px; font-weight:700; color:#2563eb; border-color:#2563eb; padding:0 25px; border-radius:4px; white-space:nowrap; min-width: 120px;" t-on-click="addSelectedMedicineToBill">+ Add to Bill</button>
+            </div>
+
+        </div>
+
+                
+                <!-- Table Area (Takes up remaining space) -->
+                <div style="flex:1; border:1px solid #e2e8f0; border-radius:4px; overflow:auto; position:relative; display:flex; flex-direction:column;">
+                    <table class="table" style="font-size:11px; text-align:center; vertical-align:middle; margin:0; width:100%; white-space:nowrap;">
+                        <thead style="background:#f8fafc; color:#0f172a; font-weight:700; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10;">
+                            <tr>
+                                <th style="padding:6px;">#</th>
+                                <th>Item Code</th>
+                                <th style="text-align:left;">Item Name</th>
+                                
+                                <th>Price (INR)</th>
+                                <th style="width:90px;">Qty</th>
+                                <th style="width:60px;">Discount (%)</th>
+                                <th>Discount (INR)</th>
+                                <th>CGST (INR)</th>
+                                <th>SGST (INR)</th>
+                                <th>IGST (INR)</th>
+                                <th>Amount (INR)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="state.medicines || []" t-as="med" t-key="med.id" style="border-bottom:1px solid #e2e8f0;">
+                                <td style="padding:4px; font-weight:600;"><t t-esc="med_index + 1"/></td>
+                                <td style="color:#64748b;"><t t-esc="med.code"/></td>
+                                <td style="text-align:left; font-weight:700; color:#1e293b;"><t t-esc="med.name"/></td>
+                                
+                                <td><t t-esc="med.price.toFixed(2)"/></td>
+                                <td>
+                                    <div style="display:flex; align-items:center; justify-content:center; border:1px solid #cbd5e1; border-radius:4px; width:70px; margin:0 auto; background:white; height:22px;">
+                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 6px; font-weight:bold; color:#475569;" t-on-click="() => this.changeQty(med.id, -1)">-</button>
+                                        <input type="text" t-att-value="med.qty" t-on-change="(ev) => this.updateQty(med.id, ev.target.value)" style="width:24px; text-align:center; border:none; outline:none; font-size:11px; font-weight:700; color:#0f172a; padding:0;"/>
+                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 6px; font-weight:bold; color:#475569;" t-on-click="() => this.changeQty(med.id, 1)">+</button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="number" t-att-value="med.discount" style="width:40px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; padding:2px; height:22px;" t-on-change="(ev) => this.updateDiscount(med.id, ev.target.value)"/>
+                                </td>
+                                <td><t t-esc="med.discountVal.toFixed(2)"/></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td style="font-weight:700; color:#0f172a;"><t t-esc="med.amount.toFixed(2)"/></td>
+                                <td>
+                                    <span style="cursor:pointer; color:#ef4444; font-size:13px;" t-on-click="() => this.removeMedicine(med.id)">Remove</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+
+
+
+            </div>
+
+            <!-- RIGHT COLUMN (Summary) -->
+            <div style="display:flex; flex-direction:column; min-height:0;">
+                <!-- Align the title height with the labels in the left column so the boxes align horizontally -->
+                <div style="height:14px; margin-bottom:4px; display:flex; align-items:flex-end;">
+                    <h4 style="margin:0; color:#2563eb; font-size:14px; font-weight:700; line-height:1;">3. Bill Summary</h4>
+                </div>
+                
+                <div style="border:1px solid #e2e8f0; border-radius:4px; padding:12px; display:flex; flex-direction:column; background:white; overflow-y:auto; overflow-x:hidden; flex:1;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
+                    <span>Total Items</span><span><t t-esc="state.medicines.length"/></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
+                    <span>Total Quantity</span><span><t t-esc="state.totalQuantity"/></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
+                    <span>Gross Amount (INR)</span><span><t t-esc="state.grossAmount.toFixed(2)"/></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
+                    <span>Total Discount (INR)</span><span><t t-esc="state.totalDiscount.toFixed(2)"/></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
+                    <span>Sub Total (INR)</span><span><t t-esc="state.subTotal.toFixed(2)"/></span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700; align-items:center;">
+                    <span>Round Off (INR)</span>
+                    <input type="number" class="form-control form-control-sm" style="width:60px; text-align:right; font-weight:700; height:24px; font-size:11px;" t-model="state.roundOff" t-on-change="() => this.calculateTotals()"/>
+                </div>
+                
+                <div style="background:#f0fdf4; border-top:1px solid #bbf7d0; border-bottom:1px solid #bbf7d0; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; margin-left:-12px; margin-right:-12px;">
+                    <span style="color:#16a34a; font-weight:700; font-size:14px;">Net Amount (INR)</span>
+                    <span style="color:#16a34a; font-weight:800; font-size:20px;"><t t-esc="state.netAmount.toFixed(2)"/></span>
+                </div>
+
+                <div style="margin-top:2px;">
+                    <label style="color:#0f172a; font-weight:700; font-size:11px; display:block; margin-bottom:4px;">Payment Mode</label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-weight:600; color:#334155; margin-bottom:8px;">
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="cash"/> Cash</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="card"/> Card</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="upi"/> UPI</label>
+                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="credit"/> Credit</label>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <button t-if="!state.isReadOnly" class="btn btn-success" style="font-weight:700; padding:4px; background:#16a34a; border-color:#16a34a; width:100%; font-size:14px;" t-on-click="openPaymentModal">Generate Bill (Pay)</button>
+<button t-if="state.isReadOnly" class="btn btn-secondary" style="font-weight:700; padding:4px; width:100%; font-size:14px;" disabled="1">PAID</button>
+                        
+                        <button t-if="!state.isReadOnly" class="btn btn-light" style="width:100%; border:1px solid #cbd5e1; font-weight:700; color:#475569; padding:4px;" t-on-click="clearBill">Clear</button>
+                        <button class="btn btn-outline-danger" style="font-weight:700; padding:4px; width:100%; font-size:14px; margin-top:2px;" t-on-click="closePOS">Close</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PAYMENT MODAL -->
+    <div t-if="state.showPaymentModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; display:flex; justify-content:center; align-items:center;">
+        <div style="background:white; width:400px; border-radius:8px; padding:20px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:8px;">
+                <h3 style="margin:0; color:#1e293b; font-weight:700; font-size:18px;">Confirm Payment</h3>
+                <span style="cursor:pointer; font-size:20px; color:#64748b; font-weight:bold;" t-on-click="closePaymentModal">X</span>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:16px;">
+                <span style="color:#475569; font-weight:600;">Net Amount:</span>
+                <strong style="color:#2563eb; font-size:20px;">INR <t t-esc="state.netAmount.toFixed(2)"/></strong>
+            </div>
+            
+            <div style="margin-bottom:8px;">
+                <label style="color:#0f172a; font-weight:700; font-size:12px; display:block; margin-bottom:5px;">Paid Amount (INR)</label>
+                <input type="number" class="form-control form-control-lg" t-att-value="state.paidAmount" t-on-change="(ev) => this.updatePaidAmount(ev.target.value)" style="font-size:20px; font-weight:700; color:#16a34a; text-align:right;"/>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-bottom:25px; font-size:16px; border-top:1px solid #e2e8f0; padding-top:15px;">
+                <span style="color:#475569; font-weight:600;">Change Return:</span>
+                <strong style="color:#ef4444; font-size:20px;">INR <t t-esc="state.changeReturn.toFixed(2)"/></strong>
+            </div>
+            
+            <t t-if="!state.paymentSuccess">
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-light" style="flex:1; font-weight:700;" t-on-click="closePaymentModal">Cancel</button>
+                    <button class="btn btn-warning" style="flex:1; font-weight:700; color:white; background:#eab308;" t-on-click="saveAsHold">Hold</button>
+                    <button class="btn btn-success" style="flex:2; font-weight:700; font-size:16px; background:#16a34a;" t-on-click="collectPayment">Confirm &amp; Pay</button>
+                </div>
+            </t>
+            <t t-if="state.paymentSuccess">
+                <div style="text-align:center; padding:20px 0;">
+                    <h2 style="color:#16a34a; margin-bottom:10px;">Payment Successful!</h2>
+                    <p style="font-size:16px; color:#475569; margin-bottom:20px;">Bill Number: <strong style="color:#1e293b;"><t t-esc="state.invoiceNo"/></strong></p>
+                    <button class="btn btn-primary" style="width:100%; font-weight:700; font-size:16px; padding:10px; margin-bottom:10px;" t-on-click="printReceipt">Print Receipt</button>
+
+                    <button class="btn btn-outline-secondary" style="width:100%; font-weight:700;" t-on-click="startNewBill">Start New Patient</button>
+                </div>
+            </t>
+        </div>
+    </div>
+</div>
+</t>
+<t t-name="hospital_management.PharmacyPurchase">
+
+        <div style="
+            padding:20px;
+            background:#f5f7fb;
+            min-height:100vh;
+        ">
+
+            <!-- HEADER -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:10px;
+            ">
+
+                <div>
+                    <h2 style="
+                        margin:0;
+                        color:#182b61;
+                        font-weight:700;
+                    ">
+                        Pharmacy Purchase
+                    </h2>
+
+                    <div style="
+                        color:#64748b;
+                        margin-top:4px;
+                    ">
+                        Home › Pharmacy › Purchase
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+
+                    <button
+                        class="btn btn-outline-primary"
+                        t-on-click="backToDashboard"
+                    >
+                        🏠 Dashboard
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        t-on-click="openBilling"
+                    >
+                        💊 Billing
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUMMARY CARDS -->
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:15px;
+                margin-bottom:10px;
+            ">
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+                    <div style="color:#64748b;">
+                        Today's Purchases
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#1d4ed8;">
+                        12
+                    </h2>
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+                    <div style="color:#64748b;">
+                        Purchase Value
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#16a34a;">
+                        ₹24,850
+                    </h2>
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+                    <div style="color:#64748b;">
+                        Pending Orders
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#f59e0b;">
+                        4
+                    </h2>
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+                    <div style="color:#64748b;">
+                        Suppliers
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#7c3aed;">
+                        8
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <!-- PURCHASE TABLE -->
+
+            <div style="
+                background:white;
+                border:1px solid #ddd;
+                border-radius:10px;
+                padding:20px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:8px;
+                ">
+
+                    <h4 style="margin:0;color:#1d4ed8;">
+                        Recent Purchases
+                    </h4>
+
+                    <button
+                        class="btn btn-primary"
+                        t-on-click="openStock"
+                    >
+                        📦 View Stock
+                    </button>
+
+                </div>
+
+
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Purchase No.</th>
+                            <th>Supplier</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody><tr><td colspan="10">Coming soon...</td></tr></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </t>
+
+
+    <!-- PHARMACY STOCK -->
+
+    <t t-name="hospital_management.PharmacyStock">
+
+        <div style="
+            padding:20px;
+            background:#f5f7fb;
+            min-height:100vh;
+        ">
+
+            <!-- HEADER -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:10px;
+            ">
+
+                <div>
+
+                    <h2 style="
+                        margin:0;
+                        color:#182b61;
+                        font-weight:700;
+                    ">
+                        Pharmacy Stock in Hand
+                    </h2>
+
+                    <div style="
+                        color:#64748b;
+                        margin-top:4px;
+                    ">
+                        Home › Pharmacy › Stock
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    gap:10px;
+                ">
+
+                    <button
+                        class="btn btn-outline-primary"
+                        t-on-click="backToDashboard"
+                    >
+                        🏠 Dashboard
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        t-on-click="openBilling"
+                    >
+                        💊 Billing
+                    </button>
+
+                    <button
+                        class="btn btn-outline-primary"
+                        t-on-click="openPurchase"
+                    >
+                        🛒 Purchase
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STOCK SUMMARY -->
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(4,1fr);
+                gap:15px;
+                margin-bottom:10px;
+            ">
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+
+                    <div style="color:#64748b;">
+                        Total Medicines
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#1d4ed8;">
+                        248
+                    </h2>
+
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+
+                    <div style="color:#64748b;">
+                        Low Stock
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#f59e0b;">
+                        18
+                    </h2>
+
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+
+                    <div style="color:#64748b;">
+                        Out of Stock
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#dc2626;">
+                        5
+                    </h2>
+
+                </div>
+
+
+                <div style="
+                    background:white;
+                    padding:20px;
+                    border-radius:10px;
+                    border:1px solid #ddd;
+                ">
+
+                    <div style="color:#64748b;">
+                        Stock Value
+                    </div>
+
+                    <h2 style="margin:8px 0;color:#16a34a;">
+                        ₹4.82L
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <!-- STOCK TABLE -->
+
+            <div style="
+                background:white;
+                border:1px solid #ddd;
+                border-radius:10px;
+                padding:20px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:8px;
+                ">
+
+                    <h4 style="margin:0;color:#1d4ed8;">
+                        Medicine Stock in Hand
+                    </h4>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search medicine..."
+                        style="max-width:300px;"
+                    />
+
+                </div>
+
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+                            <th>Medicine</th>
+                            <th>Batch</th>
+                            <th>Expiry</th>
+                            <th>Available</th>
+                            <th>Reorder Level</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody><tr><td colspan="10">Coming soon...</td></tr></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </t>
+
+
+    <!-- PHARMACY DETAILS -->
+
+    <t t-name="hospital_management.PharmacyDetails">
+
+        <div style="
+            padding:20px;
+            background:#f5f7fb;
+            min-height:100vh;
+        ">
+
+            <!-- HEADER -->
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:10px;
+            ">
+
+                <div>
+
+                    <h2 style="
+                        margin:0;
+                        color:#182b61;
+                        font-weight:700;
+                    ">
+                        Pharmacy Details
+                    </h2>
+
+                    <div style="
+                        color:#64748b;
+                        margin-top:4px;
+                    ">
+                        Home › Pharmacy › Details
+                    </div>
+
+                </div>
+
+
+                <div style="display:flex;gap:10px;">
+
+                    <button
+                        class="btn btn-outline-primary"
+                        t-on-click="backToDashboard"
+                    >
+                        🏠 Dashboard
+                    </button>
+
+                    <button
+                        class="btn btn-primary"
+                        t-on-click="openBilling"
+                    >
+                        💊 Billing
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- PHARMACY INFORMATION -->
+
+            <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:20px;
+            ">
+
+
+                <!-- PHARMACY PROFILE -->
+
+                <div style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:25px;
+                ">
+
+                    <h4 style="
+                        color:#1d4ed8;
+                        border-bottom:2px solid #dbe4ff;
+                        padding-bottom:10px;
+                    ">
+                        Pharmacy Information
+                    </h4>
+
+
+                    <div style="margin-top:20px;">
+
+                        <p>
+                            <strong>Pharmacy Name:</strong>
+                            Hospital Central Pharmacy
+                        </p>
+
+                        <p>
+                            <strong>Pharmacy Code:</strong>
+                            PHARM-001
+                        </p>
+
+                        <p>
+                            <strong>Hospital:</strong>
+                            City Care Hospital
+                        </p>
+
+                        <p>
+                            <strong>Pharmacist:</strong>
+                            Pharmacy Manager
+                        </p>
+
+                        <p>
+                            <strong>Contact:</strong>
+                            +91 98765 43210
+                        </p>
+
+                        <p>
+                            <strong>Email:</strong>
+                            pharmacy@hospital.com
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OPERATING INFORMATION -->
+
+                <div style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:25px;
+                ">
+
+                    <h4 style="
+                        color:#1d4ed8;
+                        border-bottom:2px solid #dbe4ff;
+                        padding-bottom:10px;
+                    ">
+                        Operating Information
+                    </h4>
+
+
+                    <div style="margin-top:20px;">
+
+                        <p>
+                            <strong>Opening Time:</strong>
+                            08:00 AM
+                        </p>
+
+                        <p>
+                            <strong>Closing Time:</strong>
+                            10:00 PM
+                        </p>
+
+                        <p>
+                            <strong>Working Days:</strong>
+                            Monday - Sunday
+                        </p>
+
+                        <p>
+                            <strong>Emergency Service:</strong>
+
+                            <span class="badge bg-success">
+                                Available
+                            </span>
+
+                        </p>
+
+                        <p>
+                            <strong>Current Status:</strong>
+
+                            <span class="badge bg-success">
+                                Open
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONTACT / ADDRESS -->
+
+                <div style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:25px;
+                ">
+
+                    <h4 style="
+                        color:#1d4ed8;
+                        border-bottom:2px solid #dbe4ff;
+                        padding-bottom:10px;
+                    ">
+                        Address
+                    </h4>
+
+                    <p style="margin-top:20px;">
+                        City Care Hospital<br/>
+                        Main Hospital Building<br/>
+                        Ground Floor, Pharmacy Wing<br/>
+                        Bengaluru, Karnataka<br/>
+                        India
+                    </p>
+
+                </div>
+
+
+                <!-- SYSTEM INFORMATION -->
+
+                <div style="
+                    background:white;
+                    border:1px solid #ddd;
+                    border-radius:10px;
+                    padding:25px;
+                ">
+
+                    <h4 style="
+                        color:#1d4ed8;
+                        border-bottom:2px solid #dbe4ff;
+                        padding-bottom:10px;
+                    ">
+                        System Information
+                    </h4>
+
+                    <div style="margin-top:20px;">
+
+                        <p>
+                            <strong>Pharmacy ID:</strong>
+                            PHARM-001
+                        </p>
+
+                        <p>
+                            <strong>Created:</strong>
+                            01 Aug 2026
+                        </p>
+
+                        <p>
+                            <strong>Last Updated:</strong>
+                            26 Aug 2026
+                        </p>
+
+                        <p>
+                            <strong>System Status:</strong>
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </t>
+
+</templates>
+

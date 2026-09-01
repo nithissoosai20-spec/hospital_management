@@ -6,7 +6,8 @@
               inherit_id="web.login_layout"
               name="RIALKG Login Layout">
 
-        <!-- Replace the complete Odoo default logo section -->
+        <!-- Replace Odoo logo -->
+
         <xpath expr="//div[hasclass('text-center') and hasclass('pb-3') and hasclass('border-bottom')]"
                position="replace">
 
@@ -18,6 +19,12 @@
             </div>
 
         </xpath>
+
+
+        <!-- Remove Manage Databases / Powered by Odoo -->
+
+        <xpath expr="//div[hasclass('text-center') and hasclass('small') and hasclass('border-top')]"
+               position="replace"/>
 
     </template>
 

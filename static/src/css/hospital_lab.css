@@ -1,0 +1,62 @@
+   LAB TEST TABLE - FULL WIDTH
+   ========================================================= */
+
+.hospital_lab_test_list {
+    width: 100% !important;
+}
+
+.hospital_lab_test_list .o_list_table {
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+/* Lab Test */
+.hospital_lab_test_list th:nth-child(1),
+.hospital_lab_test_list td:nth-child(1) {
+    width: 32% !important;
+}
+
+/* Code */
+.hospital_lab_test_list th:nth-child(2),
+.hospital_lab_test_list td:nth-child(2) {
+    width: 14% !important;
+}
+
+/* Category */
+.hospital_lab_test_list th:nth-child(3),
+.hospital_lab_test_list td:nth-child(3) {
+    width: 18% !important;
+}
+
+/* Sample Type */
+.hospital_lab_test_list th:nth-child(4),
+.hospital_lab_test_list td:nth-child(4) {
+    width: 22% !important;
+}
+
+/* Price */
+.hospital_lab_test_list th:nth-child(5),
+.hospital_lab_test_list td:nth-child(5) {
+    width: 14% !important;
+}
+
+   LAB RECEIPT ACTION
+   ========================================================= */
+
+.hospital-lab-receipt-action {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.hospital-lab-receipt-action .btn-primary {
+    min-width: 220px;
+    padding: 10px 24px;
+
+    font-size: 15px;
+    font-weight: 700;
+}

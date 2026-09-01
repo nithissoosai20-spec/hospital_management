@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <odoo>
 
     <template id="login_page" name="Hospital Login">
@@ -11,7 +13,7 @@
                 <meta name="viewport"
                       content="width=device-width, initial-scale=1"/>
 
-                <title>Login</title>
+                <title>RIALKG Login</title>
 
                 <link rel="stylesheet"
                       href="/hospital_management/static/src/css/login.css"/>
@@ -24,45 +26,75 @@
 
                     <div class="login-card">
 
+                        <!-- LOGO -->
+                        <div class="login-logo">
+                            <img
+                                src="/hospital_management/static/src/img/rialkg_login_logo.png"
+                                alt="RIALKG Medical Center &amp; Hospital"
+                            />
+                        </div>
+
                         <h1>Login</h1>
 
                         <form action="/login" method="post">
 
-                            <input type="hidden"
-                                   name="csrf_token"
-                                   t-att-value="request.csrf_token()"/>
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                t-att-value="request.csrf_token()"
+                            />
 
+                            <!-- USERNAME -->
                             <div class="form-group">
 
-                                <label for="email">
-                                    Email address
+                                <label for="username">
+                                    Username
                                 </label>
 
-                                <input type="email"
-                                       id="email"
-                                       name="email"
-                                       placeholder="Enter email"/>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter your username"
+                                    autocomplete="username"
+                                    required="required"
+                                />
 
                             </div>
 
+                            <!-- PASSWORD -->
                             <div class="form-group">
 
                                 <label for="password">
                                     Password
                                 </label>
 
-                                <input type="password"
-                                       id="password"
-                                       name="password"
-                                       placeholder="Password"/>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required="required"
+                                />
 
                             </div>
 
+                            <!-- LOGIN BUTTON -->
                             <button type="submit">
-                                Login
+                                Log in
                             </button>
 
                         </form>
+
+                        <!-- ERROR -->
+                        <t t-if="error">
+
+                            <div class="login-error">
+                                <t t-esc="error"/>
+                            </div>
+
+                        </t>
 
                     </div>
 

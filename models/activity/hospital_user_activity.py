@@ -6,9 +6,7 @@ class HospitalUserActivity(models.Model):
     _description = 'Hospital User Activity'
     _order = 'activity_date desc, id desc'
 
-    # =====================================================
     # USER
-    # =====================================================
 
     user_id = fields.Many2one(
         'hospital.user',
@@ -17,9 +15,7 @@ class HospitalUserActivity(models.Model):
         ondelete='cascade'
     )
 
-    # =====================================================
     # ACTIVITY INFORMATION
-    # =====================================================
 
     action = fields.Selection(
         [
@@ -46,9 +42,7 @@ class HospitalUserActivity(models.Model):
         required=True
     )
 
-    # =====================================================
     # AUDIT INFORMATION
-    # =====================================================
 
     performed_by_id = fields.Many2one(
         'res.users',
@@ -64,9 +58,7 @@ class HospitalUserActivity(models.Model):
         default=fields.Datetime.now
     )
 
-    # =====================================================
     # CHANGE INFORMATION
-    # =====================================================
 
     field_name = fields.Char(
         string='Changed Field'
@@ -80,9 +72,7 @@ class HospitalUserActivity(models.Model):
         string='New Value'
     )
 
-    # =====================================================
     # RESULT
-    # =====================================================
 
     status = fields.Selection(
         [
@@ -94,9 +84,7 @@ class HospitalUserActivity(models.Model):
         default='success'
     )
 
-    # =====================================================
     # REQUEST INFORMATION
-    # =====================================================
 
     ip_address = fields.Char(
         string='IP Address'

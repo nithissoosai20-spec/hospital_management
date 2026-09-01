@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- GENERAL MEDICINE -->
+
+    <record id="consultation_fee_general_senior_doctor"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_general_medicine"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_senior_doctor"/>
+
+        <field name="amount">700</field>
+
+    </record>
+
+
+    <record id="consultation_fee_general_junior_doctor"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_general_medicine"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_doctor"/>
+
+        <field name="amount">400</field>
+
+    </record>
+
+
+    <!-- CARDIOLOGY -->
+
+    <record id="consultation_fee_cardiology_consultant"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_cardiology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_consultant_cardiologist"/>
+
+        <field name="amount">1200</field>
+
+    </record>
+
+
+    <record id="consultation_fee_cardiology_junior"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_cardiology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_cardiologist"/>
+
+        <field name="amount">700</field>
+
+    </record>
+
+
+    <!-- PEDIATRICS -->
+
+    <record id="consultation_fee_pediatrics_consultant"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_pediatrics"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_consultant_pediatrician"/>
+
+        <field name="amount">1000</field>
+
+    </record>
+
+
+    <record id="consultation_fee_pediatrics_junior"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_pediatrics"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_pediatrician"/>
+
+        <field name="amount">600</field>
+
+    </record>
+
+
+    <!-- ORTHOPEDICS -->
+
+    <record id="consultation_fee_orthopedics_consultant"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_orthopedics"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_consultant_orthopedic"/>
+
+        <field name="amount">1100</field>
+
+    </record>
+
+
+    <record id="consultation_fee_orthopedics_junior"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_orthopedics"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_orthopedic"/>
+
+        <field name="amount">650</field>
+
+    </record>
+
+
+    <!-- ENT -->
+
+    <record id="consultation_fee_ent_consultant"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_ent"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_consultant_ent"/>
+
+        <field name="amount">900</field>
+
+    </record>
+
+
+    <record id="consultation_fee_ent_junior"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_ent"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_ent"/>
+
+        <field name="amount">550</field>
+
+    </record>
+
+
+    <!-- DERMATOLOGY -->
+
+    <record id="consultation_fee_dermatology_consultant"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_dermatology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_consultant_dermatologist"/>
+
+        <field name="amount">1000</field>
+
+    </record>
+
+
+    <record id="consultation_fee_dermatology_junior"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_dermatology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_junior_dermatologist"/>
+
+        <field name="amount">600</field>
+
+    </record>
+
+
+    <!-- RADIOLOGY -->
+
+    <record id="consultation_fee_radiology_radiologist"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_radiology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_radiologist"/>
+
+        <field name="amount">1000</field>
+
+    </record>
+
+
+    <record id="consultation_fee_radiology_specialist"
+            model="hospital.consultation.fee">
+
+        <field name="department_id"
+               ref="hospital_management.department_radiology"/>
+
+        <field name="designation_id"
+               ref="hospital_management.designation_radiology_specialist"/>
+
+        <field name="amount">700</field>
+
+    </record>
+
+</odoo>

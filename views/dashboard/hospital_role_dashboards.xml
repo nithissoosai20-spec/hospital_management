@@ -2,330 +2,7 @@
 
 <odoo>
 
-    <!-- ===================================================== -->
-    <!-- ADMIN DASHBOARD -->
-    <!-- ===================================================== -->
-
-    <record id="admin_dashboard_record"
-            model="hospital.admin.dashboard">
-
-        <field name="name">Admin Dashboard</field>
-
-    </record>
-
-
-    <record id="view_hospital_admin_dashboard_form"
-            model="ir.ui.view">
-
-        <field name="name">hospital.admin.dashboard.form</field>
-        <field name="model">hospital.admin.dashboard</field>
-
-        <field name="arch" type="xml">
-
-            <form create="0" edit="0" delete="0">
-
-                <sheet>
-
-                    <div class="admin-dashboard">
-
-                        <div class="admin-section">
-
-                            <div class="admin-section-heading">
-                                User Summary
-                            </div>
-
-                            <div class="admin-stat-grid">
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Total Users
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="total_users" nolabel="1"/>
-                                    </div>
-                                </div>
-
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Active Users
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="active_users" nolabel="1"/>
-                                    </div>
-                                </div>
-
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Inactive Users
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="inactive_users" nolabel="1"/>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="admin-section">
-
-                            <div class="admin-section-heading">
-                                Staff Summary
-                            </div>
-
-                            <div class="admin-stat-grid">
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Super Admins
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="super_admin_count" nolabel="1"/>
-                                    </div>
-                                </div>
-
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Doctors
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="doctor_count" nolabel="1"/>
-                                    </div>
-                                </div>
-
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Receptionists
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="receptionist_count" nolabel="1"/>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="admin-section">
-
-                            <div class="admin-section-heading">
-                                Hospital Summary
-                            </div>
-
-                            <div class="admin-stat-grid">
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Total Patients
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="patient_count" nolabel="1"/>
-                                    </div>
-                                </div>
-
-
-                                <div class="admin-stat-card">
-                                    <div class="admin-stat-label">
-                                        Total Appointments
-                                    </div>
-
-                                    <div class="admin-stat-number">
-                                        <field name="appointment_count" nolabel="1"/>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </sheet>
-
-            </form>
-        </field>
-
-    </record>
-
-
-    <record id="action_hospital_dashboard_admin"
-            model="ir.actions.act_window">
-
-        <field name="name">Admin Dashboard</field>
-
-        <field name="res_model">hospital.admin.dashboard</field>
-
-        <field name="view_mode">form</field>
-
-        <field name="res_id"
-               ref="admin_dashboard_record"/>
-
-        <field name="target">current</field>
-
-    </record>
-
-
-    <!-- ===================================================== -->
-    <!-- DOCTOR DASHBOARD -->
-    <!-- ===================================================== -->
-
-    <record id="doctor_dashboard_record"
-            model="hospital.doctor.dashboard">
-
-        <field name="name">Doctor Dashboard</field>
-
-    </record>
-
-
-    <record id="view_hospital_doctor_dashboard_form"
-            model="ir.ui.view">
-
-        <field name="name">hospital.doctor.dashboard.form</field>
-        <field name="model">hospital.doctor.dashboard</field>
-
-        <field name="arch" type="xml">
-
-            <form create="0" edit="0" delete="0">
-
-                <sheet>
-
-                    <h1>Doctor Dashboard</h1>
-
-                    <group>
-
-                        <field name="my_appointments"/>
-
-                        <field name="today_appointments"/>
-
-                        <field name="completed_appointments"/>
-
-                        <field name="pending_appointments"/>
-
-                        <field name="my_patients"/>
-
-                    </group>
-
-                </sheet>
-
-            </form>
-
-        </field>
-
-    </record>
-
-
-    <record id="action_hospital_dashboard_doctor"
-            model="ir.actions.act_window">
-
-        <field name="name">Doctor Dashboard</field>
-
-        <field name="res_model">hospital.doctor.dashboard</field>
-
-        <field name="view_mode">form</field>
-
-        <field name="res_id"
-               ref="doctor_dashboard_record"/>
-
-        <field name="target">current</field>
-
-    </record>
-
-
-    <!-- ===================================================== -->
-    <!-- RECEPTION DASHBOARD - QUICK NAVIGATION ACTIONS -->
-    <!-- ===================================================== -->
-
-    <record id="action_hospital_appointment_today" model="ir.actions.act_window">
-        <field name="name">Today's Appointments</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('appointment_date','=', context_today())]</field>
-    </record>
-
-    <record id="action_hospital_appointment_booked" model="ir.actions.act_window">
-        <field name="name">Booked Appointments</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state','=','booked')]</field>
-    </record>
-
-    <record id="action_hospital_appointment_completed" model="ir.actions.act_window">
-        <field name="name">Completed Appointments</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state','=','completed')]</field>
-    </record>
-
-    <record id="action_hospital_appointment_waiting" model="ir.actions.act_window">
-        <field name="name">Waiting Patients</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state','=','booked')]</field>
-    </record>
-
-    <record id="action_hospital_appointment_pending_payment" model="ir.actions.act_window">
-        <field name="name">Pending Payments</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('payment_status','=','pending')]</field>
-    </record>
-
-    <record id="action_hospital_appointment_cancelled" model="ir.actions.act_window">
-        <field name="name">Cancelled Appointments</field>
-        <field name="res_model">hospital.appointment</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state','=','cancelled')]</field>
-    </record>
-
-    <!--
-    TEMPORARILY DISABLED - "hospital.doctor" model exist agala.
-    Exact doctor model name confirm panniya piragu ithai enable pannuvom.
-    Athuvaraikkum, dashboard-ல doctor cards non-clickable div-ah irukum.
-
-    <record id="action_hospital_doctor_inactive" model="ir.actions.act_window">
-        <field name="name">Inactive Doctors</field>
-        <field name="res_model">hospital.doctor</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('active','=',False)]</field>
-        <field name="context">{'active_test': False}</field>
-    </record>
-
-    <record id="action_hospital_doctor_available" model="ir.actions.act_window">
-        <field name="name">Available Doctors</field>
-        <field name="res_model">hospital.doctor</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('active','=',True)]</field>
-    </record>
-    -->
-
-
-    <!-- ===================================================== -->
-    <!-- RECEPTION DASHBOARD (UNIQUE CLICKABLE CARD UI) -->
-    <!-- ===================================================== -->
-
-    <record id="reception_dashboard_record"
-            model="hospital.reception.dashboard">
-
-        <field name="name">Reception Dashboard</field>
-
-    </record>
-
-
-    <record id="view_hospital_reception_dashboard_form"
-        model="ir.ui.view">
+    <record id="view_hospital_reception_dashboard_form" model="ir.ui.view">
 
         <field name="name">hospital.reception.dashboard.form</field>
         <field name="model">hospital.reception.dashboard</field>
@@ -334,220 +11,184 @@
 
             <form create="0" edit="0" delete="0">
 
-                <sheet>
+                <sheet style="height:100%;padding:0;margin:0;max-width:100%;">
 
-                    <div class="admin-dashboard">
+                    <div class="rdb">
 
-                        <!-- ===================================== -->
-                        <!-- TODAY'S SUMMARY -->
-                        <!-- ===================================== -->
-
-                        <div class="admin-section">
-
-                            <div class="admin-section-heading">
-                                Today's Summary
+                        <!-- HEADER -->
+                        <div class="rdb-header">
+                            <div class="rdb-header-left">
+                                <span class="rdb-title">🏥 Reception Dashboard</span>
+                                <span class="rdb-subtitle">Welcome, Receptionist</span>
                             </div>
+                        </div>
 
-                            <div class="admin-stat-grid">
+                        <!-- ROW 1 : 6 KPI TILES -->
+                        <div class="rdb-row1">
 
-                                <button name="%(action_hospital_patient)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Total Patients
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="total_patients"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
+                            <button name="%(action_hospital_appointment_today)d" type="action" class="rdb-tile rdb-blue">
+                                <span class="rdb-tile-icon">📅</span>
+                                <span class="rdb-tile-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Today's Appointments</span>
+                            </button>
 
+                            <button name="%(action_hospital_patient)d" type="action" class="rdb-tile rdb-green">
+                                <span class="rdb-tile-icon">🧑‍⚕️</span>
+                                <span class="rdb-tile-num"><field name="total_patients" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Total Patients</span>
+                            </button>
 
-                                <button name="%(action_hospital_appointment_today)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Today Appointments
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="today_appointments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
+                            <button name="%(action_hospital_token_patients_today)d" type="action" class="rdb-tile rdb-cyan">
+                                <span class="rdb-tile-icon">🎫</span>
+                                <span class="rdb-tile-num"><field name="today_token_patients" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Today's Tokens</span>
+                            </button>
 
+                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="rdb-tile rdb-orange">
+                                <span class="rdb-tile-icon">⏳</span>
+                                <span class="rdb-tile-num"><field name="waiting_patients" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Waiting Patients</span>
+                            </button>
 
-                                <button name="%(action_hospital_appointment_booked)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Booked
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="booked_appointments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
+                            <button name="%(action_hospital_appointment_pending_payment)d" type="action" class="rdb-tile rdb-red">
+                                <span class="rdb-tile-icon">💳</span>
+                                <span class="rdb-tile-num"><field name="pending_payments" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Pending Payments</span>
+                            </button>
 
-
-                                <button name="%(action_hospital_appointment_completed)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Completed
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="completed_appointments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
-
-                            </div>
+                            <button name="%(action_hospital_lab_appointments)d" type="action" class="rdb-tile rdb-purple"
+                                    context="{'search_default_appointment_date': context_today()}">
+                                <span class="rdb-tile-icon">🔬</span>
+                                <span class="rdb-tile-num"><field name="today_lab_tests" nolabel="1" readonly="1"/></span>
+                                <span class="rdb-tile-lbl">Today's Lab Tests</span>
+                            </button>
 
                         </div>
 
+                        <!-- ROW 2 : APPOINTMENT STATUS + PATIENTS + DOCTORS -->
+                        <div class="rdb-row2">
 
-                        <!-- ===================================== -->
-                        <!-- APPOINTMENT STATUS -->
-                        <!-- ===================================== -->
+                            <!-- APPOINTMENT STATUS -->
+                            <div class="rdb-panel">
+                                <div class="rdb-panel-hdr">📋 Appointment Status</div>
+                                <div class="rdb-status-grid">
 
-                        <div class="admin-section">
+                                    <button name="%(action_hospital_appointment_booked)d" type="action" class="rdb-status-tile rdb-s-blue">
+                                        <span class="rdb-s-num"><field name="booked_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="rdb-s-lbl">Booked</span>
+                                    </button>
 
-                            <div class="admin-section-heading">
-                                Appointment Status
-                            </div>
+                                    <button name="%(action_hospital_appointment_waiting)d" type="action" class="rdb-status-tile rdb-s-orange">
+                                        <span class="rdb-s-num"><field name="waiting_patients" nolabel="1" readonly="1"/></span>
+                                        <span class="rdb-s-lbl">Waiting</span>
+                                    </button>
 
-                            <div class="admin-stat-grid">
+                                    <button name="%(action_hospital_appointment_completed)d" type="action" class="rdb-status-tile rdb-s-green">
+                                        <span class="rdb-s-num"><field name="completed_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="rdb-s-lbl">Completed</span>
+                                    </button>
 
-                                <button name="%(action_hospital_appointment_waiting)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Waiting
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="waiting_patients"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
+                                    <button name="%(action_hospital_appointment_cancelled)d" type="action" class="rdb-status-tile rdb-s-red">
+                                        <span class="rdb-s-num"><field name="cancelled_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="rdb-s-lbl">Cancelled</span>
+                                    </button>
 
-
-                                <button name="%(action_hospital_appointment_pending_payment)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Pending Payments
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="pending_payments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
-
-
-                                <button name="%(action_hospital_appointment_cancelled)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Cancelled
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="cancelled_appointments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- ===================================== -->
-                        <!-- RECEPTION INFORMATION -->
-                        <!-- ===================================== -->
-
-                        <div class="admin-section">
-
-                            <div class="admin-section-heading">
-                                Reception Information
-                            </div>
-
-                            <div class="admin-stat-grid">
-
-                                <button name="%(action_hospital_patient)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Registered Patients
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="total_patients"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
-
-
-                                <!-- Doctor model confirm agura varaikkum non-clickable -->
-                                <div class="admin-stat-card-btn" style="cursor:default;">
-                                    <div class="admin-stat-label">
-                                        Inactive Doctors
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="inactive_doctors"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
                                 </div>
+                            </div>
 
-
-                                <button name="%(action_hospital_appointment)d"
-                                        type="action"
-                                        class="admin-stat-card-btn"
-                                        context="{}">
-                                    <div class="admin-stat-label">
-                                        Total Appointments
+                            <!-- PATIENT REGISTRATION -->
+                            <div class="rdb-panel">
+                                <div class="rdb-panel-hdr">🧑‍⚕️ Patient Registration</div>
+                                <div class="rdb-patient-body">
+                                    <div class="rdb-patient-stats">
+                                        <div class="rdb-pstat">
+                                            <span class="rdb-pstat-num"><field name="today_patients" nolabel="1" readonly="1"/></span>
+                                            <span class="rdb-pstat-lbl">Today</span>
+                                        </div>
+                                        <div class="rdb-pstat">
+                                            <span class="rdb-pstat-num"><field name="total_patients" nolabel="1" readonly="1"/></span>
+                                            <span class="rdb-pstat-lbl">Total</span>
+                                        </div>
                                     </div>
-                                    <div class="admin-stat-number">
-                                        <field name="total_appointments"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </button>
+                                    <button name="%(action_hospital_patient)d" type="action" class="rdb-open-btn">
+                                        Open Patients →
+                                    </button>
+                                </div>
+                            </div>
 
+                            <!-- DOCTOR AVAILABILITY -->
+                            <div class="rdb-panel">
+                                <div class="rdb-panel-hdr">👨‍⚕️ Doctor Availability</div>
+                                <div class="rdb-doctor-list">
+
+                                    <div class="rdb-doctor-row rdb-doc-available">
+                                        <span class="rdb-doc-dot rdb-dot-green"></span>
+                                        <span class="rdb-doc-label">Available</span>
+                                        <strong class="rdb-doc-count"><field name="available_doctors" nolabel="1" readonly="1"/></strong>
+                                    </div>
+
+                                    <div class="rdb-doctor-row rdb-doc-inactive">
+                                        <span class="rdb-doc-dot rdb-dot-red"></span>
+                                        <span class="rdb-doc-label">Inactive</span>
+                                        <strong class="rdb-doc-count"><field name="inactive_doctors" nolabel="1" readonly="1"/></strong>
+                                    </div>
+
+                                </div>
                             </div>
 
                         </div>
 
+                        <!-- ROW 3 : QUICK ACTIONS -->
+                        <div class="rdb-row3">
 
-                        <!-- ===================================== -->
-                        <!-- DOCTORS -->
-                        <!-- ===================================== -->
+                            <button name="%(action_hospital_patient)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">🧑‍⚕️</span>
+                                <strong>Patients</strong>
+                                <span>Manage records</span>
+                            </button>
 
-                        <div class="admin-section">
+                            <button name="%(action_hospital_appointment_today)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">📅</span>
+                                <strong>Appointments</strong>
+                                <span>Today's list</span>
+                            </button>
 
-                            <div class="admin-section-heading">
-                                Doctors
-                            </div>
+                            <button name="%(action_hospital_token_patients_today)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">🎫</span>
+                                <strong>Tokens</strong>
+                                <span>Today's tokens</span>
+                            </button>
 
-                            <div class="admin-stat-grid">
+                            <button name="%(action_hospital_appointment_pending_payment)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">💳</span>
+                                <strong>Payments</strong>
+                                <span>Pending dues</span>
+                            </button>
 
-                                <!-- Doctor model confirm agura varaikkum non-clickable -->
-                                <div class="admin-stat-card-btn" style="cursor:default;">
-                                    <div class="admin-stat-label">
-                                        Available Doctors
-                                    </div>
-                                    <div class="admin-stat-number">
-                                        <field name="available_doctors"
-                                               nolabel="1" readonly="1"/>
-                                    </div>
-                                </div>
+                            <button name="%(action_hospital_lab_appointments)d" type="action" class="rdb-action"
+                                    context="{'search_default_appointment_date': context_today()}">
+                                <span class="rdb-action-icon">🔬</span>
+                                <strong>Laboratory</strong>
+                                <span>Today's tests</span>
+                            </button>
 
-                            </div>
+                            <button name="%(action_hospital_appointment_booked)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">📌</span>
+                                <strong>Booked</strong>
+                                <span>Booked appointments</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_completed)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">✅</span>
+                                <strong>Completed</strong>
+                                <span>Done appointments</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_cancelled)d" type="action" class="rdb-action">
+                                <span class="rdb-action-icon">❌</span>
+                                <strong>Cancelled</strong>
+                                <span>Cancelled list</span>
+                            </button>
 
                         </div>
 
@@ -561,19 +202,21 @@
 
     </record>
 
-    <record id="action_hospital_dashboard_receptionist"
-            model="ir.actions.act_window">
 
+    <!-- Reception Dashboard Record -->
+    <record id="reception_dashboard_record" model="hospital.reception.dashboard">
         <field name="name">Reception Dashboard</field>
-
-        <field name="res_model">hospital.reception.dashboard</field>
-
-        <field name="view_mode">form</field>
-
-        <field name="res_id"
-            ref="reception_dashboard_record"/>
-
-        <field name="target">current</field>
-
     </record>
+
+    <!-- Reception Dashboard Action -->
+    <record id="action_hospital_reception_dashboard" model="ir.actions.act_window">
+        <field name="name">Reception Dashboard</field>
+        <field name="res_model">hospital.reception.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="reception_dashboard_record"/>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_hospital_reception_dashboard_form"/>
+    </record>
+
+
 </odoo>

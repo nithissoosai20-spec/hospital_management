@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="view_hospital_doctor_dashboard_form" model="ir.ui.view">
+        <field name="name">hospital.doctor.dashboard.form</field>
+        <field name="model">hospital.doctor.dashboard</field>
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+                <sheet style="height:100%;padding:0;margin:0;max-width:100%;">
+
+                    <div class="ddb">
+
+                        <!-- HEADER -->
+                        <div class="ddb-header">
+                            <div class="ddb-header-left">
+                                <span class="ddb-title">👨‍⚕️ Doctor Dashboard</span>
+                                <span class="ddb-subtitle">Welcome, Doctor</span>
+                            </div>
+                        </div>
+
+                        <!-- ROW 1 : 5 KPI TILES -->
+                        <div class="ddb-row1">
+
+                            <button name="%(action_hospital_appointment)d" type="action" class="ddb-tile ddb-green">
+                                <span class="ddb-tile-icon">📋</span>
+                                <span class="ddb-tile-num"><field name="my_appointments" nolabel="1" readonly="1"/></span>
+                                <span class="ddb-tile-lbl">My Appointments</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-tile ddb-blue">
+                                <span class="ddb-tile-icon">📅</span>
+                                <span class="ddb-tile-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
+                                <span class="ddb-tile-lbl">Today's Appointments</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-tile ddb-cyan">
+                                <span class="ddb-tile-icon">✅</span>
+                                <span class="ddb-tile-num"><field name="completed_appointments" nolabel="1" readonly="1"/></span>
+                                <span class="ddb-tile-lbl">Completed</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-tile ddb-orange">
+                                <span class="ddb-tile-icon">⏳</span>
+                                <span class="ddb-tile-num"><field name="pending_appointments" nolabel="1" readonly="1"/></span>
+                                <span class="ddb-tile-lbl">Pending</span>
+                            </button>
+
+                            <button name="%(action_hospital_patient)d" type="action" class="ddb-tile ddb-purple">
+                                <span class="ddb-tile-icon">🧑‍⚕️</span>
+                                <span class="ddb-tile-num"><field name="my_patients" nolabel="1" readonly="1"/></span>
+                                <span class="ddb-tile-lbl">My Patients</span>
+                            </button>
+
+                        </div>
+
+                        <!-- ROW 2 : APPOINTMENT STATUS + MY PATIENTS + TODAY SUMMARY -->
+                        <div class="ddb-row2">
+
+                            <!-- APPOINTMENT STATUS -->
+                            <div class="ddb-panel">
+                                <div class="ddb-panel-hdr">📋 Appointment Status</div>
+                                <div class="ddb-status-grid">
+
+                                    <button name="%(action_hospital_appointment)d" type="action" class="ddb-status-tile ddb-s-blue">
+                                        <span class="ddb-s-num"><field name="my_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-s-lbl">Total</span>
+                                    </button>
+
+                                    <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-status-tile ddb-s-green">
+                                        <span class="ddb-s-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-s-lbl">Today</span>
+                                    </button>
+
+                                    <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-status-tile ddb-s-purple">
+                                        <span class="ddb-s-num"><field name="completed_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-s-lbl">Completed</span>
+                                    </button>
+
+                                    <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-status-tile ddb-s-orange">
+                                        <span class="ddb-s-num"><field name="pending_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-s-lbl">Pending</span>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <!-- MY PATIENTS -->
+                            <div class="ddb-panel">
+                                <div class="ddb-panel-hdr">🧑‍⚕️ My Patients</div>
+                                <div class="ddb-patient-body">
+                                    <div class="ddb-patient-stats">
+                                        <div class="ddb-pstat">
+                                            <span class="ddb-pstat-num"><field name="my_patients" nolabel="1" readonly="1"/></span>
+                                            <span class="ddb-pstat-lbl">Total</span>
+                                        </div>
+                                        <div class="ddb-pstat">
+                                            <span class="ddb-pstat-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
+                                            <span class="ddb-pstat-lbl">Today</span>
+                                        </div>
+                                    </div>
+                                    <button name="%(action_hospital_patient)d" type="action" class="ddb-open-btn">
+                                        Open Patients →
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- TODAY SUMMARY -->
+                            <div class="ddb-panel">
+                                <div class="ddb-panel-hdr">📊 Today's Summary</div>
+                                <div class="ddb-summary-body">
+
+                                    <div class="ddb-summary-box">
+                                        <span class="ddb-summary-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-summary-lbl">Appointments</span>
+                                    </div>
+
+                                    <div class="ddb-summary-box">
+                                        <span class="ddb-summary-num"><field name="completed_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-summary-lbl">Completed</span>
+                                    </div>
+
+                                    <div class="ddb-summary-box">
+                                        <span class="ddb-summary-num"><field name="pending_appointments" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-summary-lbl">Pending</span>
+                                    </div>
+
+                                    <div class="ddb-summary-box">
+                                        <span class="ddb-summary-num"><field name="my_patients" nolabel="1" readonly="1"/></span>
+                                        <span class="ddb-summary-lbl">Patients</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ROW 3 : QUICK ACTIONS -->
+                        <div class="ddb-row3">
+
+                            <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">📅</span>
+                                <strong>Today</strong>
+                                <span>Today's list</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">📋</span>
+                                <strong>Appointments</strong>
+                                <span>All appointments</span>
+                            </button>
+
+                            <button name="%(action_hospital_patient)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">🧑‍⚕️</span>
+                                <strong>Patients</strong>
+                                <span>Patient records</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">⏳</span>
+                                <strong>Waiting</strong>
+                                <span>Pending queue</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">✅</span>
+                                <strong>Completed</strong>
+                                <span>Done today</span>
+                            </button>
+
+                            <button name="%(action_hospital_appointment_booked)d" type="action" class="ddb-action">
+                                <span class="ddb-action-icon">📌</span>
+                                <strong>Booked</strong>
+                                <span>Booked slots</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- Doctor Dashboard Record -->
+    <record id="doctor_dashboard_record" model="hospital.doctor.dashboard">
+        <field name="name">Doctor Dashboard</field>
+    </record>
+
+    <!-- Doctor Dashboard Action -->
+    <record id="action_hospital_doctor_dashboard" model="ir.actions.act_window">
+        <field name="name">Doctor Dashboard</field>
+        <field name="res_model">hospital.doctor.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="doctor_dashboard_record"/>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_hospital_doctor_dashboard_form"/>
+    </record>
+
+</odoo>

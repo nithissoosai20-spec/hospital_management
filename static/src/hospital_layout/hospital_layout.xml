@@ -47,6 +47,14 @@
                     alt="Care Compassion Cure"
                 />
 
+                <span class="hospital-footer-product">
+                    Product Name = Hospixa (Hospital Management System)
+                </span>
+
+                <span class="hospital-footer-copyright">
+                    © Copyrights @Sathya Technologies
+                </span>
+
             </div>
 
         </xpath>

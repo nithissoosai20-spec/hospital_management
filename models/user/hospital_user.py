@@ -15,9 +15,7 @@ class HospitalUser(models.Model):
         'staff': 'hospital_management.group_hospital_user',
     }
 
-    # =====================================================
     # PERSONAL DETAILS
-    # =====================================================
 
     name = fields.Char(
         string='Full Name',
@@ -59,9 +57,7 @@ class HospitalUser(models.Model):
         string='Address'
     )
 
-    # =====================================================
     # ODOO LOGIN ACCOUNT
-    # =====================================================
 
     odoo_user_id = fields.Many2one(
         'res.users',
@@ -101,9 +97,7 @@ class HospitalUser(models.Model):
         readonly=True,
     )
 
-    # =====================================================
     # WORK DETAILS
-    # =====================================================
 
     role_id = fields.Many2one(
         'hospital.role',
@@ -157,9 +151,7 @@ class HospitalUser(models.Model):
         ondelete='restrict'
     )
 
-    # =====================================================
     # ACCOUNT STATUS
-    # =====================================================
 
     active = fields.Boolean(
         string='Active',
@@ -177,9 +169,7 @@ class HospitalUser(models.Model):
         required=True
     )
 
-    # =====================================================
     # COMPUTE
-    # =====================================================
 
     @api.depends('role_id')
     def _compute_allowed_departments(self):
@@ -210,9 +200,7 @@ class HospitalUser(models.Model):
             else:
                 record.two_factor_enabled = False
 
-    # =====================================================
     # ROLE → ODOO GROUP
-    # =====================================================
 
     def _get_odoo_group_for_role(self):
         self.ensure_one()
@@ -272,9 +260,7 @@ class HospitalUser(models.Model):
 
         return self.env.ref(xml_id)
 
-    # =====================================================
     # CREATE ODOO USER
-    # =====================================================
 
     def _create_odoo_user(self, password):
         self.ensure_one()
@@ -329,9 +315,7 @@ class HospitalUser(models.Model):
             })
 
 
-    # =====================================================
     # UPDATE ODOO USER GROUP
-    # =====================================================
 
     def _update_odoo_user_group(self):
         self.ensure_one()
@@ -345,9 +329,7 @@ class HospitalUser(models.Model):
             'group_ids': [(6, 0, [group.id])],
         })
 
-    # =====================================================
     # UPDATE ODOO USER ACCOUNT
-    # =====================================================
 
     def _update_odoo_user_account(self, vals):
         self.ensure_one()
@@ -383,9 +365,7 @@ class HospitalUser(models.Model):
         if update_vals:
             self.odoo_user_id.sudo().write(update_vals)
 
-    # =====================================================
     # ONCHANGE
-    # =====================================================
 
     @api.onchange('role_id')
     def _onchange_role_id(self):
@@ -398,9 +378,7 @@ class HospitalUser(models.Model):
         self.designation_id = False
         self.reporting_to_id = False
 
-    # =====================================================
     # AUDIT LOGGING
-    # =====================================================
 
     def _create_activity(
         self,
@@ -430,9 +408,26 @@ class HospitalUser(models.Model):
             })
 
 
-    # =====================================================
+    # SAVE ACTION  (explicit Save button on the form)
+
+    def action_save_user(self):
+        """
+        Called by the Save button in the form header.
+        In Odoo, type='object' buttons auto-save the record
+        before calling this method. We reload the same form
+        so the user sees the freshly saved state.
+        """
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'target': 'current',
+        }
+
     # CREATE
-    # =====================================================
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -486,9 +481,7 @@ class HospitalUser(models.Model):
         return records
 
 
-    # =====================================================
     # WRITE
-    # =====================================================
 
     def write(self, vals):
 
@@ -812,9 +805,7 @@ class HospitalUser(models.Model):
 
         return result
 
-    # =====================================================
     # VALIDATION
-    # =====================================================
 
     @api.constrains('employee_id')
     def _check_employee_id_unique(self):

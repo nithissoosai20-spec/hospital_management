@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="seq_hospital_pharmacy_bill"
+            model="ir.sequence">
+
+        <field name="name">Pharmacy Bill</field>
+
+        <field name="code">hospital.pharmacy.bill</field>
+
+        <field name="prefix">PH-BILL-</field>
+
+        <field name="padding">6</field>
+
+        <field name="number_increment">1</field>
+
+    </record>
+
+</odoo>

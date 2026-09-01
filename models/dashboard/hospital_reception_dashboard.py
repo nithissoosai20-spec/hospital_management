@@ -11,9 +11,7 @@ class HospitalReceptionDashboard(models.Model):
         readonly=True
     )
 
-    # =========================
     # SUMMARY
-    # =========================
 
     total_patients = fields.Integer(
         string='Total Patients',
@@ -25,8 +23,23 @@ class HospitalReceptionDashboard(models.Model):
         compute='_compute_dashboard'
     )
 
+    today_patients = fields.Integer(
+        string="Today's Patients",
+        compute='_compute_dashboard'
+    )
+
     today_appointments = fields.Integer(
         string="Today's Appointments",
+        compute='_compute_dashboard'
+    )
+
+    today_token_patients = fields.Integer(
+        string="Today's Token Patients",
+        compute='_compute_dashboard'
+    )
+
+    today_lab_tests = fields.Integer(
+        string="Today's Lab Tests",
         compute='_compute_dashboard'
     )
 
@@ -45,10 +58,7 @@ class HospitalReceptionDashboard(models.Model):
         compute='_compute_dashboard'
     )
 
-
-    # =========================
     # EXTRA INFORMATION
-    # =========================
 
     available_doctors = fields.Integer(
         string='Available Doctors',
@@ -70,96 +80,118 @@ class HospitalReceptionDashboard(models.Model):
         compute='_compute_dashboard'
     )
 
+    # DASHBOARD COMPUTATION
+
     @api.depends()
     def _compute_dashboard(self):
 
         Patient = self.env['hospital.patient']
         Appointment = self.env['hospital.appointment']
         HospitalUser = self.env['hospital.user']
+        LabAppointment = self.env['hospital.lab.appointment']
 
         today = fields.Date.today()
+        tomorrow = fields.Date.add(today, days=1)
 
         for record in self:
 
-            #total appointments
-
-            record.total_appointments = Appointment.search_count([])
-            # -------------------------
-            # PATIENTS
-            # -------------------------
+            # TOTAL PATIENTS TILL NOW
 
             record.total_patients = Patient.search_count([
                 ('active', '=', True)
             ])
 
-            # -------------------------
-            # TODAY'S APPOINTMENTS
-            # -------------------------
+            # TODAY PATIENTS
+            #
+            # Patients registered/created today
+
+            record.today_patients = Patient.search_count([
+                ('create_date', '>=', today),
+                ('create_date', '<', tomorrow),
+            ])
+
+            # TODAY APPOINTMENTS
 
             today_appointments = Appointment.search([
                 ('appointment_date', '=', today)
             ])
 
-            record.today_appointments = len(today_appointments)
+            record.today_appointments = len(
+                today_appointments
+            )
 
-            # -------------------------
-            # BOOKED
-            # -------------------------
+            # TOTAL APPOINTMENTS
+
+            record.total_appointments = Appointment.search_count([])
+
+            # TODAY TOKEN PATIENTS
+            #
+            # Today's appointments that have a token
+
+            record.today_token_patients = Appointment.search_count([
+                ('appointment_date', '=', today),
+                ('token_generated', '=', True),
+            ])
+
+            # TODAY LAB TESTS
+            #
+            # Count individual lab tests selected today,
+            # not just the number of lab appointments.
+
+            today_lab_appointments = LabAppointment.search([
+                ('appointment_date', '=', today),
+            ])
+
+            record.today_lab_tests = sum(
+                len(lab.line_ids)
+                for lab in today_lab_appointments
+            )
+
+            # BOOKED APPOINTMENTS
 
             record.booked_appointments = Appointment.search_count([
                 ('state', '=', 'booked')
             ])
 
-            # -------------------------
-            # COMPLETED
-            # -------------------------
+            # COMPLETED APPOINTMENTS
 
             record.completed_appointments = Appointment.search_count([
                 ('state', '=', 'completed')
             ])
 
-            # -------------------------
             # PENDING PAYMENTS
-            # -------------------------
 
             record.pending_payments = Appointment.search_count([
                 ('payment_status', 'in', ['pending', 'partial'])
             ])
 
-            # -------------------------
-            # WAITING
+            # WAITING PATIENTS
             #
-            # There is no separate
-            # "waiting" state in your
-            # appointment model.
-            #
-            # Draft appointments are
-            # treated as waiting.
-            # -------------------------
+            # Your appointment model does not have a separate
+            # waiting state, so draft appointments are treated
+            # as waiting.
 
             record.waiting_patients = Appointment.search_count([
                 ('state', '=', 'draft')
             ])
 
-            # -------------------------
-            # CANCELLED
-            # -------------------------
+            # CANCELLED APPOINTMENTS
 
             record.cancelled_appointments = Appointment.search_count([
                 ('state', '=', 'cancelled')
             ])
 
-            # -------------------------
-            # DOCTORS
+            # AVAILABLE DOCTORS
             #
-            # hospital.user records
-            # whose role is Doctor
-            # -------------------------
+            # hospital.user records whose role is Doctor
+            # and whose linked Odoo user is active.
 
             record.available_doctors = HospitalUser.search_count([
                 ('role_id.name', '=', 'Doctor'),
                 ('odoo_user_id.active', '=', True)
             ])
+
+            # INACTIVE DOCTORS
 
             record.inactive_doctors = HospitalUser.search_count([
                 ('role_id.name', '=', 'Doctor'),

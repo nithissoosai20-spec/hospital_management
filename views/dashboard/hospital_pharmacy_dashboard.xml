@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- PHARMACY DASHBOARD -->
+
+    <record id="action_hospital_dashboard_pharmacy" model="ir.actions.client">
+        <field name="name">Pharmacy Dashboard</field>
+        <field name="tag">hospital_pharmacy_dashboard</field>
+    </record>
+
+    <!-- PHARMACY BILLING -->
+
+    <record id="action_hospital_pharmacy_billing" model="ir.actions.client">
+        <field name="name">Pharmacy Billing</field>
+        <field name="tag">hospital_pharmacy_billing</field>
+    </record>
+
+    <!-- PHARMACY PURCHASE -->
+
+    <record id="action_hospital_pharmacy_purchase" model="ir.actions.client">
+        <field name="name">Pharmacy Purchase</field>
+        <field name="tag">hospital_pharmacy_purchase</field>
+    </record>
+
+    <!-- PHARMACY STOCK -->
+
+    <record id="action_hospital_pharmacy_stock" model="ir.actions.client">
+        <field name="name">Pharmacy Stock</field>
+        <field name="tag">hospital_pharmacy_stock</field>
+    </record>
+
+    <!-- PHARMACY DETAILS -->
+
+    <record id="action_hospital_pharmacy_details" model="ir.actions.client">
+        <field name="name">Pharmacy Details</field>
+        <field name="tag">hospital_pharmacy_details</field>
+    </record>
+
+</odoo>

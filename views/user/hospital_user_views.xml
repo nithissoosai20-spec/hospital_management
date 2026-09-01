@@ -2,9 +2,7 @@
 
 <odoo>
 
-    <!-- ================================================= -->
-    <!-- USERS LIST -->
-    <!-- ================================================= -->
+    <!-- USERS LIST                                         -->
 
     <record id="view_hospital_user_list" model="ir.ui.view">
 
@@ -22,7 +20,6 @@
                 <field name="department_id"/>
                 <field name="designation_id"/>
                 <field name="email"/>
-                <field name="status"/>
                 <field name="active"/>
 
             </list>
@@ -32,9 +29,7 @@
     </record>
 
 
-    <!-- ================================================= -->
-    <!-- USER FORM -->
-    <!-- ================================================= -->
+    <!-- USER FORM                                          -->
 
     <record id="view_hospital_user_form" model="ir.ui.view">
 
@@ -45,159 +40,143 @@
 
             <form>
 
+                <!-- SAVE BUTTON IN HEADER                 -->
+
+                
+
                 <sheet>
+                    <style>
+                        .custom-section-title {
+                            color: #1e3a8a;
+                            font-size: 16px;
+                            font-weight: bold;
+                            margin-top: 15px;
+                            margin-bottom: 10px;
+                            border-bottom: 1px solid #e2e8f0;
+                            padding-bottom: 5px;
+                        }
+                        .custom-label {
+                            font-weight: 600;
+                            font-size: 12px;
+                            color: #475569;
+                            margin-bottom: 4px;
+                            display: block;
+                        }
+                        .custom-field-container {
+                            margin-bottom: 12px;
+                        }
+                    </style>
 
-                    <!-- ================================= -->
-                    <!-- PERSONAL INFORMATION -->
-                    <!-- ================================= -->
+                    <div class="custom-section-title">1. Personal Information</div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="name" class="custom-label">Full Name *</label>
+                            <field name="name" class="w-100" placeholder="Enter full name"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="employee_id" class="custom-label">Employee ID</label>
+                            <field name="employee_id" class="w-100" placeholder="e.g. EMP-001"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="login" class="custom-label">Username *</label>
+                            <field name="login" class="w-100" placeholder="Enter username"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="email" class="custom-label">Email Address</label>
+                            <field name="email" class="w-100" placeholder="example@hospital.com"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="mobile" class="custom-label">Mobile Number</label>
+                            <field name="mobile" class="w-100" placeholder="Enter mobile number"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="date_of_birth" class="custom-label">Date of Birth</label>
+                            <field name="date_of_birth" class="w-100"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="gender" class="custom-label">Gender</label>
+                            <field name="gender" class="w-100"/>
+                        </div>
+                        <div class="col-md-8 custom-field-container">
+                            <label for="address" class="custom-label">Address</label>
+                            <field name="address" class="w-100" placeholder="Enter full address"/>
+                        </div>
+                    </div>
 
-                    <group string="Personal Information">
+                    <div class="custom-section-title">2. Work Information</div>
+                    <field name="allowed_department_ids" invisible="1"/>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="role_id" class="custom-label">Role</label>
+                            <field name="role_id" class="w-100" options="{'no_create': True}"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="department_id" class="custom-label">Department</label>
+                            <field name="department_id" class="w-100" domain="[('id', 'in', allowed_department_ids)]" options="{'no_create': True}"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="designation_id" class="custom-label">Designation</label>
+                            <field name="designation_id" class="w-100" domain="[('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="reporting_to_id" class="custom-label">Reporting To</label>
+                            <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                        </div>
+                    </div>
 
-                        <group>
+                    <div class="custom-section-title">3. Access &amp; Security</div>
+                    <div class="row">
+                        <div class="col-md-3 custom-field-container">
+                            <label for="active" class="custom-label">Active</label>
+                            <field name="active" widget="boolean_toggle"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="password" class="custom-label">Set Password</label>
+                            <field name="password" class="w-100" password="True" placeholder="Enter password"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="account_created" class="custom-label">Account Created</label>
+                            <field name="account_created" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col-md-3 custom-field-container">
+                            <label for="odoo_user_id" class="custom-label">System User ID</label>
+                            <field name="odoo_user_id" class="w-100" readonly="1"/>
+                        </div>
+                    </div>
 
-                            <field name="name"/>
-                            <field name="employee_id"/>
-                            <field name="login"/>
-                            <field name="email"/>
-                            <field
-                                name="password"
-                                string="Password"
-                                password="True"
-                            />
-                            <field name="mobile"/>
+                    <div class="custom-section-title">4. Login Activity</div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="last_login" class="custom-label">Last Login</label>
+                            <field name="last_login" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="password_last_changed" class="custom-label">Password Last Changed</label>
+                            <field name="password_last_changed" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="two_factor_enabled" class="custom-label">Two Factor Enabled</label>
+                            <field name="two_factor_enabled" widget="boolean_toggle" readonly="1"/>
+                        </div>
+                    </div>
 
-                        </group>
-
-                        <group>
-
-                            <field name="date_of_birth"/>
-                            <field name="gender"/>
-
-                        </group>
-
-                    </group>
-
-
-                    <!-- ================================= -->
-                    <!-- WORK INFORMATION -->
-                    <!-- ================================= -->
-
-                    <group string="Work Information">
-
-                        <group>
-
-                            <field name="role_id"/>
-
-                            <field
-                                name="allowed_department_ids"
-                                invisible="1"
-                            />
-
-                            <field
-                                name="department_id"
-                                domain="[('id', 'in', allowed_department_ids)]"
-                            />
-
-                            <field
-                                name="designation_id"
-                                domain="[('department_id', '=', department_id)]"
-                            />
-
-                        </group>
-
-                        <group>
-
-                            <field
-                                name="reporting_to_id"
-                                domain="[
-                                    ('id', '!=', id),
-                                    ('role_id', '=', role_id),
-                                    ('department_id', '=', department_id)
-                                ]"
-                            />
-
-                        </group>
-
-                    </group>
-
-
-                    <!-- ================================= -->
-                    <!-- ACCESS INFORMATION -->
-                    <!-- ================================= -->
-
-                    <group string="Access Information">
-
-                        <group>
-
-                            <field name="active"/>
-
-                            <field
-                                name="password"
-                                password="True"
-                                string="Password / New Password"
-                            />
-
-                        </group>
-
-                        <group>
-
-                            <field
-                                name="account_created"
-                                readonly="1"
-                            />
-
-                            <field
-                                name="odoo_user_id"
-                                readonly="1"
-                            />
-
-                        </group>
-
-                    </group>
-
-
-                    <!-- ================================= -->
-                    <!-- AUTHENTICATION INFORMATION -->
-                    <!-- ================================= -->
-
-                    <group string="Authentication Information">
-
-                        <group>
-
-                            <field
-                                name="last_login"
-                                readonly="1"
-                            />
-
-                            <field
-                                name="password_last_changed"
-                                readonly="1"
-                            />
-
-                        </group>
-
-                        <group>
-
-                            <field
-                                name="two_factor_enabled"
-                                readonly="1"
-                            />
-
-                        </group>
-
-                    </group>
-
-
-                    <!-- ================================= -->
-                    <!-- PERSONAL ADDRESS -->
-                    <!-- ================================= -->
-
-                    <group string="Address">
-
-                        <field name="address"/>
-
-                    </group>
-
+    
+                    
+                
+                    <div class="d-flex justify-content-end mt-4 mb-2">
+                        <button
+                        name="action_save_user"
+                        string="Save"
+                        type="object"
+                        class="btn-primary" style="margin-left: auto !important;"
+                    />
+                    </div>
                 </sheet>
 
             </form>
@@ -207,34 +186,28 @@
     </record>
 
 
-    <!-- ================================================= -->
-    <!-- ALL USERS -->
-    <!-- ================================================= -->
+    <!-- ALL USERS                                          -->
 
     <record id="action_hospital_users" model="ir.actions.act_window">
 
         <field name="name">User Management</field>
         <field name="res_model">hospital.user</field>
         <field name="view_mode">list,form</field>
-
         <field name="domain">[]</field>
 
     </record>
 
 
-    <!-- ================================================= -->
-    <!-- DOCTORS -->
-    <!-- ================================================= -->
+    <!-- DOCTORS                                            -->
 
     <record id="action_hospital_doctors" model="ir.actions.act_window">
 
         <field name="name">Doctors</field>
         <field name="res_model">hospital.user</field>
         <field name="view_mode">list,form</field>
-
         <field name="domain">[('role_id.name', '=', 'Doctor')]</field>
 
     </record>
 
-   
+
 </odoo>

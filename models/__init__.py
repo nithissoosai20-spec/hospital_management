@@ -6,3 +6,5 @@ from . import appointment
 from . import role
 from . import activity
 from . import lab
+from . import pharmacy
+from . import consultation_fee

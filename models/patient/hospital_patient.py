@@ -68,6 +68,13 @@ class HospitalPatient(models.Model):
         default=True
     )
 
+    appointment_ids = fields.One2many(
+        'hospital.appointment',
+        'patient_id',
+        string='Appointment History',
+        readonly=True,
+    )
+
     @api.depends('date_of_birth')
     def _compute_age(self):
         today = fields.Date.today()

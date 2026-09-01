@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_hospital_pharmacy_purchase_invoice_list" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.purchase.invoice.list</field>
+        <field name="model">hospital.pharmacy.purchase.invoice</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Invoices" decoration-warning="state == 'pending'" decoration-success="state == 'successful'">
+                <field name="name" string="Invoice No."/>
+                <field name="purchase_id" string="Purchase Order"/>
+                <field name="supplier_id"/>
+                <field name="invoice_date"/>
+                <field name="total_amount" string="Total Amount (?)"/>
+                <field name="state" widget="badge" decoration-success="state == 'successful'" decoration-warning="state == 'pending'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_hospital_pharmacy_purchase_invoice_form" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.purchase.invoice.form</field>
+        <field name="model">hospital.pharmacy.purchase.invoice</field>
+        <field name="arch" type="xml">
+            
+            <form string="Purchase Invoice">
+                
+                <sheet>
+                                        <style>
+                        .custom-section-title {
+                            color: #1e3a8a;
+                            font-size: 14px;
+                            font-weight: bold;
+                            margin-top: 5px;
+                            margin-bottom: 5px;
+                            border-bottom: 1px solid #e2e8f0;
+                            padding-bottom: 2px;
+                        }
+                        .custom-label {
+                            font-weight: 600;
+                            font-size: 11px;
+                            color: #475569;
+                            margin-bottom: 0px;
+                            display: block;
+                        }
+                        .custom-field-container {
+                            margin-bottom: 5px;
+                        }
+                        .custom-field-container input, .custom-field-container select {
+                            padding: 2px 5px !important;
+                            font-size: 12px !important;
+                            height: auto !important;
+                            min-height: 24px !important;
+                        }
+                    </style>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3 style="color:#1e3a8a; margin:0;"><field name="name" readonly="1"/></h3>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <!-- Removed status badge here -->
+                        </div>
+                    </div>
+
+                    <div class="custom-section-title">1. Invoice Details</div>
+                    <div class="row">
+                        <div class="col-md-4 custom-field-container">
+                            <label for="purchase_id" class="custom-label">Purchase Order</label>
+                            <field name="purchase_id" class="w-100" readonly="1"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="supplier_id" class="custom-label">Supplier *</label>
+                            <field name="supplier_id" class="w-100" options="{'no_create': True}"/>
+                        </div>
+                        <div class="col-md-4 custom-field-container">
+                            <label for="invoice_date" class="custom-label">Invoice Date *</label>
+                            <field name="invoice_date" class="w-100"/>
+                        </div>
+                    </div>
+
+                    <div class="custom-section-title">2. Item Pricing</div>
+                    <field name="line_ids" class="w-100" mode="list">
+                        <list editable="bottom">
+                            <control>
+                                <create name="add_item" string="Add Item"/>
+                            </control>
+                            <field name="medicine_code"/><field name="medicine_id" readonly="1"/>
+                            <field name="batch_no" readonly="1"/>
+                            <field name="qty" readonly="1"/>
+                                <field name="received_qty"/>
+                            <field name="unit" readonly="1"/>
+                            <field name="expiry_date"/>
+                            <field name="purchase_price"/>
+                            <field name="discount_percent" string="Disc(%)"/>
+                            <field name="cgst_percent"/>
+                            <field name="sgst_percent"/>
+                            <field name="igst_percent"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="taxable_val" column_invisible="True"/>
+                            <field name="discount_val" column_invisible="True"/>
+                            <field name="cgst_val" column_invisible="True"/>
+                            <field name="sgst_val" column_invisible="True"/>
+                            <field name="igst_val" column_invisible="True"/>
+                        </list>
+                    </field>
+                    
+                    <div class="row mt-1">
+                        <!-- LEFT SIDE: Invoice Totals -->
+                        <div class="col-md-7">
+                            <div class="custom-section-title" style="margin-top:0;">3. Invoice Totals</div>
+                            <div class="row">
+                                <div class="col-md-3 custom-field-container">
+                                    <label for="taxable_amount" class="custom-label">Taxable</label>
+                                    <field name="taxable_amount" class="w-100"/>
+                                </div>
+                                <div class="col-md-3 custom-field-container">
+                                    <label for="discount_amount" class="custom-label">Discount</label>
+                                    <field name="discount_amount" class="w-100"/>
+                                </div>
+                                <div class="col-md-3 custom-field-container">
+                                    <label for="gst_amount" class="custom-label">GST</label>
+                                    <field name="gst_amount" class="w-100"/>
+                                </div>
+                                <div class="col-md-3 custom-field-container">
+                                    <label for="other_charges" class="custom-label">Charges</label>
+                                    <field name="other_charges" class="w-100"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="total_amount" class="custom-label">Total Amount</label>
+                                    <field name="total_amount" class="w-100 fw-bold text-success"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT SIDE: Additional -->
+                        <div class="col-md-5">
+                            <div class="custom-section-title" style="margin-top:0;">4. Additional Info</div>
+                            <div class="row">
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="round_off" class="custom-label">Round Off</label>
+                                    <field name="round_off" class="w-100"/>
+                                </div>
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="reference_no" class="custom-label">Ref No.</label>
+                                    <field name="reference_no" class="w-100" placeholder="Ref no."/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="remarks" class="custom-label">Remarks</label>
+                                    <field name="remarks" class="w-100" placeholder="Remarks"/>
+                                </div>
+                                <div class="col-md-6 custom-field-container">
+                                    <label for="attachment" class="custom-label">Attachment</label>
+                                    <field name="attachment" filename="attachment_name" class="w-100"/>
+                                    <field name="attachment_name" invisible="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-3 mb-2">
+                            <button name="action_update_stock" string="Save" type="object" class="btn-success me-2" invisible="state == 'successful'"/>
+                            <field name="state" invisible="1"/>
+                        </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_hospital_pharmacy_purchase_invoice" model="ir.actions.act_window">
+        <field name="name">Purchase Invoices</field>
+        <field name="res_model">hospital.pharmacy.purchase.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first purchase invoice!
+            </p>
+        </field>
+    </record>
+</odoo>

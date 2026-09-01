@@ -2,9 +2,7 @@
 
 <odoo>
 
-    <!-- ================================================= -->
     <!-- LAB TEST MASTER -->
-    <!-- ================================================= -->
 
     <record id="view_hospital_lab_test_list"
             model="ir.ui.view">
@@ -79,6 +77,8 @@
 
                     </group>
 
+                
+                    
                 </sheet>
 
             </form>
@@ -88,9 +88,7 @@
     </record>
 
 
-    <!-- ================================================= -->
     <!-- LAB APPOINTMENT LIST -->
-    <!-- ================================================= -->
 
     <record id="view_hospital_lab_appointment_list"
             model="ir.ui.view">
@@ -119,6 +117,12 @@
                 <field name="payment_status"
                        widget="badge"/>
 
+                <field
+                    name="receipt_ready"
+                    invisible="1"
+                />
+
+
                 <field name="state"
                        widget="badge"/>
 
@@ -129,106 +133,231 @@
     </record>
 
 
-    <!-- ================================================= -->
     <!-- LAB APPOINTMENT FORM -->
-    <!-- ================================================= -->
 
     <record id="view_hospital_lab_appointment_form"
             model="ir.ui.view">
 
         <field name="name">hospital.lab.appointment.form</field>
-
         <field name="model">hospital.lab.appointment</field>
 
         <field name="arch" type="xml">
 
             <form>
 
+                <!-- HEADER -->
+
                 <header>
 
-                    <button name="action_schedule"
-                            type="object"
-                            string="Schedule"
-                            class="btn-primary"
-                            invisible="state != 'draft'"/>
+                    
+                    <!-- SAVE -->
+                    
+                    
+                    <button
+                        name="action_collect_sample"
+                        type="object"
+                        string="Collect Sample"
+                        invisible="state != 'scheduled'"
+                    />
 
-                    <button name="action_collect_sample"
-                            type="object"
-                            string="Collect Sample"
-                            invisible="state != 'scheduled'"/>
+                    <button
+                        name="action_start_processing"
+                        type="object"
+                        string="Start Processing"
+                        invisible="state != 'sample_collected'"
+                    />
 
-                    <button name="action_start_processing"
-                            type="object"
-                            string="Start Processing"
-                            invisible="state != 'sample_collected'"/>
+                    <button
+                        name="action_complete"
+                        type="object"
+                        string="Complete"
+                        class="btn-success"
+                        invisible="state != 'processing'"
+                    />
 
-                    <button name="action_complete"
-                            type="object"
-                            string="Complete"
-                            class="btn-success"
-                            invisible="state != 'processing'"/>
-
-                    <button name="action_cancel"
-                            type="object"
-                            string="Cancel"
-                            class="btn-secondary"
-                            invisible="state in ('completed', 'cancelled')"/>
-
-                    <field name="state"
-                           widget="statusbar"
-                           statusbar_visible="draft,scheduled,sample_collected,processing,completed"/>
+                    <button
+                        name="action_cancel"
+                        type="object"
+                        string="Cancel"
+                        class="btn-secondary"
+                        icon="fa-times"
+                        invisible="state in ('completed', 'cancelled')"
+                    />
 
                 </header>
 
+
+                <!-- MAIN CONTENT -->
+
                 <sheet>
 
-                    <div class="oe_title">
+                    <!-- PATIENT + APPOINTMENT INFORMATION -->
 
-                        <label for="name"/>
+                    <div
+                        style="
+                            border:1px solid #e5e5e5;
+                            border-radius:8px;
+                            padding:12px 16px;
+                            margin-bottom:10px;
+                            background:#ffffff;
+                        "
+                    >
 
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                        <group col="2">
+
+                            <!-- PATIENT INFORMATION -->
+
+                            <group string="PATIENT INFORMATION">
+
+                                <field
+                                    name="patient_id"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="hospital_appointment_id"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="doctor_id"
+                                    string="Referring Doctor"
+                                    readonly="1"
+                                />
+
+                            </group>
+
+
+                            <!-- APPOINTMENT INFORMATION -->
+
+                            <group string="APPOINTMENT INFORMATION">
+
+                                <field
+                                    name="appointment_date"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="appointment_time"
+                                    widget="float_time"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="priority"
+                                    readonly="1"
+                                />
+
+                            </group>
+
+                        </group>
 
                     </div>
 
-                    <group>
 
-                        <group string="Patient Information">
+                    <!-- SELECTED LABORATORY TESTS -->
+                    <!-- FULL WIDTH -->
 
-                            <field name="patient_id"/>
+                    <group string="SELECTED LABORATORY TESTS" col="1">
 
-                            <field name="lab_test_id"/>
+                        <field
+                            name="line_ids"
+                            nolabel="1"
+                        >
 
-                            <field name="doctor_id"/>
+                            <list
+                                editable="bottom"
+                                create="1"
+                                delete="1"
+                                class="hospital_lab_test_list"
+                            >
 
-                        </group>
+                                <field
+                                    name="lab_test_id"
+                                    string="Lab Test"
+                                    required="1"
+                                />
 
-                        <group string="Appointment">
+                                <field
+                                    name="test_code"
+                                    string="Code"
+                                    readonly="1"
+                                />
 
-                            <field name="appointment_date"/>
+                                <field
+                                    name="category"
+                                    string="Category"
+                                    readonly="1"
+                                />
 
-                            <field name="appointment_time"
-                                   widget="float_time"/>
+                                <field
+                                    name="sample_type"
+                                    string="Sample Type"
+                                    readonly="1"
+                                />
 
-                            <field name="priority"/>
+                                <field
+                                    name="price"
+                                    string="Price"
+                                    readonly="1"
+                                />
 
-                            <field name="sample_type"/>
+                            </list>
+
+                        </field>
+
+                    </group>
+
+
+                    <!-- PAYMENT INFORMATION -->
+                    <!-- FULL WIDTH -->
+
+                    <group string="PAYMENT INFORMATION" col="1">
+
+                        <group col="3">
+
+                            <field
+                                name="amount"
+                                string="Amount"
+                                readonly="1"
+                            />
+
+                            <field
+                                name="payment_mode"
+                                string="Payment Mode"
+                            />
+
+                            <field
+                                name="payment_status"
+                                string="Payment Status"
+                            />
 
                         </group>
 
                     </group>
 
-                    <group string="Payment">
+                    <!-- PRINT LAB RECEIPT -->
 
-                        <field name="amount"
-                               readonly="1"/>
+                    <div class="hospital-lab-receipt-action">
 
-                        <field name="payment_status"/>
+                        <button
+                            name="%(action_report_hospital_lab_receipt)d"
+                            type="action"
+                            string="Print Lab Receipt"
+                            class="btn-primary"
+                            icon="fa-print"
+                            invisible="not receipt_ready"
+                        />
 
-                    </group>
+                    </div>
 
-                    <group string="Laboratory Result">
+
+                    <!-- LAB RESULT -->
+
+                    <group
+                        string="LABORATORY RESULT"
+                        invisible="state not in ('processing', 'completed')"
+                    >
 
                         <field name="result"/>
 
@@ -236,18 +365,26 @@
 
                     </group>
 
+                
+                    
+                
+                    <div class="d-flex justify-content-end mt-4 mb-2">
+                        <button
+                        name="action_save_lab_appointment"
+                        type="object"
+                        string="Save"
+                        class="btn-primary" style="margin-left: auto !important;"
+                        icon="fa-save"
+                    />
+                    </div>
                 </sheet>
 
             </form>
 
         </field>
 
-    </record>
-
-
-    <!-- ================================================= -->
+    </record>    
     <!-- ACTIONS -->
-    <!-- ================================================= -->
 
     <record id="action_hospital_lab_appointments"
             model="ir.actions.act_window">
@@ -272,4 +409,6 @@
 
     </record>
 
+
+   
 </odoo>

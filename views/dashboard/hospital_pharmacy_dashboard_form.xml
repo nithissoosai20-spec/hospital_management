@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="view_hospital_pharmacy_dashboard_form" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.dashboard.form</field>
+        <field name="model">hospital.pharmacy.dashboard</field>
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+                <sheet style="height:100%;padding:0;margin:0;max-width:100%;">
+
+                    <div class="pdb">
+
+                        <!-- HEADER -->
+                        <div class="pdb-header">
+                            <div class="pdb-header-left">
+                                <span class="pdb-title">💊 Pharmacy Dashboard</span>
+                                <span class="pdb-subtitle">Welcome, Pharmacist</span>
+                            </div>
+                        </div>
+
+                        <!-- ROW 1 : 6 KPI TILES -->
+                        <div class="pdb-row1">
+
+                            <button name="action_view_total_medicines" type="object" class="pdb-tile pdb-teal">
+                                <span class="pdb-tile-icon">💊</span>
+                                <span class="pdb-tile-num"><field name="total_medicines" nolabel="1" readonly="1"/></span>
+                                <span class="pdb-tile-lbl">Total Medicines</span>
+                            </button>
+
+                            <button name="action_view_low_stock" type="object" class="pdb-tile pdb-orange">
+                                <span class="pdb-tile-icon">⚠️</span>
+                                <span class="pdb-tile-num"><field name="low_stock" nolabel="1" readonly="1"/></span>
+                                <span class="pdb-tile-lbl">Low Stock</span>
+                            </button>
+
+                            <button name="action_view_out_of_stock" type="object" class="pdb-tile pdb-red">
+                                <span class="pdb-tile-icon">🚫</span>
+                                <span class="pdb-tile-num"><field name="out_of_stock" nolabel="1" readonly="1"/></span>
+                                <span class="pdb-tile-lbl">Out of Stock</span>
+                            </button>
+
+                            <button name="action_view_today_bills" type="object" class="pdb-tile pdb-blue">
+                                <span class="pdb-tile-icon">🧾</span>
+                                <span class="pdb-tile-num"><field name="today_bills" nolabel="1" readonly="1"/></span>
+                                <span class="pdb-tile-lbl">Today's Bills</span>
+                            </button>
+
+                            <button name="action_view_today_revenue" type="object" class="pdb-tile pdb-green">
+                                <span class="pdb-tile-icon">💰</span>
+                                <span class="pdb-tile-num"><field name="today_revenue" nolabel="1" readonly="1" widget="float" digits="[10,0]"/></span>
+                                <span class="pdb-tile-lbl">Today's Revenue ₹</span>
+                            </button>
+
+                            <button name="action_view_pending_bills" type="object" class="pdb-tile pdb-purple">
+                                <span class="pdb-tile-icon">📋</span>
+                                <span class="pdb-tile-num"><field name="pending_bills" nolabel="1" readonly="1"/></span>
+                                <span class="pdb-tile-lbl">Pending Bills</span>
+                            </button>
+
+                        </div>
+
+                        <!-- ROW 2 : STOCK STATUS + BILLS + REVENUE -->
+                        <div class="pdb-row2">
+
+                            <!-- STOCK STATUS -->
+                            <div class="pdb-panel">
+                                <div class="pdb-panel-hdr">📦 Stock Status</div>
+                                <div class="pdb-status-grid">
+
+                                    <button name="action_view_total_medicines" type="object" class="pdb-status-tile pdb-s-teal">
+                                        <span class="pdb-s-num"><field name="total_medicines" nolabel="1" readonly="1"/></span>
+                                        <span class="pdb-s-lbl">Total</span>
+                                    </button>
+
+                                    <button name="action_view_low_stock" type="object" class="pdb-status-tile pdb-s-orange">
+                                        <span class="pdb-s-num"><field name="low_stock" nolabel="1" readonly="1"/></span>
+                                        <span class="pdb-s-lbl">Low Stock</span>
+                                    </button>
+
+                                    <button name="action_view_out_of_stock" type="object" class="pdb-status-tile pdb-s-red">
+                                        <span class="pdb-s-num"><field name="out_of_stock" nolabel="1" readonly="1"/></span>
+                                        <span class="pdb-s-lbl">Out of Stock</span>
+                                    </button>
+
+                                    <button name="action_view_pending_bills" type="object" class="pdb-status-tile pdb-s-green">
+                                        <span class="pdb-s-num"><field name="pending_bills" nolabel="1" readonly="1"/></span>
+                                        <span class="pdb-s-lbl">Pending Bills</span>
+                                    </button>
+
+                                </div>
+                            </div>
+
+                            <!-- TODAY BILLS -->
+                            <div class="pdb-panel">
+                                <div class="pdb-panel-hdr">🧾 Today's Billing</div>
+                                <div class="pdb-bills-body">
+                                    <div class="pdb-bill-stats">
+                                        <div class="pdb-bstat">
+                                            <span class="pdb-bstat-num"><field name="today_bills" nolabel="1" readonly="1"/></span>
+                                            <span class="pdb-bstat-lbl">Bills Today</span>
+                                        </div>
+                                        <div class="pdb-bstat">
+                                            <span class="pdb-bstat-num"><field name="pending_bills" nolabel="1" readonly="1"/></span>
+                                            <span class="pdb-bstat-lbl">Pending</span>
+                                        </div>
+                                    </div>
+                                    <button name="%(action_hospital_pharmacy_billing)d" type="action" class="pdb-open-btn">
+                                        Open Billing →
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- REVENUE -->
+                            <div class="pdb-panel">
+                                <div class="pdb-panel-hdr">💰 Revenue</div>
+                                <div class="pdb-revenue-body">
+                                    <div class="pdb-rev-row">
+                                        <span>Today's Revenue</span>
+                                        <strong>₹ <field name="today_revenue" nolabel="1" readonly="1" widget="float" digits="[10,0]"/></strong>
+                                    </div>
+                                    <div class="pdb-rev-total">
+                                        <span>Total Today</span>
+                                        <strong>₹ <field name="today_revenue" nolabel="1" readonly="1" widget="float" digits="[10,0]"/></strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ROW 3 : QUICK ACTIONS -->
+                        <div class="pdb-row3">
+
+                            <button name="%(action_hospital_pharmacy_billing)d" type="action" class="pdb-action">
+                                <span class="pdb-action-icon">🧾</span>
+                                <strong>Billing</strong>
+                                <span>New bill</span>
+                            </button>
+
+                            <button name="%(action_hospital_pharmacy_stock_records)d" type="action" class="pdb-action">
+                                <span class="pdb-action-icon">📦</span>
+                                <strong>Stock</strong>
+                                <span>Medicine stock</span>
+                            </button>
+
+                            <button name="%(action_hospital_pharmacy_purchase_list_new)d" type="action" class="pdb-action">
+                                <span class="pdb-action-icon">🛒</span>
+                                <strong>Purchase</strong>
+                                <span>Purchase orders</span>
+                            </button>
+
+                            <button name="%(action_hospital_pharmacy_details)d" type="action" class="pdb-action">
+                                <span class="pdb-action-icon">ℹ️</span>
+                                <strong>Details</strong>
+                                <span>Pharmacy info</span>
+                            </button>
+
+                            <button name="action_view_pending_bills" type="object" class="pdb-action">
+                                <span class="pdb-action-icon">📋</span>
+                                <strong>Pending</strong>
+                                <span>Pending bills</span>
+                            </button>
+
+                            <button name="action_view_low_stock" type="object" class="pdb-action">
+                                <span class="pdb-action-icon">⚠️</span>
+                                <strong>Low Stock</strong>
+                                <span>Reorder alerts</span>
+                            </button>
+
+                            <button name="action_view_out_of_stock" type="object" class="pdb-action">
+                                <span class="pdb-action-icon">🚫</span>
+                                <strong>Out of Stock</strong>
+                                <span>Empty items</span>
+                            </button>
+
+                            <button name="action_view_today_revenue" type="object" class="pdb-action">
+                                <span class="pdb-action-icon">💰</span>
+                                <strong>Revenue</strong>
+                                <span>Today's sales</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- Pharmacy Dashboard Record -->
+    <record id="pharmacy_dashboard_record" model="hospital.pharmacy.dashboard">
+        <field name="name">Pharmacy Dashboard</field>
+    </record>
+
+    <!-- Pharmacy Dashboard Form Action -->
+    <record id="action_hospital_pharmacy_dashboard_form" model="ir.actions.act_window">
+        <field name="name">Pharmacy Dashboard</field>
+        <field name="res_model">hospital.pharmacy.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="pharmacy_dashboard_record"/>
+        <field name="target">current</field>
+        <field name="view_id" ref="view_hospital_pharmacy_dashboard_form"/>
+    </record>
+
+</odoo>

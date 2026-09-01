@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <template id="hospital_web_login"
+              inherit_id="web.login"
+              name="RIALKG Web Login">
+
+             ALWAYS SHOW LOGIN FORM
+             ===================================================== -->
+
+        <xpath expr="//form[@role='form']"
+               position="attributes">
+
+            <attribute name="t-attf-class">oe_login_form</attribute>
+
+        </xpath>
+
+
+             CHANGE EMAIL LABEL TO USERNAME
+             ===================================================== -->
+
+        <xpath expr="//label[@for='login']"
+               position="replace">
+
+            <label for="login"
+                   class="form-label">
+                Username
+            </label>
+
+        </xpath>
+
+
+             CHANGE LOGIN INPUT
+             ===================================================== -->
+
+        <xpath expr="//input[@name='login']"
+               position="attributes">
+
+            <attribute name="type">text</attribute>
+            <attribute name="placeholder">Enter your username</attribute>
+            <attribute name="autocomplete">username</attribute>
+
+        </xpath>
+
+
+             REMOVE CHOOSE A USER
+             ===================================================== -->
+
+        <xpath expr="//owl-component[@name='web.user_switch']"
+               position="replace"/>
+
+    </template>
+
+
+         REMOVE "USE A PASSKEY" BUTTON FROM LOGIN PAGE
+         ===================================================== -->
+
+    <template id="hospital_hide_passkey"
+              inherit_id="web.login_oauth"
+              name="RIALKG Hide Passkey"
+              priority="100">
+
+        <xpath expr="//t[@t-set='auth_btns']" position="after">
+            <!-- Override passkey_btn to empty list, so it is never appended -->
+            <t t-set="passkey_btn" t-value="[]"/>
+            <t t-set="auth_btns" t-value="[]"/>
+        </xpath>
+
+    </template>
+
+</odoo>

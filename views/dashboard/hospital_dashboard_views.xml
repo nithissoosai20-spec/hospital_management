@@ -1,15 +1,653 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <odoo>
 
-    <!-- 1. Hospital Dashboard Action -->
-    <record id="action_hospital_dashboard" model="ir.actions.act_window">
+    <!-- ADMIN DASHBOARD -->
+
+    <record id="view_hospital_admin_dashboard_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.admin.dashboard.form</field>
+        <field name="model">hospital.admin.dashboard</field>
+
+        <field name="arch" type="xml">
+
+            <form create="0" edit="0" delete="0">
+
+                <sheet style="
+                    height:100%;
+                    padding:0;
+                    margin:0;
+                    max-width:100%;
+                ">
+
+                    <div class="adb">
+
+                        <!-- ================= HEADER ================= -->
+
+                        <div class="adb-header">
+
+                            <div>
+
+                                <div class="adb-title">
+                                    🏥 Hospital Admin Dashboard
+                                </div>
+
+                                <div class="adb-subtitle">
+                                    Welcome, Administrator
+                                </div>
+
+                            </div>
+
+                            <div class="adb-date">
+                                <span>📅</span>
+                                <span>Today</span>
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================= KPI ROW ================= -->
+
+                        <div class="adb-kpi-row">
+
+                            <!-- USERS -->
+
+                            <button
+                                name="%(action_hospital_users)d"
+                                type="action"
+                                class="adb-kpi adb-blue"
+                            >
+
+                                <span class="adb-kpi-icon">👥</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="total_users"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Total Users
+                                </span>
+
+                            </button>
+
+
+                            <!-- PATIENTS -->
+
+                            <button
+                                name="%(action_hospital_patient)d"
+                                type="action"
+                                class="adb-kpi adb-green"
+                            >
+
+                                <span class="adb-kpi-icon">🧑‍⚕️</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="patient_count"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Total Patients
+                                </span>
+
+                            </button>
+
+
+                            <!-- APPOINTMENTS -->
+
+                            <button
+                                name="%(action_hospital_appointment_today)d"
+                                type="action"
+                                class="adb-kpi adb-purple"
+                            >
+
+                                <span class="adb-kpi-icon">📅</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="appointment_count"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Total Appointments
+                                </span>
+
+                            </button>
+
+
+                            <!-- TODAY APPOINTMENTS -->
+
+                            <button
+                                name="%(action_hospital_appointment_today)d"
+                                type="action"
+                                class="adb-kpi adb-orange"
+                            >
+
+                                <span class="adb-kpi-icon">🗓️</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="today_appointments"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Today's Appointments
+                                </span>
+
+                            </button>
+
+
+                            <!-- TOKENS -->
+
+                            <button
+                                name="%(action_hospital_token_patients_today)d"
+                                type="action"
+                                class="adb-kpi adb-cyan"
+                            >
+
+                                <span class="adb-kpi-icon">🎫</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="today_token_patients"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Today's Tokens
+                                </span>
+
+                            </button>
+
+
+                            <!-- LAB -->
+
+                            <button
+                                name="%(action_hospital_lab_appointments)d"
+                                type="action"
+                                class="adb-kpi adb-red"
+                                context="{
+                                    'search_default_appointment_date':
+                                    context_today()
+                                }"
+                            >
+
+                                <span class="adb-kpi-icon">🔬</span>
+
+                                <span class="adb-kpi-number">
+                                    <field
+                                        name="today_lab_tests"
+                                        nolabel="1"
+                                        readonly="1"
+                                    />
+                                </span>
+
+                                <span class="adb-kpi-label">
+                                    Today's Lab Tests
+                                </span>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- ================= MAIN ROW ================= -->
+
+                        <div class="adb-main-row">
+
+
+                            <!-- STAFF SUMMARY -->
+
+                            <div class="adb-panel">
+
+                                <div class="adb-panel-header">
+                                    👥 Staff Summary
+                                </div>
+
+                                <div class="adb-list">
+
+                                    <div class="adb-list-row">
+
+                                        <span class="adb-status-dot adb-green-dot"></span>
+
+                                        <span class="adb-list-label">
+                                            Active Users
+                                        </span>
+
+                                        <strong class="adb-list-number">
+                                            <field
+                                                name="active_users"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-list-row">
+
+                                        <span class="adb-status-dot adb-red-dot"></span>
+
+                                        <span class="adb-list-label">
+                                            Inactive Users
+                                        </span>
+
+                                        <strong class="adb-list-number">
+                                            <field
+                                                name="inactive_users"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-list-row">
+
+                                        <span class="adb-status-dot adb-purple-dot"></span>
+
+                                        <span class="adb-list-label">
+                                            Super Admins
+                                        </span>
+
+                                        <strong class="adb-list-number">
+                                            <field
+                                                name="super_admin_count"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-list-row">
+
+                                        <span class="adb-status-dot adb-blue-dot"></span>
+
+                                        <span class="adb-list-label">
+                                            Doctors
+                                        </span>
+
+                                        <strong class="adb-list-number">
+                                            <field
+                                                name="doctor_count"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-list-row">
+
+                                        <span class="adb-status-dot adb-orange-dot"></span>
+
+                                        <span class="adb-list-label">
+                                            Receptionists
+                                        </span>
+
+                                        <strong class="adb-list-number">
+                                            <field
+                                                name="receptionist_count"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- TODAY ACTIVITY -->
+
+                            <div class="adb-panel">
+
+                                <div class="adb-panel-header">
+                                    📊 Today's Activity
+                                </div>
+
+                                <div class="adb-activity">
+
+                                    <div class="adb-activity-box">
+
+                                        <span class="adb-activity-number">
+                                            <field
+                                                name="today_patients"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </span>
+
+                                        <span class="adb-activity-label">
+                                            New Patients
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="adb-activity-box">
+
+                                        <span class="adb-activity-number">
+                                            <field
+                                                name="today_appointments"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </span>
+
+                                        <span class="adb-activity-label">
+                                            Appointments
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="adb-activity-box">
+
+                                        <span class="adb-activity-number">
+                                            <field
+                                                name="today_token_patients"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </span>
+
+                                        <span class="adb-activity-label">
+                                            Tokens
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="adb-activity-box">
+
+                                        <span class="adb-activity-number">
+                                            <field
+                                                name="today_lab_tests"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </span>
+
+                                        <span class="adb-activity-label">
+                                            Lab Tests
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- REVENUE -->
+
+                            <div class="adb-panel">
+
+                                <div class="adb-panel-header">
+                                    💰 Revenue
+                                </div>
+
+                                <div class="adb-revenue">
+
+                                    <div class="adb-revenue-row">
+
+                                        <span>
+                                            Consultation
+                                        </span>
+
+                                        <strong>
+                                            ₹
+                                            <field
+                                                name="consultation_revenue"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-revenue-row">
+
+                                        <span>
+                                            Laboratory
+                                        </span>
+
+                                        <strong>
+                                            ₹
+                                            <field
+                                                name="lab_revenue"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="adb-revenue-total">
+
+                                        <span>
+                                            Total Revenue
+                                        </span>
+
+                                        <strong>
+                                            ₹
+                                            <field
+                                                name="total_revenue"
+                                                nolabel="1"
+                                                readonly="1"
+                                            />
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================= QUICK ACTIONS ================= -->
+
+                        <div class="adb-section-title">
+                            Quick Actions
+                        </div>
+
+
+                        <div class="adb-actions">
+
+
+                            <button
+                                name="%(action_hospital_users)d"
+                                type="action"
+                                class="adb-action"
+                            >
+
+                                <span class="adb-action-icon">👥</span>
+
+                                <strong>Users</strong>
+
+                                <span>Manage users</span>
+
+                            </button>
+
+
+                            <button
+                                name="%(action_hospital_patient)d"
+                                type="action"
+                                class="adb-action"
+                            >
+
+                                <span class="adb-action-icon">🧑‍⚕️</span>
+
+                                <strong>Patients</strong>
+
+                                <span>Patient records</span>
+
+                            </button>
+
+
+                            <button
+                                name="%(action_hospital_appointment_today)d"
+                                type="action"
+                                class="adb-action"
+                            >
+
+                                <span class="adb-action-icon">📅</span>
+
+                                <strong>Appointments</strong>
+
+                                <span>Today's list</span>
+
+                            </button>
+
+
+                            <button
+                                name="%(action_hospital_token_patients_today)d"
+                                type="action"
+                                class="adb-action"
+                            >
+
+                                <span class="adb-action-icon">🎫</span>
+
+                                <strong>Tokens</strong>
+
+                                <span>Today's tokens</span>
+
+                            </button>
+
+
+                            <button
+                                name="%(action_hospital_lab_appointments)d"
+                                type="action"
+                                class="adb-action"
+                                context="{
+                                    'search_default_appointment_date':
+                                    context_today()
+                                }"
+                            >
+
+                                <span class="adb-action-icon">🔬</span>
+
+                                <strong>Laboratory</strong>
+
+                                <span>Today's tests</span>
+
+                            </button>
+
+
+                            <button
+                                name="%(action_hospital_appointment_pending_payment)d"
+                                type="action"
+                                class="adb-action"
+                            >
+
+                                <span class="adb-action-icon">💳</span>
+
+                                <strong>Payments</strong>
+
+                                <span>Pending payments</span>
+
+                            </button>
+
+
+                        </div>
+
+                    </div>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+
+   
+
+         ADMIN DASHBOARD RECORD
+         ========================================================= -->
+
+    <record id="admin_dashboard_record"
+            model="hospital.admin.dashboard">
+
+        <field name="name">Admin Dashboard</field>
+
+    </record>
+
+
+         ADMIN DASHBOARD ACTION
+         ========================================================= -->
+
+    <record id="action_hospital_admin_dashboard_window"
+            model="ir.actions.act_window">
+
         <field name="name">Hospital Dashboard</field>
-        <field name="res_model">hospital.dashboard</field>
-        <field name="view_mode">kanban,form</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Hospital Management Dashboard
-            </p>
+
+        <field name="res_model">hospital.admin.dashboard</field>
+
+        <field name="view_mode">form</field>
+
+        <field name="res_id"
+               ref="admin_dashboard_record"/>
+
+        <field name="view_id"
+               ref="view_hospital_admin_dashboard_form"/>
+
+        <field name="target">current</field>
+
+    </record>
+
+         DASHBOARD ROUTER (SERVER ACTION)
+         Intercepts action_hospital_dashboard calls from old URLs
+         and intelligently routes users to their correct dashboard
+         without throwing Access Errors.
+         ========================================================= -->
+
+    <record id="action_hospital_dashboard" model="ir.actions.server">
+        <field name="name">Hospital Dashboard Router</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="state">code</field>
+        <field name="code">
+if env.user.has_group('hospital_management.group_hospital_super_admin') or env.user.has_group('hospital_management.group_hospital_admin'):
+    action = env.ref('hospital_management.action_hospital_admin_dashboard_window').sudo().read()[0]
+elif env.user.has_group('hospital_management.group_hospital_receptionist'):
+    action = env.ref('hospital_management.action_hospital_reception_dashboard').sudo().read()[0]
+elif env.user.has_group('hospital_management.group_hospital_doctor'):
+    action = env.ref('hospital_management.action_hospital_doctor_dashboard').sudo().read()[0]
+elif env.user.has_group('hospital_management.group_hospital_pharmacist'):
+    action = env.ref('hospital_management.action_hospital_pharmacy_dashboard_form').sudo().read()[0]
+else:
+    # Fallback
+    action = env.ref('hospital_management.action_hospital_admin_dashboard_window').sudo().read()[0]
         </field>
     </record>
 

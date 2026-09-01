@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-inherit="web.SwitchCompanyMenu"
+       t-inherit-mode="extension">
+
+        <xpath expr="//span[contains(@class, 'oe_topbar_name')]"
+               position="replace">
+
+            <span
+                class="oe_topbar_name d-none d-lg-block text-truncate"
+                t-esc="user.name"
+            />
+
+        </xpath>
+
+    </t>
+
+</templates>
+

@@ -2,9 +2,7 @@
 
 <odoo>
 
-    <!-- ================================================= -->
     <!-- DEPARTMENTS -->
-    <!-- ================================================= -->
 
     <record id="department_general_medicine" model="hospital.department">
         <field name="name">General Medicine</field>
@@ -55,9 +53,7 @@
     </record>
 
 
-    <!-- ================================================= -->
     <!-- ROLES -->
-    <!-- ================================================= -->
 
     <record id="role_doctor" model="hospital.role">
         <field name="name">Doctor</field>
@@ -110,9 +106,7 @@
         ])]"/>
     </record>
 
-    <!-- ================================================= -->
     <!-- DESIGNATIONS -->
-    <!-- ================================================= -->
 
     <!-- General Medicine -->
 
@@ -270,9 +264,7 @@
     </record>
 
 
-    <!-- ================================================= -->
     <!-- REPORTING PERSONS -->
-    <!-- ================================================= -->
 
     <record id="reporting_doctor_arun" model="hospital.reporting.person">
         <field name="name">Dr. Arun</field>

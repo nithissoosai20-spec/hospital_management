@@ -1,0 +1,333 @@
+   DOCTOR DASHBOARD — dark theme, no scroll, same format
+   ============================================================= */
+
+.o_form_view:has(.ddb),
+.o_form_view:has(.ddb) .o_form_renderer,
+.o_form_view:has(.ddb) .o_form_sheet_bg,
+.o_form_view:has(.ddb) .o_form_sheet {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #0f172a !important;
+    overflow: hidden !important;
+    height: 100% !important;
+}
+
+.ddb {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 6px;
+    padding: 8px 10px;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f172a;
+    overflow: hidden;
+}
+
+/* HEADER */
+.ddb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ddb-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #f1f5f9;
+    letter-spacing: 0.3px;
+}
+
+.ddb-subtitle {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 1px;
+}
+
+/* ROW 1 — 5 KPI TILES */
+.ddb-row1 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
+.ddb-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.ddb-tile:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.ddb-tile-icon { font-size: 16px; line-height: 1; }
+
+.ddb-tile-num {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+}
+
+.ddb-tile-num .o_field_widget,
+.ddb-tile-num span {
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    color: #fff !important;
+}
+
+.ddb-tile-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.80);
+    line-height: 1.2;
+}
+
+.ddb-green  { background: #16a34a; }
+.ddb-blue   { background: #2563eb; }
+.ddb-orange { background: #ea580c; }
+.ddb-cyan   { background: #0891b2; }
+.ddb-purple { background: #7c3aed; }
+
+/* ROW 2 — 3 PANELS */
+.ddb-row2 {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: 6px;
+    min-height: 0;
+}
+
+.ddb-panel {
+    background: #1e293b;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.ddb-panel-hdr {
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    border-bottom: 1px solid #334155;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Appointment status 2x2 */
+.ddb-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 6px;
+    flex: 1;
+    min-height: 0;
+}
+
+.ddb-status-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 6px;
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.ddb-status-tile:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.ddb-s-num {
+    font-size: 24px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+}
+
+.ddb-s-num .o_field_widget,
+.ddb-s-num span {
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    color: #fff !important;
+}
+
+.ddb-s-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.80);
+}
+
+.ddb-s-blue   { background: #1d4ed8; }
+.ddb-s-green  { background: #15803d; }
+.ddb-s-orange { background: #c2410c; }
+.ddb-s-purple { background: #6d28d9; }
+
+/* My patients panel */
+.ddb-patient-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    padding: 8px;
+    min-height: 0;
+}
+
+.ddb-patient-stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.ddb-pstat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.ddb-pstat-num {
+    font-size: 26px;
+    font-weight: 900;
+    color: #f1f5f9;
+    line-height: 1;
+}
+
+.ddb-pstat-num .o_field_widget,
+.ddb-pstat-num span {
+    font-size: 26px !important;
+    font-weight: 900 !important;
+    color: #f1f5f9 !important;
+}
+
+.ddb-pstat-lbl {
+    font-size: 10px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.ddb-open-btn {
+    width: 100%;
+    padding: 7px;
+    border: none;
+    border-radius: 7px;
+    background: #16a34a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.ddb-open-btn:hover { background: #15803d; }
+
+/* Today summary panel */
+.ddb-summary-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 8px;
+    flex: 1;
+    min-height: 0;
+}
+
+.ddb-summary-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 7px;
+}
+
+.ddb-summary-num {
+    font-size: 24px;
+    font-weight: 900;
+    color: #f1f5f9;
+    line-height: 1;
+}
+
+.ddb-summary-num .o_field_widget,
+.ddb-summary-num span {
+    font-size: 24px !important;
+    font-weight: 900 !important;
+    color: #f1f5f9 !important;
+}
+
+.ddb-summary-lbl {
+    font-size: 9px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* ROW 3 — QUICK ACTIONS */
+.ddb-row3 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+}
+
+.ddb-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 7px 4px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.ddb-action:hover {
+    transform: translateY(-2px);
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+.ddb-action:hover strong,
+.ddb-action:hover span {
+    color: #fff !important;
+}
+
+.ddb-action-icon { font-size: 16px; line-height: 1; }
+
+.ddb-action strong {
+    font-size: 10px;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.ddb-action span {
+    font-size: 9px;
+    color: #64748b;
+}

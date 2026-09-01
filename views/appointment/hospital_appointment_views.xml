@@ -2,242 +2,929 @@
 
 <odoo>
 
-    <!-- ===================================================== -->
-    <!-- Appointment List View -->
-    <!-- ===================================================== -->
+    <!-- APPOINTMENT LIST -->
 
     <record id="view_hospital_appointment_list" model="ir.ui.view">
 
         <field name="name">hospital.appointment.list</field>
+
         <field name="model">hospital.appointment</field>
 
         <field name="arch" type="xml">
 
-            <list>
+            <list
+                class="hospital_appointment_list"
+                limit="11"
+                delete="false"
+                create="false"
+                js_class="hospital_appointment_list"
+            >
 
-                <field name="name"/>
-                <field name="patient_id"/>
-                <field name="doctor_id"/>
-                <field name="department_id"/>
-                <field name="appointment_date"/>
-                <field name="appointment_time"
-                       widget="float_time"/>
-                <field name="visit_type"/>
-                <field name="priority"/>
-                <field name="token_number"/>
-                <field name="net_amount"/>
-                <field name="payment_status"/>
-                <field name="state"/>
+                <!-- HIDDEN / DISABLED COLUMNS -->
 
-            </list>
+                <field
+                    name="name"
+                    column_invisible="True"
+                />
+
+                <field
+                    name="transaction_id"
+                    column_invisible="True"
+                />
+
+                <field
+                    name="print_preference"
+                    column_invisible="True"
+                />
+
+                <field
+                    name="receipt_printed"
+                    column_invisible="True"
+                />
+
+                <!-- REQUIRED APPOINTMENT INFORMATION -->
+
+                <field
+                    name="patient_code"
+                    string="Patient ID"
+                />
+
+                <field
+                    name="patient_name"
+                    string="Patient Name"
+                />
+
+                <field
+                    name="patient_phone"
+                    string="Contact No."
+                />
+
+                <field
+                    name="appointment_date"
+                    string="Date"
+                />
+
+                <field
+                    name="token_number"
+                    string="Token No."
+                />
+
+                <field
+                    name="doctor_id"
+                    string="Doctor"
+                />
+
+                <field
+                    name="department_id"
+                    string="Department"
+                />
+
+                <field
+                    name="appointment_time"
+                    string="Visit Time"
+                    widget="float_time"
+                />
+
+                <field
+                    name="visit_type"
+                    string="Visit Type"
+                />
+
+                <field
+                    name="priority"
+                    string="Priority"
+                />
+
+                <field
+                    name="fees_type"
+                    string="Fees Type"
+                />
+
+                <field
+                    name="net_amount"
+                    string="Net Amount"
+                />
+
+                <field
+                    name="payment_status"
+                    string="Payment Status"
+                />
+
+                <field name="state" string="Status"/>
+<field name="has_lab_test" column_invisible="True"/>
+
+                <!-- ACTION BUTTONS -->
+                <!-- EYE: Always visible -->
+                <button
+                    name="action_view_appointment"
+                    type="object"
+                    icon="fa-eye"
+                    title="View"
+                    class="hospital_appointment_action btn-sm"
+                />
+
+                <!-- PENCIL: Real -->
+                <button
+                    name="action_edit_appointment"
+                    type="object"
+                    icon="fa-pencil"
+                    title="Edit"
+                    invisible="state == 'completed'"
+                    class="hospital_appointment_action btn-sm"
+                />
+                <!-- PENCIL: Fake (maintains layout) -->
+                <button
+                    name="action_dummy"
+                    type="object"
+                    icon="fa-pencil"
+                    invisible="state != 'completed'"
+                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
+                />
+
+                <!-- PRINTER: Real -->
+                <button
+                    name="action_print_receipt"
+                    type="object"
+                    icon="fa-print"
+                    title="Print Receipt"
+                    invisible="state != 'booked'"
+                    class="hospital_appointment_action btn-sm"
+                />
+                <!-- PRINTER: Fake (maintains layout) -->
+                <button
+                    name="action_dummy"
+                    type="object"
+                    icon="fa-print"
+                    invisible="state == 'booked'"
+                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
+                />
+
+                <!-- FLASK: Real -->
+                <button
+                    name="action_open_lab_test"
+                    type="object"
+                    icon="fa-flask"
+                    title="Lab Tests"
+                    invisible="has_lab_test == False"
+                    class="hospital_appointment_action btn-sm text-info"
+                />
+                <!-- FLASK: Fake (maintains layout) -->
+                <button
+                    name="action_dummy"
+                    type="object"
+                    icon="fa-flask"
+                    invisible="fees_type == 'lab'"
+                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
+                />
+    </list>
 
         </field>
 
     </record>
 
 
-    <!-- ===================================================== -->
-    <!-- Appointment Form View -->
-    <!-- ===================================================== -->
+    <!-- APPOINTMENT FORM -->
 
-    <record id="view_hospital_appointment_form" model="ir.ui.view">
+    <record
+        id="view_hospital_appointment_form"
+        model="ir.ui.view"
+    >
 
         <field name="name">hospital.appointment.form</field>
+
         <field name="model">hospital.appointment</field>
 
         <field name="arch" type="xml">
 
-            <form>
+            <form
+                string=""
+                class="hospital_appointment_form"
+               
+            >
 
-                <!-- ========================= -->
-                <!-- WORKFLOW BUTTONS -->
-                <!-- ========================= -->
+                <!-- CUSTOM PATIENT SEARCH TOOLBAR -->
 
-                <header>
+                <div class="hospital_appointment_search_toolbar">
 
-                    <!-- Draft → Booked -->
+                    <div class="hospital_appointment_search_box">
 
-                    <button
-                        name="action_book"
-                        string="Book Appointment"
-                        type="object"
-                        class="btn-primary"
-                        invisible="state != 'draft'"
-                    />
+                        <!-- SEARCH -->
 
-                    <!-- Booked → Completed -->
+                        <field
+                            name="search_patient"
+                            placeholder="Patient ID or Mobile Number"
+                            nolabel="1"
+                            readonly="context.get('view_only')"
+                        />
 
-                    <button
-                        name="action_complete"
-                        string="Mark Completed"
-                        type="object"
-                        class="btn-primary"
-                        invisible="state != 'booked'"
-                    />
+                        <!-- SEARCH BUTTON -->
 
-                    <!-- Draft/Booked → Cancelled -->
+                        <button
+                            name="action_search_patient"
+                            string="Search"
+                            type="object"
+                            class="btn-primary hospital_search_button"
+                            icon="fa-search"
+                            invisible="context.get('view_only')"
+                        />
 
-                    <button
-                        name="action_cancel"
-                        string="Cancel"
-                        type="object"
-                        invisible="state not in ('draft', 'booked')"
-                    />
+                        
+                        <!-- CLEAR -->
 
-                    <!-- Cancelled → Draft -->
-
-                    <button
-                        name="action_reset_to_draft"
-                        string="Reset to Draft"
-                        type="object"
-                        invisible="state != 'cancelled'"
-                    />
-
-                    <!-- Status -->
-
-                    <field
-                        name="state"
-                        widget="statusbar"
-                        statusbar_visible="draft,booked,completed,cancelled"
-                    />
-
-                </header>
-
-
-                <sheet>
-
-                    <!-- ========================= -->
-                    <!-- APPOINTMENT REFERENCE -->
-                    <!-- ========================= -->
-
-                    <div class="oe_title">
-
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                        <button
+                            name="action_clear_form"
+                            string="Clear"
+                            type="object"
+                            class="btn-secondary hospital_clear_button"
+                            icon="fa-eraser"
+                            invisible="context.get('view_only')"
+                        />
 
                     </div>
 
-
-                    <!-- ========================= -->
-                    <!-- PATIENT & DOCTOR -->
-                    <!-- ========================= -->
-
-                    <group string="Patient &amp; Doctor">
-
-                        <!-- LEFT: Patient selection -->
-                        <group string="Patient">
-
-                            <field name="patient_id"
-                                placeholder="Search Patient by Name, ID or Mobile"/>
-
-                            <separator string="Patient Preview"/>
-
-                            <field name="patient_code"
-                                readonly="1"/>
-
-                            <field name="patient_name"
-                                readonly="1"/>
-
-                            <field name="patient_age"
-                                readonly="1"/>
-
-                            <field name="patient_date_of_birth"
-                                readonly="1"/>
-
-                            <field name="patient_gender"
-                                readonly="1"/>
-
-                            <field name="patient_phone"
-                                readonly="1"/>
-
-                        </group>
+                </div>
 
 
-                        <!-- RIGHT: Doctor + appointment -->
-                        <group string="Appointment">
+                <!-- APPOINTMENT SHEET -->
 
-                            <field name="doctor_id"/>
+                <sheet class="hospital_appointment_sheet">
 
-                            <field name="department_id"
-                                readonly="1"/>
+                    <!-- TECHNICAL FIELDS -->
 
-                            <field name="appointment_date"/>
+                    <field
+                        name="state"
+                        invisible="1"
+                    />
 
-                            <field name="appointment_time"
-                                widget="float_time"/>
+                    <field
+                        name="patient_id"
+                        invisible="1"
+                    />
 
-                            <field name="token_number"
-                                readonly="1"/>
+                    <field
+                        name="patient_found"
+                        invisible="1"
+                    />
 
-                        </group>
+                    <field
+                        name="token_generated"
+                        invisible="1"
+                    />
 
-                    </group>
+                    <field
+                        name="receipt_printed"
+                        invisible="1"
+                    />
 
-                    <!-- ========================= -->
-                    <!-- APPOINTMENT DETAILS -->
-                    <!-- ========================= -->
-
-                    <group string="Appointment Details">
-
-                        <group>
-
-                            <field name="visit_type"/>
-
-                            <field name="priority"/>
-
-                        </group>
-
-
-                        <group>
-
-                            <field name="appointment_mode"/>
-
-                        </group>
-
-                    </group>
+                    <field
+                        name="token_printed"
+                        invisible="1"
+                    />
 
 
-                    <!-- ========================= -->
-                    <!-- REASON / SYMPTOMS -->
-                    <!-- ========================= -->
+                    <!-- HORIZONTAL APPOINTMENT WORKFLOW -->
 
-                    <group string="Reason / Symptoms">
+                    <div class="hospital_appointment_columns">
 
-                        <field name="reason"/>
+                        <!-- 1. PATIENT DETAILS -->
 
-                    </group>
+                        <div class="hospital_appointment_column hospital_patient_column">
+
+                            <div class="hospital_section_title">
+                                Patient Details
+                            </div>
+
+                            <!-- EXISTING PATIENT -->
+
+                            <div
+                                invisible="not patient_found"
+                                class="hospital_patient_found"
+                            >
+
+                                <div class="hospital_patient_grid">
+
+                                    <!-- PATIENT ID -->
+
+                                    <div>
+                                        <label
+                                            for="patient_code"
+                                            string="Patient ID"
+                                        />
+
+                                        <field
+                                            name="patient_code"
+                                            readonly="1"
+                                            nolabel="1"
+                                        />
+                                    </div>
 
 
-                    <!-- ========================= -->
-                    <!-- FEE & PAYMENT -->
-                    <!-- ========================= -->
+                                    <!-- PATIENT NAME -->
 
-                    <group string="Fee &amp; Payment">
+                                    <div>
+                                        <label
+                                            for="patient_name"
+                                            string="Patient Name"
+                                        />
 
-                        <group>
-
-                            <field name="consultation_fee"/>
-
-                            <field name="discount"/>
-
-                            <field
-                                name="net_amount"
-                                readonly="1"
-                            />
-
-                        </group>
+                                        <field
+                                            name="patient_name"
+                                            readonly="1"
+                                            nolabel="1"
+                                        />
+                                    </div>
 
 
-                        <group>
+                                    <!-- AGE -->
 
-                            <field name="payment_mode"/>
+                                    <div>
+                                        <label
+                                            for="patient_age"
+                                            string="Age"
+                                        />
 
-                            <field name="payment_status"/>
+                                        <field
+                                            name="patient_age"
+                                            readonly="1"
+                                            nolabel="1"
+                                        />
+                                    </div>
 
-                        </group>
 
-                    </group>
+                                    <!-- GENDER -->
+
+                                    <div>
+                                        <label
+                                            for="patient_gender"
+                                            string="Gender"
+                                        />
+
+                                        <field
+                                            name="patient_gender"
+                                            readonly="1"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- MOBILE -->
+
+                                    <div>
+                                        <label
+                                            for="patient_phone"
+                                            string="Mobile"
+                                        />
+
+                                        <field
+                                            name="patient_phone"
+                                            readonly="1"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- HISTORY -->
+
+                                    <div class="hospital_history_button">
+
+                                        <button
+                                            name="action_view_patient_history"
+                                            string="History"
+                                            type="object"
+                                            class="btn-secondary btn-sm"
+                                            icon="fa-history"
+                                        />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- NEW PATIENT -->
+
+                            <div
+                                invisible="patient_found or context.get('view_only')"
+                                class="hospital_new_patient"
+                            >
+
+                                <div class="hospital_new_patient_grid">
+
+                                    <!-- PATIENT NAME -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_name"
+                                            string="Patient Name"
+                                        />
+
+                                        <field
+                                            name="new_patient_name"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- MOBILE -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_phone"
+                                            string="Mobile"
+                                        />
+
+                                        <field
+                                            name="new_patient_phone"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- DATE OF BIRTH -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_date_of_birth"
+                                            string="Date of Birth"
+                                        />
+
+                                        <field
+                                            name="new_patient_date_of_birth"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- GENDER -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_gender"
+                                            string="Gender"
+                                        />
+
+                                        <field
+                                            name="new_patient_gender"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- BLOOD GROUP -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_blood_group"
+                                            string="Blood Group"
+                                        />
+
+                                        <field
+                                            name="new_patient_blood_group"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+
+                                    <!-- EMAIL -->
+
+                                    <div>
+                                        <label
+                                            for="new_patient_email"
+                                            string="Email"
+                                        />
+
+                                        <field
+                                            name="new_patient_email"
+                                            nolabel="1"
+                                        />
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ADDRESS -->
+
+                                <div class="hospital_address_field">
+
+                                    <label
+                                        for="new_patient_address"
+                                        string="Address"
+                                    />
+
+                                    <field
+                                        name="new_patient_address"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- 2. APPOINTMENT DETAILS -->
+
+                        <div class="hospital_appointment_column hospital_appointment_column_middle">
+
+                            <div class="hospital_section_title">
+                                Appointment Details
+                            </div>
+
+
+                            <div class="hospital_appointment_grid">
+
+                                <!-- DOCTOR -->
+
+                                <div>
+                                    <label
+                                        for="doctor_id"
+                                        string="Doctor"
+                                    />
+
+                                    <field
+                                        name="doctor_id"
+                                        nolabel="1"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- DEPARTMENT -->
+
+                                <div>
+                                    <label
+                                        for="department_id"
+                                        string="Department"
+                                    />
+
+                                    <field
+                                        name="department_id"
+                                        readonly="1"
+                                        nolabel="1"
+                                    />
+                                </div>
+
+
+                                <!-- APPOINTMENT DATE -->
+
+                                <div>
+                                    <label
+                                        for="appointment_date"
+                                        string="Appointment Date"
+                                    />
+
+                                    <field
+                                        name="appointment_date"
+                                        widget="date"
+                                        options="{'format': 'dd/MM/yyyy'}"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- APPOINTMENT TIME -->
+
+                                <div>
+                                    <label
+                                        for="appointment_time"
+                                        string="Appointment Time"
+                                    />
+
+                                    <field
+                                        name="appointment_time"
+                                        widget="float_time"
+                                        nolabel="1"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- VISIT TYPE -->
+
+                                <div>
+                                    <label
+                                        for="visit_type"
+                                        string="Visit Type"
+                                    />
+
+                                    <field
+                                        name="visit_type"
+                                        nolabel="1"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- PRIORITY -->
+
+                                <div>
+                                    <label
+                                        for="priority"
+                                        string="Priority"
+                                    />
+
+                                    <field
+                                        name="priority"
+                                        nolabel="1"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- APPOINTMENT MODE -->
+
+                                <div>
+                                    <label
+                                        for="appointment_mode"
+                                        string="Appointment Mode"
+                                    />
+
+                                    <field
+                                        name="appointment_mode"
+                                        nolabel="1"
+                                        readonly="
+                                            context.get('view_only')
+                                            or state in ('completed','cancelled')
+                                        "
+                                    />
+                                </div>
+
+
+                                <!-- TOKEN NUMBER -->
+
+                                <div class="hospital-token-wrapper">
+
+                                    <div class="hospital-token-label">
+                                        🎟 TOKEN NUMBER
+                                    </div>
+
+                                    <div class="hospital-token-box">
+
+                                        <field
+                                            name="token_number"
+                                            readonly="1"
+                                            nolabel="1"
+                                            class="hospital_token_number"
+                                        />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- 3. FEE & PAYMENT -->
+
+                        <div
+                            class="hospital_appointment_column hospital_payment_column"
+                            invisible="not token_generated"
+                        >
+
+                            <div class="hospital_section_title">
+                                Fee &amp; Payment
+                            </div>
+
+
+                            <!-- FEES -->
+
+                            <div class="hospital_payment_group">
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="consultation_fee"
+                                        string="Consultation Fee"
+                                    />
+
+                                    <!-- RECEPTIONIST -->
+
+                                    <field
+                                        name="consultation_fee"
+                                        readonly="1"
+                                        nolabel="1"
+                                        groups="hospital_management.group_hospital_receptionist"
+                                    />
+
+                                    <!-- ADMIN / SUPER ADMIN -->
+
+                                    <field
+                                        name="consultation_fee"
+                                        nolabel="1"
+                                        groups="
+                                            hospital_management.group_hospital_admin,
+                                            hospital_management.group_hospital_super_admin
+                                        "
+                                    />
+
+                                </div>
+
+
+                                <!-- DISCOUNT -->
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="discount"
+                                        string="Discount"
+                                    />
+
+                                    <field
+                                        name="discount"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+
+                                <!-- NET AMOUNT -->
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="net_amount"
+                                        string="Net Amount"
+                                    />
+
+                                    <field
+                                        name="net_amount"
+                                        readonly="1"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+
+                                <!-- PAYMENT MODE -->
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="payment_mode"
+                                        string="Payment Mode"
+                                    />
+
+                                    <field
+                                        name="payment_mode"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+
+                                <!-- PAYMENT STATUS -->
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="payment_status"
+                                        string="Payment Status"
+                                    />
+
+                                    <field
+                                        name="payment_status"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+
+                                <!-- TRANSACTION ID -->
+
+                                <div class="hospital_payment_field">
+
+                                    <label
+                                        for="transaction_id"
+                                        string="Transaction ID"
+                                    />
+
+                                    <field
+                                        name="transaction_id"
+                                        nolabel="1"
+                                    />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+
+
+                    <div class="hospital_action_buttons">
+
+                        <!-- GENERATE TOKEN -->
+
+                        <button
+                            name="action_generate_token"
+                            string="Generate Token"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-ticket"
+                            invisible="
+                                context.get('view_only')
+                                or state != 'draft'
+                                or token_generated                                
+                            "
+                        />
+
+
+                        <!-- BOOK -->
+
+                        <button
+                            name="action_book"
+                            string="Book Appointment"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-check"
+                            invisible="
+                                state != 'draft'                                
+                                or payment_status != 'paid'
+
+                            "
+                        />
+
+                        <!-- LAB FEES -->
+
+                        <button
+                            name="action_set_lab_fees"
+                            string="Lab Fees"
+                            type="object"
+                            class="btn-primary"
+                            icon="fa-flask"
+                            invisible="
+                                context.get('view_only')
+                                or state != 'booked'
+                            "
+                        />
+
+
+                        <!-- PRINT TOKEN -->
+
+                        <button
+                            name="action_print_token"
+                            string="Print Token"
+                            type="object"
+                            class="btn-success"
+                            icon="fa-ticket"
+                            invisible="
+                                state not in ('booked','completed')
+                                or not token_number
+                            "
+                        />
+
+
+                        <!-- PRINT RECEIPT -->
+
+                        <button
+                            name="action_print_receipt"
+                            string="Print Receipt"
+                            type="object"
+                            class="btn-success"
+                            icon="fa-print"
+                            invisible="
+                                state not in ('booked','completed')
+                            "
+                        />
+
+
+                        <!-- CANCEL -->
+
+                        <button
+                            name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-secondary"
+                            icon="fa-times"
+                            invisible="
+                                context.get('view_only')
+                                or state not in ('draft','booked')
+                            "
+                        />
+
+                    </div>
 
                 </sheet>
 
@@ -248,20 +935,20 @@
     </record>
 
 
-    <!-- ===================================================== -->
-    <!-- Appointment Action -->
-    <!-- ===================================================== -->
+    <!-- APPOINTMENT ACTION -->
 
     <record
         id="action_hospital_appointment"
         model="ir.actions.act_window"
     >
 
-        <field name="name">Appointments</field>
+        <field name="name">&#8203;</field>
 
         <field name="res_model">hospital.appointment</field>
 
         <field name="view_mode">list,form</field>
+
+        <field name="limit">9</field>
 
     </record>
 

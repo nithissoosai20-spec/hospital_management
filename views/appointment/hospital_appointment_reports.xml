@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_hospital_a4" model="report.paperformat">
+        <field name="name">Hospital A4</field>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_height">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line">False</field>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_hospital_appointment_receipt" model="ir.actions.report">
+        <field name="name">Appointment Receipt</field>
+        <field name="model">hospital.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
+        <field name="report_name">hospital_management.report_hospital_appointment_receipt</field>
+        <field name="report_file">hospital_management.report_hospital_appointment_receipt</field>
+        <field name="binding_model_id" ref="hospital_management.model_hospital_appointment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_hospital_appointment_token" model="ir.actions.report">
+        <field name="name">Appointment Token</field>
+        <field name="model">hospital.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
+        <field name="report_name">hospital_management.report_hospital_appointment_token</field>
+        <field name="report_file">hospital_management.report_hospital_appointment_token</field>
+        <field name="binding_model_id" ref="hospital_management.model_hospital_appointment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_hospital_appointment_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                        
+                        <!-- Content -->
+                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                            
+                            <div style="text-align:center; margin:0 0 20px 0;">
+                                <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
+                                    APPOINTMENT RECEIPT
+                                </h2>
+                            </div>
+
+                            <div style="text-align:center; margin-bottom: 30px;">
+                                <div style="font-size:12px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
+                                <div style="font-size:32px; font-weight:bold; color:#1e3a8a;"><span t-field="doc.token_number"/></div>
+                            </div>
+                            
+                            <div class="row mb-4 pt-4">
+                                <div class="col-6">
+                                    <strong>Appointment No:</strong> <span t-field="doc.name"/><br/>
+                                    <strong>Patient:</strong> <span t-field="doc.patient_name"/><br/>
+                                    <strong>UHID:</strong> <span t-field="doc.patient_code"/><br/>
+                                    <strong>Phone:</strong> <span t-field="doc.patient_phone"/><br/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Date:</strong> <span t-field="doc.date_of_appointment"/><br/>
+                                    <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
+                                    <strong>Department:</strong> <span t-field="doc.department_id.name"/><br/>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 30px; margin-bottom: 10px; font-weight: bold; font-size: 16px;">Vitals</div>
+                            
+                            <table class="table table-sm" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Blood Pressure (mmHg)</th>
+                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Height (cm)</th>
+                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Weight (kg)</th>
+                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Temperature (C)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
+                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
+                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
+                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <div class="row" style="margin-top: 50px;">
+                                <div class="col-8">
+                                </div>
+                                <div class="col-3 text-center">
+                                    <br/><br/><br/>
+                                    <strong>Signature</strong>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+    
+    <template id="report_hospital_appointment_token">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.basic_layout">
+                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                        
+                        <!-- Content -->
+                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                            
+                            <div style="text-align:center; margin:0 0 20px 0;">
+                                <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
+                                    APPOINTMENT TOKEN
+                                </h2>
+                            </div>
+
+                            <div style="text-align:center; margin-bottom: 30px; margin-top: 30px;">
+                                <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
+                                <div style="font-size:48px; font-weight:bold; color:#1e3a8a; margin-top: 10px;"><span t-field="doc.token_number"/></div>
+                            </div>
+                            
+                            <div class="row mb-4 pt-4 mt-5">
+                                <div class="col-6">
+                                    <strong>Patient:</strong> <span t-field="doc.patient_name"/><br/>
+                                    <strong>UHID:</strong> <span t-field="doc.patient_code"/><br/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Date:</strong> <span t-field="doc.date_of_appointment"/><br/>
+                                    <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

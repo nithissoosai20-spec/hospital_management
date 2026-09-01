@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- Reception Dashboard Record -->
+    <record id="reception_dashboard_record"
+            model="hospital.reception.dashboard">
+
+        <field name="name">Reception Dashboard</field>
+
+    </record>
+
+
+    <!-- Today's Appointments -->
+    <record id="action_hospital_appointment_today"
+            model="ir.actions.act_window">
+
+        <field name="name">Today's Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('appointment_date', '=', context_today())]
+        </field>
+
+    </record>
+
+
+    <!-- Today's Tokens -->
+    <record id="action_hospital_token_patients_today"
+            model="ir.actions.act_window">
+
+        <field name="name">Today's Tokens</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [
+                ('appointment_date', '=', context_today()),
+                ('token_generated', '=', True)
+            ]
+        </field>
+
+    </record>
+
+
+    <!-- Waiting Appointments -->
+    <record id="action_hospital_appointment_waiting"
+            model="ir.actions.act_window">
+
+        <field name="name">Waiting Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('state', '=', 'draft')]
+        </field>
+
+    </record>
+
+
+    <!-- Pending Payments -->
+    <record id="action_hospital_appointment_pending_payment"
+            model="ir.actions.act_window">
+
+        <field name="name">Pending Payments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('payment_status', 'in', ['pending', 'partial'])]
+        </field>
+
+    </record>
+
+
+    <!-- Booked Appointments -->
+    <record id="action_hospital_appointment_booked"
+            model="ir.actions.act_window">
+
+        <field name="name">Booked Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('state', '=', 'booked')]
+        </field>
+
+    </record>
+
+
+    <!-- Completed Appointments -->
+    <record id="action_hospital_appointment_completed"
+            model="ir.actions.act_window">
+
+        <field name="name">Completed Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('state', '=', 'completed')]
+        </field>
+
+    </record>
+
+
+    <!-- Cancelled Appointments -->
+    <record id="action_hospital_appointment_cancelled"
+            model="ir.actions.act_window">
+
+        <field name="name">Cancelled Appointments</field>
+        <field name="res_model">hospital.appointment</field>
+        <field name="view_mode">list,form</field>
+
+        <field name="domain">
+            [('state', '=', 'cancelled')]
+        </field>
+
+    </record>
+
+</odoo>

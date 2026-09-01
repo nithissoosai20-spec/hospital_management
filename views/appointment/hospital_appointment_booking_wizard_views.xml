@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- APPOINTMENT BOOKING SUCCESS POPUP -->
+
+    <record
+        id="view_hospital_appointment_booking_wizard"
+        model="ir.ui.view"
+    >
+
+        <field name="name">hospital.appointment.booking.wizard.form</field>
+
+        <field name="model">hospital.appointment.booking.wizard</field>
+
+        <field name="arch" type="xml">
+
+            <!--
+                No string="Appointment Booked" here.
+                This removes the top-left modal title.
+            -->
+
+            <form>
+
+                <sheet>
+
+                    <!-- MAIN CONTAINER -->
+
+                    <div
+                        style="
+                            padding:25px 30px 20px 30px;
+                            text-align:center;
+                        "
+                    >
+
+                        <!-- SUCCESS ICON -->
+
+                        <div
+                            style="
+                                font-size:48px;
+                                line-height:55px;
+                                color:#28a745;
+                                margin-bottom:8px;
+                            "
+                        >
+                            ✓
+                        </div>
+
+
+                        <!-- SUCCESS TITLE -->
+
+                        <div
+                            style="
+                                font-size:24px;
+                                font-weight:700;
+                                color:#198754;
+                                margin-bottom:20px;
+                            "
+                        >
+                            Appointment Booked Successfully
+                        </div>
+
+
+                        <!-- HORIZONTAL LINE -->
+
+                        <div
+                            style="
+                                border-top:1px solid #e5e7eb;
+                                margin:0 0 20px 0;
+                            "
+                        />
+
+
+                        <!-- DETAILS -->
+
+                        <div
+                            style="
+                                display:flex;
+                                align-items:center;
+                                justify-content:space-between;
+                                text-align:left;
+                                margin-bottom:20px;
+                            "
+                        >
+
+                            <!-- LEFT SIDE -->
+
+                            <div
+                                style="
+                                    width:48%;
+                                    padding-right:20px;
+                                "
+                            >
+
+                                <!-- PATIENT ID -->
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        margin-bottom:18px;
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            width:38px;
+                                            font-size:24px;
+                                            color:#5b2aa8;
+                                        "
+                                    >
+                                        👤
+                                    </div>
+
+                                    <div>
+
+                                        <div
+                                            style="
+                                                font-size:14px;
+                                                font-weight:600;
+                                                color:#555;
+                                                margin-bottom:2px;
+                                            "
+                                        >
+                                            Patient ID
+                                        </div>
+
+                                        <field
+                                            name="patient_id_display"
+                                            readonly="1"
+                                            nolabel="1"
+                                            style="
+                                                font-size:20px;
+                                                font-weight:700;
+                                                color:#222;
+                                            "
+                                        />
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- PATIENT NAME -->
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            width:38px;
+                                            font-size:24px;
+                                            color:#5b2aa8;
+                                        "
+                                    >
+                                        👤
+                                    </div>
+
+                                    <div>
+
+                                        <div
+                                            style="
+                                                font-size:14px;
+                                                font-weight:600;
+                                                color:#555;
+                                                margin-bottom:2px;
+                                            "
+                                        >
+                                            Patient
+                                        </div>
+
+                                        <field
+                                            name="patient_name"
+                                            readonly="1"
+                                            nolabel="1"
+                                            style="
+                                                font-size:18px;
+                                                font-weight:600;
+                                                color:#222;
+                                            "
+                                        />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- VERTICAL DIVIDER -->
+
+                            <div
+                                style="
+                                    width:1px;
+                                    height:105px;
+                                    background:#e5e7eb;
+                                "
+                            />
+
+
+                            <!-- RIGHT SIDE - TOKEN -->
+
+                            <div
+                                style="
+                                    width:48%;
+                                    padding-left:25px;
+                                    text-align:left;
+                                "
+                            >
+
+                                <!-- TOKEN LABEL -->
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        align-items:center;
+                                        margin-bottom:5px;
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            font-size:24px;
+                                            color:#5b2aa8;
+                                            margin-right:10px;
+                                        "
+                                    >
+                                        🎟
+                                    </div>
+
+                                    <div
+                                        style="
+                                            font-size:16px;
+                                            font-weight:700;
+                                            color:#333;
+                                        "
+                                    >
+                                        Token Number
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ================= TOKEN NUMBER ================= -->
+
+                                <!-- TOKEN NUMBER -->
+
+                                <div class="hospital-token-wrapper">
+
+                                    <div class="hospital-token-label">
+                                        🎟 TOKEN NUMBER
+                                    </div>
+
+                                    <div class="hospital-token-box">
+                                        <field
+                                            name="token_number"
+                                            readonly="1"
+                                            nolabel="1"
+                                            class="hospital_token_number"
+                                        />
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- HORIZONTAL LINE -->
+
+                        <div
+                            style="
+                                border-top:1px solid #e5e7eb;
+                                margin:0 0 20px 0;
+                            "
+                        />
+
+
+                        <!-- PRINT QUESTION -->
+
+                        <div
+                            style="
+                                font-size:17px;
+                                font-weight:600;
+                                text-align:center;
+                                margin-bottom:20px;
+                            "
+                        >
+                            Do you want to print the receipt now?
+                        </div>
+
+
+                        <!-- BUTTONS -->
+
+                        <footer
+                            style="
+                                text-align:center;
+                            "
+                        >
+
+                            <button
+                                name="action_print_now"
+                                string="Print Now"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-print"
+                            />
+
+                            <button
+                                name="action_print_later"
+                                string="Print Later"
+                                type="object"
+                                class="btn-secondary"
+                                icon="fa-clock-o"
+                            />
+
+                        </footer>
+
+                    </div>
+
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
+
+</odoo>

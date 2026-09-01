@@ -2,45 +2,58 @@
 
 <odoo>
 
-    <!-- ================================================= -->
-    <!-- HOSPITAL MANAGEMENT -->
-    <!-- ================================================= -->
+    <!-- HOSPITAL MANAGEMENT ROOT -->
 
     <menuitem
         id="menu_hospital_management"
-        name="Hospital Management"
+        name="Hospital"
         sequence="10"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist,hospital_management.group_hospital_pharmacist"
+        web_icon="hospital_management,static/description/icon.png"
     />
 
 
-    <!-- ================================================= -->
     <!-- ADMIN DASHBOARD -->
-    <!-- ================================================= -->
+    <!-- ADMIN + SUPER ADMIN -->
 
     <menuitem
         id="menu_hospital_dashboard"
-        name="Dashbosard"
+        name="Dashboard"
         parent="menu_hospital_management"
-        action="action_hospital_dashboard_admin"
+        action="action_hospital_dashboard"
         sequence="10"
-        groups="hospital_management.group_hospital_admin"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
     />
 
 
     <!-- RECEPTION DASHBOARD -->
+    <!-- RECEPTIONIST ONLY -->
+
     <menuitem
         id="menu_hospital_dashboard_reception"
         name="Dashboard"
         parent="menu_hospital_management"
-        action="action_hospital_dashboard_receptionist"
+        action="action_hospital_reception_dashboard"
         sequence="10"
         groups="hospital_management.group_hospital_receptionist"
     />
 
-    <!-- ================================================= -->
+
+    <!-- DOCTOR DASHBOARD -->
+    <!-- DOCTOR ONLY -->
+
+    <menuitem
+        id="menu_hospital_dashboard_doctor"
+        name="Dashboard"
+        parent="menu_hospital_management"
+        action="action_hospital_doctor_dashboard"
+        sequence="10"
+        groups="hospital_management.group_hospital_doctor"
+    />
+
+
     <!-- USERS -->
-    <!-- ================================================= -->
+    <!-- ADMIN + SUPER ADMIN -->
 
     <menuitem
         id="menu_hospital_users"
@@ -52,9 +65,8 @@
     />
 
 
-    <!-- ================================================= -->
     <!-- USER ACTIVITIES -->
-    <!-- ================================================= -->
+    <!-- SUPER ADMIN ONLY -->
 
     <menuitem
         id="menu_hospital_user_activity"
@@ -62,13 +74,12 @@
         parent="menu_hospital_management"
         action="action_hospital_user_activity"
         sequence="25"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+        groups="hospital_management.group_hospital_super_admin"
     />
 
 
-    <!-- ================================================= -->
     <!-- PATIENTS -->
-    <!-- ================================================= -->
+    <!-- SUPER ADMIN + DOCTOR -->
 
     <menuitem
         id="menu_hospital_patients"
@@ -76,24 +87,25 @@
         parent="menu_hospital_management"
         action="action_hospital_patient"
         sequence="30"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor"
     />
 
 
-        <!-- Doctors Submenu -->
+    <!-- DOCTORS -->
+    <!-- SUPER ADMIN + DOCTOR -->
+
     <menuitem
         id="menu_hospital_doctors"
         name="Doctors"
         parent="menu_hospital_management"
         action="action_hospital_doctors"
         sequence="35"
-        groups="hospital_management.group_hospital_receptionist,hospital_management.group_hospital_doctor,hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+        groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor"
     />
 
 
-    <!-- ================================================= -->
     <!-- APPOINTMENTS -->
-    <!-- ================================================= -->
+    <!-- SUPER ADMIN + DOCTOR + RECEPTIONIST -->
 
     <menuitem
         id="menu_hospital_appointments"
@@ -101,18 +113,19 @@
         parent="menu_hospital_management"
         action="action_hospital_appointment"
         sequence="40"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist"
     />
-    <!-- ===================================================== -->
+
+
     <!-- LAB -->
-    <!-- ===================================================== -->
+    <!-- SUPER ADMIN ONLY -->
 
     <menuitem
         id="menu_hospital_lab"
         name="Lab"
         parent="menu_hospital_management"
         sequence="50"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_super_admin"
     />
 
 
@@ -122,7 +135,7 @@
         parent="menu_hospital_lab"
         action="action_hospital_lab_appointments"
         sequence="10"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_super_admin"
     />
 
 
@@ -132,6 +145,117 @@
         parent="menu_hospital_lab"
         action="action_hospital_lab_tests"
         sequence="20"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_receptionist"
+        groups="hospital_management.group_hospital_super_admin"
     />
+
+
+    <!-- PHARMACY -->
+
+    <menuitem
+        id="menu_hospital_pharmacy_dashboard"
+        name="Dashboard"
+        parent="menu_hospital_management"
+        action="action_hospital_pharmacy_dashboard_form"
+        sequence="10"
+        groups="hospital_management.group_hospital_pharmacist"
+    />
+
+
+    <menuitem
+        id="menu_hospital_pharmacy_billing"
+        name="Billing"
+        parent="menu_hospital_management"
+        action="action_hospital_pharmacy_bill_window"
+        sequence="20"
+        groups="hospital_management.group_hospital_pharmacist"
+    />
+
+
+    <menuitem
+        id="menu_hospital_pharmacy_purchase_root"
+        name="Purchase Orders"
+        parent="menu_hospital_management"
+        sequence="50"
+        groups="hospital_management.group_hospital_pharmacist"
+    />
+    <menuitem
+        id="menu_hospital_pharmacy_purchase_new"
+        name="New"
+        parent="menu_hospital_pharmacy_purchase_root"
+        action="action_hospital_pharmacy_purchase_list_new"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_hospital_pharmacy_purchase_existing"
+        name="Existing"
+        parent="menu_hospital_pharmacy_purchase_root"
+        action="action_hospital_pharmacy_purchase_list_existing"
+        sequence="20"
+    />
+
+
+    <menuitem 
+        id="menu_hospital_pharmacy_payment" 
+        name="Payments" 
+        parent="menu_hospital_management" 
+        action="action_hospital_pharmacy_payment" 
+        sequence="65"
+        groups="hospital_management.group_hospital_pharmacist"/>
+
+    <menuitem 
+        id="menu_hospital_pharmacy_purchase_invoice" 
+        name="Purchase Invoices" 
+        parent="menu_hospital_management" 
+        action="action_hospital_pharmacy_purchase_invoice" 
+        sequence="60"
+        groups="hospital_management.group_hospital_pharmacist"/>
+        
+    <menuitem
+        id="menu_hospital_purchase_intent_root"
+        name="Purchase Intent"
+        parent="menu_hospital_management"
+        sequence="40"
+        groups="hospital_management.group_hospital_pharmacist"
+    />
+    <menuitem
+        id="menu_hospital_purchase_intent_new"
+        name="New"
+        parent="menu_hospital_purchase_intent_root"
+        action="action_hospital_purchase_intent_new"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_hospital_purchase_intent_existing"
+        name="Existing"
+        parent="menu_hospital_purchase_intent_root"
+        action="action_hospital_purchase_intent_existing"
+        sequence="20"
+    />
+
+    <menuitem
+        id="menu_hospital_pharmacy_stock"
+        name="Stock"
+        parent="menu_hospital_management"
+        action="action_hospital_pharmacy_stock_records"
+        sequence="30"
+        groups="hospital_management.group_hospital_pharmacist"
+    />
+
+
+
+
+
+    <!-- CONSULTATION FEES -->
+    <!-- ADMIN / SUPER ADMIN ONLY -->
+
+    <menuitem
+        id="menu_hospital_consultation_fees"
+        name="Consultation Fees"
+        parent="menu_hospital_management"
+        action="action_hospital_consultation_fees"
+        sequence="60"
+        groups="hospital_management.group_hospital_admin"
+    />
+
+
 </odoo>

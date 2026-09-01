@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <!-- PHARMACY STOCK ACTION -->
+
+    <record
+        id="action_hospital_pharmacy_stock_records"
+        model="ir.actions.act_window"
+    >
+
+        <field name="name">Pharmacy Stock</field>
+
+        <field name="res_model">hospital.pharmacy.stock</field>
+
+        <field name="view_mode">list,form</field>
+
+        <field name="help" type="html">
+
+            <p class="o_view_nocontent_smiling_face">
+                Create your first medicine stock record.
+            </p>
+
+            <p>
+                Manage medicines, batches, expiry dates and quantities.
+            </p>
+
+        </field>
+
+    </record>
+
+
+    <!-- STOCK LIST VIEW -->
+
+    <record
+        id="view_hospital_pharmacy_stock_list"
+        model="ir.ui.view"
+    >
+
+        <field name="name">hospital.pharmacy.stock.list</field>
+
+        <field name="model">hospital.pharmacy.stock</field>
+
+        <field name="arch" type="xml">
+
+            <list
+                string="Pharmacy Stock"
+                
+                default_order="medicine_name asc"
+            >
+
+                <field
+                    name="medicine_code"
+                    string="Code"
+                />
+
+                <field
+                    name="medicine_name"
+                    string="Medicine"
+                />
+
+                <field
+                    name="category"
+                    string="Category"
+                />
+
+                <field
+                    name="batch_number"
+                    string="Batch"
+                />
+
+                <field
+                    name="expiry_date"
+                    string="Expiry Date"
+                />
+
+                <field name="total_stock"/><field name="reorder_level"/>
+                                <field name="emergency_stock"/><field name="quantity"/>
+                
+                <field name="is_reorder_needed" widget="boolean_toggle" readonly="1" optional="show"/>
+
+                
+
+                <field
+                    name="selling_price"
+                    string="Selling Price"
+                />
+
+                <field
+                    name="stock_status"
+                    string="Status"
+                    widget="badge"
+                    decoration-success="stock_status == 'available'"
+                    decoration-warning="stock_status == 'low'"
+                    decoration-danger="stock_status in ('critical', 'out', 'expired')"
+                />
+
+            </list>
+
+        </field>
+
+    </record>
+
+
+    <!-- STOCK FORM VIEW -->
+
+    <record
+        id="view_hospital_pharmacy_stock_form"
+        model="ir.ui.view"
+    >
+
+        <field name="name">hospital.pharmacy.stock.form</field>
+
+        <field name="model">hospital.pharmacy.stock</field>
+
+        <field name="arch" type="xml">
+
+            <form string="Medicine Stock">
+                <sheet>
+                    
+                    
+                    <div class="oe_title">
+                        <label for="medicine_name" string="Medicine Name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="medicine_name" placeholder="e.g. Paracetamol 500mg"/>
+                        </h1>
+                        <div name="options" class="d-flex gap-2">
+                            <span class="d-inline-block">
+                                <label for="medicine_code" class="fw-bold me-2"/>
+                                <field name="medicine_code" placeholder="e.g. MED001"/>
+                            </span>
+                            <span class="d-inline-block border-start ps-2">
+                                <label for="category" class="fw-bold me-2"/>
+                                <field name="category"/>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <group>
+                        <group name="general_info" string="Vendor &amp; Status">
+                            <field name="vendor_ids" widget="many2many_tags" placeholder="Select connected vendors..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True}"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group name="batch_info" string="Batch Details">
+                            <field name="batch_number"/>
+                            <field name="expiry_date"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Stock &amp; Inventory" name="inventory">
+                            <group>
+                                <group string="Inventory Tracking">
+                                    <field name="total_stock" readonly="1"/>
+                                    <field name="emergency_stock"/>
+                                    <field name="quantity" class="fw-bold text-success"/>
+                                    <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status in ('critical', 'out', 'expired')"/>
+                                </group>
+                                <group string="Reordering Rules">
+                                    <field name="reorder_level"/>
+                                    <field name="default_order_qty"/>
+                                    <field name="is_reorder_needed" widget="boolean_toggle" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Pricing Information" name="pricing">
+                            <group>
+                                <group>
+                                    <field name="purchase_price"/>
+                                </group>
+                                <group>
+                                    <field name="selling_price"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                
+                    <div class="d-flex justify-content-end mt-4 mb-2">
+                        <button name="action_save" string="Save" type="object" class="oe_highlight" style="margin-left: auto !important;"/>
+                    </div>
+                </sheet>
+            </form>
+
+        </field>
+
+    </record>
+
+
+    
+    
+</odoo>

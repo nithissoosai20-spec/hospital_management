@@ -1,7 +1,7 @@
-/* ================================
    RIALKG HEADER
    ================================ */
 .hospital-real-header {
+    position: relative;
     width: 100%;
     height: 160px;              /* header size increase panniruken (130px -> 160px) */
     display: flex;
@@ -12,7 +12,6 @@
     border-bottom: 2px solid #29398f;
 }
 
-/* ================================
    LEFT IMAGE
    Logo + RIALKG
    ================================ */
@@ -35,7 +34,6 @@
     object-position: left center;
 }
 
-/* ================================
    RIGHT IMAGE
    Address + Mobile + Email
    ================================ */
@@ -59,7 +57,6 @@
     object-position: right center;
 }
 
-/* ================================
    FOOTER
    ================================ */
 .hospital-real-footer {
@@ -83,7 +80,6 @@
     object-position: center;
 }
 
-/* =========================================================
    ADMIN DASHBOARD
    ========================================================= */
 
@@ -95,7 +91,6 @@
 }
 
 
-/* =========================================================
    DASHBOARD TITLE
    ========================================================= */
 
@@ -115,7 +110,6 @@
 }
 
 
-/* =========================================================
    SECTION
    ========================================================= */
 
@@ -124,7 +118,6 @@
 }
 
 
-/* =========================================================
    SECTION HEADING
    ========================================================= */
 
@@ -139,13 +132,12 @@
 
     margin-bottom: 12px;
 
-    border-bottom: 1px solid #e1e4eb;
+    border-bottom: 1.5px solid #000000;
 
     text-transform: uppercase;
 }
 
 
-/* =========================================================
    STAT GRID
    ========================================================= */
 
@@ -161,14 +153,13 @@
 }
 
 
-/* =========================================================
    STAT CARD
    ========================================================= */
 
 .admin-stat-card {
     background: #ffffff;
 
-    border: 1px solid #e1e4eb;
+    border: 1.5px solid #000000;
 
     border-radius: 6px;
 
@@ -189,7 +180,6 @@
 }
 
 
-/* =========================================================
    CARD LABEL
    ========================================================= */
 
@@ -204,7 +194,6 @@
 }
 
 
-/* =========================================================
    CARD NUMBER
    ========================================================= */
 
@@ -230,11 +219,9 @@
 }
 
 
-/* =========================================================
    CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
    ========================================================= */
 
-/* =========================================================
    CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
    ========================================================= */
 
@@ -326,7 +313,6 @@
 }
 
 
-/* =========================================================
    RESPONSIVE
    ========================================================= */
 
@@ -350,4 +336,738 @@
         font-size: 28px;
     }
 
+}
+
+   HOSPITAL APPOINTMENT - FULL WINDOW LAYOUT
+   ============================================================ */
+
+/*
+ * Appointment form only.
+ * The RIALKG header/footer are intentionally untouched.
+ *
+ * Goal:
+ *  - use the complete available Odoo content width
+ *  - remove the unused right-side sheet space
+ *  - prevent horizontal overflow
+ *  - keep appointment grids fluid
+ *  - keep the form compact on a Windows laptop
+ */
+
+
+   1. FORM VIEW / RENDERER
+   ============================================================ */
+
+.o_form_view {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+.o_form_view .o_form_renderer {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+
+   2. REMOVE ODOO SHEET SIDE SPACE
+   ============================================================ */
+
+.o_form_view .o_form_sheet_bg {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+}
+
+.o_form_view .o_form_sheet_bg .o_form_sheet {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+
+    box-sizing: border-box !important;
+}
+
+
+   3. OUR APPOINTMENT SHEET
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    margin: 0 !important;
+    box-sizing: border-box !important;
+
+    overflow-x: hidden !important;
+}
+
+
+   4. EVERY APPOINTMENT GRID MUST SHRINK
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet div[style*="display:grid"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+}
+
+.o_form_view .hospital_appointment_sheet div[style*="display:grid"] > div {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+
+   5. FIELDS MUST NOT FORCE THE PAGE WIDER
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet .o_field_widget {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.o_form_view .hospital_appointment_sheet .o_field_widget input,
+.o_form_view .hospital_appointment_sheet .o_field_widget select,
+.o_form_view .hospital_appointment_sheet .o_field_widget textarea,
+.o_form_view .hospital_appointment_sheet .o_input {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+
+   6. COMPACT SPACING
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet .o_field_widget {
+    margin-bottom: 0 !important;
+}
+
+.o_form_view .hospital_appointment_sheet label {
+    margin-bottom: 1px !important;
+}
+
+.o_form_view .hospital_appointment_sheet .mb-2 {
+    margin-bottom: 4px !important;
+}
+
+.o_form_view .hospital_appointment_sheet .mt-2 {
+    margin-top: 4px !important;
+}
+
+.o_form_view .hospital_appointment_sheet .p-2 {
+    padding: 5px !important;
+}
+
+
+   7. SEARCH BAR
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet input[name="search_patient"] {
+    max-width: 45vw !important;
+    box-sizing: border-box !important;
+}
+
+
+   8. ACTION BUTTONS
+   ============================================================ */
+
+.o_form_view .hospital_appointment_sheet button {
+    white-space: nowrap !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+
+   9. NO HORIZONTAL SCROLL
+   ============================================================ */
+
+.o_form_view,
+.o_form_view .o_form_sheet_bg,
+.o_form_view .o_form_sheet,
+.o_form_view .hospital_appointment_sheet,
+.o_form_view .o_form_renderer {
+    overflow-x: hidden !important;
+}
+
+
+   10. LIST VIEW: COMPACT ROWS
+   ============================================================ */
+
+.o_list_view .o_list_table {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.o_list_view .o_list_table th,
+.o_list_view .o_list_table td {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+
+   11. WINDOWS LAPTOP HEIGHT
+   ============================================================ */
+
+@media (max-height: 850px) {
+
+    .o_form_view .hospital_appointment_sheet {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    .o_form_view .hospital_appointment_sheet > div {
+        margin-bottom: 4px !important;
+    }
+}
+
+
+   12. VERY SHORT WINDOWS SCREEN
+   ============================================================ */
+
+@media (max-height: 750px) {
+
+    .o_form_view .hospital_appointment_sheet {
+        zoom: 0.90;
+    }
+}
+
+
+   13. WIDE DESKTOP
+   ============================================================ */
+
+@media (min-width: 1200px) {
+
+    .o_form_view .o_form_sheet_bg {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    .o_form_view .hospital_appointment_sheet {
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+   HOSPITAL APPOINTMENT - ULTRA COMPACT SPACING
+   IMPORTANT:
+   Reduce SPACE only.
+   Font sizes are NOT reduced.
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   1. REMOVE EXTRA OUTER FORM SPACE
+   ------------------------------------------------------------ */
+
+.o_form_view {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.o_form_view .o_form_renderer {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.o_form_view .o_form_sheet_bg {
+    padding: 2px 4px !important;
+    margin: 0 !important;
+}
+
+.o_form_view .o_form_sheet {
+    margin: 0 !important;
+    padding: 4px 6px !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   2. REMOVE SPACE BETWEEN FORM ELEMENTS
+   ------------------------------------------------------------ */
+
+.o_form_view .o_form_sheet > div {
+    margin-top: 0 !important;
+    margin-bottom: 2px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   3. SEARCH PATIENT
+   Make search area much shorter
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet > div:first-of-type {
+    margin-top: 0 !important;
+    margin-bottom: 3px !important;
+    padding-top: 0 !important;
+    padding-bottom: 2px !important;
+}
+
+.hospital_appointment_sheet > div:first-of-type > div:first-child {
+    margin-bottom: 1px !important;
+}
+
+.hospital_appointment_sheet > div:first-of-type > div:nth-child(2) {
+    height: 30px !important;
+    min-height: 30px !important;
+}
+
+
+/* ------------------------------------------------------------
+   4. PATIENT SECTIONS
+   Remove large empty vertical space
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet > div {
+    box-sizing: border-box !important;
+}
+
+
+/* Patient found / new patient box */
+
+.hospital_appointment_sheet div[style*="border:1px solid #ddd"] {
+    padding: 4px 7px !important;
+    margin-bottom: 3px !important;
+}
+
+
+/* Section headings */
+
+.hospital_appointment_sheet div[style*="font-size:14px"] {
+    margin-top: 0 !important;
+    margin-bottom: 2px !important;
+}
+
+
+/* New patient heading */
+
+.hospital_appointment_sheet div[style*="font-size:13px"] {
+    margin-top: 0 !important;
+    margin-bottom: 2px !important;
+}
+
+
+/* ------------------------------------------------------------
+   5. GRID ROWS
+   Reduce vertical gap only
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="display:grid"] {
+    row-gap: 2px !important;
+    column-gap: 8px !important;
+}
+
+
+/* ------------------------------------------------------------
+   6. LABELS
+   Keep text size, remove unnecessary spacing
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet label {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.15 !important;
+}
+
+
+/* ------------------------------------------------------------
+   7. FIELDS
+   Keep normal readable text but make controls compact
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet .o_field_widget {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+
+/* Inputs */
+
+.hospital_appointment_sheet input,
+.hospital_appointment_sheet select {
+    min-height: 26px !important;
+    height: 28px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+
+/* Odoo many2one */
+
+.hospital_appointment_sheet .o_field_many2one input {
+    min-height: 26px !important;
+}
+
+
+/* Date / time */
+
+.hospital_appointment_sheet .o_field_date input,
+.hospital_appointment_sheet .o_field_float input {
+    min-height: 26px !important;
+}
+
+
+/* ------------------------------------------------------------
+   8. NEW PATIENT SECTION
+   Specifically remove the huge empty area
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 2fr"] {
+    row-gap: 1px !important;
+}
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 2fr"] > div {
+    min-height: 0 !important;
+    height: 29px !important;
+}
+
+
+/* Address */
+
+.hospital_appointment_sheet textarea {
+    min-height: 34px !important;
+    height: 36px !important;
+    max-height: 40px !important;
+    resize: none !important;
+}
+
+
+/* ------------------------------------------------------------
+   9. APPOINTMENT DETAILS
+   Compress both rows
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 1.4fr"] {
+    row-gap: 1px !important;
+}
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 1.4fr"] > div {
+    min-height: 0 !important;
+}
+
+
+/* Second appointment row */
+
+.hospital_appointment_sheet div[style*="margin-top:5px"] {
+    margin-top: 2px !important;
+}
+
+
+/* ------------------------------------------------------------
+   10. REASON / SYMPTOMS
+   Big space killer, so make it compact
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet textarea[name="reason"] {
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding: 3px 5px !important;
+}
+
+
+/* ------------------------------------------------------------
+   11. FEE & PAYMENT
+   Keep everything in one compact row
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 1fr"] {
+    row-gap: 1px !important;
+}
+
+.hospital_appointment_sheet div[style*="grid-template-columns: 1fr"] > div {
+    min-height: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   12. RECEIPT PREFERENCE
+   Remove extra vertical space
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="justify-content:flex-end"] {
+    margin-top: 1px !important;
+    margin-bottom: 2px !important;
+    padding: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   13. ACTION BUTTON AREA
+   Keep buttons close to payment section
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet div[style*="justify-content:center"] {
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
+
+/* ------------------------------------------------------------
+   14. BUTTONS
+   Do NOT reduce text size
+   Just reduce surrounding space
+   ------------------------------------------------------------ */
+
+.hospital_appointment_sheet button {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   15. REMOVE ODD BLANK SPACE CREATED BY ODOO
+   ------------------------------------------------------------ */
+
+.o_form_view .o_form_sheet .o_inner_group,
+.o_form_view .o_form_sheet .o_group {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+
+/* ------------------------------------------------------------
+   16. NO HORIZONTAL SCROLL
+   ------------------------------------------------------------ */
+
+.o_form_view,
+.o_form_view .o_form_renderer,
+.o_form_view .o_form_sheet_bg,
+.o_form_view .o_form_sheet {
+    overflow-x: hidden !important;
+}
+
+
+/* ------------------------------------------------------------
+   17. USE EVERY PIXEL OF AVAILABLE WIDTH
+   ------------------------------------------------------------ */
+
+.o_form_view .o_form_sheet_bg {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.o_form_view .o_form_sheet {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+
+/* ------------------------------------------------------------
+   18. DESKTOP
+   ------------------------------------------------------------ */
+
+@media (min-width: 1200px) {
+
+    .o_form_view .o_form_sheet_bg {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
+
+    .o_form_view .o_form_sheet {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+}
+
+
+/* ------------------------------------------------------------
+   19. LAPTOP HEIGHT
+   Reduce SPACE, NOT FONT
+   ------------------------------------------------------------ */
+
+@media (max-height: 850px) {
+
+    .hospital_appointment_sheet > div {
+        margin-bottom: 2px !important;
+    }
+
+    .hospital_appointment_sheet div[style*="border:1px solid #ddd"] {
+        padding-top: 3px !important;
+        padding-bottom: 3px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .hospital_appointment_sheet textarea[name="reason"] {
+        height: 30px !important;
+        min-height: 30px !important;
+        max-height: 30px !important;
+    }
+}
+
+
+/* ------------------------------------------------------------
+   20. YOUR LAPTOP SCREEN
+   Aggressive SPACE reduction
+   Text remains normal size
+   ------------------------------------------------------------ */
+
+@media (min-width: 1200px) and (max-height: 800px) {
+
+    .o_form_view .o_form_sheet {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+    }
+
+    .hospital_appointment_sheet div[style*="border:1px solid #ddd"] {
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .hospital_appointment_sheet textarea[name="reason"] {
+        height: 28px !important;
+        min-height: 28px !important;
+        max-height: 28px !important;
+    }
+
+    .hospital_appointment_sheet div[style*="margin-top:5px"] {
+        margin-top: 1px !important;
+    }
+}
+
+   FOOTER COPYRIGHT
+   ========================================================= */
+
+.hospital-real-footer {
+    position: relative;
+}
+
+.hospital-footer-copyright {
+    position: absolute;
+
+    right: 25px;
+    bottom: 8px;
+
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+
+    line-height: 16px;
+    white-space: nowrap;
+
+    z-index: 20;
+    pointer-events: none;
+}
+
+
+   LEFT FOOTER PRODUCT NAME
+   ========================================================= */
+.hospital-footer-product {
+    position: absolute;
+    left: 25px;
+    bottom: 8px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 16px;
+    white-space: nowrap;
+    z-index: 20;
+    pointer-events: none;
+}
+
+   PAGE TITLE BANNER - Shows current page name centered
+   under the navigation menu on every page
+   ========================================================= */
+
+/* Make control panel relative so we can center-overlay the title */
+.o_control_panel {
+    position: relative !important;
+}
+
+/* Hide the breadcrumb from its default left-side position */
+.o_control_panel .o_breadcrumb {
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Use a pseudo-overlay trick: 
+   Show only the last breadcrumb item as a centered title using absolute position */
+.o_control_panel .o_breadcrumb .breadcrumb-item.active::before {
+    content: attr(data-content);
+}
+
+.o_control_panel .o_breadcrumb::after {
+    content: none;
+}
+
+/* Centered title overlay - uses the breadcrumb text via a sibling trick */
+html body .o_control_panel .o_breadcrumb .breadcrumb-item.active,
+html body .o_list_view .o_control_panel .o_breadcrumb .breadcrumb-item.active,
+html body .o_form_view .o_control_panel .o_breadcrumb .breadcrumb-item.active {
+    visibility: visible !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 6px !important;
+    line-height: 1 !important;
+    font-weight: 600 !important;
+    color: #29398f !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    font-family: Arial, sans-serif !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+}
+
+   HIDE PAGE TITLE ON ALL DASHBOARDS
+   (Dashboards already show their own title in the content)
+   ========================================================= */
+html body:has(.adb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,
+html body:has(.ddb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,
+html body:has(.pdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,
+html body:has(.rdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active {
+    visibility: hidden !important;
+}
+
+/* Hide all non-active breadcrumb items */
+.o_control_panel .o_breadcrumb .breadcrumb-item:not(.active) {
+    display: none !important;
+}
+
+/* Hide separator arrows */
+.o_control_panel .o_breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    display: none !important;
+}
+
+/* Hide duplicate title actions area */
+.o_control_panel_main .o_control_panel_breadcrumbs_actions {
+    display: none !important;
+}
+
+.o_control_panel .o_cp_action_menus {
+    display: none !important;
 }

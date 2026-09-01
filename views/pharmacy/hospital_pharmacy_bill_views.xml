@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- PHARMACY BILL SEARCH                                    -->
+    <record id="view_hospital_pharmacy_bill_search" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.bill.search</field>
+        <field name="model">hospital.pharmacy.bill</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Search Bill or Patient" filter_domain="['|', ('name', 'ilike', self), ('customer_name', 'ilike', self)]"/>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- PHARMACY BILL LIST                                      -->
+    <record id="view_hospital_pharmacy_bill_list" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.bill.list</field>
+        <field name="model">hospital.pharmacy.bill</field>
+        <field name="arch" type="xml">
+            <list
+                decoration-info="state == 'draft'"
+                decoration-success="state == 'paid'"
+                decoration-warning="state == 'held'"
+                decoration-danger="state == 'cancelled'"
+                js_class="billing_list"
+            >
+                <field name="name"/>
+                <field name="customer_type"/>
+                <field name="customer_name"/>
+                <field name="doctor_id" string="Doctor"/>
+                <field name="doctor_department_id" string="Department"/>
+                <field name="bill_date"/>
+                <field name="payment_mode"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- PHARMACY BILL FORM                                      -->
+    <record id="view_hospital_pharmacy_bill_form" model="ir.ui.view">
+        <field name="name">hospital.pharmacy.bill.form</field>
+        <field name="model">hospital.pharmacy.bill</field>
+        <field name="arch" type="xml">
+            <form class="pharm_bill_form">
+                
+
+                <sheet>
+
+                    <!-- BILL NUMBER -->
+                    <field name="state" invisible="1"/>
+                    <div class="oe_title" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:900; color:#2563eb; font-size:18px;">
+                            Bill No: <field name="name" readonly="1" nolabel="1"/>
+                        </span>
+                        <button name="%(action_report_hospital_pharmacy_bill)d" string="Print Bill" type="action" class="btn btn-primary" icon="fa-print"/>
+                    </div>
+
+                    <!-- SIDE-BY-SIDE LAYOUT -->
+                    <div style="display:flex; gap:20px; width:100%;">
+                        
+                        <!-- LEFT COLUMN: INFO -->
+                        <div style="flex: 0 0 300px;">
+                            <group>
+                                <field name="customer_type" readonly="state == 'paid'"/>
+                                <field name="customer_name" readonly="state == 'paid'"/>
+                                <field name="appointment_id" readonly="state == 'paid'"/>
+                                <field name="doctor_id" readonly="state == 'paid'"/>
+                                <field name="doctor_department_id" readonly="1"/>
+                                <field name="bill_date" readonly="state == 'paid'"/>
+                                <field name="payment_mode" readonly="state == 'paid'"/>
+                                <field name="paid_amount" readonly="state == 'paid'"/>
+                            </group>
+                            
+                            <separator string="Notes" style="margin-top:10px;"/>
+                            <field name="notes" readonly="state == 'paid'" placeholder="Internal notes..."/>
+                        </div>
+
+                        <!-- RIGHT COLUMN: MEDICINES & TOTALS -->
+                        <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+                            <separator string="Medicines" style="margin-bottom:5px; font-size:16px; color:#2563eb; font-weight:bold;"/>
+                            <field name="line_ids" readonly="state == 'paid'">
+                                <list editable="bottom">
+                                    <field
+                                        name="stock_id"
+                                        string="Medicine"
+                                        options="{'no_create': True}"
+                                    />
+                                    <field name="medicine_name" readonly="1"/>
+                                    <field name="batch" readonly="1"/>
+                                    <field name="expiry" readonly="1"/>
+                                    <field name="available_stock" readonly="1" string="Stock"/>
+                                    <field name="qty"/>
+                                    <field name="unit"/>
+                                    <field name="mrp"/>
+                                    <field name="discount"/>
+                                    <field name="gst"/>
+                                    <field name="amount" readonly="1" force_save="1"/>
+                                    <field name="gst_amount" readonly="1" force_save="1"/>
+                                </list>
+                            </field>
+
+                            <!-- TOTALS + PAYMENT SECTION -->
+                    <div class="pharm_bill_footer">
+
+                                <!-- TOTALS -->
+                                <div class="pharm_bill_totals">
+                                    <div class="pharm_total_row">
+                                        <span>Subtotal</span>
+                                        <field name="subtotal" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row">
+                                        <span>Bill Discount (₹)</span>
+                                        <field name="bill_discount" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row">
+                                        <span>Total Discount</span>
+                                        <field name="discount_amount" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row">
+                                        <span>Taxable Amount</span>
+                                        <field name="taxable_amount" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row">
+                                        <span>GST</span>
+                                        <field name="gst_amount" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row pharm_grand_total">
+                                        <span>Total Amount</span>
+                                        <field name="total_amount" readonly="1" nolabel="1"/>
+                                    </div>
+                                    <div class="pharm_total_row">
+                                        <span>Paid Amount</span>
+                                        <field name="paid_amount" readonly="state == 'paid'" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- PAYMENT BUTTON -->
+                                <div class="pharm_payment_btn_wrap" invisible="state == 'paid'">
+                                    <button
+                                        name="action_collect_payment"
+                                        string="💳 Collect Payment"
+                                        type="object"
+                                        class="btn btn-success pharm_pay_btn"
+                                    />
+                                </div>
+
+                    </div>
+                    <div class="oe_clear"/>
+                    
+                        </div>
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- PHARMACY BILL ACTION                                    -->
+    <record id="action_hospital_pharmacy_bill_window" model="ir.actions.act_window">
+        <field name="name">Pharmacy Billing</field>
+        <field name="res_model">hospital.pharmacy.bill</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- NEW BILL BUTTON ACTION (redirects to POS billing page) -->
+    <record id="action_new_pharmacy_bill_pos" model="ir.actions.client">
+        <field name="name">New Bill</field>
+        <field name="tag">hospital_pharmacy_billing</field>
+    </record>
+
+</odoo>
