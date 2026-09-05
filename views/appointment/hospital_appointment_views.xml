@@ -82,7 +82,7 @@
                 <field
                     name="appointment_time"
                     string="Visit Time"
-                    widget="float_time"
+                    widget="html_time"
                 />
 
                 <field
@@ -132,14 +132,7 @@
                     invisible="state == 'completed'"
                     class="hospital_appointment_action btn-sm"
                 />
-                <!-- PENCIL: Fake (maintains layout) -->
-                <button
-                    name="action_dummy"
-                    type="object"
-                    icon="fa-pencil"
-                    invisible="state != 'completed'"
-                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
-                />
+                
 
                 <!-- PRINTER: Real -->
                 <button
@@ -150,14 +143,7 @@
                     invisible="state != 'booked'"
                     class="hospital_appointment_action btn-sm"
                 />
-                <!-- PRINTER: Fake (maintains layout) -->
-                <button
-                    name="action_dummy"
-                    type="object"
-                    icon="fa-print"
-                    invisible="state == 'booked'"
-                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
-                />
+                
 
                 <!-- FLASK: Real -->
                 <button
@@ -168,14 +154,7 @@
                     invisible="has_lab_test == False"
                     class="hospital_appointment_action btn-sm text-info"
                 />
-                <!-- FLASK: Fake (maintains layout) -->
-                <button
-                    name="action_dummy"
-                    type="object"
-                    icon="fa-flask"
-                    invisible="fees_type == 'lab'"
-                    class="hospital_appointment_action btn-sm opacity-0 pe-none"
-                />
+                
     </list>
 
         </field>
@@ -198,13 +177,39 @@
 
             <form
                 string=""
-                class="hospital_appointment_form"
+                class="hospital_appointment_form" js_class="hospital_appointment_form_view"
                
             >
 
                 <!-- CUSTOM PATIENT SEARCH TOOLBAR -->
 
                 <div class="hospital_appointment_search_toolbar">
+                  <!-- FIX REQUIRED FIELDS STYLING -->
+                  <style>
+                      /* Remove red text from labels */
+                      .hospital_appointment_form .o_field_invalid label,
+                      .hospital_appointment_form label.o_field_invalid,
+                      .hospital_appointment_form .o_field_invalid.o_form_label,
+                      .hospital_appointment_form .o_field_widget.o_field_invalid {
+                          color: #6b7280 !important; /* Default label color */
+                      }
+
+                      /* Add pink background and red border to inputs */
+                      .hospital_appointment_form .o_field_invalid input,
+                      .hospital_appointment_form .o_field_invalid select,
+                      .hospital_appointment_form .o_field_invalid textarea {
+                          background-color: #fce4e4 !important;
+                          border: 1px solid #dc3545 !important;
+                      }
+                      
+                      /* Fix Odoo 16+ adding red borders to the widget wrapper instead of input */
+                      .hospital_appointment_form .o_field_widget.o_field_invalid {
+                          border: none !important;
+                          background-color: transparent !important;
+                      }
+                  </style>
+
+
 
                     <div class="hospital_appointment_search_box">
 
@@ -238,6 +243,17 @@
                             class="btn-secondary hospital_clear_button"
                             icon="fa-eraser"
                             invisible="context.get('view_only')"
+                        />
+
+                        <!-- HISTORY (near Clear) -->
+
+                        <button
+                            name="action_view_patient_history"
+                            string="History"
+                            type="object"
+                            class="btn-secondary hospital_clear_button"
+                            icon="fa-history"
+                            invisible="not patient_found"
                         />
 
                     </div>
@@ -382,21 +398,6 @@
                                         />
                                     </div>
 
-
-                                    <!-- HISTORY -->
-
-                                    <div class="hospital_history_button">
-
-                                        <button
-                                            name="action_view_patient_history"
-                                            string="History"
-                                            type="object"
-                                            class="btn-secondary btn-sm"
-                                            icon="fa-history"
-                                        />
-
-                                    </div>
-
                                 </div>
 
                             </div>
@@ -422,7 +423,7 @@
                                         <field
                                             name="new_patient_name"
                                             nolabel="1"
-                                        />
+                                         />
                                     </div>
 
 
@@ -437,7 +438,7 @@
                                         <field
                                             name="new_patient_phone"
                                             nolabel="1"
-                                        />
+                                         />
                                     </div>
 
 
@@ -452,7 +453,7 @@
                                         <field
                                             name="new_patient_date_of_birth"
                                             nolabel="1"
-                                        />
+                                         />
                                     </div>
 
 
@@ -467,7 +468,7 @@
                                         <field
                                             name="new_patient_gender"
                                             nolabel="1"
-                                        />
+                                         />
                                     </div>
 
 
@@ -515,7 +516,7 @@
                                     <field
                                         name="new_patient_address"
                                         nolabel="1"
-                                    />
+                                     />
 
                                 </div>
 
@@ -600,7 +601,7 @@
 
                                     <field
                                         name="appointment_time"
-                                        widget="float_time"
+                                        widget="html_time"
                                         nolabel="1"
                                         readonly="
                                             context.get('view_only')
@@ -646,7 +647,6 @@
                                         "
                                     />
                                 </div>
-
 
                                 <!-- APPOINTMENT MODE -->
 
@@ -780,7 +780,7 @@
 
                                     <label
                                         for="payment_mode"
-                                        string="Payment Mode"
+                                        string="Payment Mode *"
                                     />
 
                                     <field
@@ -791,35 +791,27 @@
                                 </div>
 
 
-                                <!-- PAYMENT STATUS -->
+                                <!-- PAYMENT STATUS - hidden, managed automatically -->
 
-                                <div class="hospital_payment_field">
-
-                                    <label
-                                        for="payment_status"
-                                        string="Payment Status"
-                                    />
-
-                                    <field
-                                        name="payment_status"
-                                        nolabel="1"
-                                    />
-
-                                </div>
+                                <field name="payment_status" invisible="1"/>
 
 
-                                <!-- TRANSACTION ID -->
+                                <!-- TRANSACTION ID (required for non-cash) -->
 
-                                <div class="hospital_payment_field">
+                                <div
+                                    class="hospital_payment_field"
+                                    invisible="payment_mode == 'cash' or not payment_mode"
+                                >
 
                                     <label
                                         for="transaction_id"
-                                        string="Transaction ID"
+                                        string="Transaction ID *"
                                     />
 
                                     <field
                                         name="transaction_id"
                                         nolabel="1"
+                                        required="payment_mode != 'cash' and payment_mode != False"
                                     />
 
                                 </div>
@@ -851,7 +843,7 @@
                         />
 
 
-                        <!-- BOOK -->
+                        <!-- BOOK - appears when token generated and payment mode selected -->
 
                         <button
                             name="action_book"
@@ -860,8 +852,9 @@
                             class="btn-primary"
                             icon="fa-check"
                             invisible="
-                                state != 'draft'                                
-                                or payment_status != 'paid'
+                                state != 'draft'
+                                or not token_generated
+                                or not payment_mode
 
                             "
                         />
@@ -922,6 +915,15 @@
                                 context.get('view_only')
                                 or state not in ('draft','booked')
                             "
+                        />
+
+                        <!-- CLOSE -->
+                        <button
+                            name="action_close_form"
+                            type="object"
+                            string="Close"
+                            class="btn-secondary"
+                            icon="fa-arrow-left"
                         />
 
                     </div>

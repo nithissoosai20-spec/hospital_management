@@ -31,7 +31,7 @@ class HospitalLabAppointment(models.Model):
                 image_file.read()
             ).decode('utf-8')
 
-        
+
     name = fields.Char(
         string='Lab Reference',
         required=True,
@@ -75,13 +75,10 @@ class HospitalLabAppointment(models.Model):
         default=fields.Date.today
     )
 
-    appointment_time = fields.Float(
+    appointment_time = fields.Char(
         string='Appointment Time',
         required=True,
-        default=lambda self: (
-            datetime.now().hour
-            + datetime.now().minute / 60.0
-        )
+        default='10:30'
     )
 
     doctor_id = fields.Many2one(
@@ -217,34 +214,26 @@ class HospitalLabAppointment(models.Model):
     def action_save_lab_appointment(self):
         self.ensure_one()
 
-        # Make sure the current form values are saved first.
+        if not self.line_ids:
+            from odoo.exceptions import UserError
+            raise UserError('Please add at least one test before saving.')
+
         self.write({
-            'payment_status': self.payment_status,
-            'payment_mode': self.payment_mode,
+            'payment_status': 'paid',
         })
 
-        # Only show the print question when the saved
-        # payment status is Paid.
-        if self.payment_status == 'paid':
-
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Lab Appointment Saved',
-                'res_model': 'hospital.lab.receipt.wizard',
-                'view_mode': 'form',
-                'target': 'new',
-                'context': {
-                    'default_lab_appointment_id': self.id,
-                },
-            }
-
-        # Pending payment: just save and stay on the record.
         return {
-            'type': 'ir.actions.client',
-            'tag': 'reload',
+            'type': 'ir.actions.act_window',
+            'name': 'Print Lab Receipt',
+            'res_model': 'hospital.lab.receipt.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lab_appointment_id': self.id,
+            },
         }
-    
-    
+
+
     def action_schedule(self):
 
         for record in self:
@@ -292,6 +281,11 @@ class HospitalLabAppointment(models.Model):
             if record.state != 'completed':
                 record.state = 'cancelled'
         return True
+
+    def action_close_to_appointments(self):
+        """Navigate back to the main patient appointments list."""
+        return self.env['ir.actions.act_window']._for_xml_id('hospital_management.action_hospital_appointment')
+
 
     _sql_constraints = [
         (
@@ -352,5 +346,3 @@ class HospitalLabAppointmentLine(models.Model):
         readonly=True,
     )
 
-
-    

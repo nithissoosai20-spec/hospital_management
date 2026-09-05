@@ -10,7 +10,6 @@ class HospitalPharmacyBill(models.Model):
     name = fields.Char(
         string='Bill Number',
         required=True,
-        ondelete='cascade',
         readonly=True,
         copy=False,
         default='New',
@@ -45,7 +44,6 @@ class HospitalPharmacyBill(models.Model):
         string='Bill Date',
         default=fields.Datetime.now,
         required=True,
-        ondelete='cascade',
     )
 
     walkin_name = fields.Char(string='Walk-in Name')
@@ -85,7 +83,6 @@ class HospitalPharmacyBill(models.Model):
         string='Status',
         default='draft',
         required=True,
-        ondelete='cascade',
         copy=False,
     )
 
@@ -186,17 +183,16 @@ class HospitalPharmacyBill(models.Model):
 
     def _reduce_stock(self):
         for line in self.line_ids:
-            if line.stock_id:
-                line.stock_id.total_stock -= line.qty
-            else:
-                # Try to find stock by name or code if stock_id isn't explicitly linked
+            stock = line.stock_id
+            if not stock and line.medicine_name:
                 stock = self.env['hospital.pharmacy.stock'].search([
-                    '|', 
+                    '|',
                     ('medicine_name', '=', line.medicine_name),
-                    ('medicine_code', '=', line.medicine_name)
+                    ('medicine_code', '=', line.medicine_name),
                 ], limit=1)
-                if stock:
-                    stock.total_stock -= line.qty
+            if stock and line.qty > 0:
+                new_qty = stock.quantity - line.qty
+                stock.quantity = max(new_qty, 0.0)
 
 
     @api.depends(
@@ -287,7 +283,6 @@ class HospitalPharmacyBillLine(models.Model):
     medicine_name = fields.Char(
         string='Medicine Name',
         required=True,
-        ondelete='cascade',
     )
 
     composition = fields.Char(
@@ -393,4 +388,3 @@ class HospitalPharmacyBillLine(models.Model):
             line.discount_amount = discount_amount
             line.taxable_amount = taxable
             line.gst_amount = gst_amount
-            

@@ -6,8 +6,7 @@
               inherit_id="web.login"
               name="RIALKG Web Login">
 
-             ALWAYS SHOW LOGIN FORM
-             ===================================================== -->
+    <!-- ALWAYS SHOW LOGIN FORM -->
 
         <xpath expr="//form[@role='form']"
                position="attributes">
@@ -17,8 +16,7 @@
         </xpath>
 
 
-             CHANGE EMAIL LABEL TO USERNAME
-             ===================================================== -->
+    <!-- CHANGE EMAIL LABEL TO USERNAME -->
 
         <xpath expr="//label[@for='login']"
                position="replace">
@@ -31,8 +29,7 @@
         </xpath>
 
 
-             CHANGE LOGIN INPUT
-             ===================================================== -->
+    <!-- CHANGE LOGIN INPUT -->
 
         <xpath expr="//input[@name='login']"
                position="attributes">
@@ -44,8 +41,7 @@
         </xpath>
 
 
-             REMOVE CHOOSE A USER
-             ===================================================== -->
+    <!-- REMOVE CHOOSE A USER -->
 
         <xpath expr="//owl-component[@name='web.user_switch']"
                position="replace"/>
@@ -53,8 +49,7 @@
     </template>
 
 
-         REMOVE "USE A PASSKEY" BUTTON FROM LOGIN PAGE
-         ===================================================== -->
+    <!-- REMOVE "USE A PASSKEY" BUTTON FROM LOGIN PAGE -->
 
     <template id="hospital_hide_passkey"
               inherit_id="web.login_oauth"

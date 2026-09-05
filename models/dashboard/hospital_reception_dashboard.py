@@ -70,6 +70,13 @@ class HospitalReceptionDashboard(models.Model):
         compute='_compute_dashboard'
     )
 
+    doctor_status_ids = fields.Many2many(
+        'hospital.user',
+        compute='_compute_dashboard',
+        string='Doctors'
+    )
+
+
     waiting_patients = fields.Integer(
         string='Waiting Appointments',
         compute='_compute_dashboard'
@@ -197,3 +204,8 @@ class HospitalReceptionDashboard(models.Model):
                 ('role_id.name', '=', 'Doctor'),
                 ('odoo_user_id.active', '=', False)
             ])
+
+            # DOCTOR LIST
+            record.doctor_status_ids = HospitalUser.search([
+                ('role_id.name', '=', 'Doctor')
+            ]).ids

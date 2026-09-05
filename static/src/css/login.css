@@ -1,9 +1,7 @@
-   HOSPITAL LOGIN
-   ========================================================= */
+/* HOSPITAL LOGIN */
 
 
-   ODOO DEFAULT LOGO
-   ========================================================= */
+/* ODOO DEFAULT LOGO */
 
 /* Safety rule: hide Odoo's default logo if it still exists */
 .o_database_list img[alt="Logo"] {
@@ -11,8 +9,7 @@
 }
 
 
-   LOGIN CARD
-   ========================================================= */
+/* LOGIN CARD */
 
 .o_database_list {
     width: 380px !important;
@@ -22,8 +19,7 @@
 }
 
 
-   RIALKG LOGO
-   ========================================================= */
+/* RIALKG LOGO */
 
 .hospital-login-logo {
     width: 100% !important;
@@ -72,8 +68,7 @@
 }
 
 
-   LOGIN FORM
-   ========================================================= */
+/* LOGIN FORM */
 
 .oe_login_form {
     width: 100% !important;
@@ -84,8 +79,7 @@
 }
 
 
-   EMAIL
-   ========================================================= */
+/* EMAIL */
 
 .oe_login_form .field-login {
     width: 100% !important;
@@ -102,8 +96,7 @@
 }
 
 
-   PASSWORD
-   ========================================================= */
+/* PASSWORD */
 
 .oe_login_form .input-group {
     display: flex !important;
@@ -148,8 +141,7 @@
 }
 
 
-   LOGIN BUTTON
-   ========================================================= */
+/* LOGIN BUTTON */
 
 .oe_login_form .oe_login_buttons {
     width: 100% !important;
@@ -170,8 +162,7 @@
 }
 
 
-   PASSKEY BUTTON
-   ========================================================= */
+/* PASSKEY BUTTON */
 
 .oe_login_form .o_auth_oauth_buttons {
     width: 100% !important;
@@ -182,8 +173,7 @@
 }
 
 
-   MOBILE
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 480px) {
 
@@ -206,8 +196,7 @@
     }
 }
 
-   HIDE ODOO EXTRA LOGIN OPTIONS
-   ========================================================= */
+/* HIDE ODOO EXTRA LOGIN OPTIONS */
 
 /* Hide OAuth / Passkey section */
 .oe_login_buttons > .o_auth_oauth_buttons {
@@ -223,4 +212,3 @@
 .o_database_list .text-center.small.mt-4.pt-3.border-top {
     display: none !important;
 }
-

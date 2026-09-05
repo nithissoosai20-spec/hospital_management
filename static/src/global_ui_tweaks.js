@@ -62,7 +62,6 @@ function injectPageTitle() {
     target.insertBefore(banner, target.firstChild);
 }
 
-// "Add New ..." BUTTON LABEL FIXER
 const observer = new MutationObserver(() => {
     // --- Page Title ---
     injectPageTitle();
@@ -88,9 +87,34 @@ const observer = new MutationObserver(() => {
 
         addBtns.forEach(btn => {
             if (btn.textContent.trim() === 'New') {
-                btn.textContent = `Add New ${contextName}`;
+                if (contextName === 'Bill') {
+                    btn.textContent = 'Create Bill';
+                } else if (contextName.toLowerCase().startsWith('create')) {
+                    btn.textContent = contextName;
+                } else {
+                    btn.textContent = `Add New ${contextName}`;
+                }
             }
         });
+
+    }
+    // --- Custom Save Button Visibility Mirroring ---
+    const customSaveBtn = document.querySelector('button[name="action_save_user"]');
+    if (customSaveBtn) {
+        // Find the native Odoo save button
+        const nativeSaveBtn = document.querySelector('.o_control_panel .o_form_button_save');
+
+        if (nativeSaveBtn) {
+            const isNativeSaveHidden = nativeSaveBtn.classList.contains('d-none') || nativeSaveBtn.classList.contains('o_hidden') || getComputedStyle(nativeSaveBtn).display === 'none';
+            if (isNativeSaveHidden) {
+                customSaveBtn.style.setProperty('display', 'none', 'important');
+            } else {
+                customSaveBtn.style.setProperty('display', 'inline-block', 'important');
+            }
+        } else {
+            // If native save is completely removed from DOM, hide custom save
+            customSaveBtn.style.setProperty('display', 'none', 'important');
+        }
     }
 });
 

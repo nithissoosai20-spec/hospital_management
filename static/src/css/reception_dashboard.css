@@ -1,5 +1,4 @@
-   RECEPTION DASHBOARD  —  Professional Light Theme
-   ============================================================= */
+/* RECEPTION DASHBOARD  â€”  Professional Light Theme */
 
 .o_form_view:has(.rdb),
 .o_form_view:has(.rdb) .o_form_renderer,
@@ -30,8 +29,7 @@
 }
 
 
-   HEADER
-   ============================================================= */
+/* HEADER */
 
 .rdb-header {
     display: flex;
@@ -53,8 +51,7 @@
 }
 
 
-   ROW 1 — 6 KPI TILES
-   ============================================================= */
+/* ROW 1 â€” 6 KPI TILES */
 
 .rdb-row1 {
     display: grid;
@@ -156,8 +153,7 @@
 .rdb-purple .rdb-tile-icon { color: #7c3aed; }
 
 
-   ROW 2 — 3 PANELS
-   ============================================================= */
+/* ROW 2 â€” 3 PANELS */
 
 .rdb-row2 {
     display: grid;
@@ -382,8 +378,7 @@
 }
 
 
-   ROW 3 — 8 QUICK ACTION TILES
-   ============================================================= */
+/* ROW 3 â€” 8 QUICK ACTION TILES */
 
 .rdb-row3 {
     display: grid;
@@ -431,8 +426,7 @@
 }
 
 
-   HIDE HOSPITAL APP ROOT NAME IN NAVBAR
-   ========================================================= */
+/* HIDE HOSPITAL APP ROOT NAME IN NAVBAR */
 
 .o_main_navbar .o_menu_brand {
     font-size: 0 !important;

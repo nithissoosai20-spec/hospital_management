@@ -21,7 +21,7 @@
                 <field name="designation_id"/>
                 <field name="email"/>
                 <field name="active"/>
-
+                <button name="action_view_history" type="object" string="History" class="btn btn-sm btn-secondary rounded-pill px-3" title="View History"/>
             </list>
 
         </field>
@@ -45,6 +45,20 @@
                 
 
                 <sheet>
+                    <div style="text-align: center; width: 100%; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; padding-bottom: 10px;">
+                        <h1 style="color: #29398f; font-weight: 800; text-transform: uppercase; font-size: 18px; margin: 0;">USER DETAILS</h1>
+                    </div>
+                    <style>
+                        .pwd-helper {
+                            display: none;
+                            color: #ef4444;
+                            font-size: 11px;
+                            margin-top: 4px;
+                        }
+                        .custom-field-container:focus-within .pwd-helper {
+                            display: block;
+                        }
+                    </style>
                     <style>
                         .custom-section-title {
                             color: #1e3a8a;
@@ -99,7 +113,7 @@
                     <div class="row">
                         <div class="col-md-4 custom-field-container">
                             <label for="gender" class="custom-label">Gender</label>
-                            <field name="gender" class="w-100"/>
+                            <field name="gender" class="w-100" required="1"/>
                         </div>
                         <div class="col-md-8 custom-field-container">
                             <label for="address" class="custom-label">Address</label>
@@ -112,7 +126,7 @@
                     <div class="row">
                         <div class="col-md-4 custom-field-container">
                             <label for="role_id" class="custom-label">Role</label>
-                            <field name="role_id" class="w-100" options="{'no_create': True}"/>
+                            <field name="role_id" class="w-100" options="{'no_create': True}" required="1"/>
                         </div>
                         <div class="col-md-4 custom-field-container">
                             <label for="department_id" class="custom-label">Department</label>
@@ -132,50 +146,42 @@
 
                     <div class="custom-section-title">3. Access &amp; Security</div>
                     <div class="row">
-                        <div class="col-md-3 custom-field-container">
+                        <div class="col-md-2 custom-field-container">
                             <label for="active" class="custom-label">Active</label>
                             <field name="active" widget="boolean_toggle"/>
                         </div>
-                        <div class="col-md-3 custom-field-container">
-                            <label for="password" class="custom-label">Set Password</label>
-                            <field name="password" class="w-100" password="True" placeholder="Enter password"/>
+                        <div class="col-md-5 custom-field-container">
+                            <label for="password" class="custom-label">Password</label>
+                            <field name="password" class="w-100" password="True" required="not id"/>
+                            <small class="pwd-helper">
+                                Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
+                            </small>
                         </div>
-                        <div class="col-md-3 custom-field-container">
-                            <label for="account_created" class="custom-label">Account Created</label>
-                            <field name="account_created" class="w-100" readonly="1"/>
-                        </div>
-                        <div class="col-md-3 custom-field-container">
-                            <label for="odoo_user_id" class="custom-label">System User ID</label>
-                            <field name="odoo_user_id" class="w-100" readonly="1"/>
+                        <div class="col-md-5 custom-field-container">
+                            <label for="password_confirm" class="custom-label">Re-enter Password</label>
+                            <field name="password_confirm" class="w-100" password="True" required="not id"/>
                         </div>
                     </div>
 
-                    <div class="custom-section-title">4. Login Activity</div>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="last_login" class="custom-label">Last Login</label>
-                            <field name="last_login" class="w-100" readonly="1"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="password_last_changed" class="custom-label">Password Last Changed</label>
-                            <field name="password_last_changed" class="w-100" readonly="1"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="two_factor_enabled" class="custom-label">Two Factor Enabled</label>
-                            <field name="two_factor_enabled" widget="boolean_toggle" readonly="1"/>
-                        </div>
-                    </div>
+                    
+                        
 
     
                     
                 
-                    <div class="d-flex justify-content-end mt-4 mb-2">
+                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;">
                         <button
-                        name="action_save_user"
-                        string="Save"
-                        type="object"
-                        class="btn-primary" style="margin-left: auto !important;"
-                    />
+                            name="action_close"
+                            string="Close"
+                            type="object"
+                            class="btn-secondary"
+                        />
+                        <button
+                            name="action_save_user"
+                            string="Save"
+                            type="object"
+                            class="btn-primary"
+                        />
                     </div>
                 </sheet>
 
@@ -190,7 +196,7 @@
 
     <record id="action_hospital_users" model="ir.actions.act_window">
 
-        <field name="name">User Management</field>
+        <field name="name">Create User</field>
         <field name="res_model">hospital.user</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
@@ -209,5 +215,38 @@
 
     </record>
 
+
+
+    <record id="view_hospital_user_history_form" model="ir.ui.view">
+        <field name="name">hospital.user.history.form</field>
+        <field name="model">hospital.user</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                                <div class="text-center mb-4 pb-3" style="border-bottom: 1px solid #e2e8f0;">
+                    <div style="color: #64748b; font-size: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        <i class="fa fa-user-circle-o" style="font-size: 18px;"></i>
+                        <field name="name" nolabel="1" readonly="1" style="font-weight: 700; color: #0f172a; margin: 0;"/>
+                        <span style="color: #cbd5e1;">|</span>
+                        <i class="fa fa-id-badge"></i>
+                        <field name="employee_id" nolabel="1" readonly="1" style="margin: 0;"/>
+                    </div>
+                </div>
+                <style>
+                    .history-table td {
+                        word-spacing: 25px !important;
+                    }
+                </style>
+                <field name="login_history_ids" readonly="1">
+                    <list no_open="1" create="0" delete="0" edit="0" decoration-success="logout_time == False" decoration-muted="logout_time != False" class="history-table">
+                        <field name="login_time" string="Logged In At"/>
+                        <field name="logout_time" string="Logged Out At"/>
+                    </list>
+                </field>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
 </odoo>

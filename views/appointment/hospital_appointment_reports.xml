@@ -41,63 +41,89 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
-                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
                         
-                        <!-- Content -->
-                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
-                            
-                            <div style="text-align:center; margin:0 0 20px 0;">
-                                <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
-                                    APPOINTMENT RECEIPT
-                                </h2>
-                            </div>
+                        
 
-                            <div style="text-align:center; margin-bottom: 30px;">
-                                <div style="font-size:12px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
-                                <div style="font-size:32px; font-weight:bold; color:#1e3a8a;"><span t-field="doc.token_number"/></div>
+                        
+                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+
+                            <div class="row pt-2" style="font-size: 12px; color: #333;">
+                                <!-- Left Column: Patient -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Patient Name</div>
+                                        <div class="col-7"><span t-field="doc.patient_name"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Mobile Number</div>
+                                        <div class="col-7"><span t-field="doc.patient_phone"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Age / Gender</div>
+                                        <div class="col-7">
+                                            <t t-if="doc.patient_id.age">
+                                                <span t-field="doc.patient_id.age"/> / 
+                                            </t>
+                                            <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Middle Column: Doctor -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-center">Doctor</div>
+                                        <div class="col-7"><span t-field="doc.doctor_id.name"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-center">Department</div>
+                                        <div class="col-7"><span t-field="doc.department_id.name"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Appointment -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">Date / Time</div>
+                                        <div class="col-7 text-end">
+                                            <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/>
+                                            <span t-field="doc.appointment_time_am_pm"/>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">OP Number</div>
+                                        <div class="col-7 text-end"><span t-field="doc.patient_code"/></div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="row mb-4 pt-4">
+                            <!-- Token Number & Receipt Info -->
+                            <div class="row mt-5">
+                                <div class="col-12 text-center">
+                                    <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
+                                    <div style="font-size:36px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
+                                        <span t-field="doc.token_number"/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-5 justify-content-center">
                                 <div class="col-6">
-                                    <strong>Appointment No:</strong> <span t-field="doc.name"/><br/>
-                                    <strong>Patient:</strong> <span t-field="doc.patient_name"/><br/>
-                                    <strong>UHID:</strong> <span t-field="doc.patient_code"/><br/>
-                                    <strong>Phone:</strong> <span t-field="doc.patient_phone"/><br/>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <strong>Date:</strong> <span t-field="doc.date_of_appointment"/><br/>
-                                    <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
-                                    <strong>Department:</strong> <span t-field="doc.department_id.name"/><br/>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: 30px; margin-bottom: 10px; font-weight: bold; font-size: 16px;">Vitals</div>
-                            
-                            <table class="table table-sm" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse;">
-                                <thead>
-                                    <tr>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Blood Pressure (mmHg)</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Height (cm)</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Weight (kg)</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Temperature (C)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
-                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
-                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
-                                        <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><br/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            
-                            <div class="row" style="margin-top: 50px;">
-                                <div class="col-8">
-                                </div>
-                                <div class="col-3 text-center">
-                                    <br/><br/><br/>
-                                    <strong>Signature</strong>
+                                    <table class="table table-sm table-borderless" style="border: 1px solid #ddd; font-size: 13px;">
+                                        <tr style="border-bottom: 1px solid #ddd;">
+                                            <td style="background-color: #f1f5f9; width: 50%;"><strong>Net Amount</strong></td>
+                                            <td>&#8377; <span t-out="'%.2f' % doc.net_amount"/></td>
+                                        </tr>
+                                        <tr style="border-bottom: 1px solid #ddd;">
+                                            <td style="background-color: #f1f5f9;"><strong>Payment Mode</strong></td>
+                                            <td style="text-transform: capitalize;"><span t-field="doc.payment_mode"/></td>
+                                        </tr>
+                                        <tr t-if="doc.transaction_id">
+                                            <td style="background-color: #f1f5f9;"><strong>Transaction ID</strong></td>
+                                            <td><span t-field="doc.transaction_id"/></td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
 
@@ -112,32 +138,95 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
-                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
                         
-                        <!-- Content -->
+                        
+
+                        
                         <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+
+                            <div class="row pt-2" style="font-size: 12px; color: #333;">
+                                <!-- Left Column: Patient -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Patient Name</div>
+                                        <div class="col-7"><span t-field="doc.patient_name"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Mobile Number</div>
+                                        <div class="col-7"><span t-field="doc.patient_phone"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Age / Gender</div>
+                                        <div class="col-7">
+                                            <t t-if="doc.patient_id.age">
+                                                <span t-field="doc.patient_id.age"/> / 
+                                            </t>
+                                            <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Middle Column: Doctor -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-center">Doctor</div>
+                                        <div class="col-7"><span t-field="doc.doctor_id.name"/></div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-center">Department</div>
+                                        <div class="col-7"><span t-field="doc.department_id.name"/></div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Appointment -->
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">Date / Time</div>
+                                        <div class="col-7 text-end">
+                                            <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/>
+                                            <span t-field="doc.appointment_time_am_pm"/>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">OP Number</div>
+                                        <div class="col-7 text-end"><span t-field="doc.patient_code"/></div>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <div style="text-align:center; margin:0 0 20px 0;">
-                                <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
-                                    APPOINTMENT TOKEN
-                                </h2>
+                            <!-- Token Number -->
+                            <div class="row mt-5">
+                                <div class="col-12 text-center">
+                                    <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
+                                    <div style="font-size:36px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
+                                        <span t-field="doc.token_number"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Vitals -->
+                            <div class="row mt-5">
+                                <div class="col-12">
+                                    <h5 style="color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 5px; font-weight: bold; margin-bottom: 15px;">Patient Vitals</h5>
+                                    <table class="table table-bordered table-sm" style="font-size: 13px; border-color: #ddd; height: 80px;">
+                                        <tbody>
+                                            <tr>
+                                                <th style="background-color: #f1f5f9; width: 25%; vertical-align: middle;">Height</th>
+                                                <td style="width: 25%;"></td>
+                                                <th style="background-color: #f1f5f9; width: 25%; vertical-align: middle;">Weight</th>
+                                                <td style="width: 25%;"></td>
+                                            </tr>
+                                            <tr>
+                                                <th style="background-color: #f1f5f9; vertical-align: middle;">Blood Pressure</th>
+                                                <td></td>
+                                                <th style="background-color: #f1f5f9; vertical-align: middle;">Temperature</th>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
-                            <div style="text-align:center; margin-bottom: 30px; margin-top: 30px;">
-                                <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
-                                <div style="font-size:48px; font-weight:bold; color:#1e3a8a; margin-top: 10px;"><span t-field="doc.token_number"/></div>
-                            </div>
-                            
-                            <div class="row mb-4 pt-4 mt-5">
-                                <div class="col-6">
-                                    <strong>Patient:</strong> <span t-field="doc.patient_name"/><br/>
-                                    <strong>UHID:</strong> <span t-field="doc.patient_code"/><br/>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <strong>Date:</strong> <span t-field="doc.date_of_appointment"/><br/>
-                                    <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
-                                </div>
-                            </div>
 
                         </div>
                     </div>

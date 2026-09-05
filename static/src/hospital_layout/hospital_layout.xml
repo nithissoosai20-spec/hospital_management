@@ -4,7 +4,7 @@
 
     <t t-inherit="web.WebClient" t-inherit-mode="extension">
 
-        <!-- ================= HEADER ================= -->
+    <!--  -->
 
         <xpath expr="//NavBar" position="before">
 
@@ -36,7 +36,7 @@
         </xpath>
 
 
-        <!-- ================= FOOTER ================= -->
+    <!--  -->
 
         <xpath expr="//MainComponentsContainer" position="after">
 
@@ -52,7 +52,7 @@
                 </span>
 
                 <span class="hospital-footer-copyright">
-                    © Copyrights @Sathya Technologies
+                    Â© Copyrights @Sathya Technologies
                 </span>
 
             </div>

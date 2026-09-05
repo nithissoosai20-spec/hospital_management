@@ -17,9 +17,13 @@
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
                     <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                        <!-- Background Image -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;">
+                            <img src="/hospital_management/static/src/img/bill.png" style="width: 100%; height: 297mm; object-fit: cover;"/>
+                        </div>
                         
                         <!-- Content -->
-                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                        <div style="padding-top: 65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
                             
                             <div style="text-align:center; margin:0 0 20px 0;">
                                 <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
@@ -80,14 +84,7 @@
                                 </div>
                             </div>
                             
-                            <div class="row" style="margin-top: 50px;">
-                                <div class="col-8">
-                                </div>
-                                <div class="col-3 text-center">
-                                    <br/><br/><br/>
-                                    <strong>Signature</strong>
-                                </div>
-                            </div>
+                            
 
                         </div>
                     </div>

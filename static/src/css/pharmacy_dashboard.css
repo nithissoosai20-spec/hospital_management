@@ -1,5 +1,4 @@
-   PHARMACY DASHBOARD  —  Professional Light Theme
-   ============================================================= */
+/* PHARMACY DASHBOARD  â€”  Professional Light Theme */
 
 .o_form_view:has(.pdb),
 .o_form_view:has(.pdb) .o_form_renderer,
@@ -49,10 +48,10 @@
     margin-top: 1px;
 }
 
-/* ROW 1 — 6 KPI TILES */
+/* ROW 1 â€” 6 KPI TILES */
 .pdb-row1 {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 6px;
 }
 
@@ -150,7 +149,7 @@
 .pdb-purple .pdb-tile-icon { color: #7c3aed; }
 
 
-/* ROW 2 — 3 PANELS */
+/* ROW 2 â€” 3 PANELS */
 .pdb-row2 {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr;
@@ -373,7 +372,7 @@
     border-color: #5eead4;
 }
 
-/* ROW 3 — QUICK ACTIONS */
+/* ROW 3 â€” QUICK ACTIONS */
 .pdb-row3 {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -420,8 +419,7 @@
 }
 
 
-   PHARMACY BILL FORM
-   ============================================================= */
+/* PHARMACY BILL FORM */
 
 /* FOOTER: totals on left, pay button on right */
 .pharm_bill_footer {

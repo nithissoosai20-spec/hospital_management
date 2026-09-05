@@ -86,3 +86,5 @@ access_hospital_pharmacy_purchase_invoice,hospital.pharmacy.purchase.invoice,mod
 access_hospital_pharmacy_purchase_invoice_line,hospital.pharmacy.purchase.invoice.line,model_hospital_pharmacy_purchase_invoice_line,base.group_user,1,1,1,1
 access_ir_actions_report_pharmacist,access.ir.actions.report.pharmacist,base.model_ir_actions_report,hospital_management.group_hospital_pharmacist,1,0,0,0
 access_hospital_pharmacy_payment,access_hospital_pharmacy_payment,model_hospital_pharmacy_payment,hospital_management.group_hospital_pharmacist,1,1,1,1
+
+access_hospital_login_history,hospital.login.history,model_hospital_login_history,hospital_management.group_hospital_user,1,1,1,1

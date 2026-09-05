@@ -106,7 +106,7 @@
                 <field name="lab_test_id"/>
                 <field name="appointment_date"/>
                 <field name="appointment_time"
-                       widget="float_time"/>
+                       widget="html_time"/>
 
                 <field name="doctor_id"/>
                 <field name="priority"
@@ -175,14 +175,7 @@
                         invisible="state != 'processing'"
                     />
 
-                    <button
-                        name="action_cancel"
-                        type="object"
-                        string="Cancel"
-                        class="btn-secondary"
-                        icon="fa-times"
-                        invisible="state in ('completed', 'cancelled')"
-                    />
+
 
                 </header>
 
@@ -190,6 +183,7 @@
                 <!-- MAIN CONTENT -->
 
                 <sheet>
+                    <field name="receipt_ready" invisible="1"/>
 
                     <!-- PATIENT + APPOINTMENT INFORMATION -->
 
@@ -239,7 +233,7 @@
 
                                 <field
                                     name="appointment_time"
-                                    widget="float_time"
+                                    widget="html_time"
                                     readonly="1"
                                 />
 
@@ -271,6 +265,9 @@
                                 delete="1"
                                 class="hospital_lab_test_list"
                             >
+                                <control>
+                                    <create name="add_line_control" string="Add test"/>
+                                </control>
 
                                 <field
                                     name="lab_test_id"
@@ -330,26 +327,14 @@
                             <field
                                 name="payment_status"
                                 string="Payment Status"
+                                invisible="1"
                             />
 
                         </group>
 
                     </group>
 
-                    <!-- PRINT LAB RECEIPT -->
-
-                    <div class="hospital-lab-receipt-action">
-
-                        <button
-                            name="%(action_report_hospital_lab_receipt)d"
-                            type="action"
-                            string="Print Lab Receipt"
-                            class="btn-primary"
-                            icon="fa-print"
-                            invisible="not receipt_ready"
-                        />
-
-                    </div>
+                    
 
 
                     <!-- LAB RESULT -->
@@ -368,14 +353,37 @@
                 
                     
                 
-                    <div class="d-flex justify-content-end mt-4 mb-2">
+                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
                         <button
-                        name="action_save_lab_appointment"
-                        type="object"
-                        string="Save"
-                        class="btn-primary" style="margin-left: auto !important;"
-                        icon="fa-save"
-                    />
+                            name="action_save_lab_appointment"
+                            type="object"
+                            string="Save"
+                            class="btn-primary hospital-save-btn"
+                            icon="fa-save"
+                        />
+                        <button
+                            name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-danger"
+                            icon="fa-times"
+                            invisible="state in ('completed', 'cancelled')"
+                        />
+                        <button
+                            name="action_close_to_appointments"
+                            type="object"
+                            string="Close"
+                            class="btn-secondary"
+                            icon="fa-arrow-left"
+                        />
+                        <button
+                            name="%(action_report_hospital_lab_receipt)d"
+                            type="action"
+                            string="Print"
+                            class="btn-info"
+                            icon="fa-print"
+                            invisible="receipt_ready == False"
+                        />
                     </div>
                 </sheet>
 

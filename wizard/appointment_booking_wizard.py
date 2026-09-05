@@ -31,16 +31,15 @@ class HospitalAppointmentBookingWizard(models.TransientModel):
     )
 
     def action_print_now(self):
-        """Print receipt immediately."""
+        """Print receipt immediately and close the wizard."""
         self.ensure_one()
-
         appointment = self.appointment_id
-
         appointment.write({
             'print_preference': 'now',
         })
-
-        return appointment.action_print_receipt()
+        action = appointment.action_print_receipt()
+        action['close_on_report_download'] = True
+        return action
 
     def action_print_later(self):
         """Close the popup and mark receipt for later printing."""

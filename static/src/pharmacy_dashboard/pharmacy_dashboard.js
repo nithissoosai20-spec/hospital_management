@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component, useState, onWillStart } from "@odoo/owl";
+import { Component, useState, onWillStart, onWillDestroy } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 
@@ -69,10 +69,20 @@ class PharmacyBilling extends PharmacyBase {
             walkinName: "", walkinPhone: "", walkinAddress: "",
             isReadOnly: false, currentBillId: false, billState: 'draft'
         });
+        this.timeInterval = setInterval(() => {
+            if (this.state && !this.state.currentBillId && !this.state.isReadOnly) {
+                this.state.billTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+                this.state.billDate = new Date().toISOString().split('T')[0];
+            }
+        }, 1000);
+        onWillDestroy(() => {
+            if (this.timeInterval) clearInterval(this.timeInterval);
+        });
+
         onWillStart(async () => {
             await this.fetchDepartments();
             await this.fetchDoctors();
-            
+
             const activeId = this.props.action && this.props.action.context && this.props.action.context.active_id;
             if (activeId) {
                 await this.loadExistingBill(activeId);
@@ -86,8 +96,8 @@ class PharmacyBilling extends PharmacyBase {
     openDetails() { this.goTo("hospital_management.action_hospital_pharmacy_details"); }
     closePOS() { this.goTo("hospital_management.action_hospital_pharmacy_bill_window"); }
 
-    
-    
+
+
         async loadExistingBill(billId) {
         const bills = await this.orm.searchRead("hospital.pharmacy.bill", [["id", "=", billId]], []);
         if (bills.length > 0) {
@@ -96,7 +106,7 @@ class PharmacyBilling extends PharmacyBase {
             this.state.lastBillId = bill.id;
             this.state.billState = bill.state;
             this.state.isReadOnly = (bill.state === 'paid');
-            
+
             this.state.customerType = bill.customer_type;
             if (bill.customer_type === 'patient' && bill.patient_id) {
                 this.state.patientSearchTerm = bill.patient_id[1];
@@ -113,16 +123,16 @@ class PharmacyBilling extends PharmacyBase {
                 this.state.walkinPhone = bill.walkin_phone || "";
                 this.state.walkinAddress = bill.walkin_address || "";
             }
-            
+
             if (bill.doctor_id) this.state.selectedDoctor = bill.doctor_id[0];
             if (bill.doctor_department_id) this.state.selectedDepartment = bill.doctor_department_id[0];
-            
+
             this.state.billDate = bill.bill_date ? bill.bill_date.split(" ")[0] : this.state.billDate;
             this.state.paymentMode = bill.payment_mode;
             this.state.paidAmount = bill.paid_amount;
             this.state.billDiscount = bill.bill_discount;
             this.state.remarks = bill.notes || "";
-            
+
             // load lines
             const lines = await this.orm.searchRead("hospital.pharmacy.bill.line", [["bill_id", "=", bill.id]], []);
             let medicines = [];
@@ -179,16 +189,16 @@ class PharmacyBilling extends PharmacyBase {
         const patients = await this.orm.call("hospital.patient", "search_read", [
             ['|', ['patient_id', 'ilike', this.state.patientSearchTerm], ['phone', 'ilike', this.state.patientSearchTerm]]
         ], { limit: 1, fields: ['id', 'name', 'patient_id', 'phone', 'age', 'gender', 'address'] });
-        
+
         if (patients.length > 0) {
             let p = patients[0];
             this.state.patient = { id: p.id, seq: p.patient_id, name: p.name, phone: p.phone, age: p.age, gender: p.gender, address: p.address || '--' };
-            
+
             // Automatically fetch last appointment doctor and department
             const apps = await this.orm.call("hospital.appointment", "search_read", [
                 [['patient_id', '=', p.id]]
             ], { limit: 1, order: 'id desc', fields: ['doctor_id', 'department_id'] });
-            
+
             if (apps.length > 0 && apps[0].doctor_id) {
                 this.state.selectedDoctor = apps[0].doctor_id[0];
                 if (apps[0].department_id) {
@@ -203,7 +213,7 @@ class PharmacyBilling extends PharmacyBase {
         }
     }
 
-    
+
     async onMedicineSearchInput(ev) {
         this.state.medicineSearchTerm = ev.target.value;
         if (this.state.medicineSearchTerm.length < 2) {
@@ -220,7 +230,7 @@ class PharmacyBilling extends PharmacyBase {
         this.state.focusedSuggestionIndex = -1;
     }
 
-    
+
     onDoctorChange(val) {
         this.state.selectedDoctor = val;
         let doc = this.state.doctors.find(d => d.id == val);
@@ -233,7 +243,7 @@ class PharmacyBilling extends PharmacyBase {
 
     onMedicineSearchKeyDown(ev) {
         if (!this.state.showMedicineSuggestions || this.state.medicineSuggestions.length === 0) return;
-        
+
         if (ev.key === "ArrowDown") {
             ev.preventDefault();
             this.state.focusedSuggestionIndex = (this.state.focusedSuggestionIndex + 1) % this.state.medicineSuggestions.length;
@@ -275,7 +285,7 @@ class PharmacyBilling extends PharmacyBase {
             try { await this.orm.write("hospital.pharmacy.bill", [this.state.currentBillId], vals); } catch(e) {}
         } else {
             vals.line_ids = line_ids;
-            try { 
+            try {
                 let bill_id = await this.orm.create("hospital.pharmacy.bill", [vals]);
                 this.state.currentBillId = bill_id[0];
                 this.state.lastBillId = bill_id[0];
@@ -293,17 +303,17 @@ class PharmacyBilling extends PharmacyBase {
         this.state.showMedicineSuggestions = false;
         this.state.focusedSuggestionIndex = -1;
     }
-    
+
     async addSelectedMedicineToBill() {
         if (!this.state.selectedMedicine) {
             this.notification.add("Please search and select a medicine first.", { type: "warning" });
             return;
         }
         let m = this.state.selectedMedicine;
-        
+
         let stock_req = await this.orm.read("hospital.pharmacy.stock", [m.id], ["quantity"]);
         let available = stock_req[0].quantity;
-        
+
         if (available < 1) {
             this.notification.add("your stock is exceeding stock on hand", { type: "danger" });
             return;
@@ -326,7 +336,7 @@ class PharmacyBilling extends PharmacyBase {
         const meds = await this.orm.call("hospital.pharmacy.stock", "search_read", [
             ['|', ['medicine_name', 'ilike', this.state.medicineSearchTerm], ['medicine_code', 'ilike', this.state.medicineSearchTerm]]
         ], { limit: 1, fields: ['id', 'medicine_name', 'batch_number', 'expiry_date', 'selling_price'] });
-        
+
         if (meds.length > 0) {
             let m = meds[0];
             this.state.medicines.push({
@@ -393,8 +403,8 @@ class PharmacyBilling extends PharmacyBase {
             m.discountVal = itemDiscVal;
             let taxable = itemGross - itemDiscVal;
             m.amount = taxable;
-            grossAmount += itemGross; 
-            totalDiscount += itemDiscVal; 
+            grossAmount += itemGross;
+            totalDiscount += itemDiscVal;
             totalGst += 0;
             totalQty += m.qty;
         }
@@ -411,7 +421,7 @@ class PharmacyBilling extends PharmacyBase {
 
     setPaymentMode(mode) { this.state.paymentMode = mode; }
 
-    
+
     openPaymentModal() {
         if (this.state.medicines.length === 0) {
             this.notify("Please add medicines to the bill before generating.", "warning");
@@ -422,17 +432,17 @@ class PharmacyBilling extends PharmacyBase {
         this.state.paymentSuccess = false;
         this.state.showPaymentModal = true;
     }
-    
+
     closePaymentModal() {
         this.state.showPaymentModal = false;
     }
-    
+
     updatePaidAmount(val) {
         this.state.paidAmount = parseFloat(val) || 0;
         this.calculateTotals();
     }
 
-    
+
     printLatestBill() {
         if (!this.state.lastBillId) {
             this.notification.add("Please generate a bill first.", { type: "warning" });
@@ -443,6 +453,7 @@ class PharmacyBilling extends PharmacyBase {
 
     printReceipt() {
         if (!this.state.lastBillId) return;
+        this.state.showPaymentModal = false;
         this.action.doAction({
             type: 'ir.actions.report',
             report_type: 'qweb-pdf',
@@ -544,7 +555,7 @@ class PharmacyBilling extends PharmacyBase {
             try { await this.orm.unlink("hospital.pharmacy.bill", [this.state.currentBillId]); } catch(e) {}
         }
         this.state.patient = null; this.state.patientSearchTerm = ""; this.state.medicines = [];
-        this.state.paidAmount = 0; this.state.billDiscount = 0; this.state.invoiceNo = "Draft"; 
+        this.state.paidAmount = 0; this.state.billDiscount = 0; this.state.invoiceNo = "Draft";
         this.state.currentBillId = false; this.state.billState = 'draft'; this.state.isReadOnly = false;
         this.calculateTotals();
     }

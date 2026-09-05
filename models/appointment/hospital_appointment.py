@@ -46,7 +46,8 @@ class HospitalAppointment(models.Model):
     )
 
     new_patient_date_of_birth = fields.Date(
-        string='Date of Birth'
+        string='Date of Birth',
+        required=False
     )
 
     new_patient_gender = fields.Selection(
@@ -58,17 +59,7 @@ class HospitalAppointment(models.Model):
         string='Gender'
     )
 
-    new_patient_blood_group = fields.Selection(
-        [
-            ('a+', 'A+'),
-            ('a-', 'A-'),
-            ('b+', 'B+'),
-            ('b-', 'B-'),
-            ('ab+', 'AB+'),
-            ('ab-', 'AB-'),
-            ('o+', 'O+'),
-            ('o-', 'O-'),
-        ],
+    new_patient_blood_group = fields.Char(
         string='Blood Group'
     )
 
@@ -79,6 +70,8 @@ class HospitalAppointment(models.Model):
     new_patient_address = fields.Text(
         string='Address'
     )
+
+
 
     # EXISTING PATIENT PREVIEW
 
@@ -140,14 +133,35 @@ class HospitalAppointment(models.Model):
         default=fields.Date.today
     )
 
-    appointment_time = fields.Float(
+    appointment_time = fields.Char(
         string='Appointment Time',
-        required=True,
-        default=lambda self: (
-            fields.Datetime.now().hour
-            + fields.Datetime.now().minute / 60.0
-        )
+        default='10:30'
     )
+
+    appointment_time_am_pm = fields.Char(
+        string='Time AM/PM',
+        compute='_compute_time_am_pm'
+    )
+
+    @api.depends('appointment_time')
+    def _compute_time_am_pm(self):
+        for rec in self:
+            if rec.appointment_time:
+                try:
+                    parts = rec.appointment_time.split(':')
+                    h = int(parts[0])
+                    m = int(parts[1])
+                    ampm = 'AM' if h < 12 else 'PM'
+                    h12 = h % 12
+                    if h12 == 0: h12 = 12
+                    rec.appointment_time_am_pm = f'{h12:02d}:{m:02d} {ampm}'
+                except:
+                    rec.appointment_time_am_pm = rec.appointment_time
+            else:
+                rec.appointment_time_am_pm = ''
+
+
+
 
     visit_type = fields.Selection(
         [
@@ -240,7 +254,9 @@ class HospitalAppointment(models.Model):
             ('upi', 'UPI'),
             ('online', 'Online'),
         ],
-        string='Payment Mode'
+        string='Payment Mode',
+        required=True,
+        default='cash'
     )
 
     payment_status = fields.Selection(
@@ -331,8 +347,8 @@ class HospitalAppointment(models.Model):
             if fee:
                 record.consultation_fee = fee.amount
 
-      
-    
+
+
 
     # COMPUTE
 
@@ -345,7 +361,7 @@ class HospitalAppointment(models.Model):
             )
 
 
-    
+
     # CREATE
 
     @api.model_create_multi
@@ -418,18 +434,15 @@ class HospitalAppointment(models.Model):
         })
 
         return True
-    
 
-    def action_search_patient(self):
 
-        self.ensure_one()
-
+    def _do_search_patient(self):
+        """Core search logic reused by both button and action."""
         value = (self.search_patient or '').strip()
-
         if not value:
-            raise UserError(
-                'Please enter Patient ID or Mobile Number.'
-            )
+            self.patient_id = False
+            self.patient_found = False
+            return None
 
         Patient = self.env['hospital.patient']
 
@@ -458,9 +471,17 @@ class HospitalAppointment(models.Model):
             # Existing patient = Follow-up
             self.visit_type = 'followup'
 
-            # -------------------------------------------------
-            # FILL VISIBLE PATIENT DETAILS
-            # -------------------------------------------------
+            # Fetch last appointment for this patient
+            last_appointment = self.env['hospital.appointment'].search(
+                [('patient_id', '=', patient.id), ('state', '!=', 'draft'), ('id', '!=', self.id)],
+                order='appointment_date desc, id desc',
+                limit=1
+            )
+            if last_appointment:
+                if last_appointment.doctor_id:
+                    self.doctor_id = last_appointment.doctor_id.id
+                if last_appointment.department_id:
+                    self.department_id = last_appointment.department_id.id
 
             self.new_patient_name = patient.name
             self.new_patient_phone = patient.phone
@@ -470,26 +491,26 @@ class HospitalAppointment(models.Model):
             self.new_patient_email = patient.email
             self.new_patient_address = patient.address
 
-            return True
+            return None
 
         # PATIENT NOT FOUND
-
         self.patient_id = False
         self.patient_found = False
-
-        # New patient = New Visit
         self.visit_type = 'new'
-
-        # Clear patient entry fields
         self.new_patient_name = False
-        self.new_patient_phone = False
+
+        if value.isdigit():
+            self.new_patient_phone = value
+        else:
+            self.new_patient_phone = False
+
         self.new_patient_date_of_birth = False
         self.new_patient_gender = False
         self.new_patient_blood_group = False
         self.new_patient_email = False
         self.new_patient_address = False
 
-        return True
+        return None
     # CREATE PATIENT FROM APPOINTMENT
 
     def _create_patient_from_appointment(self):
@@ -640,12 +661,6 @@ class HospitalAppointment(models.Model):
                 if not record.new_patient_gender:
                     raise UserError(
                         'Please select Gender.'
-                    )
-
-                # Blood Group
-                if not record.new_patient_blood_group:
-                    raise UserError(
-                        'Please select Blood Group.'
                     )
 
                 # Address
@@ -811,10 +826,27 @@ class HospitalAppointment(models.Model):
             )
 
         # ---------------------------------------------------------
+        # PAYMENT MODE REQUIRED
+        # ---------------------------------------------------------
+        if not self.payment_mode:
+            raise UserError(
+                'Please select a Payment Mode before booking.'
+            )
+
+        # ---------------------------------------------------------
+        # TRANSACTION ID REQUIRED FOR NON-CASH PAYMENTS
+        # ---------------------------------------------------------
+        if self.payment_mode != 'cash' and not (self.transaction_id or '').strip():
+            raise UserError(
+                'Please enter the Transaction ID for %s payment.' % self.payment_mode.upper()
+            )
+
+        # ---------------------------------------------------------
         # BOOK APPOINTMENT
         # ---------------------------------------------------------
         self.write({
             'state': 'booked',
+            'payment_status': 'paid',
         })
 
         # ---------------------------------------------------------
@@ -843,7 +875,7 @@ class HospitalAppointment(models.Model):
                 )
             ],
         }
-    
+
     # LAB FEES
 
     def action_set_lab_fees(self):
@@ -953,8 +985,8 @@ class HospitalAppointment(models.Model):
             ],
 
             'target': 'current',
-    
-    
+
+
             'context': {
 
                 # -------------------------------------------------
@@ -1100,6 +1132,10 @@ class HospitalAppointment(models.Model):
         return self.env.ref(
             'hospital_management.action_report_hospital_appointment_receipt'
         ).report_action(self)
+
+    def action_close_form(self):
+        """Navigate back to the appointment list view."""
+        return self.env['ir.actions.act_window']._for_xml_id('hospital_management.action_hospital_appointment')
 
     # OPEN LAB TESTS
 
@@ -1249,3 +1285,7 @@ class HospitalAppointment(models.Model):
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
+    def action_search_patient(self):
+        self.ensure_one()
+        self._do_search_patient()
+        return True

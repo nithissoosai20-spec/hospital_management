@@ -3,8 +3,37 @@ from odoo.exceptions import ValidationError
 
 
 class HospitalUser(models.Model):
+    availability_status = fields.Char(
+        string="Status",
+        compute='_compute_availability_status'
+    )
+
+    @api.depends('active')
+    def _compute_availability_status(self):
+        for record in self:
+            record.availability_status = 'Available' if record.active else 'Not Available'
+
     _name = 'hospital.user'
     _description = 'Hospital User'
+
+    login_history_ids = fields.One2many(
+        'hospital.login.history',
+        'user_id',
+        string='Login History'
+    )
+
+    def action_view_history(self):
+        self.ensure_one()
+        return {
+            'name': 'Login History',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.user',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': self.env.ref('hospital_management.view_hospital_user_history_form').id,
+            'target': 'new',
+        }
+
     _order = 'name'
 
     ROLE_GROUPS = {
@@ -68,11 +97,16 @@ class HospitalUser(models.Model):
     )
 
     password = fields.Char(
-        string='Initial Password',
+        string='Password',
         password=True,
         store=False,
         copy=False
     )
+    password_confirm = fields.Char(
+        string='Re-enter Password',
+        copy=False
+    )
+
 
     account_created = fields.Boolean(
         string='Login Account Created',
@@ -115,7 +149,7 @@ class HospitalUser(models.Model):
     )
 
     password = fields.Char(
-        string='Initial Password',
+        string='Password',
         copy=False
     )
 
@@ -200,7 +234,7 @@ class HospitalUser(models.Model):
             else:
                 record.two_factor_enabled = False
 
-    # ROLE → ODOO GROUP
+    # ROLE â†’ ODOO GROUP
 
     def _get_odoo_group_for_role(self):
         self.ensure_one()
@@ -305,7 +339,7 @@ class HospitalUser(models.Model):
         })
 
         return odoo_user
-    
+
     def _update_odoo_user_password(self, password):
         self.ensure_one()
 
@@ -429,6 +463,23 @@ class HospitalUser(models.Model):
 
     # CREATE
 
+
+    @api.model
+    def _validate_password_strength(self, password):
+        import re
+        if not password:
+            return
+        if len(password) < 8:
+            raise ValidationError("Password must be at least 8 characters long.")
+        if not re.search(r"[a-z]", password):
+            raise ValidationError("Password must contain at least one lowercase letter.")
+        if not re.search(r"[A-Z]", password):
+            raise ValidationError("Password must contain at least one uppercase letter.")
+        if not re.search(r"[0-9]", password):
+            raise ValidationError("Password must contain at least one number.")
+        if not re.search(r"[^a-zA-Z0-9]", password):
+            raise ValidationError("Password must contain at least one special symbol.")
+
     @api.model_create_multi
     def create(self, vals_list):
 
@@ -437,11 +488,15 @@ class HospitalUser(models.Model):
         for record, vals in zip(records, vals_list):
 
             password = vals.get('password')
+            password_confirm = vals.get('password_confirm')
 
             if not password:
                 raise ValidationError(
                     f'Password is required for user "{record.name}".'
                 )
+            if password != password_confirm:
+                raise ValidationError("Passwords do not match!")
+            self._validate_password_strength(password)
 
             # Create actual Odoo login account
             record._create_odoo_user(password)
@@ -486,6 +541,7 @@ class HospitalUser(models.Model):
     def write(self, vals):
 
         password = vals.pop('password', False)
+        password_confirm = vals.pop('password_confirm', False)
 
         # -------------------------------------------------
         # Save old values BEFORE update
@@ -567,6 +623,9 @@ class HospitalUser(models.Model):
         # -------------------------------------------------
 
         if password:
+            if password != password_confirm and password_confirm is not False:
+                raise ValidationError("Passwords do not match!")
+            self._validate_password_strength(password)
 
             for record in self:
 
@@ -892,3 +951,11 @@ class HospitalUser(models.Model):
                     raise ValidationError(
                         'Reporting To must belong to the same department.'
                     )
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create User',
+            'res_model': 'hospital.user',
+            'view_mode': 'list,form',
+            'target': 'current',
+        }

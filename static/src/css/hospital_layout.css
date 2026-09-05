@@ -1,5 +1,4 @@
-   RIALKG HEADER
-   ================================ */
+/* RIALKG HEADER */
 .hospital-real-header {
     position: relative;
     width: 100%;
@@ -12,9 +11,7 @@
     border-bottom: 2px solid #29398f;
 }
 
-   LEFT IMAGE
-   Logo + RIALKG
-   ================================ */
+/* LEFT IMAGE Logo + RIALKG */
 .hospital-header-left-image {
     width: 45%;
     height: 100%;
@@ -34,9 +31,7 @@
     object-position: left center;
 }
 
-   RIGHT IMAGE
-   Address + Mobile + Email
-   ================================ */
+/* RIGHT IMAGE Address + Mobile + Email */
 .hospital-header-right-image {
     width: 55%;
     height: 100%;
@@ -57,8 +52,7 @@
     object-position: right center;
 }
 
-   FOOTER
-   ================================ */
+/* FOOTER */
 .hospital-real-footer {
     width: 100%;
     height: 70px;               /* konjam reduce - 90px -> 70px */
@@ -80,8 +74,7 @@
     object-position: center;
 }
 
-   ADMIN DASHBOARD
-   ========================================================= */
+/* ADMIN DASHBOARD */
 
 .admin-dashboard {
     width: 100%;
@@ -91,8 +84,7 @@
 }
 
 
-   DASHBOARD TITLE
-   ========================================================= */
+/* DASHBOARD TITLE */
 
 .admin-dashboard-title {
     text-align: center;
@@ -110,16 +102,14 @@
 }
 
 
-   SECTION
-   ========================================================= */
+/* SECTION */
 
 .admin-section {
     margin-bottom: 28px;
 }
 
 
-   SECTION HEADING
-   ========================================================= */
+/* SECTION HEADING */
 
 .admin-section-heading {
     font-size: 15px;
@@ -138,8 +128,7 @@
 }
 
 
-   STAT GRID
-   ========================================================= */
+/* STAT GRID */
 
 .admin-stat-grid {
     display: grid;
@@ -153,8 +142,7 @@
 }
 
 
-   STAT CARD
-   ========================================================= */
+/* STAT CARD */
 
 .admin-stat-card {
     background: #ffffff;
@@ -180,8 +168,7 @@
 }
 
 
-   CARD LABEL
-   ========================================================= */
+/* CARD LABEL */
 
 .admin-stat-label {
     font-size: 13px;
@@ -194,8 +181,7 @@
 }
 
 
-   CARD NUMBER
-   ========================================================= */
+/* CARD NUMBER */
 
 .admin-stat-number {
     font-size: 30px;
@@ -219,11 +205,9 @@
 }
 
 
-   CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
-   ========================================================= */
+/* CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS) */
 
-   CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS)
-   ========================================================= */
+/* CLICKABLE STAT CARD (RECEPTION DASHBOARD BUTTONS) */
 
 .admin-stat-card-btn {
     border: none;
@@ -313,8 +297,7 @@
 }
 
 
-   RESPONSIVE
-   ========================================================= */
+/* RESPONSIVE */
 
 @media (max-width: 1000px) {
 
@@ -338,8 +321,7 @@
 
 }
 
-   HOSPITAL APPOINTMENT - FULL WINDOW LAYOUT
-   ============================================================ */
+/* HOSPITAL APPOINTMENT - FULL WINDOW LAYOUT */
 
 /*
  * Appointment form only.
@@ -354,8 +336,7 @@
  */
 
 
-   1. FORM VIEW / RENDERER
-   ============================================================ */
+/* 1. FORM VIEW / RENDERER */
 
 .o_form_view {
     width: 100% !important;
@@ -373,8 +354,7 @@
 }
 
 
-   2. REMOVE ODOO SHEET SIDE SPACE
-   ============================================================ */
+/* 2. REMOVE ODOO SHEET SIDE SPACE */
 
 .o_form_view .o_form_sheet_bg {
     width: 100% !important;
@@ -404,8 +384,7 @@
 }
 
 
-   3. OUR APPOINTMENT SHEET
-   ============================================================ */
+/* 3. OUR APPOINTMENT SHEET */
 
 .o_form_view .hospital_appointment_sheet {
     width: 100% !important;
@@ -419,8 +398,7 @@
 }
 
 
-   4. EVERY APPOINTMENT GRID MUST SHRINK
-   ============================================================ */
+/* 4. EVERY APPOINTMENT GRID MUST SHRINK */
 
 .o_form_view .hospital_appointment_sheet div[style*="display:grid"] {
     width: 100% !important;
@@ -437,8 +415,7 @@
 }
 
 
-   5. FIELDS MUST NOT FORCE THE PAGE WIDER
-   ============================================================ */
+/* 5. FIELDS MUST NOT FORCE THE PAGE WIDER */
 
 .o_form_view .hospital_appointment_sheet .o_field_widget {
     min-width: 0 !important;
@@ -456,8 +433,7 @@
 }
 
 
-   6. COMPACT SPACING
-   ============================================================ */
+/* 6. COMPACT SPACING */
 
 .o_form_view .hospital_appointment_sheet .o_field_widget {
     margin-bottom: 0 !important;
@@ -480,8 +456,7 @@
 }
 
 
-   7. SEARCH BAR
-   ============================================================ */
+/* 7. SEARCH BAR */
 
 .o_form_view .hospital_appointment_sheet input[name="search_patient"] {
     max-width: 45vw !important;
@@ -489,8 +464,7 @@
 }
 
 
-   8. ACTION BUTTONS
-   ============================================================ */
+/* 8. ACTION BUTTONS */
 
 .o_form_view .hospital_appointment_sheet button {
     white-space: nowrap !important;
@@ -499,8 +473,7 @@
 }
 
 
-   9. NO HORIZONTAL SCROLL
-   ============================================================ */
+/* 9. NO HORIZONTAL SCROLL */
 
 .o_form_view,
 .o_form_view .o_form_sheet_bg,
@@ -511,8 +484,7 @@
 }
 
 
-   10. LIST VIEW: COMPACT ROWS
-   ============================================================ */
+/* 10. LIST VIEW: COMPACT ROWS */
 
 .o_list_view .o_list_table {
     width: 100% !important;
@@ -526,8 +498,7 @@
 }
 
 
-   11. WINDOWS LAPTOP HEIGHT
-   ============================================================ */
+/* 11. WINDOWS LAPTOP HEIGHT */
 
 @media (max-height: 850px) {
 
@@ -542,8 +513,7 @@
 }
 
 
-   12. VERY SHORT WINDOWS SCREEN
-   ============================================================ */
+/* 12. VERY SHORT WINDOWS SCREEN */
 
 @media (max-height: 750px) {
 
@@ -553,8 +523,7 @@
 }
 
 
-   13. WIDE DESKTOP
-   ============================================================ */
+/* 13. WIDE DESKTOP */
 
 @media (min-width: 1200px) {
 
@@ -569,11 +538,7 @@
     }
 }
 
-   HOSPITAL APPOINTMENT - ULTRA COMPACT SPACING
-   IMPORTANT:
-   Reduce SPACE only.
-   Font sizes are NOT reduced.
-   ============================================================ */
+/* HOSPITAL APPOINTMENT - ULTRA COMPACT SPACING IMPORTANT: Reduce SPACE only. Font sizes are NOT reduced. */
 
 
 /* ------------------------------------------------------------
@@ -957,8 +922,7 @@
     }
 }
 
-   FOOTER COPYRIGHT
-   ========================================================= */
+/* FOOTER COPYRIGHT */
 
 .hospital-real-footer {
     position: relative;
@@ -982,8 +946,7 @@
 }
 
 
-   LEFT FOOTER PRODUCT NAME
-   ========================================================= */
+/* LEFT FOOTER PRODUCT NAME */
 .hospital-footer-product {
     position: absolute;
     left: 25px;
@@ -997,9 +960,7 @@
     pointer-events: none;
 }
 
-   PAGE TITLE BANNER - Shows current page name centered
-   under the navigation menu on every page
-   ========================================================= */
+/* PAGE TITLE BANNER - Shows current page name centered under the navigation menu on every page */
 
 /* Make control panel relative so we can center-overlay the title */
 .o_control_panel {
@@ -1012,7 +973,7 @@
     pointer-events: none !important;
 }
 
-/* Use a pseudo-overlay trick: 
+/* Use a pseudo-overlay trick:
    Show only the last breadcrumb item as a centered title using absolute position */
 .o_control_panel .o_breadcrumb .breadcrumb-item.active::before {
     content: attr(data-content);
@@ -1043,9 +1004,7 @@ html body .o_form_view .o_control_panel .o_breadcrumb .breadcrumb-item.active {
     z-index: 10 !important;
 }
 
-   HIDE PAGE TITLE ON ALL DASHBOARDS
-   (Dashboards already show their own title in the content)
-   ========================================================= */
+/* HIDE PAGE TITLE ON ALL DASHBOARDS (Dashboards already show their own title in the content) */
 html body:has(.adb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,
 html body:has(.ddb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,
 html body:has(.pdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active,

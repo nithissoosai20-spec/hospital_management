@@ -1,5 +1,4 @@
-   LAB TEST TABLE - FULL WIDTH
-   ========================================================= */
+/* LAB TEST TABLE - FULL WIDTH */
 
 .hospital_lab_test_list {
     width: 100% !important;
@@ -40,8 +39,7 @@
     width: 14% !important;
 }
 
-   LAB RECEIPT ACTION
-   ========================================================= */
+/* LAB RECEIPT ACTION */
 
 .hospital-lab-receipt-action {
     width: 100%;

@@ -33,11 +33,15 @@
 
             # Appointment list customization
             'hospital_management/static/src/appointment_list/appointment_list.js',
+            'hospital_management/static/src/appointment_list/appointment_search_enter.js',
             'hospital_management/static/src/billing_list/billing_list.js',
             'hospital_management/static/src/appointment_list/appointment_list.xml',
-            
+        'hospital_management/static/src/js/appointment_form.js',
+            'hospital_management/static/src/js/lab_form.js',
+            'hospital_management/static/src/js/time_picker.js',
 
-            
+
+
         ],
 
         'web.assets_frontend': [
@@ -52,7 +56,7 @@
         'security/ir.model.access.csv',
 
 
-        
+
         'data/patient/patient_sequence.xml',
         'data/appointment/appointment_sequence.xml',
         'data/pharmacy/pharmacy_bill_sequence.xml',
@@ -62,7 +66,6 @@
         'data/hospital_demo_data.xml',
         'data/lab/lab_appointment_sequence.xml',
         'data/lab/lab_test_master_data.xml',
-        'data/consultation_fee/consultation_fee_data.xml',
         'data/consultation_fee/consultation_fee_data.xml',
 
         'views/consultation_fee/hospital_consultation_fee_views.xml',
@@ -74,7 +77,7 @@
         'views/pharmacy/hospital_pharmacy_payment_views.xml',
         'views/pharmacy/hospital_pharmacy_purchase_invoice_views.xml',
         'views/pharmacy/hospital_pharmacy_purchase_reports.xml',
-       
+
         'views/patient/hospital_patient_views.xml',
         'views/appointment/hospital_appointment_views.xml',
         'views/appointment/hospital_appointment_booking_wizard_views.xml',
@@ -82,7 +85,7 @@
         'views/lab/hospital_lab_reports.xml',
         'views/lab/hospital_lab_views.xml',
         'views/lab/lab_receipt_wizard_views.xml',
-        
+
 
         'views/user/hospital_user_views.xml',
         'views/user/hospital_user_activity_views.xml',
@@ -93,15 +96,15 @@
         'views/dashboard/hospital_pharmacy_dashboard.xml',
         'views/dashboard/hospital_pharmacy_dashboard_form.xml',
         'views/dashboard/hospital_doctor_dashboard.xml',
-        
+
         'views/login/hospital_login.xml',
         'views/login/hospital_web_login.xml',
         'views/login/login_page.xml',
 
         'views/menus/hospital_menu.xml',
-        
 
-        
+
+
     ],
 
     'installable': True,

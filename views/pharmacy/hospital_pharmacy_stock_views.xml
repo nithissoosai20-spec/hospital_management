@@ -152,6 +152,7 @@
                             <group>
                                 <group string="Inventory Tracking">
                                     <field name="total_stock" readonly="1"/>
+                                    <field name="total_stock"/>
                                     <field name="emergency_stock"/>
                                     <field name="quantity" class="fw-bold text-success"/>
                                     <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status in ('critical', 'out', 'expired')"/>

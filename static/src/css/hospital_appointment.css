@@ -2,14 +2,10 @@
    CLEAN / COMPACT CSS
    ODOO 19
 
-   NOTE:
-   Header and footer styles are NOT included here.
-   They remain untouched in hospital_layout.css.
-   ========================================================= */
+/* NOTE: Header and footer styles are NOT included here. They remain untouched in hospital_layout.css. */
 
 
-   1. APPOINTMENT FORM
-   ========================================================= */
+/* 1. APPOINTMENT FORM */
 
 .hospital_appointment_form {
     width: 100% !important;
@@ -88,8 +84,7 @@ body:has(.hospital_appointment_form)
 }
 
 
-   2. APPOINTMENT FORM SEARCH
-   ========================================================= */
+/* 2. APPOINTMENT FORM SEARCH */
 
 .hospital_appointment_search_toolbar {
     width: 100% !important;
@@ -139,8 +134,7 @@ body:has(.hospital_appointment_form)
 }
 
 
-   3. FORM SHEET / SECTIONS
-   ========================================================= */
+/* 3. FORM SHEET / SECTIONS */
 
 .hospital_appointment_sheet {
     width: 100% !important;
@@ -171,8 +165,7 @@ body:has(.hospital_appointment_form)
 }
 
 
-   4. FORM GRIDS
-   ========================================================= */
+/* 4. FORM GRIDS */
 
 .hospital_patient_grid,
 .hospital_new_patient_grid,
@@ -219,8 +212,7 @@ body:has(.hospital_appointment_form)
 }
 
 
-   5. FORM LABELS / FIELDS
-   ========================================================= */
+/* 5. FORM LABELS / FIELDS */
 
 .hospital_appointment_sheet label,
 .hospital_appointment_form label {
@@ -303,8 +295,7 @@ body:has(.hospital_appointment_form)
 }
 
 
-   6. RECEIPT / ACTION BUTTONS IN FORM
-   ========================================================= */
+/* 6. RECEIPT / ACTION BUTTONS IN FORM */
 
 .hospital_receipt_preference {
     display: flex !important;
@@ -339,8 +330,7 @@ body:has(.hospital_appointment_form)
     border-radius: 4px !important;
 }
 
-7. APPOINTMENT LIST
-========================================================= */
+/* 7. APPOINTMENT LIST */
 .hospital_appointment_list {
 width: 100% !important;
 }
@@ -363,8 +353,7 @@ margin: 0 1px !important;
 body:has(.hospital_appointment_list) .o_list_renderer {
 overflow-x: hidden !important;
 }
-8. APPOINTMENT LIST CONTROL BAR
-========================================================= */
+/* 8. APPOINTMENT LIST CONTROL BAR */
 /* New Appointment */
 .hospital_new_appointment_button {
 height: 36px !important;
@@ -468,8 +457,7 @@ height: 100% !important;
 border: none !important;
 background: transparent !important;
 }
-9. LIST ACTIONS
-========================================================= */
+/* 9. LIST ACTIONS */
 /* View / Edit / Print stay together on one line */
 .hospital_appointment_list .o_list_record_actions,
 .hospital_appointment_list .o_list_button {
@@ -492,8 +480,7 @@ margin: 0 2px !important;
 .hospital_appointment_list .o_optional_columns_dropdown {
 display: none !important;
 }
-10. RESPONSIVE
-========================================================= */
+/* 10. RESPONSIVE */
 @media (max-width: 1200px) {
 }
 @media (max-width: 1100px) {
@@ -529,9 +516,7 @@ padding: 5px 7px !important;
 }
 }
 
-   APPOINTMENT LIST TOOLBAR
-   New Appointment | Dates | Search
-   ========================================================= */
+/* APPOINTMENT LIST TOOLBAR New Appointment | Dates | Search */
 
 .hospital_appointment_control_area {
     display: flex !important;
@@ -656,15 +641,13 @@ padding: 5px 7px !important;
 }
 
 
-   APPOINTMENT LIST ACTIONS
-   View | Edit | Print
-   ========================================================= */
+/* APPOINTMENT LIST ACTIONS View | Edit | Print */
 
 .hospital_appointment_list td.o_list_button,
 .hospital_appointment_list td.o_list_record_actions {
-    width: 100px !important;
-    min-width: 100px !important;
-    max-width: 100px !important;
+    width: 130px !important;
+    min-width: 130px !important;
+    max-width: 130px !important;
     padding: 0 4px !important;
     white-space: nowrap !important;
     overflow: visible !important;
@@ -674,7 +657,7 @@ padding: 5px 7px !important;
 .hospital_appointment_list td.o_list_record_actions > div {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     flex-wrap: nowrap !important;
     width: 100% !important;
     min-width: 84px !important;
@@ -698,8 +681,7 @@ padding: 5px 7px !important;
 }
 
 
-   DESKTOP
-   ========================================================= */
+/* DESKTOP */
 
 @media (max-width: 1200px) {
     .hospital_new_appointment_wrapper {
@@ -739,9 +721,7 @@ padding: 5px 7px !important;
 }
 
 
-   FINAL DATE POSITION
-   Keep From / To beside New Appointment
-   ========================================================= */
+/* FINAL DATE POSITION Keep From / To beside New Appointment */
 
 .hospital_appointment_control_area {
     position: relative !important;
@@ -762,9 +742,7 @@ padding: 5px 7px !important;
     margin: 0 !important;
 }
 
-   FINAL APPOINTMENT TOOLBAR
-   New Appointment -> Dates -> Search
-   ========================================================= */
+/* FINAL APPOINTMENT TOOLBAR New Appointment -> Dates -> Search */
 
 .hospital_appointment_control_area {
     display: flex !important;
@@ -781,8 +759,7 @@ padding: 5px 7px !important;
 }
 
 
-   NEW APPOINTMENT
-   ========================================================= */
+/* NEW APPOINTMENT */
 
 .hospital_new_appointment_wrapper {
     display: flex !important;
@@ -808,9 +785,7 @@ padding: 5px 7px !important;
 }
 
 
-   DATES
-   DIRECTLY BESIDE NEW APPOINTMENT
-   ========================================================= */
+/* DATES DIRECTLY BESIDE NEW APPOINTMENT */
 
 .hospital_appointment_date_filters {
     position: static !important;
@@ -874,9 +849,7 @@ padding: 5px 7px !important;
 }
 
 
-   SEARCH
-   PUSH SEARCH TO RIGHT
-   ========================================================= */
+/* SEARCH PUSH SEARCH TO RIGHT */
 
 .hospital_appointment_search_wrapper {
     display: flex !important;
@@ -948,10 +921,7 @@ padding: 5px 7px !important;
 }
 
 
-   NEW APPOINTMENT FORM
-   Hide Odoo's top breadcrumb/action controls
-   Keep hospital header, footer and form untouched
-   ========================================================= */
+/* NEW APPOINTMENT FORM Hide Odoo's top breadcrumb/action controls Keep hospital header, footer and form untouched */
 
 /* Hide the "New" breadcrumb/title */
 .o_form_view .o_control_panel .o_breadcrumb {
@@ -966,8 +936,7 @@ padding: 5px 7px !important;
     display: none !important;
 }
 
-   NEW APPOINTMENT FORM - TOOLBAR SPACING
-   ========================================================= */
+/* NEW APPOINTMENT FORM - TOOLBAR SPACING */
 
 /* Reduce empty space left by hidden Odoo control panel */
 .o_form_view .o_control_panel .o_breadcrumb {
@@ -983,8 +952,7 @@ padding: 5px 7px !important;
 }
 
 
-   PATIENT SEARCH + NEW APPOINTMENT
-   ========================================================= */
+/* PATIENT SEARCH + NEW APPOINTMENT */
 
 /* Add space between Search and New Appointment */
 .hospital_appointment_search_box {
@@ -1006,8 +974,7 @@ padding: 5px 7px !important;
     margin-left: 8px !important;
 }
 
-   APPOINTMENT FORM - REQUIRED FIELD ERROR
-   ========================================================= */
+/* APPOINTMENT FORM - REQUIRED FIELD ERROR */
 
 .hospital_appointment_form
 .hospital_required_error
@@ -1047,8 +1014,7 @@ select {
 
 }
 
-   TOKEN NUMBER - GENERATED TOKEN HIGHLIGHT
-   ========================================================= */
+/* TOKEN NUMBER - GENERATED TOKEN HIGHLIGHT */
 
 .hospital_appointment_form
 .hospital_token_number {
@@ -1084,10 +1050,7 @@ input {
 
 }
 
-   APPOINTMENT LIST TOOLBAR
-   LEFT ALIGN: NEW APPOINTMENT + DATES
-   SEARCH: RIGHT
-   ========================================================= */
+/* APPOINTMENT LIST TOOLBAR LEFT ALIGN: NEW APPOINTMENT + DATES SEARCH: RIGHT */
 
 .hospital_appointment_control_area {
     display: flex !important;
@@ -1103,8 +1066,7 @@ input {
 }
 
 
-   NEW APPOINTMENT
-   ========================================================= */
+/* NEW APPOINTMENT */
 
 .hospital_new_appointment_wrapper {
     display: flex !important;
@@ -1127,9 +1089,7 @@ input {
 }
 
 
-   DATE FILTERS
-   Keep them directly beside New Appointment
-   ========================================================= */
+/* DATE FILTERS Keep them directly beside New Appointment */
 
 .hospital_appointment_date_filters {
     display: flex !important;
@@ -1175,9 +1135,7 @@ input {
 }
 
 
-   SEARCH
-   Push search to the RIGHT
-   ========================================================= */
+/* SEARCH Push search to the RIGHT */
 
 .hospital_appointment_search_wrapper {
     display: flex !important;
@@ -1243,8 +1201,7 @@ input {
 }
 
 
-   MOBILE / SMALL WIDTH
-   ========================================================= */
+/* MOBILE / SMALL WIDTH */
 
 @media (max-width: 900px) {
 
@@ -1274,8 +1231,7 @@ input {
     }
 }
 
-   FINAL APPOINTMENT TOOLBAR POSITION
-   ========================================================= */
+/* FINAL APPOINTMENT TOOLBAR POSITION */
 
 .hospital_appointment_control_area {
     position: relative !important;
@@ -1455,9 +1411,7 @@ input {
 }
 
 
-   APPOINTMENT TOOLBAR - FINAL POSITION
-   NEW APPOINTMENT -> DATE FILTERS -> SEARCH
-   ========================================================= */
+/* APPOINTMENT TOOLBAR - FINAL POSITION NEW APPOINTMENT -> DATE FILTERS -> SEARCH */
 
 .hospital_appointment_search_toolbar {
     display: flex !important;
@@ -1475,8 +1429,7 @@ input {
 }
 
 
-   SEARCH BOX
-   ========================================================= */
+/* SEARCH BOX */
 
 .hospital_appointment_search_box {
     display: flex !important;
@@ -1492,8 +1445,7 @@ input {
 }
 
 
-   NEW APPOINTMENT BUTTON
-   ========================================================= */
+/* NEW APPOINTMENT BUTTON */
 
 .hospital_appointment_search_box
 .hospital_new_appointment_button {
@@ -1515,8 +1467,7 @@ input {
 }
 
 
-   DATE FILTERS
-   ========================================================= */
+/* DATE FILTERS */
 
 .hospital_appointment_search_box
 .hospital_appointment_date_filters {
@@ -1544,8 +1495,7 @@ input {
 }
 
 
-   INDIVIDUAL DATE
-   ========================================================= */
+/* INDIVIDUAL DATE */
 
 .hospital_appointment_search_box
 .hospital_date_filter {
@@ -1565,8 +1515,7 @@ input {
 }
 
 
-   DATE LABEL
-   ========================================================= */
+/* DATE LABEL */
 
 .hospital_appointment_search_box
 .hospital_date_filter label {
@@ -1579,8 +1528,7 @@ input {
 }
 
 
-   DATE INPUT
-   ========================================================= */
+/* DATE INPUT */
 
 .hospital_appointment_search_box
 .hospital_date_input {
@@ -1599,9 +1547,7 @@ input {
 }
 
 
-   SEARCH
-   PUSH IT TO RIGHT
-   ========================================================= */
+/* SEARCH PUSH IT TO RIGHT */
 
 .hospital_appointment_search_box
 .hospital_appointment_search_wrapper {
@@ -1623,8 +1569,7 @@ input {
 }
 
 
-   REMOVE ANY OLD ABSOLUTE DATE POSITION
-   ========================================================= */
+/* REMOVE ANY OLD ABSOLUTE DATE POSITION */
 
 .hospital_appointment_search_toolbar
 .hospital_appointment_date_filters {
@@ -1639,8 +1584,7 @@ input {
 }
 
 
-   DESKTOP
-   ========================================================= */
+/* DESKTOP */
 
 @media (min-width: 1201px) {
 
@@ -1663,14 +1607,10 @@ input {
     }
 }
 
-   APPOINTMENT LIST TOOLBAR - FINAL
-   NEW APPOINTMENT + DATES ON LEFT
-   SEARCH ON RIGHT
-   ========================================================= */
+/* APPOINTMENT LIST TOOLBAR - FINAL NEW APPOINTMENT + DATES ON LEFT SEARCH ON RIGHT */
 
 
-   CREATE AREA
-   ========================================================= */
+/* CREATE AREA */
 
 .hospital_appointment_create_area {
     display: flex !important;
@@ -1692,8 +1632,7 @@ input {
 }
 
 
-   NEW APPOINTMENT
-   ========================================================= */
+/* NEW APPOINTMENT */
 
 .hospital_appointment_create_area
 .hospital_new_appointment_button {
@@ -1717,8 +1656,7 @@ input {
 }
 
 
-   DATE FILTERS
-   ========================================================= */
+/* DATE FILTERS */
 
 .hospital_appointment_create_area
 .hospital_appointment_date_filters {
@@ -1751,8 +1689,7 @@ input {
 }
 
 
-   INDIVIDUAL DATE FILTER
-   ========================================================= */
+/* INDIVIDUAL DATE FILTER */
 
 .hospital_appointment_create_area
 .hospital_date_filter {
@@ -1772,8 +1709,7 @@ input {
 }
 
 
-   DATE LABEL
-   ========================================================= */
+/* DATE LABEL */
 
 .hospital_appointment_create_area
 .hospital_date_label {
@@ -1786,8 +1722,7 @@ input {
 }
 
 
-   DATE INPUT
-   ========================================================= */
+/* DATE INPUT */
 
 .hospital_appointment_create_area
 .hospital_date_input {
@@ -1808,9 +1743,7 @@ input {
 }
 
 
-   SEARCH AREA
-   PUSH TO RIGHT
-   ========================================================= */
+/* SEARCH AREA PUSH TO RIGHT */
 
 .hospital_appointment_search_area {
     display: flex !important;
@@ -1828,8 +1761,7 @@ input {
 }
 
 
-   SEARCH VIEW
-   ========================================================= */
+/* SEARCH VIEW */
 
 .hospital_appointment_search_area
 .o_searchview {
@@ -1844,8 +1776,7 @@ input {
 }
 
 
-   RESPONSIVE
-   ========================================================= */
+/* RESPONSIVE */
 
 @media (max-width: 1100px) {
 
@@ -1884,10 +1815,7 @@ input {
     }
 }
 
-   ODOO SEARCH BAR
-   SEARCH INPUT + DROPDOWN ARROW
-   SAME LINE
-   ========================================================= */
+/* ODOO SEARCH BAR SEARCH INPUT + DROPDOWN ARROW SAME LINE */
 
 .hospital_appointment_search_area {
     display: flex !important;
@@ -1906,8 +1834,7 @@ input {
 }
 
 
-   ODOO SEARCH VIEW
-   ========================================================= */
+/* ODOO SEARCH VIEW */
 
 .hospital_appointment_search_area .o_searchview {
     display: flex !important;
@@ -1931,8 +1858,7 @@ input {
 }
 
 
-   SEARCH INPUT CONTAINER
-   ========================================================= */
+/* SEARCH INPUT CONTAINER */
 
 .hospital_appointment_search_area
 .o_searchview_input_container {
@@ -1953,8 +1879,7 @@ input {
 }
 
 
-   SEARCH INPUT
-   ========================================================= */
+/* SEARCH INPUT */
 
 .hospital_appointment_search_area
 .o_searchview_input {
@@ -1972,9 +1897,7 @@ input {
 }
 
 
-   DROPDOWN ARROW
-   KEEP IT BESIDE SEARCH
-   ========================================================= */
+/* DROPDOWN ARROW KEEP IT BESIDE SEARCH */
 
 .hospital_appointment_search_area
 .o_searchview_dropdown_toggler {
@@ -2007,8 +1930,7 @@ input {
 }
 
 
-   ARROW BUTTON
-   ========================================================= */
+/* ARROW BUTTON */
 
 .hospital_appointment_search_area
 .o_searchview_dropdown_toggler button {
@@ -2028,8 +1950,7 @@ input {
 }
 
 
-   CARET
-   ========================================================= */
+/* CARET */
 
 .hospital_appointment_search_area
 .o_searchview_dropdown_toggler::after {
@@ -2043,9 +1964,7 @@ input {
 }
 
 
-   FINAL FIX
-   ODOO SEARCH + DROPDOWN MUST STAY ON ONE ROW
-   ========================================================= */
+/* FINAL FIX ODOO SEARCH + DROPDOWN MUST STAY ON ONE ROW */
 
 .hospital_appointment_search_area .o_searchview.input-group {
     display: flex !important;
@@ -2154,8 +2073,7 @@ input {
     background: transparent !important;
 }
 
-   HOSPITAL APPOINTMENT SEARCH BAR
-   ========================================================= */
+/* HOSPITAL APPOINTMENT SEARCH BAR */
 
 .hospital_appointment_search_area {
     display: flex !important;
@@ -2254,9 +2172,7 @@ input {
 }
 
 
-   APPOINTMENT LIST - SEARCH BAR
-   Keep search input and dropdown arrow on ONE LINE
-   ========================================================= */
+/* APPOINTMENT LIST - SEARCH BAR Keep search input and dropdown arrow on ONE LINE */
 
 .hospital_searchbar_container {
     display: flex !important;
@@ -2348,11 +2264,7 @@ input {
 }
 
 
-   FINAL SEARCH BAR FIX
-   Odoo .o_cp_searchview is also .input-group
-   .input-group uses flex-wrap: wrap
-   This makes the dropdown arrow move to the next line.
-   ========================================================= */
+/* FINAL SEARCH BAR FIX Odoo .o_cp_searchview is also .input-group .input-group uses flex-wrap: wrap This makes the dropdown arrow move to the next line. */
 
 .hospital_searchbar_container .o_cp_searchview {
     display: flex !important;
@@ -2420,9 +2332,7 @@ input {
 }
 
 
-   APPOINTMENT LIST - FINAL COMPACT TOOLBAR
-   Reduce Date + Search box height
-   ========================================================= */
+/* APPOINTMENT LIST - FINAL COMPACT TOOLBAR Reduce Date + Search box height */
 
 
 /* ---------------------------------------------------------
@@ -2633,9 +2543,7 @@ input {
     min-height: 34px !important;
 }
 
-   FINAL APPOINTMENT TOOLBAR SIZE FIX
-   Search box + arrow in one compact line
-   ========================================================= */
+/* FINAL APPOINTMENT TOOLBAR SIZE FIX Search box + arrow in one compact line */
 
 /* SEARCH BAR CONTAINER */
 .hospital_searchbar_container {
@@ -2754,9 +2662,7 @@ input {
 }
 
 
-   DATE BOXES
-   Keep them compact and aligned with search
-   ========================================================= */
+/* DATE BOXES Keep them compact and aligned with search */
 
 .hospital_appointment_date_filters {
     display: flex !important;
@@ -2811,9 +2717,7 @@ input {
 }
 
 
-   SEARCH AREA
-   Keep everything horizontally aligned
-   ========================================================= */
+/* SEARCH AREA Keep everything horizontally aligned */
 
 .hospital_appointment_search_area {
     display: flex !important;
@@ -2830,9 +2734,7 @@ input {
 }
 
 
-   FINAL SEARCH BAR WIDTH + HEIGHT
-   TARGET THE ACTUAL ODOO CONTROL PANEL SEARCH
-   ========================================================= */
+/* FINAL SEARCH BAR WIDTH + HEIGHT TARGET THE ACTUAL ODOO CONTROL PANEL SEARCH */
 
 /* OUTER SEARCH CONTAINER */
 .hospital_searchbar_container {
@@ -2973,8 +2875,7 @@ input {
 }
 
 
-   KEEP TOOLBAR IN ONE LINE
-   ========================================================= */
+/* KEEP TOOLBAR IN ONE LINE */
 
 .hospital_appointment_search_area {
     display: flex !important;
@@ -2989,8 +2890,7 @@ input {
 }
 
 
-   DATE FILTERS
-   ========================================================= */
+/* DATE FILTERS */
 
 .hospital_appointment_date_filters {
     display: flex !important;
@@ -3037,8 +2937,7 @@ input {
 }
 
 
-   CLEAR BUTTON
-   ========================================================= */
+/* CLEAR BUTTON */
 
 .hospital_clear_button {
     height: 38px !important;
@@ -3051,8 +2950,7 @@ input {
     white-space: nowrap !important;
 }
 
-   LAB APPOINTMENT BUTTON
-   ========================================================= */
+/* LAB APPOINTMENT BUTTON */
 
 .hospital_lab_appointment_button {
     height: 38px !important;
@@ -3065,9 +2963,7 @@ input {
     white-space: nowrap !important;
 }
 
-   HORIZONTAL APPOINTMENT WORKFLOW
-   Patient | Appointment | Payment
-   ========================================================= */
+/* HORIZONTAL APPOINTMENT WORKFLOW Patient | Appointment | Payment */
 
 .hospital_appointment_columns {
     display: grid !important;
@@ -3091,8 +2987,7 @@ input {
 }
 
 
-   EACH COLUMN
-   ========================================================= */
+/* EACH COLUMN */
 
 .hospital_appointment_columns
 .hospital_appointment_column {
@@ -3113,8 +3008,7 @@ input {
 }
 
 
-   SECTION TITLE
-   ========================================================= */
+/* SECTION TITLE */
 
 .hospital_appointment_columns
 .hospital_section_title {
@@ -3133,8 +3027,7 @@ input {
 }
 
 
-   INNER GRIDS
-   ========================================================= */
+/* INNER GRIDS */
 
 .hospital_appointment_columns
 .hospital_patient_grid,
@@ -3162,8 +3055,7 @@ input {
 }
 
 
-   GRID ITEMS
-   ========================================================= */
+/* GRID ITEMS */
 
 .hospital_appointment_columns
 .hospital_patient_grid > div,
@@ -3187,8 +3079,7 @@ input {
 }
 
 
-   LABELS
-   ========================================================= */
+/* LABELS */
 
 .hospital_appointment_columns label {
 
@@ -3206,8 +3097,7 @@ input {
 }
 
 
-   FIELDS
-   ========================================================= */
+/* FIELDS */
 
 .hospital_appointment_columns
 .o_field_widget {
@@ -3222,8 +3112,7 @@ input {
 }
 
 
-   INPUTS
-   ========================================================= */
+/* INPUTS */
 
 .hospital_appointment_columns
 input,
@@ -3244,8 +3133,7 @@ textarea {
 }
 
 
-   TOKEN NUMBER
-   ========================================================= */
+/* TOKEN NUMBER */
 
 .hospital_appointment_columns
 .hospital_token_number {
@@ -3260,8 +3148,7 @@ textarea {
 }
 
 
-   HISTORY BUTTON
-   ========================================================= */
+/* HISTORY BUTTON */
 
 .hospital_appointment_columns
 .hospital_history_button {
@@ -3274,8 +3161,7 @@ textarea {
 }
 
 
-   PAYMENT COLUMN
-   ========================================================= */
+/* PAYMENT COLUMN */
 
 .hospital_appointment_columns
 .hospital_payment_column {
@@ -3284,8 +3170,7 @@ textarea {
 }
 
 
-   PAYMENT FIELDS
-   ========================================================= */
+/* PAYMENT FIELDS */
 
 .hospital_appointment_columns
 .hospital_payment_field {
@@ -3296,8 +3181,7 @@ textarea {
 }
 
 
-   TABLET
-   ========================================================= */
+/* TABLET */
 
 @media (max-width: 1100px) {
 
@@ -3317,8 +3201,7 @@ textarea {
 }
 
 
-   MOBILE
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 700px) {
 
@@ -3339,8 +3222,7 @@ textarea {
    APPOINTMENT FORM
    HORIZONTAL 3-COLUMN LAYOUT
 
-   Patient Details | Appointment Details | Fee & Payment
-   ========================================================= */
+/* Patient Details | Appointment Details | Fee & Payment */
 
 .hospital_appointment_columns {
     display: grid !important;
@@ -3363,8 +3245,7 @@ textarea {
 }
 
 
-   EACH COLUMN
-   ========================================================= */
+/* EACH COLUMN */
 
 .hospital_appointment_columns
 .hospital_appointment_column {
@@ -3387,8 +3268,7 @@ textarea {
 }
 
 
-   SECTION TITLES
-   ========================================================= */
+/* SECTION TITLES */
 
 .hospital_appointment_columns
 .hospital_section_title {
@@ -3411,8 +3291,7 @@ textarea {
 }
 
 
-   PATIENT DETAILS
-   ========================================================= */
+/* PATIENT DETAILS */
 
 .hospital_appointment_columns
 .hospital_patient_column {
@@ -3455,8 +3334,7 @@ textarea {
 }
 
 
-   PATIENT GRID
-   ========================================================= */
+/* PATIENT GRID */
 
 .hospital_appointment_columns
 .hospital_patient_grid,
@@ -3480,8 +3358,7 @@ textarea {
 }
 
 
-   APPOINTMENT DETAILS
-   ========================================================= */
+/* APPOINTMENT DETAILS */
 
 .hospital_appointment_columns
 .hospital_appointment_column_middle {
@@ -3509,8 +3386,7 @@ textarea {
 }
 
 
-   PAYMENT COLUMN
-   ========================================================= */
+/* PAYMENT COLUMN */
 
 .hospital_appointment_columns
 .hospital_payment_column {
@@ -3521,9 +3397,7 @@ textarea {
 }
 
 
-   PAYMENT GROUP
-   Your XML uses .hospital_payment_group
-   ========================================================= */
+/* PAYMENT GROUP Your XML uses .hospital_payment_group */
 
 .hospital_appointment_columns
 .hospital_payment_group {
@@ -3559,8 +3433,7 @@ textarea {
 }
 
 
-   LABELS
-   ========================================================= */
+/* LABELS */
 
 .hospital_appointment_columns
 label {
@@ -3581,8 +3454,7 @@ label {
 }
 
 
-   FIELD CONTAINERS
-   ========================================================= */
+/* FIELD CONTAINERS */
 
 .hospital_appointment_columns
 .o_field_widget {
@@ -3601,8 +3473,7 @@ label {
 }
 
 
-   INPUTS
-   ========================================================= */
+/* INPUTS */
 
 .hospital_appointment_columns
 input,
@@ -3623,8 +3494,7 @@ textarea {
 }
 
 
-   ADDRESS
-   ========================================================= */
+/* ADDRESS */
 
 .hospital_appointment_columns
 .hospital_address_field {
@@ -3637,8 +3507,7 @@ textarea {
 }
 
 
-   HISTORY BUTTON
-   ========================================================= */
+/* HISTORY BUTTON */
 
 .hospital_appointment_columns
 .hospital_history_button {
@@ -3666,8 +3535,7 @@ textarea {
 }
 
 
-   TOKEN NUMBER
-   ========================================================= */
+/* TOKEN NUMBER */
 
 .hospital_appointment_columns
 .hospital_token_number input {
@@ -3690,8 +3558,7 @@ textarea {
 }
 
 
-   RESPONSIVE
-   ========================================================= */
+/* RESPONSIVE */
 
 /* Tablet */
 
@@ -3746,8 +3613,7 @@ textarea {
     }
 }
 
-   APPOINTMENT TOKEN HIGHLIGHT
-   ========================================================= */
+/* APPOINTMENT TOKEN HIGHLIGHT */
 
 .appointment-token-highlight {
     margin-top: 12px;
@@ -3860,8 +3726,7 @@ textarea {
     }
 }
 
-   TOKEN NUMBER - HIGHLIGHTED DISPLAY
-   ========================================================= */
+/* TOKEN NUMBER - HIGHLIGHTED DISPLAY */
 
 .hospital-token-wrapper {
     width: 100%;
@@ -3964,15 +3829,11 @@ textarea {
 .hospital_searchbar_container .o_searchview_input_container { padding: 0 4px !important; }
 .hospital_searchbar_container .o_searchview_input { padding: 0 !important; height: 100% !important; border: none !important; margin: 0 !important; min-height: unset !important; line-height: 38px !important; }
 
-/* ALIGN ACTION BUTTONS */
-.hospital_appointment_list .hospital_appointment_action.d-none, .hospital_appointment_list .hospital_appointment_action[style*="display: none"] { display: inline-block !important; visibility: hidden !important; width: 28px !important; }
-.hospital_appointment_list .hospital_appointment_action { display: inline-block !important; width: 28px !important; text-align: center !important; }
 
 
 
-   APPOINTMENT LIST — NEW COMPACT TOOLBAR
-   New Appointment | From | To | Search
-   ========================================================= */
+
+/* APPOINTMENT LIST â€” NEW COMPACT TOOLBAR New Appointment | From | To | Search */
 
 .ha_toolbar {
     display: flex !important;
@@ -4083,30 +3944,21 @@ textarea {
 }
 
 
-   ACTION BUTTONS — 4 ICONS PERFECTLY ALIGNED
-   ========================================================= */
+/* ACTION BUTTONS â€” 4 ICONS PERFECTLY ALIGNED */
 
-.hospital_appointment_list .o_list_table td.o_list_button,
-.hospital_appointment_list .o_list_table td.o_list_record_actions {
-    width: 116px !important;
-    min-width: 116px !important;
-    max-width: 116px !important;
-    padding: 0 4px !important;
-    vertical-align: middle !important;
-    white-space: nowrap !important;
-}
+
 
 .hospital_appointment_list .o_list_table td.o_list_button > *,
 .hospital_appointment_list .o_list_table td.o_list_record_actions > * {
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
     flex-wrap: nowrap !important;
     gap: 2px !important;
     width: 100% !important;
 }
 
-/* Each icon button — fixed 26px square */
+/* Each icon button â€” fixed 26px square */
 .hospital_appointment_list .hospital_appointment_action {
     display: inline-flex !important;
     align-items: center !important;
@@ -4138,4 +3990,13 @@ textarea {
 /* Ensure buttons have pointers */
 .ha_filter_btn {
     cursor: pointer !important;
+}
+
+
+/* Force invalid fields (like Date) to show red background */
+.hospital_appointment_form .o_field_invalid,
+.hospital_appointment_form .o_field_invalid input,
+.hospital_appointment_form .o_field_invalid select {
+    background-color: #ffcccc !important;
+    border-color: red !important;
 }

@@ -1,5 +1,4 @@
-   DOCTOR DASHBOARD — dark theme, no scroll, same format
-   ============================================================= */
+/* DOCTOR DASHBOARD â€” dark theme, no scroll, same format */
 
 .o_form_view:has(.ddb),
 .o_form_view:has(.ddb) .o_form_renderer,
@@ -49,7 +48,7 @@
     margin-top: 1px;
 }
 
-/* ROW 1 — 5 KPI TILES */
+/* ROW 1 â€” 5 KPI TILES */
 .ddb-row1 {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -103,7 +102,7 @@
 .ddb-cyan   { background: #0891b2; }
 .ddb-purple { background: #7c3aed; }
 
-/* ROW 2 — 3 PANELS */
+/* ROW 2 â€” 3 PANELS */
 .ddb-row2 {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr;
@@ -286,7 +285,7 @@
     font-weight: 600;
 }
 
-/* ROW 3 — QUICK ACTIONS */
+/* ROW 3 â€” QUICK ACTIONS */
 .ddb-row3 {
     display: grid;
     grid-template-columns: repeat(6, 1fr);

@@ -12,7 +12,7 @@
 
         <field name="arch" type="xml">
 
-            <form create="0" edit="0" delete="0">
+            <form create="0" delete="0" edit="0">
 
                 <sheet style="
                     height:100%;
@@ -23,7 +23,7 @@
 
                     <div class="adb">
 
-                        <!-- ================= HEADER ================= -->
+    <!--  -->
 
                         <div class="adb-header">
 
@@ -39,15 +39,27 @@
 
                             </div>
 
-                            <div class="adb-date">
-                                <span>📅</span>
-                                <span>Today</span>
+                            <div class="dropdown adb-date-filter">
+                                <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 7px; color: #64748b; font-weight: 600; padding: 4px 10px; display: flex; align-items: center; gap: 5px;">
+                                    <i class="fa fa-calendar"></i>
+                                    <field name="date_filter" readonly="1" style="margin-bottom: 0; pointer-events: none;"/>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" style="border: 1px solid #e2e8f0; border-radius: 7px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 5px;">
+                                    <li><button name="action_filter_today" type="object" string="Today" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_weekly" type="object" string="Weekly" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_monthly" type="object" string="Monthly" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_q1" type="object" string="Quarter-1 (Jan to Mar)" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_q2" type="object" string="Quarter-2 (April to June)" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_q3" type="object" string="Quarter-3 (July to Sept)" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_q4" type="object" string="Quarter-4 (Oct to Dec)" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                    <li><button name="action_filter_year" type="object" string="Yearly" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
+                                </ul>
                             </div>
 
                         </div>
 
 
-                        <!-- ================= KPI ROW ================= -->
+    <!--  -->
 
                         <div class="adb-kpi-row">
 
@@ -153,13 +165,19 @@
 
                             <!-- TOKENS -->
 
+                            
+
+
+
+                            <!-- TOKENS -->
+
                             <button
                                 name="%(action_hospital_token_patients_today)d"
                                 type="action"
                                 class="adb-kpi adb-cyan"
                             >
 
-                                <span class="adb-kpi-icon">🎫</span>
+                                <span class="adb-kpi-icon">&#127915;</span>
 
                                 <span class="adb-kpi-number">
                                     <field
@@ -188,7 +206,7 @@
                                 }"
                             >
 
-                                <span class="adb-kpi-icon">🔬</span>
+                                <span class="adb-kpi-icon">&#128300;</span>
 
                                 <span class="adb-kpi-number">
                                     <field
@@ -207,7 +225,7 @@
                         </div>
 
 
-                        <!-- ================= MAIN ROW ================= -->
+    <!--  -->
 
                         <div class="adb-main-row">
 
@@ -433,9 +451,7 @@
 
                                     <div class="adb-revenue-row">
 
-                                        <span>
-                                            Laboratory
-                                        </span>
+                                        <span>Lab Fees</span>
 
                                         <strong>
                                             ₹
@@ -449,6 +465,14 @@
                                     </div>
 
 
+                                    
+                                    <div class="adb-revenue-row">
+                                        <span>Pharmacy Collection</span>
+                                        <strong>
+                                            &#8377;
+                                            <field name="pharmacy_collection" nolabel="1" readonly="1"/>
+                                        </strong>
+                                    </div>
                                     <div class="adb-revenue-total">
 
                                         <span>
@@ -470,10 +494,70 @@
 
                             </div>
 
+                            <!-- PAYMENTS (Pharmacy) -->
+                            <div class="adb-panel">
+                                <div class="adb-panel-header">
+                                    <i class="fa fa-money"></i> Pharmacy Payments
+                                </div>
+                                <div class="adb-revenue">
+                                    <div class="adb-revenue-row">
+                                        <span>Pending Payments</span>
+                                        <strong>
+                                            &#8377;
+                                            <field name="pharmacy_pending_payments" nolabel="1" readonly="1"/>
+                                        </strong>
+                                    </div>
+                                    <div class="adb-revenue-row">
+                                        <span>Settled Payment</span>
+                                        <strong>
+                                            &#8377;
+                                            <field name="pharmacy_paid_payments" nolabel="1" readonly="1"/>
+                                        </strong>
+                                    </div>
+                                    <div class="adb-revenue-row">
+                                        <span>Upcoming Payments</span>
+                                        <strong>
+                                            &#8377;
+                                            <field name="pharmacy_upcoming_payments" nolabel="1" readonly="1"/>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- STOCK SUMMARY -->
+                            <div class="adb-panel">
+                                <div class="adb-panel-header">
+                                    <i class="fa fa-cubes"></i> Stock
+                                </div>
+                                <div class="adb-list">
+                                    <div class="adb-list-row">
+                                        <div class="adb-status-dot adb-blue-dot"></div>
+                                        <span class="adb-list-label">Total Medicines</span>
+                                        <span class="adb-list-number"><field name="stock_total" nolabel="1" readonly="1"/></span>
+                                    </div>
+                                    <div class="adb-list-row">
+                                        <div class="adb-status-dot adb-orange-dot"></div>
+                                        <span class="adb-list-label">Low Stock</span>
+                                        <span class="adb-list-number"><field name="stock_low" nolabel="1" readonly="1"/></span>
+                                    </div>
+                                    <div class="adb-list-row">
+                                        <div class="adb-status-dot adb-red-dot"></div>
+                                        <span class="adb-list-label">Out of Stock</span>
+                                        <span class="adb-list-number"><field name="stock_out" nolabel="1" readonly="1"/></span>
+                                    </div>
+                                    <div class="adb-list-row">
+                                        <div class="adb-status-dot adb-purple-dot"></div>
+                                        <span class="adb-list-label">Expired</span>
+                                        <span class="adb-list-number"><field name="stock_expired" nolabel="1" readonly="1"/></span>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
 
 
-                        <!-- ================= QUICK ACTIONS ================= -->
+    <!--  -->
 
                         <div class="adb-section-title">
                             Quick Actions
@@ -484,8 +568,8 @@
 
 
                             <button
-                                name="%(action_hospital_users)d"
-                                type="action"
+                                name="action_create_user"
+                                type="object"
                                 class="adb-action"
                             >
 
@@ -528,53 +612,13 @@
                             </button>
 
 
-                            <button
-                                name="%(action_hospital_token_patients_today)d"
-                                type="action"
-                                class="adb-action"
-                            >
-
-                                <span class="adb-action-icon">🎫</span>
-
-                                <strong>Tokens</strong>
-
-                                <span>Today's tokens</span>
-
-                            </button>
+                            
 
 
-                            <button
-                                name="%(action_hospital_lab_appointments)d"
-                                type="action"
-                                class="adb-action"
-                                context="{
-                                    'search_default_appointment_date':
-                                    context_today()
-                                }"
-                            >
-
-                                <span class="adb-action-icon">🔬</span>
-
-                                <strong>Laboratory</strong>
-
-                                <span>Today's tests</span>
-
-                            </button>
+                            
 
 
-                            <button
-                                name="%(action_hospital_appointment_pending_payment)d"
-                                type="action"
-                                class="adb-action"
-                            >
-
-                                <span class="adb-action-icon">💳</span>
-
-                                <strong>Payments</strong>
-
-                                <span>Pending payments</span>
-
-                            </button>
+                            
 
 
                         </div>
@@ -592,8 +636,7 @@
 
    
 
-         ADMIN DASHBOARD RECORD
-         ========================================================= -->
+    <!-- ADMIN DASHBOARD RECORD -->
 
     <record id="admin_dashboard_record"
             model="hospital.admin.dashboard">
@@ -603,8 +646,7 @@
     </record>
 
 
-         ADMIN DASHBOARD ACTION
-         ========================================================= -->
+    <!-- ADMIN DASHBOARD ACTION -->
 
     <record id="action_hospital_admin_dashboard_window"
             model="ir.actions.act_window">
@@ -615,8 +657,8 @@
 
         <field name="view_mode">form</field>
 
-        <field name="res_id"
-               ref="admin_dashboard_record"/>
+        <field name="res_id" ref="admin_dashboard_record"/>
+        <field name="context">{'form_view_initial_mode': 'edit'}</field>
 
         <field name="view_id"
                ref="view_hospital_admin_dashboard_form"/>
@@ -625,11 +667,7 @@
 
     </record>
 
-         DASHBOARD ROUTER (SERVER ACTION)
-         Intercepts action_hospital_dashboard calls from old URLs
-         and intelligently routes users to their correct dashboard
-         without throwing Access Errors.
-         ========================================================= -->
+    <!-- DASHBOARD ROUTER (SERVER ACTION) Intercepts action_hospital_dashboard calls from old URLs and intelligently routes users to their correct dashboard without throwing Access Errors. -->
 
     <record id="action_hospital_dashboard" model="ir.actions.server">
         <field name="name">Hospital Dashboard Router</field>
@@ -639,6 +677,7 @@
         <field name="code">
 if env.user.has_group('hospital_management.group_hospital_super_admin') or env.user.has_group('hospital_management.group_hospital_admin'):
     action = env.ref('hospital_management.action_hospital_admin_dashboard_window').sudo().read()[0]
+    action['context'] = {'form_view_initial_mode': 'edit'}
 elif env.user.has_group('hospital_management.group_hospital_receptionist'):
     action = env.ref('hospital_management.action_hospital_reception_dashboard').sudo().read()[0]
 elif env.user.has_group('hospital_management.group_hospital_doctor'):

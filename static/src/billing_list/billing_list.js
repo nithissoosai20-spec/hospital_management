@@ -11,6 +11,10 @@ export class BillingListController extends ListController {
         this.action = useService("action");
     }
 
+    get createLabel() {
+        return "Create Bill";
+    }
+
     async createRecord() {
         await this.action.doAction("hospital_management.action_hospital_pharmacy_billing");
     }

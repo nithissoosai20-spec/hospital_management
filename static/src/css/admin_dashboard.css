@@ -1,5 +1,4 @@
-   ADMIN DASHBOARD  —  Professional Light Theme
-   ============================================================= */
+/* ADMIN DASHBOARD  â€”  Professional Light Theme */
 
 .o_form_view:has(.adb),
 .o_form_view:has(.adb) .o_form_renderer,
@@ -17,8 +16,7 @@
 }
 
 
-   ROOT
-   ============================================================= */
+/* ROOT */
 
 .adb {
     display: grid;
@@ -40,8 +38,7 @@
 }
 
 
-   HEADER
-   ============================================================= */
+/* HEADER */
 
 .adb-header {
     display: flex;
@@ -82,8 +79,7 @@
 }
 
 
-   KPI CARDS
-   ============================================================= */
+/* KPI CARDS */
 
 .adb-kpi-row {
     display: grid;
@@ -146,7 +142,7 @@
 }
 
 
-/* KPI COLORS — soft tinted backgrounds */
+/* KPI COLORS â€” soft tinted backgrounds */
 
 .adb-blue {
     background: #eff6ff;
@@ -221,22 +217,17 @@
 .adb-red .adb-kpi-icon  { color: #dc2626; }
 
 
-   MAIN ROW
-   ============================================================= */
+/* MAIN ROW */
 
 .adb-main-row {
     display: grid;
-
-    grid-template-columns: 1.1fr 1fr 1fr;
-
+    grid-template-columns: repeat(5, 1fr);
     gap: 7px;
-
     min-height: 0;
 }
 
 
-   PANELS
-   ============================================================= */
+/* PANELS */
 
 .adb-panel {
     display: flex;
@@ -274,8 +265,7 @@
 }
 
 
-   STAFF LIST
-   ============================================================= */
+/* STAFF LIST */
 
 .adb-list {
     display: flex;
@@ -350,8 +340,7 @@
 }
 
 
-   TODAY ACTIVITY
-   ============================================================= */
+/* TODAY ACTIVITY */
 
 .adb-activity {
     display: grid;
@@ -411,8 +400,7 @@
 }
 
 
-   REVENUE
-   ============================================================= */
+/* REVENUE */
 
 .adb-revenue {
     display: flex;
@@ -493,8 +481,7 @@
 }
 
 
-   QUICK ACTION TITLE
-   ============================================================= */
+/* QUICK ACTION TITLE */
 
 .adb-section-title {
     font-size: 11px;
@@ -509,14 +496,11 @@
 }
 
 
-   QUICK ACTIONS
-   ============================================================= */
+/* QUICK ACTIONS */
 
 .adb-actions {
     display: grid;
-
-    grid-template-columns: repeat(6, 1fr);
-
+    grid-template-columns: repeat(3, 1fr);
     gap: 7px;
 }
 
@@ -581,3 +565,8 @@
 
     color: #94a3b8;
 }
+
+
+/* HIDE CONTROL PANEL */
+.o_control_panel:has(+ .o_content .adb) { display: none !important; }
+.o_control_panel:has(~ * .adb) { display: none !important; }

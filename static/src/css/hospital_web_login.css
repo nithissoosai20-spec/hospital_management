@@ -1,6 +1,4 @@
-   RIALKG LOGIN PAGE
-   Hide unwanted Odoo login options
-   ========================================================= */
+/* RIALKG LOGIN PAGE Hide unwanted Odoo login options */
 
 /* Hide the entire passkey + or-separator block */
 .o_login_auth {
