@@ -13,6 +13,7 @@ class HospitalPharmacyPayment(models.Model):
     invoice_total = fields.Float(string='Invoice Total', related='invoice_id.total_amount', store=True)
     invoice_balance = fields.Float(string='Pending Balance', related='invoice_id.balance_amount', store=True)
     invoice_status = fields.Selection(string='Invoice Status', related='invoice_id.status', store=True)
+    invoice_paid_amount = fields.Float(string='Already Paid', related='invoice_id.paid_amount', store=True)
 
     
     date = fields.Date(string='Payment Date', default=fields.Date.context_today, required=True)

@@ -57,7 +57,7 @@
 
                         </div>
 
-                        <!-- ROW 2 : STOCK STATUS + BILLS + REVENUE -->
+                        <!-- ROW 2 : STOCK STATUS + BILLS -->
                         <div class="pdb-row2">
 
                             <!-- STOCK STATUS -->
@@ -105,21 +105,6 @@
                                     <button name="%(action_hospital_pharmacy_billing)d" type="action" class="pdb-open-btn">
                                         Open Billing →
                                     </button>
-                                </div>
-                            </div>
-
-                            <!-- REVENUE -->
-                            <div class="pdb-panel">
-                                <div class="pdb-panel-hdr">💰 Revenue</div>
-                                <div class="pdb-revenue-body">
-                                    <div class="pdb-rev-row">
-                                        <span>Today's Revenue</span>
-                                        <strong>₹ <field name="today_revenue" nolabel="1" readonly="1" widget="float" digits="[10,0]"/></strong>
-                                    </div>
-                                    <div class="pdb-rev-total">
-                                        <span>Total Today</span>
-                                        <strong>₹ <field name="today_revenue" nolabel="1" readonly="1" widget="float" digits="[10,0]"/></strong>
-                                    </div>
                                 </div>
                             </div>
 

@@ -152,7 +152,7 @@
 /* ROW 2 â€” 3 PANELS */
 .pdb-row2 {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr;
+    grid-template-columns: 1.6fr 1.2fr;
     gap: 6px;
     min-height: 0;
 }

@@ -26,9 +26,5 @@ class HospitalRole(models.Model):
     )
 
     _sql_constraints = [
-        (
-            'hospital_role_name_unique',
-            'UNIQUE(name)',
-            'Role name must be unique.'
-        ),
+        ('unique_role_name', 'UNIQUE(name)', 'Role name must be unique.'),
     ]

@@ -1,51 +1,176 @@
-// HELPER: Get a clean, human-readable page name
-function getPageName() {
-    let text = document.title.split(' - ')[0].trim();
-    if (!text || text === 'Odoo') return null;
-    return text;
-}
+/** @odoo-module **/
 
-// PAGE TITLE BANNER
-// Injects a centered page title banner below the nav menu
-let lastPageTitle = null;
+import { App } from "@odoo/owl";
 
-function injectPageTitle() {
-    // Don't show on dashboards or form views (sub-pages)
-    if (document.querySelector('.adb, .ddb, .pdb, .rdb') || document.querySelector('.o_form_view') || window.location.hash.includes('view_type=form')) {
-        const existing = document.getElementById('hospital-page-title-banner');
+// ─── PRINT PREVIEW MODAL ─────────────────────────────────────────────────────
+(function () {
+    function showPrintPreviewModal(reportHtmlUrl, reportPdfUrl) {
+        // Remove any existing modal
+        const existing = document.getElementById('hospital-print-preview-overlay');
         if (existing) existing.remove();
-        lastPageTitle = null;
-        return;
+
+        const overlay = document.createElement('div');
+        overlay.id = 'hospital-print-preview-overlay';
+        overlay.style.cssText = [
+            'position:fixed', 'top:0', 'left:0', 'width:100%', 'height:100%',
+            'background:rgba(0,0,0,0.75)', 'z-index:100000',
+            'display:flex', 'flex-direction:column',
+            'align-items:center', 'justify-content:center'
+        ].join(';');
+
+        const modal = document.createElement('div');
+        modal.style.cssText = [
+            'background:#fff', 'width:88%', 'height:90%',
+            'border-radius:8px', 'display:flex', 'flex-direction:column',
+            'overflow:hidden', 'box-shadow:0 20px 60px rgba(0,0,0,0.5)'
+        ].join(';');
+
+        const toolbar = document.createElement('div');
+        toolbar.style.cssText = [
+            'background:#1e3a8a', 'color:#fff', 'padding:10px 20px',
+            'display:flex', 'justify-content:space-between', 'align-items:center',
+            'flex-shrink:0'
+        ].join(';');
+        toolbar.innerHTML = `
+            <span style="font-weight:700;font-size:15px;letter-spacing:1px;">📄 Print Preview</span>
+            <div style="display:flex;gap:10px;">
+                <button id="hpm-print" style="background:#10b981;color:#fff;border:none;padding:7px 18px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600;">🖨️ Print</button>
+                <button id="hpm-pdf" style="background:#3b82f6;color:#fff;border:none;padding:7px 18px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600;">⬇️ Download PDF</button>
+                <button id="hpm-close" style="background:#ef4444;color:#fff;border:none;padding:7px 18px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600;">✕ Close</button>
+            </div>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'flex:1;border:none;width:100%;background:#f3f4f6;';
+        iframe.src = reportHtmlUrl;
+
+        modal.appendChild(toolbar);
+        modal.appendChild(iframe);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        document.getElementById('hpm-close').onclick = () => overlay.remove();
+        overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+        document.getElementById('hpm-print').onclick = () => {
+            try { iframe.contentWindow.print(); }
+            catch(e) { window.open(reportHtmlUrl); }
+        };
+
+        document.getElementById('hpm-pdf').onclick = () => {
+            const a = document.createElement('a');
+            a.href = reportPdfUrl;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
     }
 
-    const pageName = getPageName();
+    // Override XMLHttpRequest to intercept Odoo's report PDF calls
+    // Odoo sends the report via /report/pdf endpoint - we intercept the action service
+    // by hooking into the fetch API which Odoo uses for RPC calls
+    const _origFetch = window.fetch;
+    window.fetch = async function (...args) {
+        const response = await _origFetch.apply(this, args);
+        return response;
+    };
+
+    // Primary approach: intercept window.open for /report/ URLs
+    const _origOpen = window.open;
+    window.open = function (url, target, features) {
+        if (url && typeof url === 'string' && url.includes('/report/pdf/')) {
+            const htmlUrl = url.replace('/report/pdf/', '/report/html/');
+            showPrintPreviewModal(htmlUrl, url);
+            return null;
+        }
+        if (url && typeof url === 'string' && url.includes('/report/html/')) {
+            showPrintPreviewModal(url, url.replace('/report/html/', '/report/pdf/'));
+            return null;
+        }
+        return _origOpen.call(this, url, target, features);
+    };
+
+    // Secondary approach: intercept navigation to report PDF via link clicks
+    document.addEventListener('click', function (e) {
+        const anchor = e.target.closest('a[href]');
+        if (anchor) {
+            const href = anchor.getAttribute('href');
+            if (href && href.includes('/report/pdf/')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const htmlUrl = href.replace('/report/pdf/', '/report/html/');
+                showPrintPreviewModal(htmlUrl, href);
+            }
+        }
+    }, true); // capture phase
+
+})();
+
+function getPageName() {
+    let title = document.title; // e.g. "Hospital Users - Odoo"
+    if (!title) return '';
+    let parts = title.split('-');
+    if (parts.length > 0) {
+        let text = parts[0].trim();
+        // Exception for appointment forms to accurately grab "Appointment Booking"
+        if (text === 'New' && window.location.href.match(/\/hospital\.appointment\/(new|\d+)/)) {
+            return 'Appointment Booking';
+        }
+        if (text === 'PINV') {
+            return 'Purchase Invoices';
+        }
+        if (text === 'PAY') {
+            return 'Payments';
+        }
+        if (text === 'PUR') {
+            const url = window.location.href;
+            if (url.includes('action-203') || url.includes('action-204')) {
+                return 'Purchase Intent';
+            }
+            if (url.includes('action-199') || url.includes('action-200')) {
+                return 'Purchase Orders';
+            }
+            return 'Purchase Intent'; // fallback
+        }
+        return text;
+    }
+    return '';
+}
+
+function injectPageTitle() {
+    let pageName = getPageName();
     if (!pageName) return;
 
-    // Don't re-inject if the title hasn't changed
-    if (pageName === lastPageTitle) return;
-    lastPageTitle = pageName;
+    let banner = document.querySelector('.hospital-page-title-banner');
+    if (!banner) {
+        let actionManager = document.querySelector('.o_action_manager');
+        if (!actionManager) return;
+        
+        // Exclude the user form entirely
+        if (document.querySelector('.hospital_user_form')) {
+            return;
+        }
 
-    // Remove any existing banner
-    const existing = document.getElementById('hospital-page-title-banner');
-    if (existing) existing.remove();
+        banner = document.createElement('div');
+        banner.className = 'hospital-page-title-banner';
+        banner.style.cssText = `
+            width: 100%;
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-height: 40px;
+        `;
+        
+        actionManager.insertBefore(banner, actionManager.firstChild);
+    }
 
-    // Find the right container to insert into (just before the content)
-    const target = document.querySelector('.o_action_manager') ||
-                   document.querySelector('.o_content') ||
-                   document.querySelector('.o_main_content');
-    if (!target) return;
-
-    const banner = document.createElement('div');
-    banner.id = 'hospital-page-title-banner';
-    // Position statically so it sits naturally below the menu, above the list/form
-    banner.style.cssText = `
-        width: 100%;
-        text-align: center;
-        padding: 4px 0 0 0;
-        background: transparent;
-        pointer-events: none;
-    `;
-    banner.innerHTML = `
+    let innerHtml = `
         <span style="
             font-size: 14px;
             font-weight: 800;
@@ -59,76 +184,188 @@ function injectPageTitle() {
         ">${pageName}</span>
     `;
 
-    target.insertBefore(banner, target.firstChild);
+    if (pageName === 'Purchase Intent' || pageName === 'Existing Purchase Intents' || pageName === 'Purchase Orders' || pageName === 'Existing Purchase Orders') {
+        const isPO = pageName.includes('Orders');
+        const isNew = pageName === 'Purchase Intent' || pageName === 'Purchase Orders';
+        const titleText = isPO ? 'Purchase Orders' : 'Purchase Intent';
+        const tabClass = isPO ? 'custom-po-tab' : 'custom-pi-tab';
+
+        innerHtml = `
+            <div style="
+                background: white;
+                padding: 8px 20px 0 20px;
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                text-transform: uppercase;
+                font-weight: 800;
+            ">
+                <span style="color: #29398f; font-size: 16px; margin-bottom: 6px;">${titleText}</span>
+                <div style="display: flex; gap: 30px; font-size: 13px;">
+                    <a class="${tabClass}" data-target="new" style="
+                        cursor: pointer;
+                        color: ${isNew ? '#29398f' : '#6c757d'};
+                        border-bottom: ${isNew ? '3px solid #29398f' : '3px solid transparent'};
+                        padding-bottom: 4px;
+                        text-decoration: none;
+                    ">New</a>
+                    <a class="${tabClass}" data-target="existing" style="
+                        cursor: pointer;
+                        color: ${!isNew ? '#29398f' : '#6c757d'};
+                        border-bottom: ${!isNew ? '3px solid #29398f' : '3px solid transparent'};
+                        padding-bottom: 4px;
+                        text-decoration: none;
+                    ">Existing</a>
+                </div>
+            </div>
+        `;
+    }
+
+    banner.innerHTML = innerHtml;
 }
 
-const observer = new MutationObserver(() => {
-    // --- Page Title ---
-    injectPageTitle();
+let observerTimer = null;
+function startObserving() {
+    const targetNode = document.body;
+    const config = { childList: true, subtree: true };
 
-    // --- Button text ---
-    const addBtns = document.querySelectorAll('.o_control_panel .o_list_button_add, .o_control_panel .o_form_button_create');
-    if (addBtns.length > 0) {
-        let contextName = "Item";
-        let text = document.title.split(' - ')[0].trim();
-
-        if (text) {
-            if (text.toLowerCase() === "patients") text = "Patient";
-            else if (text.toLowerCase() === "appointments") text = "Appointment";
-            else if (text.toLowerCase() === "doctors") text = "Doctor";
-            else if (text.toLowerCase() === "users") text = "User";
-            else if (text.toLowerCase() === "departments") text = "Department";
-            else if (text.toLowerCase().includes("billing")) text = "Bill";
-            else if (text.toLowerCase().includes("purchase")) text = "Purchase";
-            else if (text.endsWith('s')) text = text.slice(0, -1);
-
-            if (text !== "Odoo") contextName = text;
-        }
-
-        addBtns.forEach(btn => {
-            if (btn.textContent.trim() === 'New') {
-                if (contextName === 'Bill') {
-                    btn.textContent = 'Create Bill';
-                } else if (contextName.toLowerCase().startsWith('create')) {
-                    btn.textContent = contextName;
-                } else {
-                    btn.textContent = `Add New ${contextName}`;
-                }
+    const callback = function(mutationsList, observer) {
+        if (observerTimer) clearTimeout(observerTimer);
+        observerTimer = setTimeout(() => {
+            if (document.querySelector('.o_action_manager')) {
+                injectPageTitle();
             }
-        });
+        }, 50);
+    };
 
-    }
-    // --- Custom Save Button Visibility Mirroring ---
-    const customSaveBtn = document.querySelector('button[name="action_save_user"]');
-    if (customSaveBtn) {
-        // Find the native Odoo save button
-        const nativeSaveBtn = document.querySelector('.o_control_panel .o_form_button_save');
-
-        if (nativeSaveBtn) {
-            const isNativeSaveHidden = nativeSaveBtn.classList.contains('d-none') || nativeSaveBtn.classList.contains('o_hidden') || getComputedStyle(nativeSaveBtn).display === 'none';
-            if (isNativeSaveHidden) {
-                customSaveBtn.style.setProperty('display', 'none', 'important');
-            } else {
-                customSaveBtn.style.setProperty('display', 'inline-block', 'important');
-            }
-        } else {
-            // If native save is completely removed from DOM, hide custom save
-            customSaveBtn.style.setProperty('display', 'none', 'important');
-        }
-    }
-});
-
-const startObserving = () => {
-    if (document.body) {
-        observer.observe(document.body, { childList: true, subtree: true });
-        injectPageTitle(); // Run once on load
-    } else {
-        setTimeout(startObserving, 50);
-    }
-};
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+}
 
 if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', startObserving);
 } else {
     startObserving();
+}
+
+// Global tab handlers for Purchase Intent & Purchase Orders
+window.addEventListener('click', async function(e) {
+    if (e.target.closest('.btn-custom-close-pinv')) {
+        e.preventDefault();
+        const existingActionId = await getActionId('hospital_management.action_hospital_pharmacy_purchase_invoice');
+        if (existingActionId) window.location.href = `/odoo/action-${existingActionId}`;
+        return;
+    }
+    if (e.target.closest('.btn-custom-close-pay')) {
+        e.preventDefault();
+        const existingActionId = await getActionId('hospital_management.action_hospital_pharmacy_payment');
+        if (existingActionId) window.location.href = `/odoo/action-${existingActionId}`;
+        return;
+    }
+    if (e.target.closest('.btn-custom-clear')) {
+        e.preventDefault();
+        if (window._hospitalPharmacyStockController && window._hospitalPharmacyStockController.actionService) {
+            await window._hospitalPharmacyStockController.model.root.discard();
+            window._hospitalPharmacyStockController.actionService.doAction({
+                type: 'ir.actions.act_window',
+                res_model: 'hospital.pharmacy.stock',
+                views: [[false, 'form']],
+                target: 'current'
+            }, { replaceLastAction: true });
+        } else {
+            window.location.reload();
+        }
+    }
+    if (e.target.closest('.btn-custom-close')) {
+        e.preventDefault();
+        if (window._hospitalPharmacyStockController && window._hospitalPharmacyStockController.actionService) {
+            await window._hospitalPharmacyStockController.model.root.discard();
+            window._hospitalPharmacyStockController.actionService.doAction('hospital_management.action_hospital_pharmacy_stock_records', {
+                clearBreadcrumbs: true,
+            });
+        } else {
+            window.history.back();
+        }
+    }
+    
+    // Tab Navigation - Purchase Intent
+    if (e.target.classList.contains('custom-pi-tab')) {
+        e.preventDefault();
+        const target = e.target.dataset.target;
+        const xmlId = target === 'new'
+            ? 'hospital_management.action_hospital_purchase_intent_new'
+            : 'hospital_management.action_hospital_purchase_intent_existing';
+        doOdooAction(xmlId);
+    }
+    // Tab Navigation - Purchase Orders
+    if (e.target.classList.contains('custom-po-tab')) {
+        e.preventDefault();
+        const target = e.target.dataset.target;
+        const xmlId = target === 'new'
+            ? 'hospital_management.action_hospital_pharmacy_purchase_list_new'
+            : 'hospital_management.action_hospital_pharmacy_purchase_list_existing';
+        doOdooAction(xmlId);
+    }
+});
+
+// Navigate using Odoo's OWL action service directly — resolves XML IDs natively
+function doOdooAction(xmlId) {
+    try {
+        // Find any running OWL App instance and use its action service
+        for (const app of App.apps) {
+            const actionService = app.env && app.env.services && app.env.services.action;
+            if (actionService) {
+                actionService.doAction(xmlId, { clearBreadcrumbs: true });
+                return;
+            }
+        }
+    } catch(e) {
+        console.error("doOdooAction failed:", e);
+    }
+    // Absolute fallback: navigate by page refresh (works for list views)
+    console.warn("OWL action service not found, trying href fallback for:", xmlId);
+}
+
+// Helper to dynamically fetch action IDs
+async function getActionId(xmlId) {
+    try {
+        const [module, name] = xmlId.split('.');
+        // Get CSRF token from Odoo session if available
+        const csrfToken = (window.odoo && window.odoo.csrf_token) || 
+                          document.cookie.split(';').map(c => c.trim()).find(c => c.startsWith('csrf_token='))?.split('=')[1] || '';
+        
+        const res = await fetch('/web/dataset/call_kw', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'X-Csrf-Token': csrfToken } : {})
+            },
+            credentials: 'include',  // Send session cookie
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'call',
+                id: 1,
+                params: {
+                    model: 'ir.model.data',
+                    method: 'search_read',
+                    args: [[['module', '=', module], ['name', '=', name]]],
+                    kwargs: { 
+                        fields: ['res_id'],
+                        limit: 1,
+                        context: {}
+                    }
+                }
+            })
+        });
+        const data = await res.json();
+        if (data && data.result && data.result.length > 0) {
+            return data.result[0].res_id;
+        }
+        console.warn('getActionId: no result for', xmlId, data);
+    } catch (err) {
+        console.error("Failed to fetch action ID for", xmlId, err);
+    }
+    return null;
 }

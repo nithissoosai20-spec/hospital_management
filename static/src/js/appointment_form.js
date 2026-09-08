@@ -12,6 +12,10 @@ export class AppointmentFormController extends FormController {
         this.actionService = useService("action");
     }
 
+    displayName() {
+        return "Appointment Booking";
+    }
+
     async beforeExecuteActionButton(clickParams) {
         if (clickParams.name === 'action_close_form') {
             await this.model.root.discard();
@@ -27,7 +31,7 @@ export class AppointmentFormController extends FormController {
                 const missing = [];
                 if (!record.data.new_patient_name) missing.push("Patient Name");
                 if (!record.data.new_patient_phone) missing.push("Mobile");
-                if (!record.data.new_patient_date_of_birth) missing.push("Date of Birth");
+                if (!record.data.new_patient_age || record.data.new_patient_age <= 0) missing.push("Age");
                 if (!record.data.new_patient_gender) missing.push("Gender");
                 if (!record.data.new_patient_address) missing.push("Address");
 
@@ -45,16 +49,26 @@ export class AppointmentFormController extends FormController {
                             fieldEls.forEach(el => {
                                 // Apply the invalid class to the widget wrapper
                                 const widgetEl = el.closest('.o_field_widget') || el;
-                                if (!record.data[fieldName]) {
-                                    widgetEl.classList.add('o_field_invalid');
+                                
+                                if (fieldName === 'new_patient_age') {
+                                    if (!record.data[fieldName] || record.data[fieldName] <= 0) {
+                                        widgetEl.classList.add('o_field_invalid');
+                                    } else {
+                                        widgetEl.classList.remove('o_field_invalid');
+                                    }
                                 } else {
-                                    widgetEl.classList.remove('o_field_invalid');
+                                    if (!record.data[fieldName]) {
+                                        widgetEl.classList.add('o_field_invalid');
+                                    } else {
+                                        widgetEl.classList.remove('o_field_invalid');
+                                    }
                                 }
+
                             });
                         };
                         checkAndHighlight('new_patient_name');
                         checkAndHighlight('new_patient_phone');
-                        checkAndHighlight('new_patient_date_of_birth');
+                        checkAndHighlight('new_patient_age');
                         checkAndHighlight('new_patient_gender');
                         checkAndHighlight('new_patient_address');
                     }

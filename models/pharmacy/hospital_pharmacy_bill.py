@@ -51,7 +51,7 @@ class HospitalPharmacyBill(models.Model):
     walkin_address = fields.Char(string='Walk-in Address')
 
     customer_name = fields.Char(
-        string='Patient',
+        string='Customer Name',
         compute='_compute_customer_name',
         store=True
     )
@@ -191,8 +191,8 @@ class HospitalPharmacyBill(models.Model):
                     ('medicine_code', '=', line.medicine_name),
                 ], limit=1)
             if stock and line.qty > 0:
-                new_qty = stock.quantity - line.qty
-                stock.quantity = max(new_qty, 0.0)
+                new_qty = stock.total_stock - line.qty
+                stock.total_stock = max(new_qty, 0.0)
 
 
     @api.depends(
@@ -256,6 +256,13 @@ class HospitalPharmacyBill(models.Model):
                 bill.paid_amount = bill.total_amount
             elif bill.paid_amount < bill.total_amount:
                 raise UserError('Please enter a Paid Amount equal to or greater than the Total Amount.')
+
+            # Deduct from Total Stock
+            for line in bill.bill_line_ids:
+                if line.stock_id:
+                    if line.stock_id.total_stock < line.qty:
+                        raise UserError(f'Not enough stock for {line.stock_id.medicine_name}.')
+                    line.stock_id.total_stock -= line.qty
 
             bill.state = 'paid'
 

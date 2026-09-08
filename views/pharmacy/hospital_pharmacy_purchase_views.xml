@@ -20,7 +20,7 @@
     </record>
 
     <record id="action_hospital_purchase_intent_new" model="ir.actions.act_window">
-        <field name="name">Purchase Intent (New)</field>
+        <field name="name">Purchase Intent</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('state', '=', 'intent')]</field>
@@ -31,14 +31,17 @@
     </record>
 
     <record id="action_hospital_purchase_intent_existing" model="ir.actions.act_window">
-        <field name="name">Purchase Intent (Existing)</field>
+        <field name="name">Existing Purchase Intents</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('state', 'in', ('draft', 'done', 'cancelled'))]</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_intent_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
     </record>
 
         <record id="action_hospital_pharmacy_purchase_list_new" model="ir.actions.act_window">
-        <field name="name">Purchase Orders (New)</field>
+        <field name="name">Purchase Orders</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('state', '=', 'draft')]</field>
@@ -46,18 +49,17 @@
     </record>
 
     <record id="action_hospital_pharmacy_purchase_list_existing" model="ir.actions.act_window">
-        <field name="name">Purchase Orders (Existing)</field>
+        <field name="name">Existing Purchase Orders</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('state', '=', 'done')]</field>
-        <field name="context">{'default_state': 'done'}</field>
     </record>
 
     <record id="view_hospital_pharmacy_purchase_list" model="ir.ui.view">
         <field name="name">hospital.pharmacy.purchase.list</field>
         <field name="model">hospital.pharmacy.purchase</field>
         <field name="arch" type="xml">
-            <list string="Purchase List" >
+            <list string="Purchase List">
                 <field name="name" string="Purchase No."/>
                 <field name="medicine_names" string="Product Name"/>
                 <field name="supplier_id" string="Supplier Name"/>
@@ -155,12 +157,12 @@
                             <field name="batch_no"/>
                             <field name="qty"/>
                             <field name="unit"/>
-                            <field name="purchase_price"/>
-                            <field name="discount_percent"/>
-                            <field name="cgst_percent"/>
-                            <field name="sgst_percent"/>
-                            <field name="igst_percent"/>
-                            <field name="amount" readonly="1"/>
+                            <field name="purchase_price" column_invisible="True"/>
+                            <field name="discount_percent" column_invisible="True"/>
+                            <field name="cgst_percent" column_invisible="True"/>
+                            <field name="sgst_percent" column_invisible="True"/>
+                            <field name="igst_percent" column_invisible="True"/>
+                            <field name="amount" readonly="1" column_invisible="True"/>
                             
                             
                             

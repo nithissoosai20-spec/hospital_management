@@ -19,7 +19,7 @@ class HospitalPharmacyPurchase(models.Model):
     
     # 1. Supplier & Invoice Details
     supplier_id = fields.Many2one('res.partner', string='Supplier Name')
-    supplier_name = fields.Char(string='Supplier Name') # Fallback if not using res.partner
+    supplier_name = fields.Char(string='Supplier') # Fallback if not using res.partner
     invoice_no = fields.Char(string='Invoice No.')
     invoice_date = fields.Date(string='Invoice Date', default=fields.Date.context_today, required=True)
     

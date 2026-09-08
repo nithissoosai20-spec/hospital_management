@@ -19,14 +19,7 @@ class HospitalPatient(models.Model):
         default='New'
     )
 
-    date_of_birth = fields.Date(
-        string='Date of Birth'
-    )
-
-    age = fields.Integer(
-        string='Age',
-        compute='_compute_age'
-    )
+    age = fields.Integer(string='Age')
 
     gender = fields.Selection(
         [
@@ -75,25 +68,6 @@ class HospitalPatient(models.Model):
         readonly=True,
     )
 
-    @api.depends('date_of_birth')
-    def _compute_age(self):
-        today = fields.Date.today()
-
-        for record in self:
-            if record.date_of_birth:
-                birth_date = record.date_of_birth
-
-                age = today.year - birth_date.year
-
-                if (today.month, today.day) < (
-                    birth_date.month,
-                    birth_date.day
-                ):
-                    age -= 1
-
-                record.age = age
-            else:
-                record.age = 0
 
     @api.model_create_multi
     def create(self, vals_list):

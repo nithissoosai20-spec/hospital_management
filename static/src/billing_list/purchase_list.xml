@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- PURCHASE ORDER LIST -->
+    <t t-name="hospital_management.PurchaseOrderList" t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//Layout" position="before">
+            <div style="padding:10px 16px 0 16px;">
+                <h4 style="margin:0 0 8px 0; color:#182b61; font-weight:700; font-size:18px;">Purchase Orders</h4>
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <button
+                        t-attf-class="btn btn-sm {{ tab.active === 'new' ? 'btn-primary' : 'btn-outline-secondary' }}"
+                        t-on-click="() => this.switchTab('new')"
+                    >New</button>
+                    <button
+                        t-attf-class="btn btn-sm {{ tab.active === 'existing' ? 'btn-primary' : 'btn-outline-secondary' }}"
+                        t-on-click="() => this.switchTab('existing')"
+                    >Existing</button>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+    <!-- PURCHASE INTENT LIST -->
+    <t t-name="hospital_management.PurchaseIntentList" t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//Layout" position="before">
+            <div style="padding:10px 16px 0 16px;">
+                <h4 style="margin:0 0 8px 0; color:#182b61; font-weight:700; font-size:18px;">Purchase Intent</h4>
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <button
+                        t-attf-class="btn btn-sm {{ tab.active === 'new' ? 'btn-primary' : 'btn-outline-secondary' }}"
+                        t-on-click="() => this.switchTab('new')"
+                    >New</button>
+                    <button
+                        t-attf-class="btn btn-sm {{ tab.active === 'existing' ? 'btn-primary' : 'btn-outline-secondary' }}"
+                        t-on-click="() => this.switchTab('existing')"
+                    >Existing</button>
+                </div>
+            </div>
+        </xpath>
+    </t>
+
+</templates>

@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError
 
 class HospitalUser(models.Model):
     availability_status = fields.Char(
-        string="Status",
+        string="Availability",
         compute='_compute_availability_status'
     )
 
@@ -21,6 +21,9 @@ class HospitalUser(models.Model):
         'user_id',
         string='Login History'
     )
+
+    def action_close_user_form(self):
+        return {'type': 'ir.actions.act_window_close'}
 
     def action_view_history(self):
         self.ensure_one()
@@ -66,7 +69,7 @@ class HospitalUser(models.Model):
     )
 
     mobile = fields.Char(
-        string='Mobile Number'
+        string='Mobile Number',
     )
 
     date_of_birth = fields.Date(
@@ -83,30 +86,15 @@ class HospitalUser(models.Model):
     )
 
     address = fields.Text(
-        string='Address'
+        string='Address',
     )
 
     # ODOO LOGIN ACCOUNT
 
-    odoo_user_id = fields.Many2one(
-        'res.users',
-        string='Odoo User',
-        ondelete='set null',
-        copy=False,
-        readonly=True
-    )
-
-    password = fields.Char(
-        string='Password',
-        password=True,
-        store=False,
-        copy=False
-    )
     password_confirm = fields.Char(
         string='Re-enter Password',
         copy=False
     )
-
 
     account_created = fields.Boolean(
         string='Login Account Created',

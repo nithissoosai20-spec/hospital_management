@@ -1,10 +1,22 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class HospitalConsultationFee(models.Model):
     _name = 'hospital.consultation.fee'
     _description = 'Hospital Consultation Fee'
     _order = 'department_id, designation_id'
+
+    _constraints = [
+        models.Constraint(
+            'unique(department_id, designation_id)',
+            'A consultation fee already exists for this Department and Designation.',
+        ),
+        models.Constraint(
+            'CHECK(amount >= 0)',
+            'Consultation Fee cannot be negative.',
+        ),
+    ]
 
     department_id = fields.Many2one(
         'hospital.department',
@@ -32,18 +44,6 @@ class HospitalConsultationFee(models.Model):
         default=True,
     )
 
-    _sql_constraints = [
-        (
-            'unique_department_designation',
-            'unique(department_id, designation_id)',
-            'A consultation fee already exists for this Department and Designation.'
-        ),
-        (
-            'positive_amount',
-            'CHECK(amount >= 0)',
-            'Consultation Fee cannot be negative.'
-        ),
-    ]
 
     @api.onchange('department_id')
     def _onchange_department_id(self):
@@ -57,7 +57,7 @@ class HospitalConsultationFee(models.Model):
                 and record.designation_id
                 and record.designation_id.department_id != record.department_id
             ):
-                raise models.ValidationError(
+                raise ValidationError(
                     'The selected Designation does not belong to the selected Department.'
                 )
 

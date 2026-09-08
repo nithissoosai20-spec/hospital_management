@@ -119,7 +119,7 @@ class HospitalPharmacyStock(models.Model):
         search='_search_reorder_needed',
     )
 
-    @api.depends("quantity", "reorder_level")
+    @api.depends('total_stock', 'emergency_stock', 'reorder_level')
     def _compute_reorder_needed(self):
         for rec in self:
             rec.is_reorder_needed = rec.quantity < rec.reorder_level
@@ -184,6 +184,12 @@ class HospitalPharmacyStock(models.Model):
         return res
 
 
+    def action_clear_form(self):
+        pass
+
+    def action_close_form(self):
+        pass
+
     def action_save(self):
         # Trigger the automated reorder engine immediately so user doesn't have to wait for cron
         self._cron_auto_reorder()
@@ -220,10 +226,7 @@ class HospitalPharmacyStock(models.Model):
 
     # COMPUTE STOCK STATUS
 
-    @api.depends(
-        'quantity',
-                'expiry_date',
-    )
+    @api.depends('total_stock', 'emergency_stock', 'expiry_date')
     def _compute_stock_status(self):
 
         today = fields.Date.today()

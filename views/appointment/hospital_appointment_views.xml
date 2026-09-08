@@ -129,7 +129,7 @@
                     type="object"
                     icon="fa-pencil"
                     title="Edit"
-                    invisible="state == 'completed'"
+                    invisible="state in ('completed', 'cancelled')"
                     class="hospital_appointment_action btn-sm"
                 />
                 
@@ -446,12 +446,12 @@
 
                                     <div>
                                         <label
-                                            for="new_patient_date_of_birth"
-                                            string="Date of Birth"
+                                            for="new_patient_age"
+                                            string="Age"
                                         />
 
                                         <field
-                                            name="new_patient_date_of_birth"
+                                            name="new_patient_age"
                                             nolabel="1"
                                          />
                                     </div>
@@ -730,10 +730,7 @@
                                     <field
                                         name="consultation_fee"
                                         nolabel="1"
-                                        groups="
-                                            hospital_management.group_hospital_admin,
-                                            hospital_management.group_hospital_super_admin
-                                        "
+                                        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
                                     />
 
                                 </div>
@@ -944,7 +941,7 @@
         model="ir.actions.act_window"
     >
 
-        <field name="name">&#8203;</field>
+        <field name="name">Appointment List</field>
 
         <field name="res_model">hospital.appointment</field>
 

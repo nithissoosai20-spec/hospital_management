@@ -20,6 +20,8 @@
             'hospital_management/static/src/css/doctor_dashboard.css',
 
             'hospital_management/static/src/global_ui_tweaks.js',
+            'hospital_management/static/src/js/hospital_user_form.js',
+            'hospital_management/static/src/js/hospital_pharmacy_stock_form.js',
             'hospital_management/static/src/hospital_layout/hospital_layout.js',
             'hospital_management/static/src/hospital_layout/hospital_layout.xml',
             'hospital_management/static/src/hospital_layout/user_company_menu.xml',

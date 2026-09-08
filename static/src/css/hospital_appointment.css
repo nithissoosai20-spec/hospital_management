@@ -4000,3 +4000,12 @@ textarea {
     background-color: #ffcccc !important;
     border-color: red !important;
 }
+
+/* BIGGER ADDRESS FIELD */
+.hospital_address_field textarea,
+.hospital_appointment_form .hospital_address_field textarea.o_input,
+.hospital_appointment_form .hospital_address_field .o_field_widget textarea {
+    height: 80px !important;
+    min-height: 80px !important;
+    resize: vertical !important;
+}

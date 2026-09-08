@@ -41,10 +41,10 @@
 
                             <div class="dropdown adb-date-filter">
                                 <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 7px; color: #64748b; font-weight: 600; padding: 4px 10px; display: flex; align-items: center; gap: 5px;">
-                                    <i class="fa fa-calendar"></i>
+                                    <i class="fa fa-calendar" title="Date Filter"></i>
                                     <field name="date_filter" readonly="1" style="margin-bottom: 0; pointer-events: none;"/>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end" style="border: 1px solid #e2e8f0; border-radius: 7px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 5px;">
+                                <ul class="dropdown-menu dropdown-menu-end" role="menu" style="border: 1px solid #e2e8f0; border-radius: 7px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); padding: 5px;">
                                     <li><button name="action_filter_today" type="object" string="Today" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
                                     <li><button name="action_filter_weekly" type="object" string="Weekly" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>
                                     <li><button name="action_filter_monthly" type="object" string="Monthly" class="dropdown-item" style="font-size: 12px; font-weight: 500; border-radius: 4px;"/></li>

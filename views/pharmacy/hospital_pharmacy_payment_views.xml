@@ -39,8 +39,6 @@
                         }
                     </style>
                     
-                    <widget name="web_ribbon" title="Paid" bg_color="bg-success" invisible="state != 'done'"/>
-
                     <div class="row align-items-center mb-3 pb-2 border-bottom">
                         <div class="col-md-6">
                             <span class="custom-label">Payment Reference</span>
@@ -85,21 +83,27 @@
                             </div>
                             
                             <div class="row mt-3 p-3 bg-light rounded border">
-                                <div class="col-md-6 text-center border-end">
-                                    <label for="invoice_balance" class="custom-label text-danger">Invoice Balance</label>
+                                <div class="col-md-4 text-center border-end" invisible="invoice_status != 'partial'">
+                                    <label for="invoice_paid_amount" class="custom-label" style="color:#64748b;">Already Paid</label>
+                                    <div class="fs-5 fw-bold" style="color:#64748b;"><field name="invoice_paid_amount" readonly="1"/></div>
+                                </div>
+                                <div class="col-md-4 text-center border-end">
+                                    <label for="invoice_balance" class="custom-label text-danger">Pending Balance</label>
                                     <div class="fs-5 fw-bold text-danger"><field name="invoice_balance" readonly="1"/></div>
                                 </div>
-                                <div class="col-md-6 text-center">
+                                <div class="col-md-4 text-center">
                                     <label for="amount" class="custom-label text-success">Amount Paid *</label>
-                                    <div class="fs-4 fw-bold text-success"><field name="amount" readonly="state == 'done'"/></div>
+                                    <div class="fs-4 fw-bold text-success"><field name="amount" readonly="invoice_status == 'paid'"/></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="d-flex justify-content-end mt-4">
-                        <button name="action_confirm" string="Confirm Payment" type="object" class="btn-success btn-lg" invisible="state == 'done'"/>
+                    <div class="d-flex justify-content-end mt-4 gap-3">
+                        <a href="#" role="button" class="btn btn-secondary btn-lg btn-custom-close-pay">Close</a>
+                        <button name="action_confirm" string="Confirm Payment" type="object" class="btn-success btn-lg" invisible="invoice_status == 'paid'"/>
                         <field name="state" invisible="1"/>
+                        <field name="invoice_status" invisible="1"/>
                     </div>
                 </sheet>
             </form>

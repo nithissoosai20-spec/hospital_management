@@ -41,12 +41,29 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
+<style>
+            /* Hide Odoo default footer in PDF and HTML preview */
+            .o_report_footer, footer, .o_footer,
+            #wkhtmltopdf-footer, .footer-block { display: none !important; }
+            /* A4 print settings */
+            @media print {
+                .o_report_footer, footer, .o_footer { display: none !important; }
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+            body, .page, .article {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            }
+        </style>
                     <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
+                        <!-- Edge-to-Edge Background, Footer Cropped via CSS Background -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 210mm; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
+                        
                         
                         
 
-                        
-                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                        <div style="padding-top:  65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
 
                             <div class="row pt-2" style="font-size: 12px; color: #333;">
                                 <!-- Left Column: Patient -->
@@ -138,13 +155,31 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.basic_layout">
+                    <style>
+                        /* Hide Odoo default footer in PDF and HTML preview */
+                        .o_report_footer, footer, .o_footer,
+                        #wkhtmltopdf-footer, .footer-block { display: none !important; }
+                        /* A4 print settings */
+                        @media print {
+                            .o_report_footer, footer, .o_footer { display: none !important; }
+                            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+            body, .page, .article {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+                        }
+                    </style>
                     <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
+                        <!-- Edge-to-Edge Background, Footer Cropped via CSS Background -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 210mm; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
+                        
                         
                         
 
-                        
-                        <div style="padding-top: 50mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                        <div style="padding-top:  65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
 
+                            <!-- First Row: Patient, Doctor, Date -->
                             <div class="row pt-2" style="font-size: 12px; color: #333;">
                                 <!-- Left Column: Patient -->
                                 <div class="col-4">
@@ -189,44 +224,43 @@
                                         </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-5 fw-bold text-end">OP Number</div>
-                                        <div class="col-7 text-end"><span t-field="doc.patient_code"/></div>
+                                        <div class="col-5 fw-bold text-end">Patient ID</div>
+                                        <div class="col-7 text-end"><span t-field="doc.patient_id.patient_id"/></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Token Number -->
-                            <div class="row mt-5">
-                                <div class="col-12 text-center">
-                                    <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
-                                    <div style="font-size:36px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
-                                        <span t-field="doc.token_number"/>
+                            <!-- Second Row: Vitals at the same size as details -->
+                            <div class="row mt-3" style="font-size: 12px; color: #333; border-top: 1px solid #ddd; padding-top: 15px;">
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold">Height</div>
+                                        <div class="col-7">________</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-center">Weight</div>
+                                        <div class="col-7">________</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">BP / Temp</div>
+                                        <div class="col-7 text-end">________ / ________</div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Vitals -->
-                            <div class="row mt-5">
-                                <div class="col-12">
-                                    <h5 style="color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 5px; font-weight: bold; margin-bottom: 15px;">Patient Vitals</h5>
-                                    <table class="table table-bordered table-sm" style="font-size: 13px; border-color: #ddd; height: 80px;">
-                                        <tbody>
-                                            <tr>
-                                                <th style="background-color: #f1f5f9; width: 25%; vertical-align: middle;">Height</th>
-                                                <td style="width: 25%;"></td>
-                                                <th style="background-color: #f1f5f9; width: 25%; vertical-align: middle;">Weight</th>
-                                                <td style="width: 25%;"></td>
-                                            </tr>
-                                            <tr>
-                                                <th style="background-color: #f1f5f9; vertical-align: middle;">Blood Pressure</th>
-                                                <td></td>
-                                                <th style="background-color: #f1f5f9; vertical-align: middle;">Temperature</th>
-                                                <td></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+
+                            <!-- Token Number Highlighted & Smaller -->
+                            <div class="row mt-4">
+                                <div class="col-12 text-center">
+                                    <div style="display: inline-block; padding: 5px 15px; border: 2px solid #1e3a8a; border-radius: 5px; background-color: #f1f5f9;">
+                                        <span style="font-size:12px; font-weight:bold; color:#555; margin-right: 10px;">TOKEN NUMBER:</span>
+                                        <span style="font-size:18px; font-weight:bold; color:#1e3a8a;" t-field="doc.token_number"/>
+                                    </div>
                                 </div>
                             </div>
-
 
                         </div>
                     </div>

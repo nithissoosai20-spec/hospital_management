@@ -134,10 +134,10 @@ class HospitalPharmacyPurchaseInvoiceLine(models.Model):
     igst_val = fields.Float(compute='_compute_amounts', store=True)
     amount = fields.Float(string='Amount', compute='_compute_amounts', store=True)
 
-    @api.depends('qty', 'purchase_price', 'discount_percent', 'cgst_percent', 'sgst_percent', 'igst_percent')
+    @api.depends('received_qty', 'purchase_price', 'discount_percent', 'cgst_percent', 'sgst_percent', 'igst_percent')
     def _compute_amounts(self):
         for line in self:
-            base = line.qty * line.purchase_price
+            base = line.received_qty * line.purchase_price
             disc = base * (line.discount_percent / 100.0)
             taxable = base - disc
             

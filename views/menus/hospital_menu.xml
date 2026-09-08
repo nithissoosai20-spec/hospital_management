@@ -109,7 +109,7 @@
 
     <menuitem
         id="menu_hospital_appointments"
-        name="Appointments"
+        name="Appointment Booking"
         parent="menu_hospital_management"
         action="action_hospital_appointment"
         sequence="40"
@@ -175,22 +175,9 @@
         id="menu_hospital_pharmacy_purchase_root"
         name="Purchase Orders"
         parent="menu_hospital_management"
+        action="action_hospital_pharmacy_purchase_list_new"
         sequence="50"
         groups="hospital_management.group_hospital_pharmacist"
-    />
-    <menuitem
-        id="menu_hospital_pharmacy_purchase_new"
-        name="New"
-        parent="menu_hospital_pharmacy_purchase_root"
-        action="action_hospital_pharmacy_purchase_list_new"
-        sequence="10"
-    />
-    <menuitem
-        id="menu_hospital_pharmacy_purchase_existing"
-        name="Existing"
-        parent="menu_hospital_pharmacy_purchase_root"
-        action="action_hospital_pharmacy_purchase_list_existing"
-        sequence="20"
     />
 
 
@@ -214,22 +201,9 @@
         id="menu_hospital_purchase_intent_root"
         name="Purchase Intent"
         parent="menu_hospital_management"
+        action="action_hospital_purchase_intent_new"
         sequence="40"
         groups="hospital_management.group_hospital_pharmacist"
-    />
-    <menuitem
-        id="menu_hospital_purchase_intent_new"
-        name="New"
-        parent="menu_hospital_purchase_intent_root"
-        action="action_hospital_purchase_intent_new"
-        sequence="10"
-    />
-    <menuitem
-        id="menu_hospital_purchase_intent_existing"
-        name="Existing"
-        parent="menu_hospital_purchase_intent_root"
-        action="action_hospital_purchase_intent_existing"
-        sequence="20"
     />
 
     <menuitem

@@ -38,17 +38,14 @@ class HospitalAppointment(models.Model):
     # New patient details
 
     new_patient_name = fields.Char(
-        string='Patient Name'
+        string='New Patient Name'
     )
 
     new_patient_phone = fields.Char(
-        string='Mobile Number'
+        string='New Patient Mobile'
     )
 
-    new_patient_date_of_birth = fields.Date(
-        string='Date of Birth',
-        required=False
-    )
+    new_patient_age = fields.Integer(string='New Patient Age')
 
     new_patient_gender = fields.Selection(
         [
@@ -56,7 +53,7 @@ class HospitalAppointment(models.Model):
             ('female', 'Female'),
             ('other', 'Other'),
         ],
-        string='Gender'
+        string='New Patient Gender'
     )
 
     new_patient_blood_group = fields.Char(
@@ -93,11 +90,6 @@ class HospitalAppointment(models.Model):
         readonly=True
     )
 
-    patient_date_of_birth = fields.Date(
-        string='Date of Birth',
-        related='patient_id.date_of_birth',
-        readonly=True
-    )
 
     patient_gender = fields.Selection(
         string='Gender',
@@ -254,9 +246,7 @@ class HospitalAppointment(models.Model):
             ('upi', 'UPI'),
             ('online', 'Online'),
         ],
-        string='Payment Mode',
-        required=True,
-        default='cash'
+        string='Payment Mode', default='cash'
     )
 
     payment_status = fields.Selection(
@@ -402,7 +392,7 @@ class HospitalAppointment(models.Model):
 
             'new_patient_name': False,
             'new_patient_phone': False,
-            'new_patient_date_of_birth': False,
+            'new_patient_age': False,
             'new_patient_gender': False,
             'new_patient_blood_group': False,
             'new_patient_email': False,
@@ -485,7 +475,7 @@ class HospitalAppointment(models.Model):
 
             self.new_patient_name = patient.name
             self.new_patient_phone = patient.phone
-            self.new_patient_date_of_birth = patient.date_of_birth
+            self.new_patient_age = patient.age
             self.new_patient_gender = patient.gender
             self.new_patient_blood_group = patient.blood_group
             self.new_patient_email = patient.email
@@ -504,7 +494,7 @@ class HospitalAppointment(models.Model):
         else:
             self.new_patient_phone = False
 
-        self.new_patient_date_of_birth = False
+        self.new_patient_age = False
         self.new_patient_gender = False
         self.new_patient_blood_group = False
         self.new_patient_email = False
@@ -554,8 +544,8 @@ class HospitalAppointment(models.Model):
 
             'phone': self.new_patient_phone.strip(),
 
-            'date_of_birth':
-                self.new_patient_date_of_birth,
+            'age':
+                self.new_patient_age,
 
             'gender':
                 self.new_patient_gender,
@@ -652,9 +642,9 @@ class HospitalAppointment(models.Model):
                     )
 
                 # Date of Birth
-                if not record.new_patient_date_of_birth:
+                if record.new_patient_age <= 0:
                     raise UserError(
-                        'Please enter Date of Birth.'
+                        'Patient Age must be greater than zero!'
                     )
 
                 # Gender
@@ -673,7 +663,6 @@ class HospitalAppointment(models.Model):
                 # No validation required for new_patient_email.
 
                 # Create patient
-                record._create_patient_from_appointment()
 
             # APPOINTMENT VALIDATION
 

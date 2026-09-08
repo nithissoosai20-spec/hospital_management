@@ -288,11 +288,8 @@ class HospitalLabAppointment(models.Model):
 
 
     _sql_constraints = [
-        (
-            'unique_lab_test_per_appointment',
-            'unique(lab_appointment_id, lab_test_id)',
-            'This Lab Test has already been selected.'
-        ),
+        ('unique_lab_appointment_test', 'UNIQUE(lab_appointment_id, lab_test_id)',
+         'This Lab Test has already been selected.'),
     ]
 
 # LAB APPOINTMENT LINE
