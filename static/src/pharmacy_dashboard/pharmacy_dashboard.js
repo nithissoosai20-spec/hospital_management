@@ -67,7 +67,9 @@ class PharmacyBilling extends PharmacyBase {
             changeReturn: 0, invoiceNo: "Draft", totalQuantity: 0, billDate: new Date().toISOString().split('T')[0], billTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
             doctors: [], selectedDoctor: "", departments: [], selectedDepartment: "",
             walkinName: "", walkinPhone: "", walkinAddress: "",
-            isReadOnly: false, currentBillId: false, billState: 'draft'
+            isReadOnly: false, currentBillId: false, billState: 'draft',
+            d2000c: 0, d500c: 0, d200c: 0, d100c: 0, d50c: 0, d20c: 0, d10c: 0,
+            payCash: 0, payUpi: 0, payCard: 0, payCredit: 0, totalAmountPaid: 0, balanceAmount: 0,
         });
         this.timeInterval = setInterval(() => {
             if (this.state && !this.state.currentBillId && !this.state.isReadOnly) {
@@ -423,12 +425,30 @@ class PharmacyBilling extends PharmacyBase {
 
 
     openPaymentModal() {
+        if (this.state.customerType === 'patient' && !this.state.patient) { 
+            this.notify("Select a patient first.", "danger"); 
+            return; 
+        }
+        if (this.state.customerType === 'walk-in' && !this.state.walkinName) { 
+            this.notify("Enter walk-in name.", "danger"); 
+            return; 
+        }
         if (this.state.medicines.length === 0) {
             this.notify("Please add medicines to the bill before generating.", "warning");
             return;
         }
-        this.state.paidAmount = this.state.netAmount;
-        this.calculateTotals();
+        
+        for (const k of ['d500r','d500p','d200r','d200p','d100r','d100p','d50r','d50p','d20r','d20p','d10r','d10p','coinsR','coinsP']) {
+            this.state[k] = 0;
+        }
+        this.state.paymentMode = "none";
+        this.state.paidAmount = 0;
+        this.state.transactionId = "";
+        this.state.denomTotalReceived = 0;
+        this.state.denomTotalRepay = 0;
+        this.state.totalAmountPaid = 0;
+        this.state.balanceAmount = this.state.netAmount;
+        
         this.state.paymentSuccess = false;
         this.state.showPaymentModal = true;
     }
@@ -437,9 +457,25 @@ class PharmacyBilling extends PharmacyBase {
         this.state.showPaymentModal = false;
     }
 
-    updatePaidAmount(val) {
-        this.state.paidAmount = parseFloat(val) || 0;
-        this.calculateTotals();
+    onDenomInput(field, rawVal) {
+        this.state[field] = parseInt(rawVal) || 0;
+        this.calcTotalAmountPaid();
+    }
+
+    onDigiPayInput(rawVal) {
+        this.state.paidAmount = parseFloat(rawVal) || 0;
+        this.calcTotalAmountPaid();
+    }
+
+    calcTotalAmountPaid() {
+        const s = this.state;
+        const totalR = s.d500r*500 + s.d200r*200 + s.d100r*100 + s.d50r*50 + s.d20r*20 + s.d10r*10 + s.coinsR;
+        const totalP = s.d500p*500 + s.d200p*200 + s.d100p*100 + s.d50p*50 + s.d20p*20 + s.d10p*10 + s.coinsP;
+        s.denomTotalReceived = totalR;
+        s.denomTotalRepay = totalP;
+        
+        s.totalAmountPaid = s.paidAmount + totalR - totalP;
+        s.balanceAmount = s.netAmount - s.totalAmountPaid;
     }
 
 
@@ -468,6 +504,22 @@ class PharmacyBilling extends PharmacyBase {
         if (this.state.customerType === 'walk-in' && !this.state.walkinName) { this.notification.add("Enter walk-in name.", { type: "danger" }); return; }
         if (this.state.medicines.length === 0) { this.notification.add("Add at least one medicine.", { type: "danger" }); return; }
 
+        if (this.state.paymentMode !== 'none') {
+            if (!this.state.transactionId) {
+                this.notification.add("Please enter a valid Transaction ID for the digital payment.", { type: "danger" });
+                return;
+            }
+            if (this.state.paidAmount <= 0) {
+                this.notification.add("Digital payment selected but no online amount entered. Please provide the online paid amount.", { type: "danger" });
+                return;
+            }
+        }
+        
+        if (this.state.balanceAmount !== 0) {
+            this.notification.add("Transaction incomplete: The total received payment must exactly match the net bill amount.", { type: "danger" });
+            return;
+        }
+
         let line_ids = this.state.medicines.map(m => [0, 0, {
             stock_id: m.id, medicine_name: m.name, composition: m.composition, batch: m.batch, expiry: m.expiry,
             qty: m.qty, unit: m.unit, mrp: m.mrp, discount: m.discount, gst: m.gst
@@ -480,7 +532,8 @@ class PharmacyBilling extends PharmacyBase {
                 walkin_name: this.state.walkinName, walkin_phone: this.state.walkinPhone, walkin_address: this.state.walkinAddress,
                 doctor_id: this.state.selectedDoctor ? parseInt(this.state.selectedDoctor) : false,
                 doctor_department_id: this.state.selectedDepartment ? parseInt(this.state.selectedDepartment) : false,
-                payment_mode: this.state.paymentMode, paid_amount: this.state.paidAmount,
+                payment_mode: this.state.paymentMode === 'none' ? 'cash' : this.state.paymentMode, 
+                paid_amount: this.state.totalAmountPaid,
                 bill_discount: this.state.billDiscount, state: "paid"
             };
             if (this.state.currentBillId) {
@@ -522,7 +575,8 @@ class PharmacyBilling extends PharmacyBase {
                 walkin_name: this.state.walkinName, walkin_phone: this.state.walkinPhone, walkin_address: this.state.walkinAddress,
                 doctor_id: this.state.selectedDoctor ? parseInt(this.state.selectedDoctor) : false,
                 doctor_department_id: this.state.selectedDepartment ? parseInt(this.state.selectedDepartment) : false,
-                payment_mode: this.state.paymentMode, paid_amount: 0,
+                payment_mode: this.state.paymentMode === 'none' ? 'cash' : this.state.paymentMode, 
+                paid_amount: 0,
                 bill_discount: this.state.billDiscount, state: "held"
             };
             if (this.state.currentBillId) {

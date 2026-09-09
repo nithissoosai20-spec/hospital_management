@@ -133,6 +133,18 @@ function getPageName() {
             }
             return 'Purchase Intent'; // fallback
         }
+        if (text.toUpperCase() === 'ODOO') {
+            const url = window.location.href;
+            if (url.includes('hospital_pharmacy_billing')) return 'Pharmacy Billing';
+            if (url.includes('hospital_pharmacy_purchase')) return 'Purchase Intent';
+            if (url.includes('action-189') || url.includes('action-120')) return 'Pharmacy Billing'; // Based on screenshot URL
+            
+            const activeMenu = document.querySelector('.o_nav_entry.active, .dropdown-item.active');
+            if (activeMenu && activeMenu.textContent.trim().toUpperCase() !== 'ODOO') {
+                return activeMenu.textContent.trim();
+            }
+            return ''; // Avoid returning "ODOO"
+        }
         return text;
     }
     return '';
@@ -224,6 +236,24 @@ function injectPageTitle() {
     }
 
     banner.innerHTML = innerHtml;
+
+    // Attach direct click listeners on tab elements so OWL can't intercept
+    banner.querySelectorAll('.custom-pi-tab, .custom-po-tab').forEach(tab => {
+        tab.addEventListener('click', function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const isPO = this.classList.contains('custom-po-tab');
+            const tgt = this.dataset.target;
+            const xmlId = isPO
+                ? (tgt === 'new'
+                    ? 'hospital_management.action_hospital_pharmacy_purchase_list_new'
+                    : 'hospital_management.action_hospital_pharmacy_purchase_list_existing')
+                : (tgt === 'new'
+                    ? 'hospital_management.action_hospital_purchase_intent_new'
+                    : 'hospital_management.action_hospital_purchase_intent_existing');
+            doOdooAction(xmlId);
+        });
+    });
 }
 
 let observerTimer = null;
@@ -312,33 +342,41 @@ window.addEventListener('click', async function(e) {
 
 // Navigate using Odoo's OWL action service directly — resolves XML IDs natively
 function doOdooAction(xmlId) {
+    // Approach 1: app.root.component.env.services.action (OWL 2 correct path)
     try {
-        // Find any running OWL App instance and use its action service
         for (const app of App.apps) {
-            const actionService = app.env && app.env.services && app.env.services.action;
-            if (actionService) {
-                actionService.doAction(xmlId, { clearBreadcrumbs: true });
+            const env = app.root?.component?.env;
+            if (env?.services?.action) {
+                env.services.action.doAction(xmlId, { clearBreadcrumbs: true });
                 return;
             }
         }
-    } catch(e) {
-        console.error("doOdooAction failed:", e);
-    }
-    // Absolute fallback: navigate by page refresh (works for list views)
-    console.warn("OWL action service not found, trying href fallback for:", xmlId);
+    } catch(e) { }
+
+    // Approach 2: app.env.services.action (OWL 1 / older path)
+    try {
+        for (const app of App.apps) {
+            if (app.env?.services?.action) {
+                app.env.services.action.doAction(xmlId, { clearBreadcrumbs: true });
+                return;
+            }
+        }
+    } catch(e) { }
+
+    console.warn("OWL action service not found, falling back to RPC for:", xmlId);
+    _fetchAndNavigate(xmlId);
 }
 
 // Helper to dynamically fetch action IDs
-async function getActionId(xmlId) {
+async function _fetchAndNavigate(xmlId) {
     try {
         const [module, name] = xmlId.split('.');
         // Get CSRF token from Odoo session if available
-        const csrfToken = (window.odoo && window.odoo.csrf_token) || 
-                          document.cookie.split(';').map(c => c.trim()).find(c => c.startsWith('csrf_token='))?.split('=')[1] || '';
-        
+        const csrfToken = window.odoo?.csrf_token || '';
+
         const res = await fetch('/web/dataset/call_kw', {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 ...(csrfToken ? { 'X-Csrf-Token': csrfToken } : {})
             },
@@ -351,7 +389,7 @@ async function getActionId(xmlId) {
                     model: 'ir.model.data',
                     method: 'search_read',
                     args: [[['module', '=', module], ['name', '=', name]]],
-                    kwargs: { 
+                    kwargs: {
                         fields: ['res_id'],
                         limit: 1,
                         context: {}
@@ -361,11 +399,11 @@ async function getActionId(xmlId) {
         });
         const data = await res.json();
         if (data && data.result && data.result.length > 0) {
-            return data.result[0].res_id;
+            window.location.href = `/odoo/action-${data.result[0].res_id}`;
+            return;
         }
-        console.warn('getActionId: no result for', xmlId, data);
+        console.warn('_fetchAndNavigate: no result for', xmlId, data);
     } catch (err) {
         console.error("Failed to fetch action ID for", xmlId, err);
     }
-    return null;
 }

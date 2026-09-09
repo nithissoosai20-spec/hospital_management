@@ -312,19 +312,14 @@
                 </div>
 
                 <div style="margin-top:2px;">
-                    <label style="color:#0f172a; font-weight:700; font-size:11px; display:block; margin-bottom:4px;">Payment Mode</label>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; font-weight:600; color:#334155; margin-bottom:8px;">
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="cash"/> Cash</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="card"/> Card</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="upi"/> UPI</label>
-                        <label style="cursor:pointer; display:flex; align-items:center; gap:4px;"><input type="radio" name="payMode" t-model="state.paymentMode" value="credit"/> Credit</label>
-                    </div>
+                    
 
                     <div style="display:flex; flex-direction:column; gap:6px;">
                         <button t-if="!state.isReadOnly" class="btn btn-success" style="font-weight:700; padding:4px; background:#16a34a; border-color:#16a34a; width:100%; font-size:14px;" t-on-click="openPaymentModal">Generate Bill (Pay)</button>
 <button t-if="state.isReadOnly" class="btn btn-secondary" style="font-weight:700; padding:4px; width:100%; font-size:14px;" disabled="1">PAID</button>
                         
                         <button t-if="!state.isReadOnly" class="btn btn-light" style="width:100%; border:1px solid #cbd5e1; font-weight:700; color:#475569; padding:4px;" t-on-click="clearBill">Clear</button>
+                        <button t-if="state.isReadOnly" class="btn btn-info" style="font-weight:700; padding:4px; width:100%; font-size:14px; margin-top:2px; color:white;" t-on-click="printReceipt">Print</button>
                         <button class="btn btn-outline-danger" style="font-weight:700; padding:4px; width:100%; font-size:14px; margin-top:2px;" t-on-click="closePOS">Close</button>
                     </div>
                 </div>
@@ -334,42 +329,146 @@
     </div>
     
     <!-- PAYMENT MODAL -->
-    <div t-if="state.showPaymentModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; display:flex; justify-content:center; align-items:center;">
-        <div style="background:white; width:400px; border-radius:8px; padding:20px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:10px; margin-bottom:8px;">
-                <h3 style="margin:0; color:#1e293b; font-weight:700; font-size:18px;">Confirm Payment</h3>
-                <span style="cursor:pointer; font-size:20px; color:#64748b; font-weight:bold;" t-on-click="closePaymentModal">X</span>
-            </div>
-            
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:16px;">
-                <span style="color:#475569; font-weight:600;">Net Amount:</span>
-                <strong style="color:#2563eb; font-size:20px;">INR <t t-esc="state.netAmount.toFixed(2)"/></strong>
-            </div>
-            
-            <div style="margin-bottom:8px;">
-                <label style="color:#0f172a; font-weight:700; font-size:12px; display:block; margin-bottom:5px;">Paid Amount (INR)</label>
-                <input type="number" class="form-control form-control-lg" t-att-value="state.paidAmount" t-on-change="(ev) => this.updatePaidAmount(ev.target.value)" style="font-size:20px; font-weight:700; color:#16a34a; text-align:right;"/>
-            </div>
-            
-            <div style="display:flex; justify-content:space-between; margin-bottom:25px; font-size:16px; border-top:1px solid #e2e8f0; padding-top:15px;">
-                <span style="color:#475569; font-weight:600;">Change Return:</span>
-                <strong style="color:#ef4444; font-size:20px;">INR <t t-esc="state.changeReturn.toFixed(2)"/></strong>
-            </div>
-            
-            <t t-if="!state.paymentSuccess">
-                <div style="display:flex; gap:10px;">
-                    <button class="btn btn-light" style="flex:1; font-weight:700;" t-on-click="closePaymentModal">Cancel</button>
-                    <button class="btn btn-warning" style="flex:1; font-weight:700; color:white; background:#eab308;" t-on-click="saveAsHold">Hold</button>
-                    <button class="btn btn-success" style="flex:2; font-weight:700; font-size:16px; background:#16a34a;" t-on-click="collectPayment">Confirm &amp; Pay</button>
-                </div>
-            </t>
-            <t t-if="state.paymentSuccess">
-                <div style="text-align:center; padding:20px 0;">
-                    <h2 style="color:#16a34a; margin-bottom:10px;">Payment Successful!</h2>
-                    <p style="font-size:16px; color:#475569; margin-bottom:20px;">Bill Number: <strong style="color:#1e293b;"><t t-esc="state.invoiceNo"/></strong></p>
-                    <button class="btn btn-primary" style="width:100%; font-weight:700; font-size:16px; padding:10px; margin-bottom:10px;" t-on-click="printReceipt">Print Receipt</button>
+    <div t-if="state.showPaymentModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.55); z-index:1040; display:flex; justify-content:center; align-items:center;">
+        <div style="background:white; width:900px; max-width:96vw; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.25); overflow:hidden;">
 
-                    <button class="btn btn-outline-secondary" style="width:100%; font-weight:700;" t-on-click="startNewBill">Start New Patient</button>
+            <!-- MODAL HEADER -->
+            <div style="background:#1e3a8a; color:white; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; font-size:18px; font-weight:700; color:white;">Collect Payment</h3>
+                <span style="cursor:pointer; font-size:22px; font-weight:bold; line-height:1;" t-on-click="closePaymentModal">X</span>
+            </div>
+
+            <t t-if="!state.paymentSuccess">
+            <div style="padding:20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                    <div>
+                        <div style="margin-bottom:8px; display:flex; align-items:center; gap:20px;">
+                            <div>
+                                <span style="font-weight:600; color:#334155;">Type of Digital Payment:</span>
+                                <select class="form-select" style="display:inline-block; width:150px; margin-left:10px; padding:2px;" t-model="state.paymentMode">
+                                    <option value="none">None</option>
+                                    <option value="upi">UPI</option>
+                                    <option value="card">Card</option>
+                                    <option value="credit">Credit</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span style="font-weight:600; color:#334155;">Transaction ID:</span>
+                                <input type="text" t-att-value="state.transactionId" t-on-change="(ev) => state.transactionId = ev.target.value" t-att-disabled="state.paymentMode === 'none'" style="width:150px; margin-left:10px; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/>
+                            </div>
+                        </div>
+                        <div>
+                            <span style="font-weight:600; color:#334155;">Online Paid Amount:</span>
+                            <input type="number" min="0" t-att-value="state.paidAmount" t-on-change="(ev) => this.onDigiPayInput(ev.target.value)" t-att-disabled="state.paymentMode === 'none'" style="width:100px; margin-left:10px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; text-align:right;"/>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-weight:700; font-size:16px; color:#1e293b;">Net amount: </span>
+                        <strong style="color:#2563eb; font-size:24px;"><t t-esc="state.netAmount ? state.netAmount.toFixed(2) : '0.00'"/></strong>
+                    </div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                    <thead>
+                        <tr style="background:#e2e8f0; color:#334155; font-weight:bold;">
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Denomination</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Received Count</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Received Amount</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Repay Count</th>
+                            <th style="border:1px solid #cbd5e1; padding:8px;">Repay Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 500 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">500 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d500r" t-on-change="(ev) => this.onDenomInput('d500r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d500r * 500"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d500p" t-on-change="(ev) => this.onDenomInput('d500p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d500p * 500"/></td>
+                        </tr>
+                        <!-- 200 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">200 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d200r" t-on-change="(ev) => this.onDenomInput('d200r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d200r * 200"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d200p" t-on-change="(ev) => this.onDenomInput('d200p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d200p * 200"/></td>
+                        </tr>
+                        <!-- 100 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">100 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d100r" t-on-change="(ev) => this.onDenomInput('d100r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d100r * 100"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d100p" t-on-change="(ev) => this.onDenomInput('d100p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d100p * 100"/></td>
+                        </tr>
+                        <!-- 50 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">50 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d50r" t-on-change="(ev) => this.onDenomInput('d50r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d50r * 50"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d50p" t-on-change="(ev) => this.onDenomInput('d50p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d50p * 50"/></td>
+                        </tr>
+                        <!-- 20 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">20 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d20r" t-on-change="(ev) => this.onDenomInput('d20r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d20r * 20"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d20p" t-on-change="(ev) => this.onDenomInput('d20p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d20p * 20"/></td>
+                        </tr>
+                        <!-- 10 -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">10 X</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d10r" t-on-change="(ev) => this.onDenomInput('d10r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d10r * 10"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d10p" t-on-change="(ev) => this.onDenomInput('d10p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d10p * 10"/></td>
+                        </tr>
+                        <!-- Coins -->
+                        <tr>
+                            <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">Coins</td>
+                            <td style="border:1px solid #cbd5e1; padding:6px; background:#f8fafc;"></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.coinsR" t-on-change="(ev) => this.onDenomInput('coinsR', ev.target.value)" style="width:80px; text-align:right; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px; background:#f8fafc;"></td>
+                            <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.coinsP" t-on-change="(ev) => this.onDenomInput('coinsP', ev.target.value)" style="width:80px; text-align:right; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                        </tr>
+                        <!-- Total -->
+                        <tr style="background:#f1f5f9; font-weight:bold;">
+                            <td style="border:1px solid #cbd5e1; padding:8px;">Total</td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;"></td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;"><t t-esc="state.denomTotalReceived"/></td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;"></td>
+                            <td style="border:1px solid #cbd5e1; padding:8px;"><t t-esc="state.denomTotalRepay"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top:20px; font-size:15px; font-weight:bold; display:flex; flex-direction:column; gap:8px;">
+                    <div>Balance Amount: <span style="color:#ef4444;"><t t-esc="state.balanceAmount ? state.balanceAmount.toFixed(2) : '0.00'"/></span></div>
+                    <div>Total Received Payment: <span style="color:#16a34a;"><t t-esc="state.totalAmountPaid ? state.totalAmountPaid.toFixed(2) : '0.00'"/></span></div>
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button class="btn btn-outline-secondary" t-on-click="closePaymentModal">Cancel</button>
+                    <button class="btn btn-warning" style="background:#eab308; color:white; border:none; padding:8px 24px;" t-on-click="saveAsHold">Hold</button>
+                    <button class="btn btn-success" style="background:#16a34a; border:none; padding:8px 24px;" t-on-click="collectPayment">Confirm and Pay</button>
+                </div>
+            </div>
+            </t>
+            
+            <!-- SUCCESS STATE -->
+            <t t-if="state.paymentSuccess">
+                <div style="padding:40px; text-align:center;">
+                    <div style="font-size:48px; margin-bottom:10px;">SUCCESS</div>
+                    <h3 style="color:#16a34a; margin-bottom:10px;">Bill Generated Successfully!</h3>
+                    <p style="color:#475569; margin-bottom:20px;">Bill ID: <strong t-esc="state.invoiceNo"></strong></p>
+                    <div style="display:flex; justify-content:center; gap:10px;">
+                        <button class="btn btn-primary" t-on-click="printReceipt">Print Bill</button>
+                        <button class="btn btn-outline-secondary" t-on-click="startNewBill">Close</button>
+                    </div>
                 </div>
             </t>
         </div>

@@ -2,6 +2,15 @@
 
 <odoo>
 
+    <!-- CREATE PHARMACY VENDOR ACTION -->
+    <record id="action_create_pharmacy_vendor" model="ir.actions.act_window">
+        <field name="name">Create Vendor</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}</field>
+    </record>
+
     <!-- PHARMACY STOCK ACTION -->
 
     <record
@@ -138,7 +147,7 @@
                     
                     <group>
                         <group name="general_info" string="Vendor &amp; Status">
-                            <field name="vendor_ids" widget="many2many_tags" placeholder="Select connected vendors..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True}"/>
+                            <field name="vendor_ids" widget="many2many_tags" can_create="1" options="{'no_create': False, 'no_quick_create': False, 'no_create_edit': False}" placeholder="Select connected vendors..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}"/>
                             <field name="active" widget="boolean_toggle"/>
                         </group>
                         <group name="batch_info" string="Batch Details">

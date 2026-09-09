@@ -32,8 +32,12 @@
             }
         </style>
                     <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
-                        <!-- Edge-to-Edge Background, Footer Cropped via CSS Background -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 210mm; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
+                                                <!-- Edge-to-Edge Background -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
+                        <!-- White mask to hide the footer graphic -->
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60mm; background-color: white; z-index: -1;"></div>
+                        <!-- CSS blue edge lines drawn over everything to stretch perfectly to the bottom -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-left: 8px solid #1e3a8a; border-right: 8px solid #1e3a8a; box-sizing: border-box; z-index: 0; pointer-events: none;"></div>
                         
                         
                         
@@ -129,3 +133,6 @@
         </t>
     </template>
 </odoo>
+
+
+
