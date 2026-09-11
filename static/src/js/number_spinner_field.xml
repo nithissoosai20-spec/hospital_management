@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="hospital_management.NumberSpinnerField" owl="1">
+        <input type="number" min="0" t-att-value="value" t-on-change="onChange" class="o_input text-center" style="width: 70px; border: 1px solid #cbd5e1; border-radius: 4px; padding: 2px;" t-att-disabled="props.readonly"/>
+    </t>
+</templates>

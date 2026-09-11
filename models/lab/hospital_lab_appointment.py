@@ -148,13 +148,14 @@ class HospitalLabAppointment(models.Model):
 
     payment_mode = fields.Selection(
         [
-            ('cash', 'Cash'),
+            ('none', 'None'),
             ('card', 'Card'),
             ('upi', 'UPI'),
             ('bank', 'Bank Transfer'),
+            ('online', 'Online'),
         ],
         string='Payment Mode',
-        default='cash',
+        default='none',
     )
 
     state = fields.Selection(
@@ -179,24 +180,160 @@ class HospitalLabAppointment(models.Model):
         string='Remarks'
     )
 
+    transaction_id = fields.Char(
+        string='Transaction ID',
+        copy=False
+    )
+
+    online_paid_amount = fields.Float(
+        string='Online Paid Amount'
+    )
+
+    # CASH DENOMINATIONS - RECEIVED
+    notes_500 = fields.Integer(string='₹500 Received')
+    notes_200 = fields.Integer(string='₹200 Received')
+    notes_100 = fields.Integer(string='₹100 Received')
+    notes_50 = fields.Integer(string='₹50 Received')
+    notes_20 = fields.Integer(string='₹20 Received')
+    notes_10 = fields.Integer(string='₹10 Received')
+    coins_received = fields.Float(string='Coins Received')
+
+    amt_500_recv = fields.Float(compute='_compute_cash_totals')
+    amt_200_recv = fields.Float(compute='_compute_cash_totals')
+    amt_100_recv = fields.Float(compute='_compute_cash_totals')
+    amt_50_recv = fields.Float(compute='_compute_cash_totals')
+    amt_20_recv = fields.Float(compute='_compute_cash_totals')
+    amt_10_recv = fields.Float(compute='_compute_cash_totals')
+
+    # CASH DENOMINATIONS - RETURNED
+    return_500 = fields.Integer(string='₹500 Returned')
+    return_200 = fields.Integer(string='₹200 Returned')
+    return_100 = fields.Integer(string='₹100 Returned')
+    return_50 = fields.Integer(string='₹50 Returned')
+    return_20 = fields.Integer(string='₹20 Returned')
+    return_10 = fields.Integer(string='₹10 Returned')
+    coins_return = fields.Float(string='Coins Returned')
+
+    amt_500_ret = fields.Float(compute='_compute_cash_totals')
+    amt_200_ret = fields.Float(compute='_compute_cash_totals')
+    amt_100_ret = fields.Float(compute='_compute_cash_totals')
+    amt_50_ret = fields.Float(compute='_compute_cash_totals')
+    amt_20_ret = fields.Float(compute='_compute_cash_totals')
+    amt_10_ret = fields.Float(compute='_compute_cash_totals')
+
+    total_cash_received = fields.Float(
+        string='Total Received Payment',
+        compute='_compute_cash_totals'
+    )
+    total_cash_returned = fields.Float(
+        string='Total Returned Payment',
+        compute='_compute_cash_totals'
+    )
+    balance_amount = fields.Float(
+        string='Balance Amount',
+        compute='_compute_cash_totals'
+    )
+    amount_to_collect = fields.Float(
+        string='Remaining Amount',
+        compute='_compute_cash_totals'
+    )
+
+    @api.depends(
+        'notes_500', 'notes_200', 'notes_100', 'notes_50', 'notes_20', 'notes_10', 'coins_received',
+        'return_500', 'return_200', 'return_100', 'return_50', 'return_20', 'return_10', 'coins_return',
+        'amount', 'online_paid_amount'
+    )
+    def _compute_cash_totals(self):
+        for record in self:
+            record.amt_500_recv = record.notes_500 * 500
+            record.amt_200_recv = record.notes_200 * 200
+            record.amt_100_recv = record.notes_100 * 100
+            record.amt_50_recv = record.notes_50 * 50
+            record.amt_20_recv = record.notes_20 * 20
+            record.amt_10_recv = record.notes_10 * 10
+
+            record.amt_500_ret = record.return_500 * 500
+            record.amt_200_ret = record.return_200 * 200
+            record.amt_100_ret = record.return_100 * 100
+            record.amt_50_ret = record.return_50 * 50
+            record.amt_20_ret = record.return_20 * 20
+            record.amt_10_ret = record.return_10 * 10
+
+            total_recv = record.amt_500_recv + record.amt_200_recv + record.amt_100_recv + \
+                         record.amt_50_recv + record.amt_20_recv + record.amt_10_recv + record.coins_received
+            
+            total_ret = record.amt_500_ret + record.amt_200_ret + record.amt_100_ret + \
+                        record.amt_50_ret + record.amt_20_ret + record.amt_10_ret + record.coins_return
+
+            record.total_cash_received = total_recv
+            record.total_cash_returned = total_ret
+            
+            # The fixed amount they need to pay via cash
+            record.amount_to_collect = record.amount - record.online_paid_amount
+            
+            # Balance Amount = Due by patient
+            record.balance_amount = record.amount_to_collect - total_recv + total_ret
+
+    def action_open_cash_wizard(self):
+        self.ensure_one()
+        
+        # Odoo's frontend treats 0.00 as a valid number, so it bypasses the frontend 'required' check.
+        # We manually catch 0.00 and spawn the native red toast notification to mimic frontend validation.
+
+
+        # Find the form view for the cash wizard
+        view_id = self.env.ref('hospital_management.view_hospital_lab_cash_wizard_form').id
+        return {
+            'name': 'Cash Payment',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.lab.appointment',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': view_id,
+            'target': 'new',
+        }
+
+    def action_confirm_cash(self):
+        self.ensure_one()
+        if self.balance_amount > 0:
+            raise UserError('Insufficient Payment! Please collect the full amount.')
+        if self.balance_amount < 0:
+            raise UserError('Unbalanced Payment! Please log the exact return denominations so the balance is 0.')
+        
+        if self.payment_mode and self.payment_mode != 'none' and self.online_paid_amount <= 0:
+            raise UserError('Online Paid Amount must be greater than 0.00 for digital payments.')
+        
+        # If they paid entirely by cash (online paid amount is 0), default to 'none' mode.
+        if self.online_paid_amount <= 0:
+            self.payment_mode = 'none'
+
+        self.write({
+            'payment_status': 'paid',
+            'receipt_ready': True,
+        })
+
+        # Return the receipt wizard after confirming payment
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Print Lab Receipt',
+            'res_model': 'hospital.lab.receipt.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lab_appointment_id': self.id,
+            },
+        }
+
+    def action_hold_cash(self):
+        """Close the wizard and save the state (Hold)."""
+        self.ensure_one()
+        return {'type': 'ir.actions.act_window_close'}
+
     @api.model_create_multi
     def create(self, vals_list):
-
         for vals in vals_list:
-
-            if vals.get('name', 'New') == 'New':
-                vals['name'] = self.env[
-                    'ir.sequence'
-                ].next_by_code(
-                    'hospital.lab.appointment'
-                ) or 'New'
-
-            # Receipt becomes available only when
-            # the record is actually created as Paid.
-            vals['receipt_ready'] = (
-                vals.get('payment_status') == 'paid'
-            )
-
+            if not vals.get('name') or vals.get('name') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('hospital.lab.appointment') or 'New'
         return super().create(vals_list)
 
 
@@ -218,20 +355,8 @@ class HospitalLabAppointment(models.Model):
             from odoo.exceptions import UserError
             raise UserError('Please add at least one test before saving.')
 
-        self.write({
-            'payment_status': 'paid',
-        })
-
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Print Lab Receipt',
-            'res_model': 'hospital.lab.receipt.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_lab_appointment_id': self.id,
-            },
-        }
+        # Open the cash wizard directly!
+        return self.action_open_cash_wizard()
 
 
     def action_schedule(self):
@@ -342,4 +467,7 @@ class HospitalLabAppointmentLine(models.Model):
         string='Price',
         readonly=True,
     )
+
+
+
 

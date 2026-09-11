@@ -12,7 +12,7 @@ class HospitalPharmacyBill(models.Model):
         required=True,
         readonly=True,
         copy=False,
-        default='New',
+        default='Create Bill',
     )
 
     patient_id = fields.Many2one(
@@ -162,7 +162,7 @@ class HospitalPharmacyBill(models.Model):
         sequence = self.env['ir.sequence']
 
         for vals in vals_list:
-            if vals.get('name', 'New') == 'New':
+            if vals.get('name', 'Create Bill') == 'Create Bill':
                 vals['name'] = sequence.next_by_code(
                     'hospital.pharmacy.bill'
                 ) or 'PH-BILL-000001'
@@ -199,27 +199,24 @@ class HospitalPharmacyBill(models.Model):
         'line_ids.amount',
         'line_ids.discount_amount',
         'line_ids.gst_amount',
+        'line_ids.total_amount',
         'bill_discount',
     )
     def _compute_amounts(self):
         for bill in self:
-            subtotal = sum(
-                bill.line_ids.mapped('amount')
-            )
-
-            line_discount = sum(
-                bill.line_ids.mapped('discount_amount')
-            )
-
-            line_gst = 0.0
-
-            taxable = subtotal - bill.bill_discount
-
+            subtotal = sum(bill.line_ids.mapped('amount'))
+            line_discount = sum(bill.line_ids.mapped('discount_amount'))
+            line_gst = sum(bill.line_ids.mapped('gst_amount'))
+            
+            taxable = subtotal - line_discount - bill.bill_discount
             if taxable < 0:
                 taxable = 0.0
 
             bill.subtotal = subtotal
-            bill.total_amount = taxable
+            bill.discount_amount = line_discount + bill.bill_discount
+            bill.taxable_amount = taxable
+            bill.gst_amount = line_gst
+            bill.total_amount = sum(bill.line_ids.mapped('total_amount')) - bill.bill_discount
 
     def action_save_draft(self):
         for bill in self:
@@ -315,6 +312,11 @@ class HospitalPharmacyBillLine(models.Model):
         default=1.0,
     )
 
+    free_qty = fields.Integer(
+        string='Free Qty',
+        default=0,
+    )
+
     unit = fields.Char(
         string='Unit',
         default='Tab',
@@ -330,16 +332,19 @@ class HospitalPharmacyBillLine(models.Model):
         default=0.0,
     )
 
-    gst = fields.Float(
-        string='GST %',
-        default=12.0,
-    )
+    cgst_percent = fields.Float(string='CGST %', default=0.0)
+    sgst_percent = fields.Float(string='SGST %', default=0.0)
+    igst_percent = fields.Float(string='IGST %', default=0.0)
 
     amount = fields.Float(
         string='Amount',
         compute='_compute_amounts',
         store=True,
     )
+
+    cgst = fields.Float(string='CGST', compute='_compute_amounts', store=True)
+    sgst = fields.Float(string='SGST', compute='_compute_amounts', store=True)
+    igst = fields.Float(string='IGST', compute='_compute_amounts', store=True)
 
     discount_amount = fields.Float(
         string='Discount Amount',
@@ -359,15 +364,25 @@ class HospitalPharmacyBillLine(models.Model):
         store=True,
     )
 
+    total_amount = fields.Float(
+        string='Total Amount',
+        compute='_compute_amounts',
+        store=True,
+    )
+
     @api.onchange('stock_id')
     def _onchange_stock_id(self):
         if self.stock_id:
             s = self.stock_id
             self.medicine_name = s.medicine_name
             self.batch = s.batch_number or ''
-            self.expiry = str(s.expiry_date) if s.expiry_date else ''
+            self.expiry = s.expiry_date or ''
+            # self.expiry = str(s.expiry_date) if s.expiry_date else ''
             self.available_stock = s.quantity
             self.mrp = s.selling_price
+            self.cgst_percent = s.cgst
+            self.sgst_percent = s.sgst
+            self.igst_percent = s.igst
         else:
             self.batch = ''
             self.expiry = ''
@@ -377,21 +392,25 @@ class HospitalPharmacyBillLine(models.Model):
         'qty',
         'mrp',
         'discount',
-        'gst',
+        'cgst_percent',
+        'sgst_percent',
+        'igst_percent',
     )
     def _compute_amounts(self):
         for line in self:
-            gross = line.qty * line.mrp
+            amt = line.qty * line.mrp
+            disc_amt = amt * line.discount / 100.0
+            taxable = amt - disc_amt
 
-            discount_amount = (
-                gross * line.discount / 100.0
-            )
+            c_amt = taxable * line.cgst_percent / 100.0
+            s_amt = taxable * line.sgst_percent / 100.0
+            i_amt = taxable * line.igst_percent / 100.0
 
-            taxable = gross - discount_amount
-
-            gst_amount = 0.0
-
-            line.amount = taxable
-            line.discount_amount = discount_amount
+            line.amount = amt
+            line.discount_amount = disc_amt
             line.taxable_amount = taxable
-            line.gst_amount = gst_amount
+            line.cgst = c_amt
+            line.sgst = s_amt
+            line.igst = i_amt
+            line.gst_amount = c_amt + s_amt + i_amt
+            line.total_amount = taxable + line.gst_amount

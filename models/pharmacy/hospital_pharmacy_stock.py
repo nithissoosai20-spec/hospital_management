@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class HospitalPharmacyStock(models.Model):
@@ -7,12 +8,27 @@ class HospitalPharmacyStock(models.Model):
     _rec_name = 'medicine_name'
     _order = 'medicine_name asc'
 
+    @api.depends('medicine_name')
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = 'Stock View'
+
     
 
     _medicine_code_uniq = models.Constraint(
         'UNIQUE(medicine_code)',
         'This Item Code already exists! Please use a unique Item Code.'
     )
+
+    @api.constrains('batch_number')
+    def _check_unique_batch_number(self):
+        for record in self:
+            if record.batch_number:
+                domain = [('batch_number', '=', record.batch_number), ('id', '!=', record.id)]
+                if self.env['hospital.pharmacy.stock'].search(domain, limit=1):
+                    raise ValidationError("This Batch Number already exists! Please use a unique Batch Number.")
+
+
 
     # BASIC MEDICINE INFORMATION
 
@@ -34,6 +50,9 @@ class HospitalPharmacyStock(models.Model):
         ('Injection', 'Injections'),
         ('Ointment', 'Ointments'),
         ('Drops', 'Drops'),
+        ('Gel', 'Gel'),
+        ('Cream', 'Cream'),
+        ('Lotion', 'Lotion'),
         ('Other', 'Other')
     ], string='Category', default='Tablet')
 
@@ -43,8 +62,12 @@ class HospitalPharmacyStock(models.Model):
         string='Batch Number',
     )
 
-    expiry_date = fields.Date(
+    expiry_date = fields.Char(
         string='Expiry Date',
+    )
+
+    hsn_code = fields.Char(
+        string='HSN Code',
     )
 
     # PRICING
@@ -56,6 +79,57 @@ class HospitalPharmacyStock(models.Model):
     selling_price = fields.Float(
         string='Selling Price',
     )
+    
+    cgst = fields.Float(
+        string='CGST (%)',
+        default=0.0,
+    )
+
+    cgst_amount = fields.Float(
+        string='CGST (INR)',
+        compute='_compute_tax_amounts',
+        store=True,
+    )
+
+    sgst = fields.Float(
+        string='SGST (%)',
+        default=0.0,
+    )
+
+    sgst_amount = fields.Float(
+        string='SGST (INR)',
+        compute='_compute_tax_amounts',
+        store=True,
+    )
+
+    igst = fields.Float(
+        string='IGST (%)',
+        default=0.0,
+    )
+
+    igst_amount = fields.Float(
+        string='IGST (INR)',
+        compute='_compute_tax_amounts',
+        store=True,
+    )
+
+    selling_price_with_gst = fields.Float(
+        string='Taxable Amount',
+        compute='_compute_selling_price_with_gst',
+        store=True,
+    )
+
+    @api.depends('selling_price', 'cgst', 'sgst', 'igst')
+    def _compute_tax_amounts(self):
+        for record in self:
+            record.cgst_amount = record.selling_price * (record.cgst / 100.0)
+            record.sgst_amount = record.selling_price * (record.sgst / 100.0)
+            record.igst_amount = record.selling_price * (record.igst / 100.0)
+
+    @api.depends('selling_price', 'cgst_amount', 'sgst_amount', 'igst_amount')
+    def _compute_selling_price_with_gst(self):
+        for record in self:
+            record.selling_price_with_gst = record.selling_price + record.cgst_amount + record.sgst_amount + record.igst_amount
 
     # STOCK
 
@@ -194,14 +268,19 @@ class HospitalPharmacyStock(models.Model):
         # Trigger the automated reorder engine immediately so user doesn't have to wait for cron
         self._cron_auto_reorder()
         
+        # Load the fully-formed action from the database so Odoo's frontend doesn't crash missing the 'views' mapping
+        # We use sudo() here because regular users don't have direct read access to 'ir.actions.act_window' records
+        action = self.env.ref('hospital_management.action_hospital_pharmacy_stock_records').sudo().read()[0]
+        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Saved & Procurement Checked',
-                'message': 'Record saved! Automated procurement engine checked for low stock.',
+                'title': 'Success',
+                'message': 'Saved successfully',
                 'type': 'success',
                 'sticky': False,
+                'next': action,
             }
         }
     # STATUS
@@ -229,17 +308,9 @@ class HospitalPharmacyStock(models.Model):
     @api.depends('total_stock', 'emergency_stock', 'expiry_date')
     def _compute_stock_status(self):
 
-        today = fields.Date.today()
-
         for record in self:
 
-            if (
-                record.expiry_date
-                and record.expiry_date < today
-            ):
-                record.stock_status = 'expired'
-
-            elif record.quantity <= 0:
+            if record.quantity <= 0:
                 record.stock_status = 'out'
 
             elif record.quantity < 20:
@@ -250,7 +321,7 @@ class HospitalPharmacyStock(models.Model):
 
             else:
                 record.stock_status = 'available'
-
+            
     def name_get(self):
         result = []
         for rec in self:

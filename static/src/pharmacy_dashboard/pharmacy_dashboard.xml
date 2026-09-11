@@ -69,7 +69,7 @@
     <div style="margin-bottom:4px;">
         <h4 style="margin:0 0 8px 0; color:#2563eb; font-size:14px; font-weight:700;">1. Patient / Customer Details</h4>
         <div t-if="state.customerType === 'patient'">
-            <div style="display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1fr 1.2fr; gap:10px; margin-bottom:8px;">
+            <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin-bottom:10px;">
                 <!-- Row 1 -->
                 <div>
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Customer Type</label>
@@ -83,7 +83,7 @@
                     <div style="display:flex;">
                         <input type="text" class="form-control form-control-sm" t-model="state.patientSearchTerm" t-on-keydown="(ev) => this.onPatientSearchKeyDown(ev)" placeholder="UHID..." style="height:28px; font-size:11px;"/>
                         <button class="btn btn-sm btn-primary" t-on-click="searchPatient" style="height:28px; border-radius:0 4px 4px 0; background:#2563eb; border:none; padding:0 10px;"><i class="fa fa-search"></i></button>
-                        </div>
+                    </div>
                 </div>
                 <div>
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Patient Name</label>
@@ -102,11 +102,9 @@
                         </t>
                     </select>
                 </div>
-            </div>
-            
-            <div style="display:grid; grid-template-columns:2.5fr 1fr 1fr 1.2fr; gap:10px;">
+                
                 <!-- Row 2 -->
-                <div>
+                <div style="grid-column: span 2;">
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Address</label>
                     <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? state.patient.address : ''" readonly="readonly" style="height:28px; font-size:11px; background:transparent;"/>
                 </div>
@@ -131,7 +129,7 @@
         </div>
 
         <div t-if="state.customerType === 'walk-in'">
-            <div style="display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1fr 1.2fr; gap:10px; margin-bottom:8px;">
+            <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin-bottom:10px;">
                 <!-- Row 1 -->
                 <div>
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Customer Type</label>
@@ -156,11 +154,9 @@
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Bill Time</label>
                     <input type="time" readonly="1" class="form-control form-control-sm" t-model="state.billTime" style="height:28px; font-size:11px; background:#f3f4f6; pointer-events:none;"/>
                 </div>
-            </div>
-            
-            <div style="display:grid; grid-template-columns:1fr; gap:10px;">
+                
                 <!-- Row 2 -->
-                <div>
+                <div style="grid-column: span 3;">
                     <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:4px;">Address</label>
                     <input type="text" class="form-control form-control-sm" t-model="state.walkinAddress" placeholder="Enter address" style="height:28px; font-size:11px;"/>
                 </div>
@@ -174,11 +170,11 @@
     <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
         <h4 style="margin:0 0 8px 0; color:#2563eb; font-size:14px; font-weight:700;">2. Add Medicines</h4>
         
-        <!-- LOWER GRIDS (Table + Remarks on Left | Summary on Right) -->
-        <div style="display:grid; grid-template-columns:3.5fr 1fr; gap:15px; flex:1; min-height:0;">
+        <!-- LOWER GRIDS (Table takes 100% width, actions at bottom) -->
+        <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-height:0;">
             
-            <!-- LEFT COLUMN -->
-            <div style="display:flex; flex-direction:column; gap:10px; min-height:0;" t-attf-style="{{ state.isReadOnly ? 'pointer-events: none; opacity: 0.8;' : '' }}">
+            <!-- FULL WIDTH TABLE -->
+            <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-height:0;" t-attf-style="{{ state.isReadOnly ? 'pointer-events: none; opacity: 0.8;' : '' }}">
                 <!-- Search Bar Row -->
         <div style="display:flex; gap:10px; align-items:flex-end; margin-bottom:4px;">
             <div style="flex:2; position:relative;">
@@ -225,106 +221,84 @@
                 
                 <!-- Table Area (Takes up remaining space) -->
                 <div style="flex:1; border:1px solid #e2e8f0; border-radius:4px; overflow:auto; position:relative; display:flex; flex-direction:column;">
-                    <table class="table" style="font-size:11px; text-align:center; vertical-align:middle; margin:0; width:100%; white-space:nowrap;">
+                    <table class="table" style="font-size:10px; text-align:center; vertical-align:middle; margin:0; width:100%; white-space:nowrap;">
                         <thead style="background:#f8fafc; color:#0f172a; font-weight:700; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10;">
                             <tr>
-                                <th style="padding:6px;">#</th>
-                                <th>Item Code</th>
-                                <th style="text-align:left;">Item Name</th>
-                                
-                                <th>Price (INR)</th>
-                                <th style="width:90px;">Qty</th>
-                                <th style="width:60px;">Discount (%)</th>
-                                <th>Discount (INR)</th>
-                                <th>CGST (INR)</th>
-                                <th>SGST (INR)</th>
-                                <th>IGST (INR)</th>
-                                <th>Amount (INR)</th>
-                                <th>Action</th>
+                                <th style="padding:4px 6px;">#</th>
+                                <th style="padding:4px 6px;">HSN</th>
+                                <th style="text-align:left; padding:4px 6px;">Product Description</th>
+                                <th style="padding:4px 6px;">Batch No.</th>
+                                <th style="padding:4px 6px;">Exp.</th>
+                                <th style="padding:4px 6px;">M.R.P. Rs.</th>
+                                <th style="width:70px; padding:4px 6px;">Qty</th>
+                                <th style="padding:4px 6px;">Free Qty</th>
+                                <th style="padding:4px 6px;">RATE</th>
+                                <th style="padding:4px 6px;">Gross Amount Rs.</th>
+                                <th style="width:50px; padding:4px 6px;">Dis%</th>
+                                <th style="padding:4px 6px;">CGST Rs.</th>
+                                <th style="padding:4px 6px;">SGST Rs.</th>
+                                <th style="padding:4px 6px;">IGST Rs.</th>
+                                <th style="padding:4px 6px;">Total Amount Rs.</th>
+                                <th style="padding:4px 6px;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr t-foreach="state.medicines || []" t-as="med" t-key="med.id" style="border-bottom:1px solid #e2e8f0;">
-                                <td style="padding:4px; font-weight:600;"><t t-esc="med_index + 1"/></td>
-                                <td style="color:#64748b;"><t t-esc="med.code"/></td>
-                                <td style="text-align:left; font-weight:700; color:#1e293b;"><t t-esc="med.name"/></td>
-                                
-                                <td><t t-esc="med.price.toFixed(2)"/></td>
-                                <td>
-                                    <div style="display:flex; align-items:center; justify-content:center; border:1px solid #cbd5e1; border-radius:4px; width:70px; margin:0 auto; background:white; height:22px;">
-                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 6px; font-weight:bold; color:#475569;" t-on-click="() => this.changeQty(med.id, -1)">-</button>
-                                        <input type="text" t-att-value="med.qty" t-on-change="(ev) => this.updateQty(med.id, ev.target.value)" style="width:24px; text-align:center; border:none; outline:none; font-size:11px; font-weight:700; color:#0f172a; padding:0;"/>
-                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 6px; font-weight:bold; color:#475569;" t-on-click="() => this.changeQty(med.id, 1)">+</button>
+                                <td style="padding:4px 6px; font-weight:600;"><t t-esc="med_index + 1"/></td>
+                                <td style="color:#64748b; padding:4px 6px;"><t t-esc="med.code"/></td>
+                                <td style="text-align:left; font-weight:700; color:#1e293b; padding:4px 6px;"><t t-esc="med.name"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.batch"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.expiry"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.price.toFixed(2)"/></td>
+                                <td style="padding:4px 6px;">
+                                    <div style="display:flex; align-items:center; justify-content:center; border:1px solid #cbd5e1; border-radius:4px; width:60px; margin:0 auto; background:white; height:20px;">
+                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 4px; font-weight:bold; color:#475569; font-size:10px;" t-on-click="() => this.changeQty(med.id, -1)">-</button>
+                                        <input type="text" t-att-value="med.qty" t-on-change="(ev) => this.updateQty(med.id, ev.target.value)" style="width:20px; text-align:center; border:none; outline:none; font-size:10px; font-weight:700; color:#0f172a; padding:0;"/>
+                                        <button class="btn btn-sm" style="border:none; background:transparent; padding:0 4px; font-weight:bold; color:#475569; font-size:10px;" t-on-click="() => this.changeQty(med.id, 1)">+</button>
                                     </div>
                                 </td>
-                                <td>
-                                    <input type="number" t-att-value="med.discount" style="width:40px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; padding:2px; height:22px;" t-on-change="(ev) => this.updateDiscount(med.id, ev.target.value)"/>
+                                <td style="padding:4px 6px;">
+                                    <input type="number" t-att-value="med.free_qty || 0" t-on-change="(ev) => this.updateFreeQty(med.id, ev.target.value)" style="width:36px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; font-size:10px; padding:0 2px; height:20px;"/>
                                 </td>
-                                <td><t t-esc="med.discountVal.toFixed(2)"/></td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td>0.00</td>
-                                <td style="font-weight:700; color:#0f172a;"><t t-esc="med.amount.toFixed(2)"/></td>
-                                <td>
-                                    <span style="cursor:pointer; color:#ef4444; font-size:13px;" t-on-click="() => this.removeMedicine(med.id)">Remove</span>
+                                <td style="padding:4px 6px;"><t t-esc="med.price.toFixed(2)"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.amount.toFixed(2)"/></td>
+                                <td style="padding:4px 6px;">
+                                    <input type="number" t-att-value="med.discount" style="width:36px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; font-size:10px; padding:0 2px; height:20px;" t-on-change="(ev) => this.updateDiscount(med.id, ev.target.value)"/>
+                                </td>
+                                <td style="padding:4px 6px;"><t t-esc="med.cgst_val ? med.cgst_val.toFixed(2) : '0.00'"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.sgst_val ? med.sgst_val.toFixed(2) : '0.00'"/></td>
+                                <td style="padding:4px 6px;"><t t-esc="med.igst_val ? med.igst_val.toFixed(2) : '0.00'"/></td>
+                                <td style="font-weight:700; color:#0f172a; padding:4px 6px;"><t t-esc="med.total_amount ? med.total_amount.toFixed(2) : '0.00'"/></td>
+                                <td style="padding:4px 6px;">
+                                    <span style="cursor:pointer; color:#ef4444; font-size:12px;" t-on-click="() => this.removeMedicine(med.id)">Remove</span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                
-
-
-
             </div>
 
-            <!-- RIGHT COLUMN (Summary) -->
-            <div style="display:flex; flex-direction:column; min-height:0;">
-                <!-- Align the title height with the labels in the left column so the boxes align horizontally -->
-                <div style="height:14px; margin-bottom:4px; display:flex; align-items:flex-end;">
-                    <h4 style="margin:0; color:#2563eb; font-size:14px; font-weight:700; line-height:1;">3. Bill Summary</h4>
-                </div>
+            <!-- BOTTOM ACTION BAR -->
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; padding:12px 0 0 0; margin-top:5px;">
                 
-                <div style="border:1px solid #e2e8f0; border-radius:4px; padding:12px; display:flex; flex-direction:column; background:white; overflow-y:auto; overflow-x:hidden; flex:1;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
-                    <span>Total Items</span><span><t t-esc="state.medicines.length"/></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
-                    <span>Total Quantity</span><span><t t-esc="state.totalQuantity"/></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
-                    <span>Gross Amount (INR)</span><span><t t-esc="state.grossAmount.toFixed(2)"/></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
-                    <span>Total Discount (INR)</span><span><t t-esc="state.totalDiscount.toFixed(2)"/></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700;">
-                    <span>Sub Total (INR)</span><span><t t-esc="state.subTotal.toFixed(2)"/></span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:2px; color:#334155; font-weight:700; align-items:center;">
-                    <span>Round Off (INR)</span>
-                    <input type="number" class="form-control form-control-sm" style="width:60px; text-align:right; font-weight:700; height:24px; font-size:11px;" t-model="state.roundOff" t-on-change="() => this.calculateTotals()"/>
-                </div>
-                
-                <div style="background:#f0fdf4; border-top:1px solid #bbf7d0; border-bottom:1px solid #bbf7d0; padding:4px 10px; display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; margin-left:-12px; margin-right:-12px;">
-                    <span style="color:#16a34a; font-weight:700; font-size:14px;">Net Amount (INR)</span>
-                    <span style="color:#16a34a; font-weight:800; font-size:20px;"><t t-esc="state.netAmount.toFixed(2)"/></span>
+                <!-- Net Amount -->
+                <div style="background:#f0fdf4; border:1px solid #16a34a; padding:8px 24px; border-radius:6px; display:flex; align-items:center; justify-content:space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-width:350px;">
+                    <span style="color:#16a34a; font-weight:700; font-size:16px;">Net Amount (INR)</span>
+                    <span style="color:#16a34a; font-weight:800; font-size:24px;"><t t-esc="state.netAmount.toFixed(2)"/></span>
                 </div>
 
-                <div style="margin-top:2px;">
+                <!-- Action Buttons -->
+                <div style="display:flex; gap:10px; min-width:350px;">
+                    <button t-if="!state.isReadOnly" class="btn btn-success" style="font-weight:700; padding:8px 0; background:#16a34a; border-color:#16a34a; font-size:14px; box-shadow: 0 2px 4px rgba(22,163,74,0.2); flex:1;" t-on-click="openPaymentModal">Generate Bill (Pay)</button>
+                    <button t-if="state.isReadOnly" class="btn btn-secondary" style="font-weight:700; padding:8px 0; font-size:14px; flex:1;" disabled="1">PAID</button>
                     
-
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                        <button t-if="!state.isReadOnly" class="btn btn-success" style="font-weight:700; padding:4px; background:#16a34a; border-color:#16a34a; width:100%; font-size:14px;" t-on-click="openPaymentModal">Generate Bill (Pay)</button>
-<button t-if="state.isReadOnly" class="btn btn-secondary" style="font-weight:700; padding:4px; width:100%; font-size:14px;" disabled="1">PAID</button>
-                        
-                        <button t-if="!state.isReadOnly" class="btn btn-light" style="width:100%; border:1px solid #cbd5e1; font-weight:700; color:#475569; padding:4px;" t-on-click="clearBill">Clear</button>
-                        <button t-if="state.isReadOnly" class="btn btn-info" style="font-weight:700; padding:4px; width:100%; font-size:14px; margin-top:2px; color:white;" t-on-click="printReceipt">Print</button>
-                        <button class="btn btn-outline-danger" style="font-weight:700; padding:4px; width:100%; font-size:14px; margin-top:2px;" t-on-click="closePOS">Close</button>
-                    </div>
+                    <button t-if="!state.isReadOnly" class="btn btn-light" style="border:1px solid #cbd5e1; font-weight:700; color:#475569; padding:8px 0; font-size:14px; background:white; flex:1;" t-on-click="clearBill">Clear</button>
+                    <button t-if="state.isReadOnly" class="btn btn-info" style="font-weight:700; padding:8px 0; font-size:14px; color:white; flex:1;" t-on-click="printReceipt">Print</button>
+                    <button class="btn btn-outline-danger" style="font-weight:700; padding:8px 0; font-size:14px; background:white; flex:1;" t-on-click="closePOS">Close</button>
                 </div>
+
             </div>
-            </div>
+
         </div>
     </div>
     
@@ -341,25 +315,22 @@
             <t t-if="!state.paymentSuccess">
             <div style="padding:20px;">
                 <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                    <div>
-                        <div style="margin-bottom:8px; display:flex; align-items:center; gap:20px;">
-                            <div>
-                                <span style="font-weight:600; color:#334155;">Type of Digital Payment:</span>
-                                <select class="form-select" style="display:inline-block; width:150px; margin-left:10px; padding:2px;" t-model="state.paymentMode">
-                                    <option value="none">None</option>
-                                    <option value="upi">UPI</option>
-                                    <option value="card">Card</option>
-                                    <option value="credit">Credit</option>
-                                </select>
-                            </div>
-                            <div>
-                                <span style="font-weight:600; color:#334155;">Transaction ID:</span>
-                                <input type="text" t-att-value="state.transactionId" t-on-change="(ev) => state.transactionId = ev.target.value" t-att-disabled="state.paymentMode === 'none'" style="width:150px; margin-left:10px; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/>
-                            </div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; align-items: center;">
+                            <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Type of Digital Payment:</span>
+                            <select class="form-select" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px;" t-model="state.paymentMode">
+                                <option value="none">None</option>
+                                <option value="upi">UPI</option>
+                                <option value="card">Card</option>
+                                <option value="credit">Credit</option>
+                            </select>
+
+                            <span style="font-weight:600; color:#334155; margin-left: 20px; margin-right: 10px;">Transaction ID:</span>
+                            <input type="text" t-att-value="state.transactionId" t-on-change="(ev) => state.transactionId = ev.target.value" t-att-disabled="state.paymentMode === 'none'" style="width:150px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px;"/>
                         </div>
-                        <div>
-                            <span style="font-weight:600; color:#334155;">Online Paid Amount:</span>
-                            <input type="number" min="0" t-att-value="state.paidAmount" t-on-change="(ev) => this.onDigiPayInput(ev.target.value)" t-att-disabled="state.paymentMode === 'none'" style="width:100px; margin-left:10px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; text-align:right;"/>
+                        <div style="display: flex; align-items: center;">
+                            <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Online Paid Amount:</span>
+                            <input type="number" min="0" t-att-value="state.paidAmount" t-on-change="(ev) => this.onDigiPayInput(ev.target.value)" t-att-disabled="state.paymentMode === 'none'" style="width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px; text-align:right;"/>
                         </div>
                     </div>
                     <div style="text-align:right;">

@@ -313,7 +313,7 @@ body:has(.hospital_appointment_form)
 .hospital_action_buttons {
     width: 100% !important;
     display: flex !important;
-    justify-content: center !important;
+    justify-content: flex-end !important;
     align-items: center !important;
     gap: 7px !important;
     margin: 6px 0 2px 0 !important;
@@ -4009,3 +4009,5 @@ textarea {
     min-height: 80px !important;
     resize: vertical !important;
 }
+
+

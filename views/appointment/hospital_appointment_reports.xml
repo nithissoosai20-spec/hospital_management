@@ -16,7 +16,7 @@
     </record>
 
     <record id="action_report_hospital_appointment_receipt" model="ir.actions.report">
-        <field name="name">Appointment Receipt</field>
+        <field name="name">Appointment Token</field>
         <field name="model">hospital.appointment</field>
         <field name="report_type">qweb-pdf</field>
         <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
@@ -27,7 +27,7 @@
     </record>
 
     <record id="action_report_hospital_appointment_token" model="ir.actions.report">
-        <field name="name">Appointment Token</field>
+        <field name="name">Appointment Receipt</field>
         <field name="model">hospital.appointment</field>
         <field name="report_type">qweb-pdf</field>
         <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
@@ -56,16 +56,16 @@
             }
             }
         </style>
-                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
-                                                <!-- Edge-to-Edge Background -->
+                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
+                        <!-- Edge-to-Edge Background -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
                         <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60mm; background-color: white; z-index: -1;"></div>
-                        <!-- CSS blue edge lines drawn over everything to stretch perfectly to the bottom -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-left: 8px solid #1e3a8a; border-right: 8px solid #1e3a8a; box-sizing: border-box; z-index: 0; pointer-events: none;"></div>
-                        
-                        
-                        
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
+                        <!-- Blue border edges -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
 
                         <div style="padding-top:  65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
 
@@ -113,37 +113,45 @@
                                         </div>
                                     </div>
                                     <div class="row mb-2">
-                                        <div class="col-5 fw-bold text-end">OP Number</div>
+                                        <div class="col-5 fw-bold text-end">Patient ID</div>
                                         <div class="col-7 text-end"><span t-field="doc.patient_code"/></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Token Number & Receipt Info -->
+                            <!-- Token Number &amp; Receipt Info -->
                             <div class="row mt-5">
                                 <div class="col-12 text-center">
                                     <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
-                                    <div style="font-size:36px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
+                                    <div style="font-size:24px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
                                         <span t-field="doc.token_number"/>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="row mt-5 justify-content-center">
-                                <div class="col-6">
-                                    <table class="table table-sm table-borderless" style="border: 1px solid #ddd; font-size: 13px;">
-                                        <tr style="border-bottom: 1px solid #ddd;">
-                                            <td style="background-color: #f1f5f9; width: 50%;"><strong>Net Amount</strong></td>
-                                            <td>&#8377; <span t-out="'%.2f' % doc.net_amount"/></td>
+                                <div class="col-12">
+                                    <table class="table table-bordered" style="font-size: 20px; border-color: #cbd5e1;">
+                                        <tr style="background-color: #f8fafc;">
+                                            <td style="padding: 18px; width: 60%;"><strong>Total Net Amount</strong></td>
+                                            <td style="padding: 18px;"><strong>&#8377; <span t-out="'%.2f' % doc.net_amount"/></strong></td>
                                         </tr>
-                                        <tr style="border-bottom: 1px solid #ddd;">
-                                            <td style="background-color: #f1f5f9;"><strong>Payment Mode</strong></td>
-                                            <td style="text-transform: capitalize;"><span t-field="doc.payment_mode"/></td>
-                                        </tr>
-                                        <tr t-if="doc.transaction_id">
-                                            <td style="background-color: #f1f5f9;"><strong>Transaction ID</strong></td>
-                                            <td><span t-field="doc.transaction_id"/></td>
-                                        </tr>
+                                        <t t-if="doc.online_paid_amount &gt; 0">
+                                            <tr>
+                                                <td style="padding: 18px;"><strong>Amount Paid via Digital (<span style="text-transform: capitalize;" t-field="doc.payment_mode"/>)</strong></td>
+                                                <td style="padding: 18px; color: #15803d;">&#8377; <span t-out="'%.2f' % doc.online_paid_amount"/></td>
+                                            </tr>
+                                            <tr t-if="doc.transaction_id">
+                                                <td style="padding: 18px;"><strong>Transaction ID</strong></td>
+                                                <td style="padding: 18px;"><span t-field="doc.transaction_id"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="(doc.net_amount - doc.online_paid_amount) &gt; 0">
+                                            <tr>
+                                                <td style="padding: 18px;"><strong>Amount Paid via Cash</strong></td>
+                                                <td style="padding: 18px; color: #15803d;">&#8377; <span t-out="'%.2f' % (doc.net_amount - doc.online_paid_amount)"/></td>
+                                            </tr>
+                                        </t>
                                     </table>
                                 </div>
                             </div>
@@ -174,16 +182,16 @@
             }
                         }
                     </style>
-                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
-                                                <!-- Edge-to-Edge Background -->
+                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif; font-size: 13px;">
+                        <!-- Edge-to-Edge Background -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
                         <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60mm; background-color: white; z-index: -1;"></div>
-                        <!-- CSS blue edge lines drawn over everything to stretch perfectly to the bottom -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-left: 8px solid #1e3a8a; border-right: 8px solid #1e3a8a; box-sizing: border-box; z-index: 0; pointer-events: none;"></div>
-                        
-                        
-                        
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
+                        <!-- Blue border edges -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
 
                         <div style="padding-top:  65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
 
@@ -240,27 +248,30 @@
                             
                             <!-- Second Row: Vitals at the same size as details -->
                             <div class="row mt-3" style="font-size: 12px; color: #333; border-top: 1px solid #ddd; padding-top: 15px;">
-                                <div class="col-4">
-                                    <div class="row mb-2">
-                                        <div class="col-5 fw-bold">Height</div>
-                                        <div class="col-7">________</div>
-                                    </div>
+                                <div class="col-8">
+                                    <!-- Empty space on the left to align vitals to the right corner -->
                                 </div>
                                 <div class="col-4">
                                     <div class="row mb-2">
-                                        <div class="col-5 fw-bold text-center">Weight</div>
-                                        <div class="col-7">________</div>
+                                        <div class="col-5 fw-bold text-end">Height</div>
+                                        <div class="col-7 text-end">________</div>
                                     </div>
-                                </div>
-                                <div class="col-4">
                                     <div class="row mb-2">
-                                        <div class="col-5 fw-bold text-end">BP / Temp</div>
-                                        <div class="col-7 text-end">________ / ________</div>
+                                        <div class="col-5 fw-bold text-end">Weight</div>
+                                        <div class="col-7 text-end">________</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">BP</div>
+                                        <div class="col-7 text-end">________</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-5 fw-bold text-end">Temp</div>
+                                        <div class="col-7 text-end">________</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Token Number Highlighted & Smaller -->
+                            <!-- Token Number Highlighted &amp; Smaller -->
                             <div class="row mt-4">
                                 <div class="col-12 text-center">
                                     <div style="display: inline-block; padding: 5px 15px; border: 2px solid #1e3a8a; border-radius: 5px; background-color: #f1f5f9;">
@@ -277,5 +288,3 @@
         </t>
     </template>
 </odoo>
-
-

@@ -31,13 +31,16 @@
             }
             }
         </style>
-                    <div class="page" style="position: relative; width: 100%; min-height: 297mm; z-index: 1; font-family: Arial, sans-serif;">
+                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif;">
                                                 <!-- Edge-to-Edge Background -->
                         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
                         <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 60mm; background-color: white; z-index: -1;"></div>
-                        <!-- CSS blue edge lines drawn over everything to stretch perfectly to the bottom -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-left: 8px solid #1e3a8a; border-right: 8px solid #1e3a8a; box-sizing: border-box; z-index: 0; pointer-events: none;"></div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
+                        <!-- Blue border edges -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
                         
                         
                         
@@ -53,14 +56,26 @@
                             
                             <div class="row mb-4 pt-4">
                                 <div class="col-6">
-                                    <strong>Lab Reference:</strong> <span t-field="doc.name"/><br/>
-                                    <strong>Patient:</strong> <span t-field="doc.patient_id.name"/><br/>
-                                    <strong>UHID:</strong> <span t-field="doc.patient_id.patient_id"/>
+                                    <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
+                                    <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/><br/>
+                                    <strong>Mobile Number:</strong> <span t-field="doc.patient_id.phone"/>
                                 </div>
                                 <div class="col-6 text-end">
-                                    <strong>Date:</strong> <span t-field="doc.appointment_date"/><br/>
+                                    <strong>Date and Time:</strong> <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/> <span t-field="doc.appointment_time"/><br/>
                                     <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
-                                    <strong>Payment Mode:</strong> <span style="text-transform:uppercase;" t-field="doc.payment_mode"/>
+                                    <strong>Payment Mode:</strong> 
+                                    <t t-if="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received &gt; 0">
+                                        <span t-field="doc.payment_mode"/> and Cash
+                                    </t>
+                                    <t t-elif="(not doc.payment_mode or doc.payment_mode == 'none') and doc.total_cash_received &gt; 0">
+                                        Cash
+                                    </t>
+                                    <t t-elif="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received == 0">
+                                        <span t-field="doc.payment_mode"/>
+                                    </t>
+                                    <t t-else="">
+                                        None
+                                    </t>
                                 </div>
                             </div>
 
@@ -113,5 +128,8 @@
         </t>
     </template>
 </odoo>
+
+
+
 
 

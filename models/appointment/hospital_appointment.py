@@ -241,12 +241,12 @@ class HospitalAppointment(models.Model):
 
     payment_mode = fields.Selection(
         [
-            ('cash', 'Cash'),
+            ('none', 'None'),
             ('card', 'Card'),
             ('upi', 'UPI'),
             ('online', 'Online'),
         ],
-        string='Payment Mode', default='cash'
+        string='Type of Digital Payment Mode', default='none'
     )
 
     payment_status = fields.Selection(
@@ -262,6 +262,149 @@ class HospitalAppointment(models.Model):
         string='Transaction ID',
         copy=False
     )
+
+    online_paid_amount = fields.Float(
+        string='Online Paid Amount'
+    )
+
+    # CASH DENOMINATIONS - RECEIVED
+    notes_500 = fields.Integer(string='₹500 Received')
+    notes_200 = fields.Integer(string='₹200 Received')
+    notes_100 = fields.Integer(string='₹100 Received')
+    notes_50 = fields.Integer(string='₹50 Received')
+    notes_20 = fields.Integer(string='₹20 Received')
+    notes_10 = fields.Integer(string='₹10 Received')
+    coins_received = fields.Float(string='Coins Received')
+
+    amt_500_recv = fields.Float(compute='_compute_cash_totals')
+    amt_200_recv = fields.Float(compute='_compute_cash_totals')
+    amt_100_recv = fields.Float(compute='_compute_cash_totals')
+    amt_50_recv = fields.Float(compute='_compute_cash_totals')
+    amt_20_recv = fields.Float(compute='_compute_cash_totals')
+    amt_10_recv = fields.Float(compute='_compute_cash_totals')
+
+    # CASH DENOMINATIONS - RETURNED
+    return_500 = fields.Integer(string='₹500 Returned')
+    return_200 = fields.Integer(string='₹200 Returned')
+    return_100 = fields.Integer(string='₹100 Returned')
+    return_50 = fields.Integer(string='₹50 Returned')
+    return_20 = fields.Integer(string='₹20 Returned')
+    return_10 = fields.Integer(string='₹10 Returned')
+    coins_return = fields.Float(string='Coins Returned')
+
+    amt_500_ret = fields.Float(compute='_compute_cash_totals')
+    amt_200_ret = fields.Float(compute='_compute_cash_totals')
+    amt_100_ret = fields.Float(compute='_compute_cash_totals')
+    amt_50_ret = fields.Float(compute='_compute_cash_totals')
+    amt_20_ret = fields.Float(compute='_compute_cash_totals')
+    amt_10_ret = fields.Float(compute='_compute_cash_totals')
+
+    total_cash_received = fields.Float(
+        string='Total Received Payment',
+        compute='_compute_cash_totals'
+    )
+    total_cash_returned = fields.Float(
+        string='Total Returned Payment',
+        compute='_compute_cash_totals'
+    )
+    balance_amount = fields.Float(
+        string='Balance Amount',
+        compute='_compute_cash_totals'
+    )
+    amount_to_collect = fields.Float(
+        string='Remaining Amount',
+        compute='_compute_cash_totals'
+    )
+
+    @api.depends(
+        'notes_500', 'notes_200', 'notes_100', 'notes_50', 'notes_20', 'notes_10', 'coins_received',
+        'return_500', 'return_200', 'return_100', 'return_50', 'return_20', 'return_10', 'coins_return',
+        'net_amount', 'online_paid_amount'
+    )
+    def _compute_cash_totals(self):
+        for record in self:
+            record.amt_500_recv = record.notes_500 * 500
+            record.amt_200_recv = record.notes_200 * 200
+            record.amt_100_recv = record.notes_100 * 100
+            record.amt_50_recv = record.notes_50 * 50
+            record.amt_20_recv = record.notes_20 * 20
+            record.amt_10_recv = record.notes_10 * 10
+
+            record.amt_500_ret = record.return_500 * 500
+            record.amt_200_ret = record.return_200 * 200
+            record.amt_100_ret = record.return_100 * 100
+            record.amt_50_ret = record.return_50 * 50
+            record.amt_20_ret = record.return_20 * 20
+            record.amt_10_ret = record.return_10 * 10
+
+            total_recv = record.amt_500_recv + record.amt_200_recv + record.amt_100_recv + \
+                         record.amt_50_recv + record.amt_20_recv + record.amt_10_recv + record.coins_received
+            
+            total_ret = record.amt_500_ret + record.amt_200_ret + record.amt_100_ret + \
+                        record.amt_50_ret + record.amt_20_ret + record.amt_10_ret + record.coins_return
+
+            record.total_cash_received = total_recv
+            record.total_cash_returned = total_ret
+            
+            # The fixed amount they need to pay via cash
+            record.amount_to_collect = record.net_amount - record.online_paid_amount
+            
+            # Balance Amount = Due by patient
+            record.balance_amount = record.amount_to_collect - total_recv + total_ret
+
+    def action_open_cash_wizard(self):
+        self.ensure_one()
+        
+        # Find the form view for the cash wizard
+        view_id = self.env.ref('hospital_management.view_hospital_appointment_cash_wizard_form').id
+        return {
+            'name': 'Cash Payment',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.appointment',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': view_id,
+            'target': 'new',
+        }
+
+    def action_confirm_cash(self):
+        self.ensure_one()
+        if self.balance_amount > 0:
+            raise UserError('Insufficient Payment! Please collect the full amount.')
+        if self.balance_amount < 0:
+            raise UserError('Unbalanced Payment! Please log the exact return denominations so the balance is 0.')
+        
+        if self.payment_mode and self.payment_mode != 'none' and self.online_paid_amount <= 0:
+            raise UserError('Online Paid Amount must be greater than 0.00 for digital payments.')
+            
+        if self.online_paid_amount <= 0:
+            self.payment_mode = 'none'
+            
+        self.payment_status = 'paid'
+        # Book the appointment and mark as paid
+        self.write({
+            'state': 'booked',
+            'payment_status': 'paid',
+        })
+        
+        return {'type': 'ir.actions.act_window_close'}
+        # Open the booking success wizard
+        wizard = self.env['hospital.appointment.booking.wizard'].create({
+            'appointment_id': self.id,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Appointment Booked',
+            'res_model': 'hospital.appointment.booking.wizard',
+            'view_mode': 'form',
+            'res_id': wizard.id,
+            'target': 'new',
+        }
+
+    def action_hold_cash(self):
+        """Close the wizard and save the state (Hold)."""
+        self.ensure_one()
+        return {'type': 'ir.actions.act_window_close'}
 
     # PRINTING
 
@@ -817,15 +960,15 @@ class HospitalAppointment(models.Model):
         # ---------------------------------------------------------
         # PAYMENT MODE REQUIRED
         # ---------------------------------------------------------
-        if not self.payment_mode:
+        if not self.payment_mode or (self.payment_mode == 'none' and self.total_cash_received <= 0):
             raise UserError(
-                'Please select a Payment Mode before booking.'
+                'Please select a Digital Payment Mode or click Cash to enter a cash payment before booking.'
             )
 
         # ---------------------------------------------------------
-        # TRANSACTION ID REQUIRED FOR NON-CASH PAYMENTS
+        # TRANSACTION ID REQUIRED FOR DIGITAL PAYMENTS
         # ---------------------------------------------------------
-        if self.payment_mode != 'cash' and not (self.transaction_id or '').strip():
+        if self.payment_mode not in (False, 'none') and not (self.transaction_id or '').strip():
             raise UserError(
                 'Please enter the Transaction ID for %s payment.' % self.payment_mode.upper()
             )
@@ -941,7 +1084,7 @@ class HospitalAppointment(models.Model):
                         'draft',
 
                     'payment_mode':
-                        'cash',
+                        'none',
 
                     'payment_status':
                         'pending',
@@ -1119,7 +1262,7 @@ class HospitalAppointment(models.Model):
         self.receipt_printed = True
 
         return self.env.ref(
-            'hospital_management.action_report_hospital_appointment_receipt'
+            'hospital_management.action_report_hospital_appointment_token'
         ).report_action(self)
 
     def action_close_form(self):
@@ -1147,7 +1290,7 @@ class HospitalAppointment(models.Model):
                 'appointment_time': self.appointment_time,
                 'priority': self.priority,
                 'state': 'draft',
-                'payment_mode': 'cash',
+                'payment_mode': 'none',
                 'payment_status': 'pending',
             })
 
@@ -1189,8 +1332,7 @@ class HospitalAppointment(models.Model):
         self.token_printed = True
 
         return self.env.ref(
-            'hospital_management.'
-            'action_report_hospital_appointment_token'
+            'hospital_management.action_report_hospital_appointment_receipt'
         ).report_action(self)
 
     # COMPLETE APPOINTMENT
@@ -1278,3 +1420,5 @@ class HospitalAppointment(models.Model):
         self.ensure_one()
         self._do_search_patient()
         return True
+
+

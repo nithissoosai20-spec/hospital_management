@@ -1030,3 +1030,187 @@ html body:has(.rdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active {
 .o_control_panel .o_cp_action_menus {
     display: none !important;
 }
+
+
+/* ============================================================
+   ENTERPRISE TABULAR LAYOUT (Refined & Compact)
+   ============================================================ */
+
+/* Form sheet layout - light grey background with white panels */
+.o_form_view .o_form_sheet_bg {
+    background-color: #f4f5f7 !important;
+}
+
+.o_form_view .o_form_sheet {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    padding: 16px !important;
+}
+
+/* Base font sizing - clean, compact readability */
+.o_form_view .o_form_sheet label,
+.o_form_view .o_form_sheet .o_form_label,
+.o_form_view .o_form_sheet .o_field_widget label,
+.o_form_view .o_form_sheet .o_field_widget,
+.o_form_view .o_form_sheet .o_field_widget input,
+.o_form_view .o_form_sheet .o_field_widget select,
+.o_form_view .o_form_sheet .o_field_widget textarea,
+.o_form_view .o_form_sheet .o_field_widget span,
+.o_form_view .o_form_sheet .o_input,
+.o_list_view .o_list_table th,
+.o_list_view .o_list_table td,
+.o_list_view .o_list_table td .o_field_widget,
+.o_list_view .o_list_table td .o_field_widget span,
+.o_list_view .o_list_table td .o_field_widget input,
+.o_searchview input {
+    font-size: 13px !important;
+    color: #333333 !important;
+}
+
+/* Subtle, refined borders for inputs */
+.o_form_view .o_form_sheet input,
+.o_form_view .o_form_sheet select,
+.o_form_view .o_form_sheet textarea,
+.o_form_view .o_form_sheet .o_input,
+.o_form_view .o_form_sheet .o_field_many2one .o_input,
+.o_form_view .o_form_sheet .o_field_many2one input,
+.o_form_view .o_form_sheet .o_field_many2many_tags {
+    border: 1.5px solid #888888 !important;
+    border-radius: 2px !important;
+    padding: 3px 6px !important;
+    min-height: 26px !important;
+    background-color: #ffffff !important;
+}
+
+/* Fix double box in many2many_tags */
+.o_form_view .o_form_sheet .o_field_many2many_tags input,
+.o_form_view .o_form_sheet .o_field_many2many_tags .o_input {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+}
+
+/* Form groups & layout borders */
+.o_form_view .o_form_sheet .o_group {
+    border: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 12px !important;
+}
+
+/* Inner groups (columns) within groups */
+.o_form_view .o_form_sheet .o_inner_group {
+    border: none !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+
+/* Ensure labels are properly aligned to the left/right in columns */
+.o_form_view .o_form_sheet .o_form_label {
+    font-weight: 600 !important;
+    color: #4b5563 !important;
+    padding-right: 12px !important;
+    white-space: nowrap !important;
+}
+
+/* Notebook (tabs container) */
+.o_form_view .o_form_sheet .o_notebook {
+    border: 1px solid #d1d5db !important;
+    border-radius: 2px !important;
+    background-color: #ffffff !important;
+}
+
+.o_form_view .o_form_sheet .o_notebook .tab-content {
+    border-top: 1px solid #d1d5db !important;
+    padding: 10px !important;
+}
+
+.o_form_view .o_form_sheet .o_notebook .nav-link {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #4b5563 !important;
+    border-bottom: none !important;
+}
+
+/* List view table and borders */
+.o_list_view .o_list_table,
+.o_form_view .o_form_sheet .o_list_table {
+    border: 1.5px solid #888888 !important;
+    background-color: #ffffff !important;
+}
+
+.o_list_view .o_list_table th,
+.o_list_view .o_list_table td,
+.o_form_view .o_form_sheet .o_list_table th,
+.o_form_view .o_form_sheet .o_list_table td {
+    border: 1px solid #e5e7eb !important;
+    padding: 4px 8px !important;
+}
+
+/* Light blue table headers */
+.o_list_view .o_list_table thead,
+.o_form_view .o_form_sheet .o_list_table thead,
+.o_list_view .o_list_table thead th,
+.o_form_view .o_form_sheet .o_list_table thead th {
+    background-color: #e0eaf5 !important;
+    color: #1f2937 !important;
+    border-bottom: 2px solid #aebed1 !important;
+    font-weight: bold !important;
+}
+
+/* Separator lines */
+.o_form_view .o_form_sheet .o_horizontal_separator {
+    border-bottom: 1px solid #cbd5e1 !important;
+    color: #1f2937 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    padding-bottom: 4px !important;
+    margin-bottom: 12px !important;
+    margin-top: 12px !important;
+}
+
+/* Search bar border */
+.o_searchview {
+    border: 1.5px solid #888888 !important;
+    border-radius: 2px !important;
+}
+
+/* Pharmacy OWL dashboard borders */
+.form-control, .form-control-sm, .form-select, .form-select-sm {
+    border: 1.5px solid #888888 !important;
+    border-radius: 2px !important;
+    font-size: 13px !important;
+}
+
+/* --- PRESERVE: buttons, badges, colored elements --- */
+.btn, .btn span, .btn-primary, .btn-primary span, .btn-secondary, .btn-secondary span,
+.btn-success, .btn-success span, .btn-danger, .btn-danger span, .btn-warning, .btn-warning span,
+.btn-info, .btn-info span, .oe_highlight, .oe_highlight span, .o_list_button_add, .o_list_button_add span,
+.btn-outline-primary, .btn-outline-primary span { color: unset; }
+
+.badge, .o_badge, .o_field_badge, .o_field_badge span, .o_field_widget[name="state"] span,
+.o_field_widget[name="stock_status"] span, .o_field_widget[name="payment_mode"] span,
+.o_field_widget[name="status"] span, .text-success, .text-danger, .text-warning, .text-info,
+.text-primary, .text-muted { color: unset; }
+
+/* Force green background for active boolean toggles */
+.o_boolean_toggle.form-switch .form-check-input:checked,
+.form-switch .form-check-input:checked {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+}
+
+
+/* Force borders for specific readonly fields */
+span.has-border {
+    border: 1.5px solid #888888 !important;
+    border-radius: 2px !important;
+    padding: 3px 6px !important;
+    min-height: 26px !important;
+    background-color: #f3f4f6 !important;
+    display: inline-block !important;
+    color: #333 !important;
+}

@@ -770,49 +770,15 @@
 
                                 </div>
 
-
-                                <!-- PAYMENT MODE -->
-
-                                <div class="hospital_payment_field">
-
-                                    <label
-                                        for="payment_mode"
-                                        string="Payment Mode *"
-                                    />
-
-                                    <field
-                                        name="payment_mode"
-                                        nolabel="1"
-                                    />
-
+                            </div>
+                            
+                            <!-- BOOK BUTTON INSIDE PAYMENT BOX -->
+                            <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px; text-align: center;">
+                                <button name="action_open_cash_wizard" type="object" string=" Book Appointment" class="btn btn-primary w-100" icon="fa-check" style="font-weight: bold; border-radius: 4px;" invisible="state != 'draft' or not token_generated"/>
+                                <div class="text-success mt-2" style="font-weight: 500; font-size: 13px;" invisible="state not in ('booked', 'completed')">
+                                    <i class="fa fa-check-circle me-1"/> The payment is done successfully. proceed to print receipt or lab fees
                                 </div>
-
-
-                                <!-- PAYMENT STATUS - hidden, managed automatically -->
-
-                                <field name="payment_status" invisible="1"/>
-
-
-                                <!-- TRANSACTION ID (required for non-cash) -->
-
-                                <div
-                                    class="hospital_payment_field"
-                                    invisible="payment_mode == 'cash' or not payment_mode"
-                                >
-
-                                    <label
-                                        for="transaction_id"
-                                        string="Transaction ID *"
-                                    />
-
-                                    <field
-                                        name="transaction_id"
-                                        nolabel="1"
-                                        required="payment_mode != 'cash' and payment_mode != False"
-                                    />
-
-                                </div>
-
+                                <field name="total_cash_received" invisible="1"/>
                             </div>
 
                         </div>
@@ -821,97 +787,56 @@
 
                     <!-- ACTION BUTTONS -->
 
+                    <div class="hospital_action_buttons" style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
 
-                    <div class="hospital_action_buttons">
+                        <!-- CANCEL -->
+                        <button
+                            name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            class="btn-danger"
+                            icon="fa-times"
+                            invisible="context.get('view_only') or state not in ('draft','booked')"
+                        />
 
                         <!-- GENERATE TOKEN -->
-
                         <button
                             name="action_generate_token"
                             string="Generate Token"
                             type="object"
                             class="btn-primary"
                             icon="fa-ticket"
-                            invisible="
-                                context.get('view_only')
-                                or state != 'draft'
-                                or token_generated                                
-                            "
-                        />
-
-
-                        <!-- BOOK - appears when token generated and payment mode selected -->
-
-                        <button
-                            name="action_book"
-                            string="Book Appointment"
-                            type="object"
-                            class="btn-primary"
-                            icon="fa-check"
-                            invisible="
-                                state != 'draft'
-                                or not token_generated
-                                or not payment_mode
-
-                            "
+                            invisible="context.get('view_only') or state not in ('draft','booked') or token_generated"
                         />
 
                         <!-- LAB FEES -->
-
                         <button
                             name="action_set_lab_fees"
                             string="Lab Fees"
                             type="object"
                             class="btn-primary"
                             icon="fa-flask"
-                            invisible="
-                                context.get('view_only')
-                                or state != 'booked'
-                            "
+                            invisible="context.get('view_only') or state != 'booked' or not token_generated"
                         />
 
-
                         <!-- PRINT TOKEN -->
-
                         <button
                             name="action_print_token"
                             string="Print Token"
                             type="object"
                             class="btn-success"
                             icon="fa-ticket"
-                            invisible="
-                                state not in ('booked','completed')
-                                or not token_number
-                            "
+                            invisible="state not in ('booked','completed') or not token_number"
                         />
 
-
                         <!-- PRINT RECEIPT -->
-
                         <button
                             name="action_print_receipt"
                             string="Print Receipt"
                             type="object"
                             class="btn-success"
                             icon="fa-print"
-                            invisible="
-                                state not in ('booked','completed')
-                            "
-                        />
-
-
-                        <!-- CANCEL -->
-
-                        <button
-                            name="action_cancel"
-                            string="Cancel"
-                            type="object"
-                            class="btn-secondary"
-                            icon="fa-times"
-                            invisible="
-                                context.get('view_only')
-                                or state not in ('draft','booked')
-                            "
+                            invisible="state not in ('booked','completed') or not token_generated"
                         />
 
                         <!-- CLOSE -->
@@ -940,15 +865,152 @@
         id="action_hospital_appointment"
         model="ir.actions.act_window"
     >
-
-        <field name="name">Appointment List</field>
-
+        <field name="name">Appointments</field>
         <field name="res_model">hospital.appointment</field>
-
         <field name="view_mode">list,form</field>
+    </record>
 
-        <field name="limit">9</field>
 
+    <!-- CASH WIZARD -->
+
+    <record id="view_hospital_appointment_cash_wizard_form" model="ir.ui.view">
+        <field name="name">hospital.appointment.cash.wizard.form</field>
+        <field name="model">hospital.appointment</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form string="Collect Payment" style="padding: 0; background: #f8fafc;">
+                <!-- We hide the native modal header using CSS -->
+                <style>
+                    .modal-header { display: none !important; }
+                    .modal-body { padding: 0 !important; }
+                </style>
+
+                <!-- CUSTOM HEADER -->
+                <div style="background:#1e3a8a; color:white; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0; font-size:18px; font-weight:700; color:white;">Collect Payment</h3>
+                    <button special="cancel" class="btn btn-link" style="color:white; font-size:22px; font-weight:bold; line-height:1; padding:0; text-decoration:none;"><i class="fa fa-times"/></button>
+                </div>
+
+                <div style="padding:20px; background: white;">
+                    <!-- TOP INFO -->
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Type of Digital Payment:</span>
+                                <field name="payment_mode" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;"/>
+
+                                <span style="font-weight:600; color:#334155; margin-left: 20px; margin-right: 10px;">Transaction ID:</span>
+                                <field name="transaction_id" nolabel="1" style="display:inline-block; width:150px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;" required="payment_mode != 'none' and payment_mode != False"/>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Online Paid Amount:</span>
+                                <field name="online_paid_amount" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px; text-align:right;" required="payment_mode != 'none' and payment_mode != False"/>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-weight:700; font-size:16px; color:#1e293b;">Net amount: </span>
+                            <field name="amount_to_collect" nolabel="1" class="fw-bold text-primary" style="font-size: 24px;" readonly="1" force_save="1"/>
+                        </div>
+                    </div>
+
+                    <!-- TABLE -->
+                    <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                        <thead>
+                            <tr style="background:#e2e8f0; color:#334155; font-weight:bold;">
+                                <th style="border:1px solid #cbd5e1; padding:8px;">Denomination</th>
+                                <th style="border:1px solid #cbd5e1; padding:8px;">Received Count</th>
+                                <th style="border:1px solid #cbd5e1; padding:8px;">Received Amount</th>
+                                <th style="border:1px solid #cbd5e1; padding:8px;">Repay Count</th>
+                                <th style="border:1px solid #cbd5e1; padding:8px;">Repay Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 500 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">500 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- 200 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">200 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- 100 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">100 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- 50 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">50 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- 20 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">20 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- 10 -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">10 X</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_recv" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_ret" nolabel="1" readonly="1"/></td>
+                            </tr>
+                            <!-- Coins -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" colspan="2">Coins</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_received" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_return" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                            </tr>
+                            <!-- Totals -->
+                            <tr>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" colspan="2">Total</td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_received" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_returned" nolabel="1" readonly="1"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 15px; font-weight: bold;">
+                        <div>
+                            Balance Amount: <field name="balance_amount" nolabel="1" class="text-danger" readonly="1"/>
+                        </div>
+                        <div style="margin-top: 5px;">
+                            Total Received Payment: <field name="total_cash_received" nolabel="1" class="text-success" readonly="1"/>
+                        </div>
+                    </div>
+                </div>
+
+                <footer style="background:#f8fafc; padding:15px 20px; border-top:1px solid #e2e8f0;">
+                    <div class="w-100 d-flex justify-content-end" style="gap: 10px;">
+                        <button string="Cancel" class="btn-outline-secondary btn" special="cancel"/>
+                        <button string="Hold" name="action_hold_cash" type="object" class="btn-warning btn"/>
+                        <button string="Confirm and Pay" name="action_confirm_cash" type="object" class="btn-success btn"/>
+                    </div>
+                </footer>
+            </form>
+        </field>
     </record>
 
 </odoo>
+
+

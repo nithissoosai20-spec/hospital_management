@@ -11,6 +11,7 @@
         <field name="context">{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}</field>
     </record>
 
+
     <!-- PHARMACY STOCK ACTION -->
 
     <record
@@ -54,7 +55,6 @@
 
             <list
                 string="Pharmacy Stock"
-                
                 default_order="medicine_name asc"
             >
 
@@ -83,12 +83,17 @@
                     string="Expiry Date"
                 />
 
-                <field name="total_stock"/><field name="reorder_level"/>
-                                <field name="emergency_stock"/><field name="quantity"/>
-                
-                <field name="is_reorder_needed" widget="boolean_toggle" readonly="1" optional="show"/>
+                <field name="total_stock"/>
+                <field name="reorder_level"/>
+                <field name="emergency_stock"/>
+                <field name="quantity"/>
 
-                
+                <field
+                    name="is_reorder_needed"
+                    widget="boolean_toggle"
+                    readonly="1"
+                    optional="show"
+                />
 
                 <field
                     name="selling_price"
@@ -125,78 +130,162 @@
         <field name="arch" type="xml">
 
             <form string="Medicine Stock">
+
                 <sheet>
-                    
-                    
-                    <div class="oe_title">
-                        <label for="medicine_name" string="Medicine Name" class="oe_edit_only"/>
-                        <h1>
-                            <field name="medicine_name" placeholder="e.g. Paracetamol 500mg"/>
-                        </h1>
-                        <div name="options" class="d-flex gap-2">
-                            <span class="d-inline-block">
-                                <label for="medicine_code" class="fw-bold me-2"/>
-                                <field name="medicine_code" placeholder="e.g. MED001"/>
-                            </span>
-                            <span class="d-inline-block border-start ps-2">
-                                <label for="category" class="fw-bold me-2"/>
-                                <field name="category"/>
-                            </span>
+
+                    <!-- =====================================================
+                         VENDOR & STATUS
+                         ===================================================== -->
+
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1>Vendor &amp; Status</h1>
+
+                        <div name="options" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 20px;">
+
+                            <!-- Vendor Dropdown -->
+                            <div style="display: flex; align-items: center; flex-grow: 1;">
+                                <label for="vendor_ids" string="Vendor Name" style="font-weight: 600; margin-right: 16px; white-space: nowrap; font-size: 16px;"/>
+                                <div style="flex-grow: 1;">
+                                    <field
+                                        name="vendor_ids"
+                                        widget="many2many_tags"
+                                        can_create="1"
+                                        options="{'no_create': False, 'no_quick_create': False, 'no_create_edit': False}"
+                                        placeholder="Select connected vendors..."
+                                        domain="[('is_pharmacy_vendor', '=', True)]"
+                                        context="{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}"
+                                        style="width: 100% !important;"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Active Toggle -->
+                            <div style="display: flex; align-items: center;">
+                                <label for="active" string="Active" style="font-weight: 600; margin-right: 10px; font-size: 16px;"/>
+                                <field
+                                    name="active"
+                                    widget="boolean_toggle"
+                                />
+                            </div>
+
                         </div>
+
                     </div>
-                    
-                    <group>
-                        <group name="general_info" string="Vendor &amp; Status">
-                            <field name="vendor_ids" widget="many2many_tags" can_create="1" options="{'no_create': False, 'no_quick_create': False, 'no_create_edit': False}" placeholder="Select connected vendors..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}"/>
-                            <field name="active" widget="boolean_toggle"/>
-                        </group>
-                        <group name="batch_info" string="Batch Details">
-                            <field name="batch_number"/>
-                            <field name="expiry_date"/>
-                        </group>
-                    </group>
-                    
-                    <notebook>
-                        <page string="Stock &amp; Inventory" name="inventory">
+
+
+                    <!-- =====================================================
+                         STOCK / BATCH INFORMATION
+                         ===================================================== -->
+
+                    <!-- =====================================================
+                         3-COLUMN PROFESSIONAL LAYOUT
+                         ===================================================== -->
+                    <div class="row" style="margin-top: 40px !important;">
+                        
+                        <!-- COLUMN 1: Basic & Batch Details -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Item &amp; Batch Details</h5>
                             <group>
-                                <group string="Inventory Tracking">
-                                    <field name="total_stock"/>
-                                    <field name="emergency_stock"/>
-                                    <field name="quantity" class="fw-bold text-success"/>
-                                    <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status in ('critical', 'out', 'expired')"/>
-                                </group>
-                                <group string="Reordering Rules">
-                                    <field name="reorder_level"/>
-                                    <field name="default_order_qty"/>
-                                    <field name="is_reorder_needed" widget="boolean_toggle" readonly="1"/>
-                                </group>
+                                <field name="medicine_name" placeholder="e.g. Paracetamol 500mgs"/>
+                                <field name="medicine_code" placeholder="e.g. MED001"/>
+                                <field name="category"/>
+                                <field name="batch_number"/>
+                                <field name="expiry_date"/>
+                                <field name="hsn_code"/>
                             </group>
-                        </page>
-                        <page string="Pricing Information" name="pricing">
+                        </div>
+
+                        <!-- COLUMN 2: Stock & Inventory -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Stock &amp; Inventory</h5>
                             <group>
-                                <group>
-                                    <field name="purchase_price"/>
-                                </group>
-                                <group>
-                                    <field name="selling_price"/>
-                                </group>
+                                <field name="total_stock"/>
+                                <field name="emergency_stock"/>
+                                <field name="reorder_level"/>
+                                <field name="default_order_qty"/>
+                                <field name="quantity" class="fw-bold text-success"/>
+                                <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status in ('critical', 'out', 'expired')"/>
+                                <field name="is_reorder_needed" widget="boolean_toggle" readonly="1"/>
                             </group>
-                        </page>
-                    </notebook>
-                
-                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;">
-                        <a role="button" class="btn btn-secondary btn-custom-clear" style="color: white; background-color: #6c757d; border-color: #6c757d; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;">Clear</a>
-                        <a role="button" class="btn btn-secondary btn-custom-close" style="color: white; background-color: #6c757d; border-color: #6c757d; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;">Close</a>
-                        <button name="action_save" string="Save" type="object" class="oe_highlight"/>
+                        </div>
+
+                        <!-- COLUMN 3: Pricing Information -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Pricing Information</h5>
+                            <group>
+                                <field name="purchase_price"/>
+                                <field name="selling_price"/>
+                                
+                                <label for="cgst" string="CGST %"/>
+                                <div class="d-flex align-items-center">
+                                    <field name="cgst" class="oe_inline text-center" style="width: 70px;"/>
+                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">CGST Amount</span>
+                                    <field name="cgst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                </div>
+                                
+                                <label for="sgst" string="SGST %"/>
+                                <div class="d-flex align-items-center">
+                                    <field name="sgst" class="oe_inline text-center" style="width: 70px;"/>
+                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">SGST Amount</span>
+                                    <field name="sgst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                </div>
+                                
+                                <label for="igst" string="IGST %"/>
+                                <div class="d-flex align-items-center">
+                                    <field name="igst" class="oe_inline text-center" style="width: 70px;"/>
+                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">IGST Amount</span>
+                                    <field name="igst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                </div>
+                                
+                                <field name="selling_price_with_gst" string="Taxable Amount" readonly="1" force_save="1" class="fw-bold text-primary has-border mt-2" style="width: 100px; text-align: center;"/>
+                            </group>
+                        </div>
+
                     </div>
+
+
+                    <!-- =====================================================
+                         ACTION BUTTONS
+                         ===================================================== -->
+
+                    <div
+                        class="d-flex justify-content-end mt-4 mb-2 gap-2"
+                        style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;"
+                    >
+
+                        <a
+                            role="button"
+                            class="btn btn-secondary btn-custom-clear"
+                            style="color: white; background-color: #6c757d; border-color: #6c757d; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;"
+                        >
+                            Clear
+                        </a>
+
+
+                        <a
+                            role="button"
+                            class="btn btn-danger btn-custom-close"
+                            style="color: white; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;"
+                        >
+                            Close
+                        </a>
+
+
+                        <button
+                            name="action_save"
+                            string="Save"
+                            type="object"
+                            class="oe_highlight"
+                        />
+
+                    </div>
+
                 </sheet>
+
             </form>
 
         </field>
 
     </record>
 
-
-    
-    
 </odoo>

@@ -124,22 +124,18 @@ function getPageName() {
             return 'Payments';
         }
         if (text === 'PUR') {
-            const url = window.location.href;
-            if (url.includes('action-203') || url.includes('action-204')) {
-                return 'Purchase Intent';
-            }
-            if (url.includes('action-199') || url.includes('action-200')) {
-                return 'Purchase Orders';
+            const activeMenu = document.querySelector('.o_nav_entry.active, .dropdown-item.active, .o_menu_sections .active');
+            if (activeMenu && activeMenu.textContent.trim().toUpperCase() !== 'ODOO') {
+                return activeMenu.textContent.trim();
             }
             return 'Purchase Intent'; // fallback
         }
-        if (text.toUpperCase() === 'ODOO') {
+        if (text.toUpperCase() === 'ODOO' || text === 'Create Bill') {
             const url = window.location.href;
             if (url.includes('hospital_pharmacy_billing')) return 'Pharmacy Billing';
-            if (url.includes('hospital_pharmacy_purchase')) return 'Purchase Intent';
             if (url.includes('action-189') || url.includes('action-120')) return 'Pharmacy Billing'; // Based on screenshot URL
             
-            const activeMenu = document.querySelector('.o_nav_entry.active, .dropdown-item.active');
+            const activeMenu = document.querySelector('.o_nav_entry.active, .dropdown-item.active, .o_menu_sections .active');
             if (activeMenu && activeMenu.textContent.trim().toUpperCase() !== 'ODOO') {
                 return activeMenu.textContent.trim();
             }
@@ -196,7 +192,7 @@ function injectPageTitle() {
         ">${pageName}</span>
     `;
 
-    if (pageName === 'Purchase Intent' || pageName === 'Existing Purchase Intents' || pageName === 'Purchase Orders' || pageName === 'Existing Purchase Orders') {
+    if (false && pageName === 'Purchase Intent') { // tabs removed — handled by left-side buttons
         const isPO = pageName.includes('Orders');
         const isNew = pageName === 'Purchase Intent' || pageName === 'Purchase Orders';
         const titleText = isPO ? 'Purchase Orders' : 'Purchase Intent';
@@ -222,7 +218,7 @@ function injectPageTitle() {
                         border-bottom: ${isNew ? '3px solid #29398f' : '3px solid transparent'};
                         padding-bottom: 4px;
                         text-decoration: none;
-                    ">New</a>
+                    ">New </a>
                     <a class="${tabClass}" data-target="existing" style="
                         cursor: pointer;
                         color: ${!isNew ? '#29398f' : '#6c757d'};
@@ -407,3 +403,168 @@ async function _fetchAndNavigate(xmlId) {
         console.error("Failed to fetch action ID for", xmlId, err);
     }
 }
+
+// ─── NEW VENDOR BUTTON INJECTION ─────────────────────────────────────────────
+// Watches for the "Search: Connected Vendors" dialog and injects a "New Vendor" button
+(function () {
+    function injectNewVendorBtn(node) {
+        // Look for modal dialogs
+        const dialogs = node.querySelectorAll ? node.querySelectorAll('.modal, .o_dialog') : [];
+        const targets = dialogs.length > 0 ? Array.from(dialogs) : (
+            (node.classList && (node.classList.contains('modal') || node.classList.contains('o_dialog'))) ? [node] : []
+        );
+
+        targets.forEach(function(dialog) {
+            const title = dialog.querySelector('.modal-title, .o_dialog_title, h4, h5, .o_dialog_header span');
+            if (!title) return;
+            if (!/Connected Vendors/i.test(title.textContent)) return;
+            if (dialog.querySelector('.hospital-new-vendor-btn')) return;
+
+            const footer = dialog.querySelector('.modal-footer, .o_dialog_footer, .o_btns_area, footer');
+            if (!footer) return;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-primary hospital-new-vendor-btn me-auto';
+            btn.style.cssText = 'margin-right: auto !important; order: -1;';
+            btn.textContent = 'New Vendor';
+
+            btn.addEventListener('click', function (event) {
+                event.stopPropagation();
+                event.preventDefault();
+                // Build a custom popup form to create a new vendor
+                const existingPopup = document.getElementById('hospital-new-vendor-popup');
+                if (existingPopup) existingPopup.remove();
+
+                const popup = document.createElement('div');
+                popup.id = 'hospital-new-vendor-popup';
+                popup.style.cssText = [
+                    'position:fixed','top:0','left:0','width:100%','height:100%',
+                    'background:rgba(0,0,0,0.55)','z-index:999999',
+                    'display:flex','align-items:center','justify-content:center'
+                ].join(';');
+
+                popup.innerHTML = `
+                    <div style="background:#fff;border-radius:10px;width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.4);font-family:Arial,sans-serif;overflow:hidden;">
+                        <div style="background:#1e3a8a;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+                            <strong style="font-size:15px;">New Vendor</strong>
+                            <span id="hnv-close" style="cursor:pointer;font-size:20px;line-height:1;">×</span>
+                        </div>
+                        <div style="padding:20px;">
+                            <div style="margin-bottom:12px;">
+                                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#374151;">Vendor Name <span style="color:red;">*</span></label>
+                                <input id="hnv-name" type="text" placeholder="e.g. MediCorp Supplies" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box;"/>
+                            </div>
+                            <div style="margin-bottom:12px;">
+                                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#374151;">Phone</label>
+                                <input id="hnv-phone" type="text" placeholder="e.g. 9876543210" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box;"/>
+                            </div>
+                            <div style="margin-bottom:12px;">
+                                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#374151;">Email</label>
+                                <input id="hnv-email" type="email" placeholder="e.g. vendor@example.com" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box;"/>
+                            </div>
+                            <div style="margin-bottom:12px;">
+                                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#374151;">Address</label>
+                                <input id="hnv-address" type="text" placeholder="e.g. No.5, Main Street, City" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box;"/>
+                            </div>
+                            <div style="margin-bottom:16px;">
+                                <label style="display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:#374151;">GST No.</label>
+                                <input id="hnv-gst" type="text" placeholder="e.g. 33ABCDE1234F1Z5" style="width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:5px;font-size:13px;box-sizing:border-box;"/>
+                            </div>
+                            <div id="hnv-error" style="color:red;font-size:12px;margin-bottom:8px;display:none;"></div>
+                            <div style="display:flex;gap:10px;justify-content:flex-end;">
+                                <button id="hnv-cancel" type="button" style="padding:8px 18px;border:1px solid #d1d5db;border-radius:5px;background:#fff;cursor:pointer;font-size:13px;">Cancel</button>
+                                <button id="hnv-save" type="button" style="padding:8px 20px;border:none;border-radius:5px;background:#1e3a8a;color:#fff;cursor:pointer;font-size:13px;font-weight:600;">Save Vendor</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(popup);
+
+                popup.querySelector('#hnv-close').onclick = function() { popup.remove(); };
+                popup.querySelector('#hnv-cancel').onclick = function() { popup.remove(); };
+
+                popup.querySelector('#hnv-save').onclick = async function() {
+                    const name = popup.querySelector('#hnv-name').value.trim();
+                    const phone = popup.querySelector('#hnv-phone').value.trim();
+                    const email = popup.querySelector('#hnv-email').value.trim();
+                    const address = popup.querySelector('#hnv-address').value.trim();
+                    const gst = popup.querySelector('#hnv-gst').value.trim();
+                    const errDiv = popup.querySelector('#hnv-error');
+
+                    if (!name) {
+                        errDiv.textContent = 'Vendor Name is required.';
+                        errDiv.style.display = 'block';
+                        return;
+                    }
+                    errDiv.style.display = 'none';
+
+                    const saveBtn = popup.querySelector('#hnv-save');
+                    saveBtn.textContent = 'Saving...';
+                    saveBtn.disabled = true;
+
+                    try {
+                        const csrfToken = document.cookie.match(/csrf_token=([^;]+)/)?.[1] || '';
+                        const res = await fetch('/hospital/create_vendor', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(csrfToken ? { 'X-Csrf-Token': csrfToken } : {})
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                jsonrpc: '2.0', method: 'call', id: Date.now(),
+                                params: {
+                                    name: name,
+                                    phone: phone || null,
+                                    email: email || null,
+                                    street: address || null,
+                                    vat: gst || null,
+                                }
+                            })
+                        });
+                        const data = await res.json();
+                        if (data.error) throw new Error(data.error.data?.message || 'Save failed');
+                        if (data.result && !data.result.success) throw new Error(data.result.error || 'Save failed');
+
+                        popup.remove();
+                        const toast = document.createElement('div');
+                        toast.textContent = `Vendor "${name}" created successfully!`;
+                        toast.style.cssText = 'position:fixed;bottom:30px;right:30px;background:#16a34a;color:#fff;padding:12px 20px;border-radius:8px;z-index:999999;font-family:Arial,sans-serif;font-size:14px;box-shadow:0 4px 15px rgba(0,0,0,0.2);';
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    } catch(e) {
+                        errDiv.textContent = e.message || 'Failed to save vendor. Please try again.';
+                        errDiv.style.display = 'block';
+                        saveBtn.textContent = 'Save Vendor';
+                        saveBtn.disabled = false;
+                    }
+                };
+            });
+
+            footer.insertBefore(btn, footer.firstChild);
+        });
+    }
+
+    const observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType !== 1) return;
+                setTimeout(function() { injectNewVendorBtn(node); }, 80);
+            });
+        });
+    });
+
+    function startObserving() {
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startObserving);
+    } else {
+        startObserving();
+    }
+})();

@@ -151,13 +151,31 @@ class PharmacyBilling extends PharmacyBase {
                     mrp: line.mrp || 0,
                     price: line.selling_price || line.mrp || 0,
                     qty: line.qty || 1,
+                    free_qty: line.free_qty || 0,
                     discount: line.discount || 0,
+                    cgst_percent: line.cgst_percent || 0,
+                    sgst_percent: line.sgst_percent || 0,
+                    igst_percent: line.igst_percent || 0,
+                    cgst_val: line.cgst || 0,
+                    sgst_val: line.sgst || 0,
+                    igst_val: line.igst || 0,
+                    amount: line.amount || 0,
+                    total_amount: line.total_amount || 0,
                     gst: line.gst || 0,
                     stock: line.available_stock || 0
                 });
             }
             this.state.medicines = medicines;
             this.calculateTotals();
+        }
+    }
+
+    updateFreeQty(id, val) {
+        let m = this.state.medicines.find(x => x.id === id);
+        if (m) {
+            m.free_qty = parseInt(val) || 0;
+            this.calculateTotals();
+            this.syncCart();
         }
     }
 
@@ -226,7 +244,7 @@ class PharmacyBilling extends PharmacyBase {
         }
         const meds = await this.orm.call("hospital.pharmacy.stock", "search_read", [
             ['|', ['medicine_name', 'ilike', this.state.medicineSearchTerm], ['medicine_code', 'ilike', this.state.medicineSearchTerm]]
-        ], { limit: 10, fields: ['id', 'medicine_name', 'medicine_code', 'batch_number', 'expiry_date', 'selling_price', 'quantity'] });
+        ], { limit: 10, fields: ['id', 'medicine_name', 'medicine_code', 'batch_number', 'expiry_date', 'selling_price', 'quantity', 'cgst', 'sgst', 'igst'] });
         this.state.medicineSuggestions = meds;
         this.state.showMedicineSuggestions = true;
         this.state.focusedSuggestionIndex = -1;
@@ -269,7 +287,8 @@ class PharmacyBilling extends PharmacyBase {
 
         let line_ids = this.state.medicines.map(m => [0, 0, {
             stock_id: m.id, medicine_name: m.name, composition: m.composition, batch: m.batch, expiry: m.expiry,
-            qty: m.qty, unit: m.unit, mrp: m.price, discount: m.discount, gst: m.gst
+            qty: m.qty, free_qty: m.free_qty || 0, unit: m.unit, mrp: m.price, discount: m.discount,
+            cgst_percent: m.cgst_percent, sgst_percent: m.sgst_percent, igst_percent: m.igst_percent
         }]);
 
         let vals = {
@@ -298,7 +317,10 @@ class PharmacyBilling extends PharmacyBase {
     async selectMedicine(m) {
         this.state.selectedMedicine = {
             id: m.id, code: m.medicine_code, name: m.medicine_name, composition: "--", batch: m.batch_number || "--",
-            expiry: m.expiry_date || "--", stock: m.quantity || 0, qty: 1, unit: "Tab", mrp: m.selling_price || 0, price: m.selling_price || 0, discount: 0, discountVal: 0, gst: 12, amount: 0
+            expiry: m.expiry_date || "--", stock: m.quantity || 0, qty: 1, unit: "Tab", mrp: m.selling_price || 0, price: m.selling_price || 0, 
+            discount: 0, discountVal: 0, 
+            cgst_percent: m.cgst || 0, sgst_percent: m.sgst || 0, igst_percent: m.igst || 0,
+            cgst_val: 0, sgst_val: 0, igst_val: 0, amount: 0, total_amount: 0
         };
         this.state.medicineSearchTerm = m.medicine_name;
         this.state.medicineSuggestions = [];
@@ -337,13 +359,16 @@ class PharmacyBilling extends PharmacyBase {
         if (!this.state.medicineSearchTerm) return;
         const meds = await this.orm.call("hospital.pharmacy.stock", "search_read", [
             ['|', ['medicine_name', 'ilike', this.state.medicineSearchTerm], ['medicine_code', 'ilike', this.state.medicineSearchTerm]]
-        ], { limit: 1, fields: ['id', 'medicine_name', 'batch_number', 'expiry_date', 'selling_price'] });
+        ], { limit: 1, fields: ['id', 'medicine_name', 'batch_number', 'expiry_date', 'selling_price', 'cgst', 'sgst', 'igst'] });
 
         if (meds.length > 0) {
             let m = meds[0];
             this.state.medicines.push({
                 id: m.id, name: m.medicine_name, composition: "--", batch: m.batch_number || "--",
-                expiry: m.expiry_date || "--", qty: 1, unit: "Tab", mrp: m.selling_price || 0, price: m.selling_price || 0, discount: 0, discountVal: 0, gst: 12, amount: 0
+                expiry: m.expiry_date || "--", qty: 1, unit: "Tab", mrp: m.selling_price || 0, price: m.selling_price || 0, 
+                discount: 0, discountVal: 0, 
+                cgst_percent: m.cgst || 0, sgst_percent: m.sgst || 0, igst_percent: m.igst || 0,
+                cgst_val: 0, sgst_val: 0, igst_val: 0, amount: 0, total_amount: 0
             });
             this.state.medicineSearchTerm = "";
             this.calculateTotals();
@@ -404,10 +429,23 @@ class PharmacyBilling extends PharmacyBase {
             let itemDiscVal = itemGross * (m.discount / 100);
             m.discountVal = itemDiscVal;
             let taxable = itemGross - itemDiscVal;
-            m.amount = taxable;
+            
+            let cgst_val = taxable * ((m.cgst_percent || 0) / 100);
+            let sgst_val = taxable * ((m.sgst_percent || 0) / 100);
+            let igst_val = taxable * ((m.igst_percent || 0) / 100);
+            
+            m.cgst_val = cgst_val;
+            m.sgst_val = sgst_val;
+            m.igst_val = igst_val;
+            
+            let lineGst = cgst_val + sgst_val + igst_val;
+            
+            m.amount = itemGross;
+            m.total_amount = taxable + lineGst;
+            
             grossAmount += itemGross;
             totalDiscount += itemDiscVal;
-            totalGst += 0;
+            totalGst += lineGst;
             totalQty += m.qty;
         }
         totalDiscount += parseFloat(this.state.billDiscount) || 0;

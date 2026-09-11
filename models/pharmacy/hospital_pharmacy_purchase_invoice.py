@@ -116,7 +116,7 @@ class HospitalPharmacyPurchaseInvoiceLine(models.Model):
     medicine_id = fields.Many2one('hospital.pharmacy.stock', string='Item', required=True)
     medicine_code = fields.Char(related='medicine_id.medicine_code', string='Item Code')
     batch_no = fields.Char(string='Batch No.')
-    expiry_date = fields.Date(string='Expiry Date')
+    expiry_date = fields.Char(string='Expiry Date')
     unit = fields.Selection([('tab', 'Tab'), ('btl', 'Bottle'), ('tube', 'Tube'), ('inj', 'Inj')], string='Unit', default='tab')
     qty = fields.Float(string='Ordered Qty', default=1.0)
     received_qty = fields.Float(string='Received Qty', default=0.0)

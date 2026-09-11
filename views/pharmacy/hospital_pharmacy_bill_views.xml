@@ -94,10 +94,13 @@
                                     <field name="qty"/>
                                     <field name="unit"/>
                                     <field name="mrp"/>
-                                    <field name="discount"/>
-                                    <field name="gst"/>
                                     <field name="amount" readonly="1" force_save="1"/>
-                                    <field name="gst_amount" readonly="1" force_save="1"/>
+                                    <field name="cgst" readonly="1" force_save="1"/>
+                                    <field name="sgst" readonly="1" force_save="1"/>
+                                    <field name="igst" readonly="1" force_save="1"/>
+                                    <field name="discount"/>
+                                    <field name="discount_amount" readonly="1" force_save="1"/>
+                                    <field name="total_amount" readonly="1" force_save="1"/>
                                 </list>
                             </field>
 
@@ -166,7 +169,7 @@
 
     <!-- NEW BILL BUTTON ACTION (redirects to POS billing page) -->
     <record id="action_new_pharmacy_bill_pos" model="ir.actions.client">
-        <field name="name">New Bill</field>
+        <field name="name">Create Bill</field>
         <field name="tag">hospital_pharmacy_billing</field>
     </record>
 
