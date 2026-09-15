@@ -8,12 +8,7 @@ class HospitalPharmacyStock(models.Model):
     _rec_name = 'medicine_name'
     _order = 'medicine_name asc'
 
-    @api.depends('medicine_name')
-    def _compute_display_name(self):
-        for rec in self:
-            rec.display_name = 'Stock View'
 
-    
 
     _medicine_code_uniq = models.Constraint(
         'UNIQUE(medicine_code)',
@@ -75,9 +70,42 @@ class HospitalPharmacyStock(models.Model):
     purchase_price = fields.Float(
         string='Purchase Price',
     )
+    
+    mrp = fields.Float(
+        string='MRP',
+    )
+    
+    item_category = fields.Selection([
+        ('strip', 'Strips'),
+        ('pack', 'Packs'),
+        ('box', 'Boxes'),
+        ('bottle', 'Bottles'),
+        ('vial', 'Vials'),
+        ('ampoule', 'Ampoules'),
+        ('tube', 'Tubes'),
+        ('piece', 'Pieces'),
+    ], string='Item Category', default='strip')
+    
+    qty_in_category = fields.Integer(
+        string='Qty in Category',
+        default=1,
+    )
+    
+    amount_per_item = fields.Float(
+        string='Amount/Item',
+        compute='_compute_pricing',
+        store=True,
+    )
+
+    selling_price_percent = fields.Float(
+        string='Selling Price (%)',
+        default=0.0,
+    )
 
     selling_price = fields.Float(
-        string='Selling Price',
+        string='Selling Price Amount',
+        compute='_compute_pricing',
+        store=True,
     )
     
     cgst = fields.Float(
@@ -87,7 +115,7 @@ class HospitalPharmacyStock(models.Model):
 
     cgst_amount = fields.Float(
         string='CGST (INR)',
-        compute='_compute_tax_amounts',
+        compute='_compute_pricing',
         store=True,
     )
 
@@ -98,7 +126,7 @@ class HospitalPharmacyStock(models.Model):
 
     sgst_amount = fields.Float(
         string='SGST (INR)',
-        compute='_compute_tax_amounts',
+        compute='_compute_pricing',
         store=True,
     )
 
@@ -109,27 +137,53 @@ class HospitalPharmacyStock(models.Model):
 
     igst_amount = fields.Float(
         string='IGST (INR)',
-        compute='_compute_tax_amounts',
+        compute='_compute_pricing',
         store=True,
     )
 
-    selling_price_with_gst = fields.Float(
+    discount_percent = fields.Float(
+        string='Discount (%)',
+        default=0.0,
+    )
+    
+    discount_amount = fields.Float(
+        string='Discount Amount',
+        compute='_compute_pricing',
+        store=True,
+    )
+    
+    taxable_amount = fields.Float(
         string='Taxable Amount',
-        compute='_compute_selling_price_with_gst',
+        compute='_compute_pricing',
         store=True,
     )
 
-    @api.depends('selling_price', 'cgst', 'sgst', 'igst')
-    def _compute_tax_amounts(self):
-        for record in self:
-            record.cgst_amount = record.selling_price * (record.cgst / 100.0)
-            record.sgst_amount = record.selling_price * (record.sgst / 100.0)
-            record.igst_amount = record.selling_price * (record.igst / 100.0)
+    total_amount = fields.Float(
+        string='Total Amount',
+        compute='_compute_pricing',
+        store=True,
+    )
 
-    @api.depends('selling_price', 'cgst_amount', 'sgst_amount', 'igst_amount')
-    def _compute_selling_price_with_gst(self):
+    @api.depends('purchase_price', 'qty_in_category', 'discount_percent', 'selling_price_percent', 'cgst', 'sgst', 'igst')
+    def _compute_pricing(self):
         for record in self:
-            record.selling_price_with_gst = record.selling_price + record.cgst_amount + record.sgst_amount + record.igst_amount
+            qty = record.qty_in_category if record.qty_in_category > 0 else 1
+            amt_per_item = record.purchase_price / qty
+            disc_amt = amt_per_item * (record.discount_percent / 100.0)
+            taxable = amt_per_item - disc_amt
+            
+            record.amount_per_item = amt_per_item
+            record.discount_amount = disc_amt
+            record.taxable_amount = taxable
+            
+            record.cgst_amount = taxable * (record.cgst / 100.0)
+            record.sgst_amount = taxable * (record.sgst / 100.0)
+            record.igst_amount = taxable * (record.igst / 100.0)
+            
+            tot_amt = taxable + record.cgst_amount + record.sgst_amount + record.igst_amount
+            record.total_amount = tot_amt
+            
+            record.selling_price = tot_amt + (tot_amt * (record.selling_price_percent / 100.0))
 
     # STOCK
 
@@ -359,9 +413,10 @@ class HospitalPharmacyStock(models.Model):
             
             if not existing_order:
                 # Automatically create an Intent in 'intent' state
-                self.env['hospital.pharmacy.purchase'].create({
+                vendor = med.vendor_ids[0] if med.vendor_ids else None
+                intent_vals = {
                     'state': 'intent',
-                    'supplier_id': med.vendor_ids[0].id if med.vendor_ids else False,
+                    'supplier_id': vendor.id if vendor else False,
                     'purchase_type': 'stock',
                     'line_ids': [(0, 0, {
                         'medicine_id': med.id,
@@ -369,6 +424,17 @@ class HospitalPharmacyStock(models.Model):
                         'qty': 200.0,
                         'purchase_price': med.purchase_price,
                     })]
-                })
+                }
+                
+                if vendor:
+                    intent_vals['mobile_number'] = vendor.phone if hasattr(vendor, 'phone') else ""
+                    parts = []
+                    if hasattr(vendor, 'street') and vendor.street: parts.append(vendor.street)
+                    if hasattr(vendor, 'street2') and vendor.street2: parts.append(vendor.street2)
+                    if hasattr(vendor, 'city') and vendor.city: parts.append(vendor.city)
+                    if hasattr(vendor, 'state_id') and vendor.state_id: parts.append(vendor.state_id.name)
+                    intent_vals['address'] = ", ".join(parts) if parts else ""
+                    
+                self.env['hospital.pharmacy.purchase'].create(intent_vals)
 
 

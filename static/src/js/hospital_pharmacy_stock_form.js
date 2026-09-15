@@ -13,6 +13,10 @@ export class PharmacyStockFormController extends FormController {
         this.actionService = useService("action");
         window._hospitalPharmacyStockController = this;
     }
+
+    displayName() {
+        return "STOCK VIEW";
+    }
 }
 
 export const pharmacyStockFormView = {

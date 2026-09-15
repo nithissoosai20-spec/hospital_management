@@ -45,20 +45,6 @@
                 
 
                 <sheet>
-                    <div style="text-align: center; width: 100%; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; padding-bottom: 10px;">
-                        <h1 style="color: #29398f; font-weight: 800; text-transform: uppercase; font-size: 18px; margin: 0;">USER DETAILS</h1>
-                    </div>
-                    <style>
-                        .pwd-helper {
-                            display: none;
-                            color: #ef4444;
-                            font-size: 11px;
-                            margin-top: 4px;
-                        }
-                        .custom-field-container:focus-within .pwd-helper {
-                            display: block;
-                        }
-                    </style>
                     <style>
                         .custom-section-title {
                             color: #1e3a8a;
@@ -153,7 +139,7 @@
                         <div class="col-md-5 custom-field-container">
                             <label for="password" class="custom-label">Password</label>
                             <field name="password" class="w-100" password="True" required="not id"/>
-                            <small class="pwd-helper">
+                            <small class="pwd-helper" style="color: red !important; font-weight: bold;">
                                 Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
                             </small>
                         </div>

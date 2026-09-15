@@ -37,7 +37,7 @@ class HospitalLabAppointment(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        default='New'
+        default='New Lab Test'
     )
 
     hospital_appointment_id = fields.Many2one(
@@ -332,7 +332,7 @@ class HospitalLabAppointment(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if not vals.get('name') or vals.get('name') == 'New':
+            if not vals.get('name') or vals.get('name') == 'New Lab Test':
                 vals['name'] = self.env['ir.sequence'].next_by_code('hospital.lab.appointment') or 'New'
         return super().create(vals_list)
 

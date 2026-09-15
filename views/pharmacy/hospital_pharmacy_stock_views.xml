@@ -129,7 +129,7 @@
 
         <field name="arch" type="xml">
 
-            <form string="Medicine Stock">
+            <form string="Medicine Stock" js_class="hospital_pharmacy_stock_form_view">
 
                 <sheet>
 
@@ -213,31 +213,63 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Pricing Information</h5>
                             <group>
-                                <field name="purchase_price"/>
-                                <field name="selling_price"/>
-                                
-                                <label for="cgst" string="CGST %"/>
-                                <div class="d-flex align-items-center">
-                                    <field name="cgst" class="oe_inline text-center" style="width: 70px;"/>
-                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">CGST Amount</span>
-                                    <field name="cgst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                <label for="purchase_price" string="Pur. Price"/>
+                                <div class="o_row">
+                                    <field name="purchase_price"/>
+                                    <span class="ms-2 me-1 text-muted">MRP</span>
+                                    <field name="mrp"/>
                                 </div>
                                 
-                                <label for="sgst" string="SGST %"/>
-                                <div class="d-flex align-items-center">
-                                    <field name="sgst" class="oe_inline text-center" style="width: 70px;"/>
-                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">SGST Amount</span>
-                                    <field name="sgst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                <label for="item_category" string="Item Category"/>
+                                <div class="o_row">
+                                    <field name="item_category"/>
+                                    <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Qty in Category</span>
+                                    <field name="qty_in_category"/>
                                 </div>
                                 
-                                <label for="igst" string="IGST %"/>
-                                <div class="d-flex align-items-center">
-                                    <field name="igst" class="oe_inline text-center" style="width: 70px;"/>
-                                    <span class="mx-3 fw-bold text-muted" style="font-size: 11px; white-space: nowrap; text-transform: uppercase;">IGST Amount</span>
-                                    <field name="igst_amount" class="oe_inline has-border text-center fw-bold" nolabel="1" style="width: 70px;"/>
+                                <label for="amount_per_item" string="Amt/Item"/>
+                                <div class="o_row">
+                                    <field name="amount_per_item" readonly="1" force_save="1" class="o_input bg-light"/>
+                                    <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Discount %</span>
+                                    <field name="discount_percent"/>
+                                    <span class="ms-2 me-1 text-muted">Amt</span>
+                                    <field name="discount_amount" readonly="1" force_save="1" class="o_input bg-light"/>
+                                </div>
+
+                                <label for="selling_price_percent" string="Selling Price %"/>
+                                <div class="o_row">
+                                    <field name="selling_price_percent"/>
+                                    <span class="ms-2 me-1 text-muted">Amt</span>
+                                    <field name="selling_price" readonly="1" force_save="1" class="o_input bg-light"/>
+                                </div>
+
+                                <field name="taxable_amount" readonly="1" force_save="1" class="o_input bg-light"/>
+
+                                <label for="cgst" string="CGST (%)"/>
+                                <div class="o_row">
+                                    <field name="cgst"/>
+                                    <span class="ms-2 me-1 text-muted">Amt</span>
+                                    <field name="cgst_amount" readonly="1" force_save="1" class="o_input bg-light"/>
                                 </div>
                                 
-                                <field name="selling_price_with_gst" string="Taxable Amount" readonly="1" force_save="1" class="fw-bold text-primary has-border mt-2" style="width: 100px; text-align: center;"/>
+                                <label for="sgst" string="SGST (%)"/>
+                                <div class="o_row">
+                                    <field name="sgst"/>
+                                    <span class="ms-2 me-1 text-muted">Amt</span>
+                                    <field name="sgst_amount" readonly="1" force_save="1" class="o_input bg-light"/>
+                                </div>
+                                
+                                <label for="igst" string="IGST (%)"/>
+                                <div class="o_row">
+                                    <field name="igst"/>
+                                    <span class="ms-2 me-1 text-muted">Amt</span>
+                                    <field name="igst_amount" readonly="1" force_save="1" class="o_input bg-light"/>
+                                </div>
+
+                                <label for="total_amount" string="Total Amount"/>
+                                <div>
+                                    <field name="total_amount" readonly="1" force_save="1" style="border: 2px solid #2563eb; background-color: #eff6ff; color: #1e3a8a; font-weight: bold; padding: 4px 12px; border-radius: 4px; display: block; width: 100%; text-align: center;"/>
+                                </div>
                             </group>
                         </div>
 

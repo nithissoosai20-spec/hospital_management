@@ -11,6 +11,11 @@ export class HospitalUserFormController extends FormController {
         this.actionService = useService("action");
     }
 
+    displayName() {
+        const name = this.model.root.data.name;
+        return (name ? name : "New") + " User Details";
+    }
+
     async beforeExecuteActionButton(clickParams) {
         if (clickParams.name === 'action_close_user_form') {
             await this.model.root.discard();

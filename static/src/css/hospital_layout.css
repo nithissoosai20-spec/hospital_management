@@ -1214,3 +1214,9 @@ span.has-border {
     display: inline-block !important;
     color: #333 !important;
 }
+
+/* Hide control panel double lines and invisible back button */
+.o_control_panel { border: none !important; }
+.o_control_panel .o_back_button { display: none !important; }
+.o_form_sheet { border-top: none !important; }
+

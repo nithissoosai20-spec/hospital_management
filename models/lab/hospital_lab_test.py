@@ -63,3 +63,27 @@ class HospitalLabTest(models.Model):
     notes = fields.Text(
         string='Notes'
     )
+
+    def action_save(self):
+        # Implicitly saves in Odoo.
+        pass
+
+    def action_clear(self):
+        for rec in self:
+            rec.name = False
+            rec.code = False
+            rec.category = False
+            rec.sample_type = False
+            rec.price = 0.0
+            rec.turnaround_time = False
+            rec.notes = False
+            rec.active = True
+
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Lab Fees',
+            'res_model': 'hospital.lab.test',
+            'view_mode': 'list,form',
+            'target': 'current',
+        }

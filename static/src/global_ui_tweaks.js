@@ -568,3 +568,83 @@ async function _fetchAndNavigate(xmlId) {
         startObserving();
     }
 })();
+
+// ============================================================
+// FORCE FULL RELOAD when clicking Purchase Intent / Purchase Orders nav links
+// This ensures the NEW tab always loads with fresh data
+// ============================================================
+(async function forcePurchaseNavReload() {
+    const INTENT_NEW_XMLID = 'hospital_management.action_hospital_purchase_intent_new';
+    const ORDERS_NEW_XMLID = 'hospital_management.action_hospital_pharmacy_purchase_list_new';
+
+    async function getActionId(xmlId) {
+        try {
+            const res = await fetch('/web/action/load', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: Date.now(), params: { action_id: xmlId } })
+            });
+            const data = await res.json();
+            return data?.result?.id || null;
+        } catch(e) { return null; }
+    }
+
+    let intentActionId = null;
+    let ordersActionId = null;
+
+    // Pre-fetch action IDs once
+    document.addEventListener('DOMContentLoaded', async () => {
+        intentActionId = await getActionId(INTENT_NEW_XMLID);
+        ordersActionId = await getActionId(ORDERS_NEW_XMLID);
+    });
+
+    // Intercept nav menu clicks and force full page reload to the correct "new" tab action
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('.o_nav_entry, .o_menu_sections a');
+        if (!link) return;
+        const text = link.textContent.trim();
+
+        if (text === 'Purchase Intent' && intentActionId) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            window.location.href = '/odoo/action-' + intentActionId;
+        } else if (text === 'Purchase Orders' && ordersActionId) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            window.location.href = '/odoo/action-' + ordersActionId;
+        }
+    }, true); // true = capture phase so we intercept before Odoo's router
+})();
+
+(function() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const observer = new MutationObserver((mutations) => {
+            const breadcrumbs = document.querySelector('.o_control_panel_breadcrumbs .breadcrumb-item.active, .o_breadcrumb .active, .o_last_breadcrumb_item');
+            if (breadcrumbs) {
+                const title = breadcrumbs.textContent.trim().toUpperCase();
+                const newBtn = document.querySelector('.o_list_button_add, .o_control_panel_main_buttons button.btn-primary');
+                
+                if (newBtn && newBtn.textContent.trim() === 'New') {
+                    if (title === 'PURCHASE INVOICES') {
+                        newBtn.textContent = 'New Purchase Invoice';
+                    } else if (title === 'VENDOR PAYMENTS') {
+                        newBtn.textContent = 'New Payment';
+                    } else if (title === 'CONSULTATION FEES') {
+                        newBtn.textContent = 'New Consultation Fees';
+                    } else if (title === 'LAB FEES') {
+                        newBtn.textContent = 'New Lab Fees';
+                    } else if (title === 'USERS') {
+                        newBtn.textContent = 'New User';
+                    } else if (title === 'PHARMACY STOCK') {
+                        newBtn.textContent = 'New Stock';
+                    }
+                }
+            }
+
+        });
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
+    });
+})();

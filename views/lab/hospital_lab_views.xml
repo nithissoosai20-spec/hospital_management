@@ -37,50 +37,43 @@
 
         <field name="arch" type="xml">
 
-            <form>
-
+            <form js_class="lab_form_view">
                 <sheet>
+                    <div style="padding: 20px 40px;">
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                        <div class="oe_title mb-4">
+                            <label for="name" string="Test Name" class="oe_edit_only" style="font-weight: bold; color: #1e3a8a;"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Blood Sugar"/>
+                            </h1>
+                        </div>
 
-                    <div class="oe_title">
+                        <group>
+                            <group name="test_info" string="Test Information">
+                                <field name="code"/>
+                                <field name="category"/>
+                                <field name="sample_type"/>
+                            </group>
+                            <group name="pricing_details" string="Pricing &amp; Details">
+                                <field name="price" string="Price (Rs.)"/>
+                                <field name="turnaround_time"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </group>
+                        </group>
 
-                        <label for="name"/>
+                        <notebook>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Add any test-specific notes or instructions here..."/>
+                            </page>
+                        </notebook>
 
-                        <h1>
-                            <field name="name"/>
-                        </h1>
-
+                        <div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                            <button name="action_save" string="Save" type="object" class="btn-primary"/>
+                            <button name="action_clear" string="Clear" type="object" class="btn-secondary"/>
+                            <button name="action_close" string="Close" type="object" class="btn-danger"/>
+                        </div>
                     </div>
-
-                    <group>
-
-                        <group string="Test Information">
-
-                            <field name="code"/>
-                            <field name="category"/>
-                            <field name="sample_type"/>
-
-                        </group>
-
-                        <group string="Pricing">
-
-                            <field name="price"/>
-                            <field name="turnaround_time"/>
-                            <field name="active"/>
-
-                        </group>
-
-                    </group>
-
-                    <group string="Notes">
-
-                        <field name="notes"/>
-
-                    </group>
-
-                
-                    
                 </sheet>
-
             </form>
 
         </field>
@@ -378,7 +371,7 @@
     <record id="action_hospital_lab_tests"
             model="ir.actions.act_window">
 
-        <field name="name">Lab Test Master</field>
+        <field name="name">Lab Fees</field>
 
         <field name="res_model">hospital.lab.test</field>
 

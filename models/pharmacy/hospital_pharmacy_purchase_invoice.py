@@ -5,7 +5,7 @@ class HospitalPharmacyPurchaseInvoice(models.Model):
     _description = 'Purchase Invoice'
     _order = 'id desc'
 
-    name = fields.Char(string='Invoice No.', required=True, copy=False, readonly=True, default='New')
+    name = fields.Char(string='Invoice No.', required=True, copy=False, readonly=True, default='New Purchase Invoice')
     purchase_id = fields.Many2one('hospital.pharmacy.purchase', string='Purchase Order', readonly=True)
     
     supplier_id = fields.Many2one('res.partner', string='Supplier Name', required=True, domain="[('is_pharmacy_vendor', '=', True)]")
@@ -53,7 +53,7 @@ class HospitalPharmacyPurchaseInvoice(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name', 'New') == 'New':
+            if vals.get('name', 'New Purchase Invoice') == 'New Purchase Invoice':
                 vals['name'] = self.env['ir.sequence'].next_by_code('hospital.pharmacy.purchase.invoice') or 'New'
         return super().create(vals_list)
 

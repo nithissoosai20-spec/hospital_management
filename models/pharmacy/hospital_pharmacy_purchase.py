@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 from datetime import datetime
 
 class HospitalPharmacyPurchase(models.Model):
@@ -6,7 +7,7 @@ class HospitalPharmacyPurchase(models.Model):
     _description = 'Pharmacy Purchase'
     _order = 'id desc'
 
-    name = fields.Char(string='Purchase No.', required=True, copy=False, readonly=True, default='New')
+    name = fields.Char(string='Purchase No.', required=True, copy=False, readonly=True, default='New Purchase Order')
     
     medicine_names = fields.Char(string='Product Name', compute='_compute_medicine_names')
 
@@ -30,6 +31,22 @@ class HospitalPharmacyPurchase(models.Model):
                 if line.medicine_id and line.medicine_id.vendor_ids:
                     self.supplier_id = line.medicine_id.vendor_ids[0].id
                     break
+
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id(self):
+        if self.supplier_id:
+            # Auto-fetch mobile number
+            if not self.mobile_number:
+                self.mobile_number = self.supplier_id.phone
+                
+            # Auto-fetch address
+            if not self.address:
+                parts = []
+                if hasattr(self.supplier_id, 'street') and self.supplier_id.street: parts.append(self.supplier_id.street)
+                if hasattr(self.supplier_id, 'street2') and self.supplier_id.street2: parts.append(self.supplier_id.street2)
+                if hasattr(self.supplier_id, 'city') and self.supplier_id.city: parts.append(self.supplier_id.city)
+                if hasattr(self.supplier_id, 'state_id') and self.supplier_id.state_id: parts.append(self.supplier_id.state_id.name)
+                self.address = ", ".join(parts) if parts else ""
 
     purchase_type = fields.Selection([
         ('stock', 'Stock Purchase'),
@@ -63,7 +80,7 @@ class HospitalPharmacyPurchase(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name', 'New') == 'New':
+            if vals.get('name', 'New Purchase Order') == 'New Purchase Order':
                 vals['name'] = self.env['ir.sequence'].next_by_code('hospital.pharmacy.purchase') or 'PUR-New'
         return super().create(vals_list)
 
@@ -131,6 +148,9 @@ class HospitalPharmacyPurchase(models.Model):
     def action_confirm(self):
         for rec in self:
             if rec.state == 'draft':
+                if not rec.supplier_id:
+                    raise ValidationError("Please select a Supplier Name before confirming and generating the invoice.")
+                    
                 # Increase Stock
                 invoice_lines = []
                 for line in rec.line_ids:
@@ -162,7 +182,7 @@ class HospitalPharmacyPurchaseLine(models.Model):
     _description = 'Purchase Line'
 
     purchase_id = fields.Many2one('hospital.pharmacy.purchase', string='Purchase', ondelete='cascade')
-    medicine_id = fields.Many2one('hospital.pharmacy.stock', string='Item Code / Name', required=True)
+    medicine_id = fields.Many2one('hospital.pharmacy.stock', string='Item Name', required=True)
     batch_no = fields.Char(string='Batch No.')
     unit = fields.Selection([('tab', 'Tab'), ('btl', 'Bottle'), ('tube', 'Tube'), ('inj', 'Inj')], string='Unit', default='tab')
     qty = fields.Float(string='Order Quantity', default=200.0)

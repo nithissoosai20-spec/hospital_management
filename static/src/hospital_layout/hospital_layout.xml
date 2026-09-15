@@ -4,59 +4,39 @@
 
     <t t-inherit="web.WebClient" t-inherit-mode="extension">
 
-    <!--  -->
-
         <xpath expr="//NavBar" position="before">
-
             <div class="hospital-real-header">
-
                 <!-- LEFT SIDE -->
                 <div class="hospital-header-left-image">
-
                     <img
                         src="/hospital_management/static/src/img/hospital_header_left.png"
                         alt="RIALKG Medical Center &amp; Hospital"
                     />
-
                 </div>
-
 
                 <!-- RIGHT SIDE -->
                 <div class="hospital-header-right-image">
-
                     <img
                         src="/hospital_management/static/src/img/hospital_header_right.png"
                         alt="Hospital Contact Information"
                     />
-
                 </div>
-
             </div>
-
         </xpath>
 
-
-    <!--  -->
-
         <xpath expr="//MainComponentsContainer" position="after">
-
             <div class="hospital-real-footer">
-
                 <img
                     src="/hospital_management/static/src/img/hospital_footer.png"
                     alt="Care Compassion Cure"
                 />
-
                 <span class="hospital-footer-product">
                     Product Name = Hospixa (Hospital Management System)
                 </span>
-
                 <span class="hospital-footer-copyright">
                     &#169; Copyrights @Sathya Technologies
                 </span>
-
             </div>
-
         </xpath>
 
     </t>

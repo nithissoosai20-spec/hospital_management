@@ -14,7 +14,7 @@ class HospitalAppointment(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        default='New'
+        default='New Appointment'
     )
 
     # PATIENT
@@ -502,7 +502,7 @@ class HospitalAppointment(models.Model):
 
         for vals in vals_list:
 
-            if vals.get('name', 'New') == 'New':
+            if vals.get('name', 'New Appointment') == 'New Appointment':
 
                 vals['name'] = self.env[
                     'ir.sequence'

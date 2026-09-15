@@ -29,7 +29,10 @@ export class LabFormController extends FormController {
         onPatched(() => {
             updateSaveButton();
         });
+    }
 
+    displayName() {
+        return "LAB FEES";
     }
 
     async beforeExecuteActionButton(clickParams) {

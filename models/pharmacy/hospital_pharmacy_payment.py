@@ -6,7 +6,7 @@ class HospitalPharmacyPayment(models.Model):
     _description = 'Pharmacy Vendor Payment'
     _order = 'date desc, id desc'
 
-    name = fields.Char(string='Payment Reference', required=True, copy=False, readonly=True, default='New')
+    name = fields.Char(string='Payment Reference', required=True, copy=False, readonly=True, default='New Payment')
     vendor_id = fields.Many2one('res.partner', string='Vendor', domain=[('is_pharmacy_vendor', '=', True)], required=True)
     invoice_id = fields.Many2one('hospital.pharmacy.purchase.invoice', string='Purchase Invoice', domain="[('supplier_id', '=', vendor_id)]")
     
@@ -34,13 +34,14 @@ class HospitalPharmacyPayment(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if vals.get('name', 'New') == 'New':
+            if vals.get('name', 'New Payment') == 'New Payment':
                 vals['name'] = self.env['ir.sequence'].next_by_code('hospital.pharmacy.payment') or 'New'
         return super().create(vals_list)
 
     def action_confirm(self):
         for rec in self:
             rec.state = 'done'
+        return self.env.ref('hospital_management.action_hospital_pharmacy_payment').sudo().read()[0]
             
     def action_draft(self):
         for rec in self:

@@ -139,15 +139,6 @@
     />
 
 
-    <menuitem
-        id="menu_hospital_lab_tests"
-        name="Lab Test Master"
-        parent="menu_hospital_lab"
-        action="action_hospital_lab_tests"
-        sequence="20"
-        groups="hospital_management.group_hospital_super_admin"
-    />
-
 
     <!-- PHARMACY -->
 
@@ -219,16 +210,31 @@
 
 
 
-    <!-- CONSULTATION FEES -->
-    <!-- ADMIN / SUPER ADMIN ONLY -->
+    <!-- FEES ROOT MENU -->
+    <menuitem
+        id="menu_hospital_fees_root"
+        name="Fees"
+        parent="menu_hospital_management"
+        sequence="60"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
 
     <menuitem
         id="menu_hospital_consultation_fees"
         name="Consultation Fees"
-        parent="menu_hospital_management"
+        parent="menu_hospital_fees_root"
         action="action_hospital_consultation_fees"
-        sequence="60"
-        groups="hospital_management.group_hospital_admin"
+        sequence="10"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
+    <menuitem
+        id="menu_hospital_lab_tests"
+        name="Lab Fees"
+        parent="menu_hospital_fees_root"
+        action="action_hospital_lab_tests"
+        sequence="20"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
     />
 
 

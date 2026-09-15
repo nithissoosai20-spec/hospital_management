@@ -7,6 +7,10 @@ class HospitalConsultationFee(models.Model):
     _description = 'Hospital Consultation Fee'
     _order = 'department_id, designation_id'
 
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = 'Consultation Fee'
+
     _constraints = [
         models.Constraint(
             'unique(department_id, designation_id)',
@@ -43,6 +47,26 @@ class HospitalConsultationFee(models.Model):
         string='Active',
         default=True,
     )
+
+    def action_save(self):
+        # Implicitly saves in Odoo.
+        pass
+
+    def action_clear(self):
+        for rec in self:
+            rec.department_id = False
+            rec.designation_id = False
+            rec.amount = 0.0
+            rec.active = True
+
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Consultation Fees',
+            'res_model': 'hospital.consultation.fee',
+            'view_mode': 'list,form',
+            'target': 'current',
+        }
 
 
     @api.onchange('department_id')

@@ -156,7 +156,7 @@
                     </div>
 
                     <div class="custom-section-title">2. Item Details</div>
-                    <field name="line_ids" class="w-100" mode="list">
+                    <field name="line_ids" class="w-100" mode="list" readonly="state == 'intent'">
                         <list editable="bottom">
                             <control><create string="Add items"/></control>
                             <field name="medicine_code"/><field name="medicine_id"/>
