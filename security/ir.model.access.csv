@@ -62,6 +62,9 @@ access_hospital_consultation_fee_receptionist,hospital.consultation.fee.receptio
 
 access_hospital_lab_receipt_wizard_user,access.hospital.lab.receipt.wizard.user,model_hospital_lab_receipt_wizard,base.group_user,1,1,1,0
 
+access_hospital_lab_test_selector_user,access.hospital.lab.test.selector.user,model_hospital_lab_test_selector,base.group_user,1,1,1,1
+access_hospital_lab_test_selector_line_user,access.hospital.lab.test.selector.line.user,model_hospital_lab_test_selector_line,base.group_user,1,1,1,1
+
 access_hospital_pharmacy_dashboard_pharmacist,hospital.pharmacy.dashboard.pharmacist,model_hospital_pharmacy_dashboard,base.group_user,1,0,0,0
 access_hospital_pharmacy_dashboard_admin,hospital.pharmacy.dashboard.admin,model_hospital_pharmacy_dashboard,hospital_management.group_hospital_admin,1,1,1,1
 

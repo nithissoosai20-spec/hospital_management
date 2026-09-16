@@ -53,7 +53,7 @@
 
         <field name="arch" type="xml">
 
-            <list
+            <list limit="14"
                 string="Pharmacy Stock"
                 default_order="medicine_name asc"
             >

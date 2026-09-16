@@ -16,6 +16,34 @@ class HospitalLabTest(models.Model):
         required=True
     )
 
+    is_profile = fields.Boolean(
+        string='Is a Profile/Package',
+        default=False
+    )
+
+    parameter_ids = fields.Many2many(
+        'hospital.lab.test',
+        'hospital_lab_test_parameter_rel',
+        'profile_id',
+        'parameter_id',
+        string='Test Parameters',
+        domain="[('is_profile', '=', False)]"
+    )
+
+    normal_range_min = fields.Float(
+        string='Min Value',
+        default=0.0
+    )
+
+    normal_range_max = fields.Float(
+        string='Max Value',
+        default=0.0
+    )
+
+    unit = fields.Char(
+        string='Unit'
+    )
+
     category = fields.Selection(
         [
             ('hematology', 'Hematology'),

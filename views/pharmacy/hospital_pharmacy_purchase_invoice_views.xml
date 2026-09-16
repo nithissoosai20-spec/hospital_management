@@ -5,7 +5,7 @@
         <field name="name">hospital.pharmacy.purchase.invoice.list</field>
         <field name="model">hospital.pharmacy.purchase.invoice</field>
         <field name="arch" type="xml">
-            <list string="Purchase Invoices" decoration-warning="state == 'pending'" decoration-success="state == 'successful'">
+            <list string="Purchase Invoices" limit="14" decoration-warning="state == 'pending'" decoration-success="state == 'successful'">
                 <field name="name" string="Invoice No."/>
                 <field name="purchase_id" string="Purchase Order"/>
                 <field name="supplier_id"/>

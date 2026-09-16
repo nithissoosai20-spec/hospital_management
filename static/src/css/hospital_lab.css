@@ -6,37 +6,61 @@
 
 .hospital_lab_test_list .o_list_table {
     width: 100% !important;
-    table-layout: fixed !important;
 }
 
-/* Lab Test */
+/* Make the list section scrollable — shows ~5 rows then scrolls */
+.custom_lab_table_wrapper .o_list_renderer {
+    max-height: 240px !important;
+    overflow-y: auto !important;
+    display: block !important;
+}
+
+/* Code (col 1) - small */
 .hospital_lab_test_list th:nth-child(1),
 .hospital_lab_test_list td:nth-child(1) {
-    width: 32% !important;
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 70px !important;
 }
 
-/* Code */
+/* Test Name (col 2) - wide */
 .hospital_lab_test_list th:nth-child(2),
 .hospital_lab_test_list td:nth-child(2) {
-    width: 14% !important;
+    width: 280px !important;
+    min-width: 200px !important;
 }
 
-/* Category */
+/* Price (col 3) - small */
 .hospital_lab_test_list th:nth-child(3),
 .hospital_lab_test_list td:nth-child(3) {
-    width: 18% !important;
+    width: 70px !important;
+    max-width: 70px !important;
 }
 
-/* Sample Type */
+/* Units (col 4) - small */
 .hospital_lab_test_list th:nth-child(4),
 .hospital_lab_test_list td:nth-child(4) {
-    width: 22% !important;
+    width: 80px !important;
+    max-width: 80px !important;
 }
 
-/* Price */
+/* Normal Range (col 5) */
 .hospital_lab_test_list th:nth-child(5),
 .hospital_lab_test_list td:nth-child(5) {
-    width: 14% !important;
+    width: 120px !important;
+}
+
+/* Analysed Value (col 6) */
+.hospital_lab_test_list th:nth-child(6),
+.hospital_lab_test_list td:nth-child(6) {
+    width: 120px !important;
+}
+
+/* N/↑/↓ (col 7) - small */
+.hospital_lab_test_list th:nth-child(7),
+.hospital_lab_test_list td:nth-child(7) {
+    width: 60px !important;
+    max-width: 60px !important;
 }
 
 /* LAB RECEIPT ACTION */

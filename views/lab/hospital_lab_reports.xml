@@ -79,29 +79,53 @@
                                 </div>
                             </div>
 
-                            <table class="table table-sm mt-4" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse;">
+                            <table class="table table-sm mt-4" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse; border: 1px solid #888; font-size: 13px;">
                                 <thead>
                                     <tr>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">S.No</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Code</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Lab Test Name</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Category</th>
-                                        <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Sample</th>
-                                        <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Price</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Code</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Lab Test Name</th>
+                                        <th class="text-end" style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Price (Rs.)</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Analysed Value</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000; text-align: center;">Indicator</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Units</th>
+                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Normal range</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <t t-set="sno" t-value="1"/>
-                                    <t t-foreach="doc.line_ids" t-as="line">
+                                    <!-- Extract unique categories dynamically -->
+                                    <t t-set="all_categories" t-value="[]"/>
+                                    <t t-foreach="doc.line_ids" t-as="l">
+                                        <t t-if="l.category not in all_categories">
+                                            <t t-set="dummy" t-value="all_categories.append(l.category)"/>
+                                        </t>
+                                    </t>
+                                    
+                                    <t t-foreach="all_categories" t-as="cat">
+                                        <!-- Category Header Row -->
                                         <tr>
-                                            <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><t t-esc="sno"/></td>
-                                            <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.test_code"/></td>
-                                            <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.lab_test_id"/></td>
-                                            <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.category"/></td>
-                                            <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.sample_type"/></td>
-                                            <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.price"/></td>
+                                            <td colspan="7" style="background-color: #e2e8f0; font-weight: bold; font-size: 14px; padding: 6px 10px; border: 1px solid #888; color: #000;">
+                                                <t t-if="cat == 'hematology'">Hematology</t>
+                                                <t t-elif="cat == 'biochemistry'">Biochemistry</t>
+                                                <t t-elif="cat == 'microbiology'">Microbiology</t>
+                                                <t t-elif="cat == 'pathology'">Pathology</t>
+                                                <t t-elif="cat == 'radiology'">Radiology</t>
+                                                <t t-elif="cat == 'cardiology'">Cardiology</t>
+                                                <t t-elif="cat == 'other'">Other</t>
+                                                <t t-else="">Uncategorized</t>
+                                            </td>
                                         </tr>
-                                        <t t-set="sno" t-value="sno + 1"/>
+                                        <!-- Tests within this Category -->
+                                        <t t-foreach="doc.line_ids.filtered(lambda l: l.category == cat)" t-as="line">
+                                            <tr>
+                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.test_code"/></td>
+                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.lab_test_id"/></td>
+                                                <td class="text-end" style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.price"/></td>
+                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.result_value"/></td>
+                                                <td style="padding: 6px 8px; border: 1px solid #888; text-align: center;"><span t-field="line.result_indicator"/></td>
+                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.unit"/></td>
+                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.normal_range_display"/></td>
+                                            </tr>
+                                        </t>
                                     </t>
                                 </tbody>
                             </table>

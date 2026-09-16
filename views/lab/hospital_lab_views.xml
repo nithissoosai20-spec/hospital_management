@@ -12,7 +12,7 @@
 
         <field name="arch" type="xml">
 
-            <list>
+            <list limit="14">
 
                 <field name="code"/>
                 <field name="name"/>
@@ -28,6 +28,23 @@
 
     </record>
 
+    <!-- LAB TEST SEARCH VIEW -->
+    <record id="view_hospital_lab_test_search" model="ir.ui.view">
+        <field name="name">hospital.lab.test.search</field>
+        <field name="model">hospital.lab.test</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Is Profile" name="filter_is_profile" domain="[('is_profile', '=', True)]"/>
+                <group>
+                    <filter string="Category" name="group_by_category" context="{'group_by':'category'}"/>
+                    <filter string="Sample Type" name="group_by_sample_type" context="{'group_by':'sample_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
 
     <record id="view_hospital_lab_test_form"
             model="ir.ui.view">
@@ -37,15 +54,21 @@
 
         <field name="arch" type="xml">
 
-            <form js_class="lab_form_view">
+            <form js_class="lab_form_view" class="position-relative">
                 <sheet>
-                    <div style="padding: 20px 40px;">
-                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
-                        <div class="oe_title mb-4">
-                            <label for="name" string="Test Name" class="oe_edit_only" style="font-weight: bold; color: #1e3a8a;"/>
-                            <h1>
-                                <field name="name" placeholder="e.g. Blood Sugar"/>
-                            </h1>
+                    <field name="is_profile" invisible="1"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    
+                    <div style="padding: 20px;">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="oe_title">
+                                    <label for="name" string="Test Name" class="oe_edit_only" style="font-weight: 600; color: #1e3a8a;"/>
+                                    <h1>
+                                        <field name="name" placeholder="e.g. Blood Sugar" style="width: 100%; max-width: 600px;"/>
+                                    </h1>
+                                </div>
+                            </div>
                         </div>
 
                         <group>
@@ -60,20 +83,40 @@
                                 <field name="active" widget="boolean_toggle"/>
                             </group>
                         </group>
+                        <group invisible="is_profile">
+                            <group name="normal_range" string="Normal Range">
+                                <label for="normal_range_min" string="Range"/>
+                                <div class="o_row">
+                                    <field name="normal_range_min" class="oe_inline"/> <span class="mx-2 text-muted">-</span>
+                                    <field name="normal_range_max" class="oe_inline"/>
+                                </div>
+                                <field name="unit"/>
+                            </group>
+                            <group>
+                                <!-- Empty group to keep the form 2-column balanced -->
+                            </group>
+                        </group>
 
-                        <notebook>
-                            <page string="Notes" name="notes">
-                                <field name="notes" placeholder="Add any test-specific notes or instructions here..."/>
+                        <notebook class="mt-4" invisible="not is_profile">
+                            <page string="Parameters" name="parameters">
+                                <field name="parameter_ids" widget="many2many">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="category"/>
+                                        <field name="sample_type"/>
+                                    </list>
+                                </field>
                             </page>
                         </notebook>
-
-                        <div class="d-flex justify-content-end gap-2 mt-4" style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                            <button name="action_save" string="Save" type="object" class="btn-primary"/>
-                            <button name="action_clear" string="Clear" type="object" class="btn-secondary"/>
-                            <button name="action_close" string="Close" type="object" class="btn-danger"/>
-                        </div>
                     </div>
                 </sheet>
+
+                <!-- Floating Buttons always at the bottom right corner -->
+                <div style="position: fixed; bottom: 80px; right: 30px; z-index: 9999; display: flex; gap: 10px; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e2e8f0;">
+                    <button name="action_save" string="Save" type="object" class="btn btn-primary hospital-save-btn" style="min-width: 100px; font-weight: bold;"/>
+                    <button name="action_clear" string="Clear" type="object" class="btn btn-light border" style="min-width: 100px; font-weight: bold; color: #334155;"/>
+                    <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 100px; font-weight: bold;"/>
+                </div>
             </form>
 
         </field>
@@ -136,7 +179,7 @@
 
         <field name="arch" type="xml">
 
-            <form>
+            <form js_class="lab_form_view">
 
                 <!-- HEADER -->
 
@@ -244,60 +287,67 @@
 
                     <!-- SELECTED LABORATORY TESTS -->
                     <!-- FULL WIDTH -->
-
-                    <group string="SELECTED LABORATORY TESTS" col="1">
-
-                        <field
-                            name="line_ids"
-                            nolabel="1"
-                        >
-
-                            <list
-                                editable="bottom"
-                                create="1"
-                                delete="1"
-                                class="hospital_lab_test_list"
+                    <notebook>
+                        <page string="Selected Laboratory Tests">
+                            <button name="action_open_test_selector" string="📋 Select Lab Test" type="object" class="btn btn-primary" style="margin-bottom: 10px;"/>
+                            <field
+                                name="line_ids"
+                                nolabel="1"
+                                class="custom_lab_table_wrapper"
                             >
-                                <control>
-                                    <create name="add_line_control" string="Add test"/>
-                                </control>
+                                <list
+                                    editable="bottom"
+                                    create="0"
+                                    delete="1"
+                                    limit="100"
+                                    class="hospital_lab_test_list"
+                                >
+                                    <field name="test_code" string="Code" width="70" readonly="1"/>
+                                    
+                                    <field
+                                        name="lab_test_id"
+                                        string="Test Name"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        required="1"
+                                        readonly="1"
+                                        width="300"
+                                    />
 
-                                <field
-                                    name="lab_test_id"
-                                    string="Lab Test"
-                                    required="1"
-                                    options="{'no_open': True, 'no_create': True}"
-                                />
+                                    <field
+                                        name="price"
+                                        string="Price"
+                                        width="70"
+                                        readonly="1"
+                                    />
+                                    
+                                    <field
+                                        name="unit"
+                                        string="Units"
+                                        width="80"
+                                        readonly="1"
+                                    />
 
-                                <field
-                                    name="test_code"
-                                    string="Code"
-                                    readonly="1"
-                                />
+                                    <field name="normal_range_display" string="Normal Range" width="120" readonly="1"/>
 
-                                <field
-                                    name="category"
-                                    string="Category"
-                                    readonly="1"
-                                />
+                                    <field
+                                        name="result_value"
+                                        string="Analysed Value"
+                                        width="120"
+                                    />
+                                    
+                                    <field
+                                        name="result_indicator"
+                                        string="N/↑/↓"
+                                        readonly="1"
+                                        width="60"
+                                    />
 
-                                <field
-                                    name="sample_type"
-                                    string="Sample Type"
-                                    readonly="1"
-                                />
-
-                                <field
-                                    name="price"
-                                    string="Price"
-                                    readonly="1"
-                                />
-
-                            </list>
-
-                        </field>
-
-                    </group>
+                                    <field name="normal_range_min" column_invisible="True"/>
+                                    <field name="normal_range_max" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                     <!-- LAB RESULT -->
 
                     <group
@@ -376,6 +426,7 @@
         <field name="res_model">hospital.lab.test</field>
 
         <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_by_category': 1}</field>
 
     </record>
 

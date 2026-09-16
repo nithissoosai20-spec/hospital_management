@@ -6,7 +6,7 @@
         <field name="name">hospital.pharmacy.purchase.intent.list</field>
         <field name="model">hospital.pharmacy.purchase</field>
         <field name="arch" type="xml">
-            <list string="Purchase Intent List" js_class="purchase_intent_list">
+            <list string="Purchase Intent List" limit="14" js_class="purchase_intent_list">
                 <field name="name" string="Purchase No."/>
                 <field name="medicine_names" string="Product Name"/>
                 <field name="supplier_id" string="Supplier Name"/>
@@ -65,7 +65,7 @@
         <field name="name">hospital.pharmacy.purchase.list</field>
         <field name="model">hospital.pharmacy.purchase</field>
         <field name="arch" type="xml">
-            <list string="Purchase List" js_class="purchase_order_list">
+            <list string="Purchase List" limit="14" js_class="purchase_order_list">
                 <field name="name" string="Purchase No."/>
                 <field name="medicine_names" string="Product Name"/>
                 <field name="supplier_id" string="Supplier Name"/>

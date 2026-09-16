@@ -115,7 +115,7 @@
         <field name="name">hospital.pharmacy.payment.list</field>
         <field name="model">hospital.pharmacy.payment</field>
         <field name="arch" type="xml">
-            <list string="Payments">
+            <list string="Payments" limit="14">
                 <field name="name"/>
                 <field name="vendor_id"/>
                 <field name="invoice_id" widget="many2one"/>

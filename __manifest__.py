@@ -1,6 +1,6 @@
 {
     'name': 'Hospital Management',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Healthcare',
     'summary': 'Hospital Management System',
     'author': 'Hospital POC',
@@ -90,6 +90,7 @@
         'views/lab/hospital_lab_reports.xml',
         'views/lab/hospital_lab_views.xml',
         'views/lab/lab_receipt_wizard_views.xml',
+        'views/lab/hospital_lab_test_selector_views.xml',
 
 
         'views/user/hospital_user_views.xml',

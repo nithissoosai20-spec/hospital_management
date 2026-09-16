@@ -61,6 +61,10 @@ class HospitalLabAppointment(models.Model):
         ondelete='restrict'
     )
 
+
+
+
+
     # MULTIPLE LAB TESTS
 
     line_ids = fields.One2many(
@@ -115,22 +119,35 @@ class HospitalLabAppointment(models.Model):
 
     amount = fields.Float(
         string='Total Amount',
-        compute='_compute_amount',
+        compute='_compute_total_amount',
         store=True,
-        readonly=True,
     )
 
-    @api.depends(
-        'line_ids',
-        'line_ids.price',
-    )
-    def _compute_amount(self):
-
+    # =========================================================================
+    # COMPUTE METHODS
+    # =========================================================================
+    @api.depends('line_ids', 'line_ids.price')
+    def _compute_total_amount(self):
         for record in self:
-
             record.amount = sum(
                 record.line_ids.mapped('price')
             )
+
+    def action_open_test_selector(self):
+        """Open the lab test selector wizard."""
+        self.ensure_one()
+        return {
+            'name': 'Select Lab Tests',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.lab.test.selector',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_lab_appointment_id': self.id,
+                'dialog_size': 'xl',
+            }
+        }
+
     payment_status = fields.Selection(
         [
             ('pending', 'Pending'),
@@ -434,11 +451,17 @@ class HospitalLabAppointmentLine(models.Model):
     )
 
     # LAB TEST
+    
+    display_type = fields.Selection([
+        ('line_section', "Section"),
+        ('line_note', "Note")], default=False)
+        
+    name = fields.Char(string='Description')
 
     lab_test_id = fields.Many2one(
         'hospital.lab.test',
         string='Lab Test',
-        required=True,
+        required=False,
         ondelete='restrict',
     )
 
@@ -461,6 +484,72 @@ class HospitalLabAppointmentLine(models.Model):
         string='Sample Type',
         readonly=True,
     )
+
+    normal_range_min = fields.Float(
+        related='lab_test_id.normal_range_min',
+        string='Min Value',
+        readonly=True,
+    )
+
+    normal_range_max = fields.Float(
+        related='lab_test_id.normal_range_max',
+        string='Max Value',
+        readonly=True,
+    )
+
+    unit = fields.Char(
+        related='lab_test_id.unit',
+        string='Unit',
+        readonly=True,
+    )
+
+    result_value = fields.Char(
+        string='Result Value'
+    )
+    
+    result_indicator = fields.Char(
+        string='Indicator',
+        compute='_compute_result_indicator',
+        store=True,
+    )
+    
+    normal_range_display = fields.Char(
+        string='Normal Range',
+        compute='_compute_normal_range_display'
+    )
+    
+    @api.depends('normal_range_min', 'normal_range_max')
+    def _compute_normal_range_display(self):
+        for line in self:
+            if line.normal_range_min and line.normal_range_max:
+                line.normal_range_display = f"{line.normal_range_min} - {line.normal_range_max}"
+            elif line.normal_range_min:
+                line.normal_range_display = f"> {line.normal_range_min}"
+            elif line.normal_range_max:
+                line.normal_range_display = f"< {line.normal_range_max}"
+            else:
+                line.normal_range_display = ""
+
+    @api.depends('result_value', 'normal_range_min', 'normal_range_max')
+    def _compute_result_indicator(self):
+        for line in self:
+            if not line.result_value or line.display_type:
+                line.result_indicator = False
+                continue
+                
+            try:
+                val = float(line.result_value)
+                if line.normal_range_min or line.normal_range_max:
+                    if line.normal_range_min and val < line.normal_range_min:
+                        line.result_indicator = '↓'
+                    elif line.normal_range_max and val > line.normal_range_max:
+                        line.result_indicator = '↑'
+                    else:
+                        line.result_indicator = 'N'
+                else:
+                    line.result_indicator = False
+            except ValueError:
+                line.result_indicator = False
 
     price = fields.Float(
         related='lab_test_id.price',

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Lab Test Selector Wizard Form -->
+    <record id="view_hospital_lab_test_selector_form" model="ir.ui.view">
+        <field name="name">hospital.lab.test.selector.form</field>
+        <field name="model">hospital.lab.test.selector</field>
+        <field name="arch" type="xml">
+            <form string="Select Lab Tests">
+                <sheet style="min-width: 900px; min-height: 500px;">
+                    <!-- Filters & Header Actions -->
+                    <div class="d-flex align-items-center mb-3 gap-3" style="background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="filter_category" class="fw-bold mb-0" style="color: #1e3a8a;"/>
+                            <field name="filter_category" style="min-width: 130px;"/>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="filter_sample_type" class="fw-bold mb-0" style="color: #1e3a8a;"/>
+                            <field name="filter_sample_type" style="min-width: 130px;"/>
+                        </div>
+
+                        <div class="ms-auto d-flex gap-2" invisible="not filter_category or not filter_sample_type">
+                            <button name="action_select_all" type="object" string="Select All" class="btn-primary"/>
+                            <button name="action_deselect_all" type="object" string="Deselect All" class="btn-secondary"/>
+                        </div>
+                    </div>
+
+                    <!-- Test List with Checkboxes -->
+                    <div style="height: 500px; overflow-y: auto;">
+                        <field name="line_ids" nolabel="1">
+                            <list editable="bottom" create="0" delete="0" limit="1000">
+                                <field name="selected" string="Select" widget="boolean_toggle" width="60"/>
+                                <field name="test_code" string="Code" width="80" readonly="1"/>
+                                <field name="test_id" string="Test Name" readonly="1" force_save="1"/>
+                                <field name="category" string="Category" readonly="1"/>
+                                <field name="sample_type" string="Sample Type" readonly="1"/>
+                                <field name="price" string="Price (Rs.)" readonly="1"/>
+                            </list>
+                        </field>
+                    </div>
+                </sheet>
+
+                <footer style="background:#f8fafc; padding:15px 20px; border-top:1px solid #e2e8f0;">
+                    <div class="w-100 d-flex justify-content-end gap-2">
+                        <button name="action_add_selected" string="Add Selected Tests" type="object" class="btn-primary"/>
+                        <button string="Close" special="cancel" class="btn-secondary"/>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
+

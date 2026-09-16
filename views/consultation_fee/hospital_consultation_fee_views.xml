@@ -12,7 +12,7 @@
 
         <field name="arch" type="xml">
 
-            <list>
+            <list limit="14">
 
                 <field name="department_id"/>
                 <field name="designation_id"/>

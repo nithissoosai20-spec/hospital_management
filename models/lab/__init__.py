@@ -1,2 +1,3 @@
 from . import hospital_lab_test
 from . import hospital_lab_appointment
+from . import hospital_lab_test_selector

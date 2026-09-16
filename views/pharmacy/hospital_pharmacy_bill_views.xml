@@ -18,7 +18,7 @@
         <field name="name">hospital.pharmacy.bill.list</field>
         <field name="model">hospital.pharmacy.bill</field>
         <field name="arch" type="xml">
-            <list
+            <list limit="14"
                 decoration-info="state == 'draft'"
                 decoration-success="state == 'paid'"
                 decoration-warning="state == 'held'"
