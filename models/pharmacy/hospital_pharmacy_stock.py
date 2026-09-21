@@ -216,10 +216,15 @@ class HospitalPharmacyStock(models.Model):
             record.sgst_amount = taxable * (record.sgst / 100.0)
             record.igst_amount = taxable * (record.igst / 100.0)
             
-            tot_amt = taxable + record.cgst_amount + record.sgst_amount + record.igst_amount
-            record.total_amount = tot_amt
+            base_tot_amt = taxable + record.cgst_amount + record.sgst_amount + record.igst_amount
             
-            record.selling_price = tot_amt + (tot_amt * (record.selling_price_percent / 100.0))
+            margin_amt = base_tot_amt * (record.selling_price_percent / 100.0)
+            
+            # selling_price now acts as the 'Margin Amount' in the UI next to the percentage
+            record.selling_price = margin_amt
+            
+            # total_amount is the final grand total (Cost + Tax + Margin)
+            record.total_amount = base_tot_amt + margin_amt
 
     # STOCK
 

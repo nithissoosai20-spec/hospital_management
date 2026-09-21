@@ -11,7 +11,6 @@
         <field name="context">{'default_is_pharmacy_vendor': True, 'default_supplier_rank': 1}</field>
     </record>
 
-
     <!-- PHARMACY STOCK ACTION -->
 
     <record
@@ -38,7 +37,6 @@
         </field>
 
     </record>
-
 
     <!-- STOCK LIST VIEW -->
 
@@ -96,7 +94,7 @@
                 />
 
                 <field
-                    name="selling_price"
+                    name="total_amount"
                     string="Selling Price"
                 />
 
@@ -114,7 +112,6 @@
         </field>
 
     </record>
-
 
     <!-- STOCK FORM VIEW -->
 
@@ -171,7 +168,6 @@
                         </div>
 
                     </div>
-
 
                     <!-- =====================================================
                          STOCK / BATCH INFORMATION
@@ -270,11 +266,11 @@
                                 <div>
                                     <field name="total_amount" readonly="1" force_save="1" style="border: 2px solid #2563eb; background-color: #eff6ff; color: #1e3a8a; font-weight: bold; padding: 4px 12px; border-radius: 4px; display: block; width: 100%; text-align: center;"/>
                                 </div>
+
                             </group>
                         </div>
 
                     </div>
-
 
                     <!-- =====================================================
                          ACTION BUTTONS
@@ -293,7 +289,6 @@
                             Clear
                         </a>
 
-
                         <a
                             role="button"
                             class="btn btn-danger btn-custom-close"
@@ -301,7 +296,6 @@
                         >
                             Close
                         </a>
-
 
                         <button
                             name="action_save"

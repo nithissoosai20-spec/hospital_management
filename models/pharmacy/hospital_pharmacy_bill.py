@@ -179,7 +179,7 @@ class HospitalPharmacyBill(models.Model):
                             'stock_id': p_line.medicine_id.id,
                             'medicine_name': p_line.medicine_id.medicine_name,
                             'qty': p_line.qty,
-                            'mrp': p_line.medicine_id.selling_price,
+                            'mrp': p_line.medicine_id.total_amount,
                             'available_stock': p_line.medicine_id.quantity,
                             'batch': p_line.medicine_id.batch_number or '',
                             'expiry': p_line.medicine_id.expiry_date or '',
@@ -443,7 +443,7 @@ class HospitalPharmacyBillLine(models.Model):
             self.expiry = s.expiry_date or ''
             # self.expiry = str(s.expiry_date) if s.expiry_date else ''
             self.available_stock = s.quantity
-            self.mrp = s.selling_price
+            self.mrp = s.total_amount
             self.cgst_percent = s.cgst
             self.sgst_percent = s.sgst
             self.igst_percent = s.igst
