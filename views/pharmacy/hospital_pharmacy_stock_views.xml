@@ -232,14 +232,10 @@
                                     <field name="discount_amount" readonly="1" force_save="1" class="o_input bg-light"/>
                                 </div>
 
-                                <label for="selling_price_percent" string="Selling Price %"/>
+                                <label for="selling_price" string="Selling Amount"/>
                                 <div class="o_row">
-                                    <field name="selling_price_percent"/>
-                                    <span class="ms-2 me-1 text-muted">Amt</span>
                                     <field name="selling_price" readonly="1" force_save="1" class="o_input bg-light"/>
                                 </div>
-
-                                <field name="taxable_amount" readonly="1" force_save="1" class="o_input bg-light"/>
 
                                 <label for="cgst" string="CGST (%)"/>
                                 <div class="o_row">

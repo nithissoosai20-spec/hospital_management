@@ -133,13 +133,8 @@ class HospitalPharmacyStock(models.Model):
         store=True,
     )
 
-    selling_price_percent = fields.Float(
-        string='Selling Price (%)',
-        default=0.0,
-    )
-
     selling_price = fields.Float(
-        string='Selling Price Amount',
+        string='Selling Amount',
         compute='_compute_pricing',
         store=True,
     )
@@ -188,43 +183,38 @@ class HospitalPharmacyStock(models.Model):
         store=True,
     )
     
-    taxable_amount = fields.Float(
-        string='Taxable Amount',
-        compute='_compute_pricing',
-        store=True,
-    )
-
     total_amount = fields.Float(
         string='Total Amount',
         compute='_compute_pricing',
         store=True,
     )
 
-    @api.depends('purchase_price', 'qty_in_category', 'discount_percent', 'selling_price_percent', 'cgst', 'sgst', 'igst')
+    @api.depends('purchase_price', 'mrp', 'qty_in_category', 'discount_percent', 'cgst', 'sgst', 'igst')
     def _compute_pricing(self):
         for record in self:
             qty = record.qty_in_category if record.qty_in_category > 0 else 1
             amt_per_item = record.purchase_price / qty
-            disc_amt = amt_per_item * (record.discount_percent / 100.0)
-            taxable = amt_per_item - disc_amt
+            
+            # Calculate Selling Amount derived from MRP
+            sell_amt = record.mrp / qty
+            
+            # Discount calculates against the Selling Amount
+            disc_amt = sell_amt * (record.discount_percent / 100.0)
             
             record.amount_per_item = amt_per_item
             record.discount_amount = disc_amt
-            record.taxable_amount = taxable
             
-            record.cgst_amount = taxable * (record.cgst / 100.0)
-            record.sgst_amount = taxable * (record.sgst / 100.0)
-            record.igst_amount = taxable * (record.igst / 100.0)
+            discounted_sell_amt = sell_amt - disc_amt
             
-            base_tot_amt = taxable + record.cgst_amount + record.sgst_amount + record.igst_amount
+            # Taxes calculate on top of the discounted Selling Amount
+            record.cgst_amount = discounted_sell_amt * (record.cgst / 100.0)
+            record.sgst_amount = discounted_sell_amt * (record.sgst / 100.0)
+            record.igst_amount = discounted_sell_amt * (record.igst / 100.0)
             
-            margin_amt = base_tot_amt * (record.selling_price_percent / 100.0)
+            record.selling_price = sell_amt
             
-            # selling_price now acts as the 'Margin Amount' in the UI next to the percentage
-            record.selling_price = margin_amt
-            
-            # total_amount is the final grand total (Cost + Tax + Margin)
-            record.total_amount = base_tot_amt + margin_amt
+            # Total Amount = (Selling Amount - Discount) + Taxes
+            record.total_amount = discounted_sell_amt + record.cgst_amount + record.sgst_amount + record.igst_amount
 
     # STOCK
 
