@@ -1,6 +1,6 @@
 {
     'name': 'Hospital Management',
-    'version': '19.0.1.0.1',
+    'version': '2.9',
     'category': 'Healthcare',
     'summary': 'Hospital Management System',
     'author': 'Hospital POC',
@@ -14,6 +14,7 @@
     'assets': {
         'web.assets_backend': [
 
+            'hospital_management/static/src/xml/list_view_override.xml',
             'hospital_management/static/src/css/reception_dashboard.css',
             'hospital_management/static/src/css/admin_dashboard.css',
             'hospital_management/static/src/css/pharmacy_dashboard.css',
@@ -69,10 +70,12 @@
         'data/pharmacy/pharmacy_payment_sequence.xml',
         'data/pharmacy/pharmacy_cron.xml',
         'data/hospital_demo_data.xml',
+        'data/master_category_data.xml',
         'data/lab/lab_appointment_sequence.xml',
         'data/lab/lab_test_master_data.xml',
         'data/consultation_fee/consultation_fee_data.xml',
 
+        'views/master/hospital_category_master_views.xml',
         'views/consultation_fee/hospital_consultation_fee_views.xml',
 
         'views/pharmacy/hospital_pharmacy_stock_views.xml',
@@ -84,7 +87,9 @@
         'views/pharmacy/hospital_pharmacy_purchase_reports.xml',
 
         'views/patient/hospital_patient_views.xml',
+        'wizard/prescribe_wizard_views.xml',
         'views/appointment/hospital_appointment_views.xml',
+        'views/appointment/hospital_doctor_views.xml',
         'views/appointment/hospital_appointment_booking_wizard_views.xml',
         'views/appointment/hospital_appointment_reports.xml',
         'views/lab/hospital_lab_reports.xml',
@@ -96,6 +101,7 @@
         'views/user/hospital_user_views.xml',
         'views/user/hospital_user_activity_views.xml',
 
+        'views/dashboard/hospital_lab_dashboard_views.xml',
         'views/dashboard/hospital_reception_actions.xml',
         'views/dashboard/hospital_dashboard_views.xml',
         'views/dashboard/hospital_role_dashboards.xml',

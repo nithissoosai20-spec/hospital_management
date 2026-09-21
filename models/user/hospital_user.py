@@ -240,13 +240,14 @@ class HospitalUser(models.Model):
             'receptionist': 'group_hospital_receptionist',
             'pharmacist': 'group_hospital_pharmacist',
             'lab technician': 'group_hospital_lab_technician',
+            'lab manager': 'group_hospital_lab_technician',
+            'lab master': 'group_hospital_lab_technician',
             'billing executive': 'group_hospital_billing',
             'admin': 'group_hospital_admin',
             'administrator': 'group_hospital_admin',
             'hr executive': 'group_hospital_hr',
             'super admin': 'group_hospital_super_admin',
         }
-
         xml_id = role_group_map.get(role_name)
 
         if xml_id:
@@ -433,20 +434,20 @@ class HospitalUser(models.Model):
     # SAVE ACTION  (explicit Save button on the form)
 
     def action_save_user(self):
-        """
-        Called by the Save button in the form header.
-        In Odoo, type='object' buttons auto-save the record
-        before calling this method. We reload the same form
-        so the user sees the freshly saved state.
-        """
         self.ensure_one()
+        # The user requested to always redirect to the all users page
+        action = self.env.ref('hospital_management.action_hospital_users').read()[0]
+            
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': self._name,
-            'res_id': self.id,
-            'view_mode': 'form',
-            'views': [(False, 'form')],
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Saved successfully',
+                'type': 'success',
+                'sticky': False,
+                'next': action
+            }
         }
 
     # CREATE

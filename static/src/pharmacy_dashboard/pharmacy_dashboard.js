@@ -63,7 +63,7 @@ class PharmacyBilling extends PharmacyBase {
             patientSearchTerm: "", patient: null, medicineSearchTerm: "", medicines: [], medicineSuggestions: [], showMedicineSuggestions: false,
             selectedMedicine: null, showPaymentModal: false, paymentSuccess: false, lastBillId: false, focusedSuggestionIndex: -1,
             billDiscount: 0, paidAmount: 0, paymentMode: "cash", remarks: "", roundOff: 0,
-            grossAmount: 0, subTotal: 0, totalDiscount: 0, totalGst: 0, taxableAmount: 0, grandTotal: 0, netAmount: 0,
+            grossAmount: 0, subTotal: 0, totalDiscount: 0, totalGst: 0, taxableAmount: 0, grandTotal: 0, netAmount: 0, autoRoundOff: 0,
             changeReturn: 0, invoiceNo: "Draft", totalQuantity: 0, billDate: new Date().toISOString().split('T')[0], billTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
             doctors: [], selectedDoctor: "", departments: [], selectedDepartment: "",
             walkinName: "", walkinPhone: "", walkinAddress: "",
@@ -228,6 +228,51 @@ class PharmacyBilling extends PharmacyBase {
             } else {
                 this.notification.add("Patient linked!", { type: "success" });
             }
+
+            // AUTO FETCH PRESCRIPTIONS
+            try {
+                const prescriptions = await this.orm.call("hospital.prescription", "search_read", [
+                    [['patient_id', '=', p.id], ['state', '=', 'draft']]
+                ], { fields: ['id'] });
+
+                if (prescriptions.length > 0) {
+                    const p_ids = prescriptions.map(pr => pr.id);
+                    const p_lines = await this.orm.call("hospital.prescription.line", "search_read", [
+                        [['prescription_id', 'in', p_ids]]
+                    ], { fields: ['medicine_id', 'qty', 'morning', 'afternoon', 'evening', 'night', 'timing'] });
+
+                    let meds_added = 0;
+                    for (let line of p_lines) {
+                        if (line.medicine_id) {
+                            // fetch stock details for this medicine to get mrp, batch, etc.
+                            const stocks = await this.orm.call("hospital.pharmacy.stock", "search_read", [
+                                [['id', '=', line.medicine_id[0]]]
+                            ], { fields: ['id', 'medicine_name', 'batch_number', 'expiry_date', 'selling_price', 'cgst', 'sgst', 'igst'] });
+                            
+                            if (stocks.length > 0) {
+                                let m = stocks[0];
+                                // check if already in cart
+                                let existing = this.state.medicines.find(x => x.id === m.id);
+                                if (!existing) {
+                                    this.state.medicines.push({
+                                        id: m.id, name: m.medicine_name, composition: "--", batch: m.batch_number || "--",
+                                        expiry: m.expiry_date || "--", qty: line.qty || 1, unit: "Tab", mrp: m.selling_price || 0, price: m.selling_price || 0, 
+                                        discount: 0, discountVal: 0, 
+                                        cgst_percent: m.cgst || 0, sgst_percent: m.sgst || 0, igst_percent: m.igst || 0,
+                                        cgst_val: 0, sgst_val: 0, igst_val: 0, amount: 0, total_amount: 0
+                                    });
+                                    meds_added++;
+                                }
+                            }
+                        }
+                    }
+                    if (meds_added > 0) {
+                        this.calculateTotals();
+                        this.notification.add(meds_added + " prescribed medicine(s) auto-loaded!", { type: "info" });
+                    }
+                }
+            } catch (e) { console.log("Failed to fetch prescriptions", e); }
+
         } else {
             this.notification.add("Patient not found.", { type: "warning" });
         }
@@ -453,8 +498,11 @@ class PharmacyBilling extends PharmacyBase {
         this.state.totalDiscount = totalDiscount;
         this.state.totalGst = totalGst;
         this.state.subTotal = grossAmount - totalDiscount;
-        this.state.netAmount = this.state.subTotal + totalGst + (parseFloat(this.state.roundOff) || 0);
-        this.state.grandTotal = this.state.netAmount;
+        const rawNet = this.state.subTotal + totalGst;
+        const roundedNet = Math.round(rawNet);
+        this.state.autoRoundOff = Math.round((roundedNet - rawNet) * 100) / 100;
+        this.state.netAmount = roundedNet;
+        this.state.grandTotal = roundedNet;
         this.state.totalQuantity = totalQty;
         this.state.changeReturn = (this.state.paidAmount - this.state.netAmount) > 0 ? (this.state.paidAmount - this.state.netAmount) : 0;
     }
@@ -512,8 +560,8 @@ class PharmacyBilling extends PharmacyBase {
         s.denomTotalReceived = totalR;
         s.denomTotalRepay = totalP;
         
-        s.totalAmountPaid = s.paidAmount + totalR - totalP;
-        s.balanceAmount = s.netAmount - s.totalAmountPaid;
+        s.totalAmountPaid = Math.round((s.paidAmount + totalR - totalP) * 100) / 100;
+        s.balanceAmount = Math.round((s.netAmount - s.totalAmountPaid) * 100) / 100;
     }
 
 
@@ -560,7 +608,8 @@ class PharmacyBilling extends PharmacyBase {
 
         let line_ids = this.state.medicines.map(m => [0, 0, {
             stock_id: m.id, medicine_name: m.name, composition: m.composition, batch: m.batch, expiry: m.expiry,
-            qty: m.qty, unit: m.unit, mrp: m.mrp, discount: m.discount, gst: m.gst
+            qty: m.qty, unit: m.unit, mrp: m.mrp, discount: m.discount,
+            cgst_percent: m.cgst_percent || 0, sgst_percent: m.sgst_percent || 0, igst_percent: m.igst_percent || 0
         }]);
 
         try {
@@ -603,7 +652,8 @@ class PharmacyBilling extends PharmacyBase {
 
         let line_ids = this.state.medicines.map(m => [0, 0, {
             stock_id: m.id, medicine_name: m.name, composition: m.composition, batch: m.batch, expiry: m.expiry,
-            qty: m.qty, unit: m.unit, mrp: m.mrp, discount: m.discount, gst: m.gst
+            qty: m.qty, unit: m.unit, mrp: m.mrp, discount: m.discount,
+            cgst_percent: m.cgst_percent || 0, sgst_percent: m.sgst_percent || 0, igst_percent: m.igst_percent || 0
         }]);
 
         try {

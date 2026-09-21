@@ -16,8 +16,8 @@
 
                 <field name="code"/>
                 <field name="name"/>
-                <field name="category"/>
-                <field name="sample_type"/>
+                <field name="lab_category_id"/>
+                <field name="lab_sub_category_id"/>
                 <field name="price"/>
                 <field name="turnaround_time"/>
                 <field name="active"/>
@@ -38,8 +38,8 @@
                 <field name="code"/>
                 <filter string="Is Profile" name="filter_is_profile" domain="[('is_profile', '=', True)]"/>
                 <group>
-                    <filter string="Category" name="group_by_category" context="{'group_by':'category'}"/>
-                    <filter string="Sample Type" name="group_by_sample_type" context="{'group_by':'sample_type'}"/>
+                    <filter string="Category" name="group_by_category" context="{'group_by':'lab_category_id'}"/>
+                    <filter string="Sub Category" name="group_by_sample_type" context="{'group_by':'lab_sub_category_id'}"/>
                 </group>
             </search>
         </field>
@@ -74,8 +74,8 @@
                         <group>
                             <group name="test_info" string="Test Information">
                                 <field name="code"/>
-                                <field name="category"/>
-                                <field name="sample_type"/>
+                                <field name="lab_category_id"/>
+                                <field name="lab_sub_category_id"/>
                             </group>
                             <group name="pricing_details" string="Pricing &amp; Details">
                                 <field name="price" string="Price (Rs.)"/>
@@ -102,8 +102,8 @@
                                 <field name="parameter_ids" widget="many2many">
                                     <list>
                                         <field name="name"/>
-                                        <field name="category"/>
-                                        <field name="sample_type"/>
+                                        <field name="lab_category_id"/>
+                                        <field name="lab_sub_category_id"/>
                                     </list>
                                 </field>
                             </page>
@@ -135,11 +135,11 @@
 
         <field name="arch" type="xml">
 
-            <list>
+            <list limit="14" class="custom_lab_list">
 
                 <field name="name"/>
                 <field name="patient_id"/>
-                <field name="lab_test_id"/>
+                <field name="test_names"/>
                 <field name="appointment_date"/>
                 <field name="appointment_time"
                        widget="html_time"/>
@@ -148,7 +148,7 @@
                 <field name="priority"
                        widget="badge"/>
 
-                <field name="amount"/>
+                <field name="amount"/><field name="round_off"/><field name="net_amount"/>
 
                 <field name="payment_status"
                        widget="badge"/>
@@ -159,8 +159,7 @@
                 />
 
 
-                <field name="state"
-                       widget="badge"/>
+                
 
             </list>
 
@@ -169,6 +168,185 @@
     </record>
 
 
+    
+    <!-- LAB MANAGER FORM -->
+<record id="view_hospital_lab_appointment_tech_form"
+            model="ir.ui.view">
+
+        <field name="name">hospital.lab.appointment.tech.form</field>
+        <field name="model">hospital.lab.appointment</field>
+
+        <field name="arch" type="xml">
+
+            <form js_class="lab_tech_form_view">
+
+
+                <!-- MAIN CONTENT -->
+
+                <sheet>
+                    <field name="receipt_ready" invisible="1"/>
+
+                    <!-- PATIENT + APPOINTMENT INFORMATION -->
+
+                    <div
+                        style="
+                            border:1px solid #e5e5e5;
+                            border-radius:8px;
+                            padding:12px 16px;
+                            margin-bottom:10px;
+                            background:#ffffff;
+                        "
+                    >
+
+                        <group col="2">
+
+                            <!-- PATIENT INFORMATION -->
+
+                            <group string="PATIENT INFORMATION">
+
+                                <field name="patient_id" readonly="1" options="{'no_open': True}"/>
+
+                                <field name="hospital_appointment_id" readonly="1" options="{'no_open': True}"/>
+
+                                <field name="doctor_id" string="Referring Doctor" readonly="1" options="{'no_open': True}"/>
+
+                            </group>
+
+
+                            <!-- APPOINTMENT INFORMATION -->
+
+                            <group string="APPOINTMENT INFORMATION">
+
+                                <field
+                                    name="appointment_date"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="appointment_time"
+                                    widget="html_time"
+                                    readonly="1"
+                                />
+
+                                <field
+                                    name="priority"
+                                    readonly="1"
+                                />
+                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1"/>
+
+                            </group>
+
+                        </group>
+
+                    </div>
+
+
+                    <!-- SELECTED LABORATORY TESTS -->
+                    <!-- FULL WIDTH -->
+                    <notebook>
+                        <page string="Selected Laboratory Tests">
+                            <button name="action_open_test_selector" string="📋 Select Lab Test" type="object" class="btn btn-primary" style="margin-bottom: 10px;"/>
+                            <field
+                                name="line_ids"
+                                nolabel="1"
+                                class="custom_lab_table_wrapper"
+                            >
+                                <list
+                                    editable="bottom"
+                                    create="0"
+                                    delete="1"
+                                    limit="100"
+                                    class="hospital_lab_test_list"
+                                >
+                                    <field name="test_code" string="Code" width="70" readonly="1"/>
+                                    
+                                    <field
+                                        name="lab_test_id"
+                                        string="Test Name"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        required="1"
+                                        readonly="1"
+                                        width="300"
+                                    />
+                                    <field name="lab_category_id" string="Category" readonly="1" width="120"/>
+                                    <field name="lab_sub_category_id" string="Sub Category" readonly="1" width="120"/>
+
+                                    
+                                    
+                                    <field
+                                        name="unit"
+                                        string="Units"
+                                        width="80"
+                                        readonly="1"
+                                    />
+
+                                    <field name="normal_range_display" string="Normal Range" width="120" readonly="1"/>
+
+                                    <field
+                                        name="result_value"
+                                        string="Analysed Value"
+                                        width="120"
+                                        readonly="parent.payment_status != 'paid'"
+                                    />
+                                    
+                                    <field
+                                        name="result_indicator"
+                                        string="N/↑/↓"
+                                        readonly="1"
+                                        width="60"
+                                    />
+
+                                    <field name="normal_range_min" column_invisible="True"/>
+                                    <field name="normal_range_max" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    
+
+                
+                    
+                
+                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
+                        <button
+                            name="action_tech_save_lab_appointment"
+                            type="object"
+                            string="Save"
+                            class="btn-primary hospital-save-btn"
+                            icon="fa-save"
+                            invisible="state == 'completed' or payment_status != 'paid'"
+                        />
+                        <button
+                            name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            class="btn-danger hospital-cancel-btn"
+                            icon="fa-times"
+                            invisible="state != 'draft'"
+                        />
+                        <button
+                            name="action_close_to_appointments"
+                            type="object"
+                            string="Close"
+                            class="btn-secondary"
+                            icon="fa-arrow-left"
+                        />
+                        <button
+                            name="%(action_report_hospital_lab_result)d"
+                            type="action"
+                            string="Print"
+                            class="btn-info"
+                            icon="fa-print"
+                            invisible="receipt_ready == False"
+                        />
+                    </div>
+                </sheet>
+
+            </form>
+
+        </field>
+
+    </record>
     <!-- LAB APPOINTMENT FORM -->
 
     <record id="view_hospital_lab_appointment_form"
@@ -180,40 +358,6 @@
         <field name="arch" type="xml">
 
             <form js_class="lab_form_view">
-
-                <!-- HEADER -->
-
-                <header>
-
-                    
-                    <!-- SAVE -->
-                    
-                    
-                    <button
-                        name="action_collect_sample"
-                        type="object"
-                        string="Collect Sample"
-                        invisible="state != 'scheduled'"
-                    />
-
-                    <button
-                        name="action_start_processing"
-                        type="object"
-                        string="Start Processing"
-                        invisible="state != 'sample_collected'"
-                    />
-
-                    <button
-                        name="action_complete"
-                        type="object"
-                        string="Complete"
-                        class="btn-success"
-                        invisible="state != 'processing'"
-                    />
-
-
-
-                </header>
 
 
                 <!-- MAIN CONTENT -->
@@ -277,6 +421,7 @@
                                     name="priority"
                                     readonly="1"
                                 />
+                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1"/>
 
                             </group>
 
@@ -312,6 +457,8 @@
                                         readonly="1"
                                         width="300"
                                     />
+                                    <field name="lab_category_id" string="Category" readonly="1" width="120"/>
+                                    <field name="lab_sub_category_id" string="Sub Category" readonly="1" width="120"/>
 
                                     <field
                                         name="price"
@@ -320,27 +467,13 @@
                                         readonly="1"
                                     />
                                     
-                                    <field
-                                        name="unit"
-                                        string="Units"
-                                        width="80"
-                                        readonly="1"
-                                    />
-
-                                    <field name="normal_range_display" string="Normal Range" width="120" readonly="1"/>
-
-                                    <field
-                                        name="result_value"
-                                        string="Analysed Value"
-                                        width="120"
-                                    />
                                     
-                                    <field
-                                        name="result_indicator"
-                                        string="N/↑/↓"
-                                        readonly="1"
-                                        width="60"
-                                    />
+
+                                    
+
+                                    
+                                    
+                                    
 
                                     <field name="normal_range_min" column_invisible="True"/>
                                     <field name="normal_range_max" column_invisible="True"/>
@@ -348,18 +481,7 @@
                             </field>
                         </page>
                     </notebook>
-                    <!-- LAB RESULT -->
-
-                    <group
-                        string="LABORATORY RESULT"
-                        invisible="state not in ('processing', 'completed')"
-                    >
-
-                        <field name="result"/>
-
-                        <field name="remarks"/>
-
-                    </group>
+                    
 
                 
                     
@@ -371,15 +493,15 @@
                             string="Save"
                             class="btn-primary hospital-save-btn"
                             icon="fa-save"
-                            invisible="state in ('completed', 'cancelled') or (payment_status == 'paid' and balance_amount == 0)"
+                            invisible="payment_status == 'paid'"
                         />
                         <button
                             name="action_cancel"
                             type="object"
                             string="Cancel"
-                            class="btn-danger"
+                            class="btn-danger hospital-cancel-btn"
                             icon="fa-times"
-                            invisible="state in ('completed', 'cancelled')"
+                            invisible="payment_status == 'paid'"
                         />
                         <button
                             name="action_close_to_appointments"
@@ -394,7 +516,7 @@
                             string="Print"
                             class="btn-info"
                             icon="fa-print"
-                            invisible="receipt_ready == False"
+                            invisible="payment_status == 'pending'"
                         />
                     </div>
                 </sheet>
@@ -404,17 +526,59 @@
         </field>
 
     </record>    
+    <!-- LAB TECHNICIAN LIST VIEW -->
+    <record id="view_hospital_lab_appointment_tech_list" model="ir.ui.view">
+        <field name="name">hospital.lab.appointment.tech.list</field>
+        <field name="model">hospital.lab.appointment</field>
+        <field name="arch" type="xml">
+            <list limit="14" class="custom_lab_list" create="0">
+                <field name="patient_id"/>
+                <field name="name" string="Lab Ref"/>
+                <field name="hospital_appointment_id" string="Token Ref"/>
+                <field name="appointment_date"/>
+                <field name="appointment_time" widget="html_time"/>
+                <field name="doctor_id"/>
+                <field name="priority" widget="badge"/>
+                <field name="payment_status" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- LAB APPOINTMENT SEARCH VIEW -->
+    <record id="view_hospital_lab_appointment_search" model="ir.ui.view">
+        <field name="name">hospital.lab.appointment.search</field>
+        <field name="model">hospital.lab.appointment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="patient_id" filter_domain="['|', '|', ('patient_id.name', 'ilike', self), ('patient_id.patient_id', 'ilike', self), ('patient_id.phone', 'ilike', self)]" string="Patient ID / Name / Phone"/>
+                <field name="name" string="Lab Reference"/>
+                <field name="hospital_appointment_id" string="Token Number"/>
+                <filter string="Today" name="today" domain="[('appointment_date', '=', context_today())]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- LAB TECHNICIAN ACTION -->
+    <record id="action_hospital_lab_technician_appointments" model="ir.actions.act_window">
+        <field name="name">Lab Appointments</field>
+        <field name="res_model">hospital.lab.appointment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hospital_lab_appointment_search"/>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_tech_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_tech_form')})]"/>
+    </record>
+
     <!-- ACTIONS -->
 
     <record id="action_hospital_lab_appointments"
             model="ir.actions.act_window">
-
         <field name="name">Lab Appointments</field>
-
         <field name="res_model">hospital.lab.appointment</field>
-
         <field name="view_mode">list,form</field>
-
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_form')})]"/>
     </record>
 
 

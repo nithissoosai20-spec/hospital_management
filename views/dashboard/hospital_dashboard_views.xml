@@ -559,6 +559,7 @@
 
     <!--  -->
 
+                        <div class="adb-quick-wrap">
                         <div class="adb-section-title">
                             Quick Actions
                         </div>
@@ -622,7 +623,7 @@
 
 
                         </div>
-
+                        </div>
                     </div>
 
                 </sheet>
@@ -682,6 +683,8 @@ elif env.user.has_group('hospital_management.group_hospital_receptionist'):
     action = env.ref('hospital_management.action_hospital_reception_dashboard').sudo().read()[0]
 elif env.user.has_group('hospital_management.group_hospital_doctor'):
     action = env.ref('hospital_management.action_hospital_doctor_dashboard').sudo().read()[0]
+elif env.user.has_group('hospital_management.group_hospital_lab_technician'):
+    action = env.ref('hospital_management.action_hospital_lab_dashboard').sudo().read()[0]
 elif env.user.has_group('hospital_management.group_hospital_pharmacist'):
     action = env.ref('hospital_management.action_hospital_pharmacy_dashboard_form').sudo().read()[0]
 else:

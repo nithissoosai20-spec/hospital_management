@@ -78,4 +78,27 @@
 
     </record>
 
+
+    <record id="view_hospital_lab_result_wizard_form" model="ir.ui.view">
+        <field name="name">hospital.lab.result.wizard.form</field>
+        <field name="model">hospital.lab.result.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div style="text-align:center; padding:10px 20px 5px 20px;">
+                        <div style="font-size:20px; font-weight:700; margin-bottom:15px; color:#16a34a;">
+                            <i class="fa fa-check-circle"/> Saved Successfully!
+                        </div>
+                        <div style="font-size:17px; font-weight:600; margin-bottom:20px;">
+                            Do you want to print the lab result now?
+                        </div>
+                    </div>
+                    <footer style="text-align:center;">
+                        <button name="action_print_now" string="Print Now" type="object" class="btn-primary" icon="fa-print"/>
+                        <button name="action_print_later" string="Later" type="object" class="btn-secondary" icon="fa-clock-o"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
 </odoo>

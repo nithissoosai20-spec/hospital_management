@@ -501,3 +501,4 @@
     box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35) !important;
     transform: translateY(-1px);
 }
+.pdb-title { display: none !important; }

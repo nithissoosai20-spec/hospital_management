@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- MEDICINE WIZARD -->
+    <record id="view_prescribe_medicine_wizard_form" model="ir.ui.view">
+        <field name="name">patient.medicine.prescription.wizard.form</field>
+        <field name="model">patient.medicine.prescription.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Prescribe Medicines">
+                <sheet style="min-width: 900px; min-height: 500px;">
+                    <field name="patient_id" invisible="1"/>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="medicine_id" />
+                            <field name="qty" />
+                            <field name="morning" widget="boolean_toggle"/>
+                            <field name="afternoon" widget="boolean_toggle"/>
+                            <field name="evening" widget="boolean_toggle"/>
+                            <field name="night" widget="boolean_toggle"/>
+                            <field name="timing" />
+                        </list>
+                    </field>
+                </sheet>
+                <footer style="background:#f8fafc; padding:15px 20px; border-top:1px solid #e2e8f0;">
+                    <div class="w-100 d-flex justify-content-end gap-2">
+                        <button name="action_prescribe" string="Save" type="object" class="btn-primary hospital-save-btn" style="min-width: 100px; font-weight: bold;"/>
+                        <button string="Close" class="btn-secondary hospital-cancel-btn" special="cancel" style="min-width: 100px; font-weight: bold;"/>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- LAB TEST DOCTOR POPUP VIEW -->
+    <record id="view_hospital_lab_test_doctor_popup" model="ir.ui.view">
+        <field name="name">hospital.lab.test.doctor.popup</field>
+        <field name="model">hospital.lab.test</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <list string="Lab Tests">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="sample_type"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- LAB TEST WIZARD -->
+    <record id="view_prescribe_lab_test_wizard_form" model="ir.ui.view">
+        <field name="name">patient.lab.test.wizard.form</field>
+        <field name="model">patient.lab.test.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Prescribe Lab Tests">
+                <sheet style="min-width: 900px; min-height: 500px;">
+                    <field name="patient_id" invisible="1"/>
+                    <field name="test_ids" widget="many2many" context="{'tree_view_ref': 'hospital_management.view_hospital_lab_test_doctor_popup', 'search_default_group_by_category': 1, 'search_default_group_by_sample_type': 1}">
+                        <list>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="sample_type"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer style="background:#f8fafc; padding:15px 20px; border-top:1px solid #e2e8f0;">
+                    <div class="w-100 d-flex justify-content-end gap-2">
+                        <button name="action_prescribe" string="Save" type="object" class="btn-primary hospital-save-btn" style="min-width: 100px; font-weight: bold;"/>
+                        <button string="Close" class="btn-secondary hospital-cancel-btn" special="cancel" style="min-width: 100px; font-weight: bold;"/>
+                    </div>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
+

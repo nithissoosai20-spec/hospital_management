@@ -188,7 +188,7 @@
                             <group>
                                 <field name="medicine_name" placeholder="e.g. Paracetamol 500mgs"/>
                                 <field name="medicine_code" placeholder="e.g. MED001"/>
-                                <field name="category"/>
+                                <field name="pharmacy_category_id"/>
                                 <field name="batch_number"/>
                                 <field name="expiry_date"/>
                                 <field name="hsn_code"/>
@@ -220,9 +220,9 @@
                                     <field name="mrp"/>
                                 </div>
                                 
-                                <label for="item_category" string="Item Category"/>
+                                <label for="pharmacy_item_category_id" string="Item Category"/>
                                 <div class="o_row">
-                                    <field name="item_category"/>
+                                    <field name="pharmacy_item_category_id"/>
                                     <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Qty in Category</span>
                                     <field name="qty_in_category"/>
                                 </div>

@@ -9,6 +9,15 @@ from datetime import datetime
 class HospitalLabAppointment(models.Model):
     _name = 'hospital.lab.appointment'
     _description = 'Hospital Lab Appointment'
+
+    @api.onchange('hospital_appointment_id')
+    def _onchange_hospital_appointment_id(self):
+        if self.hospital_appointment_id:
+            if self.hospital_appointment_id.patient_id:
+                self.patient_id = self.hospital_appointment_id.patient_id
+            if self.hospital_appointment_id.doctor_id:
+                self.doctor_id = self.hospital_appointment_id.doctor_id
+
     _order = 'appointment_date desc, id desc'
 
 
@@ -53,6 +62,18 @@ class HospitalLabAppointment(models.Model):
         required=True,
         ondelete='restrict'
     )
+
+    
+    test_names = fields.Char(
+        string='Lab Tests',
+        compute='_compute_test_names',
+    )
+
+    @api.depends('line_ids', 'line_ids.lab_test_id')
+    def _compute_test_names(self):
+        for rec in self:
+            rec.test_names = ', '.join(rec.line_ids.mapped('lab_test_id.name'))
+
 
     lab_test_id = fields.Many2one(
         'hospital.lab.test',
@@ -105,16 +126,28 @@ class HospitalLabAppointment(models.Model):
 
     sample_type = fields.Selection(
         [
-            ('blood', 'Blood'),
-            ('urine', 'Urine'),
-            ('stool', 'Stool'),
-            ('swab', 'Swab'),
-            ('serum', 'Serum'),
-            ('other', 'Other'),
+            ('blood', 'Blood Testing'),
+            ('urine', 'Urine Testing'),
+            ('stool', 'Stool Testing'),
+            ('swab', 'Swab Testing'),
+            ('serum', 'Serum Testing'),
+            ('other', 'Other Testing'),
         ],
-        string='Sample Type',
+        string='Sub Category',
         required=True,
         default='blood'
+    )
+
+    
+    round_off = fields.Float(
+        string='Round Off',
+        compute='_compute_total_amount',
+        store=True,
+    )
+    net_amount = fields.Float(
+        string='Net Amount',
+        compute='_compute_total_amount',
+        store=True,
     )
 
     amount = fields.Float(
@@ -129,9 +162,11 @@ class HospitalLabAppointment(models.Model):
     @api.depends('line_ids', 'line_ids.price')
     def _compute_total_amount(self):
         for record in self:
-            record.amount = sum(
-                record.line_ids.mapped('price')
-            )
+            calc_amt = sum(record.line_ids.mapped('price'))
+            rounded_amt = round(calc_amt)
+            record.amount = calc_amt
+            record.round_off = rounded_amt - calc_amt
+            record.net_amount = rounded_amt
 
     def action_open_test_selector(self):
         """Open the lab test selector wizard."""
@@ -258,7 +293,7 @@ class HospitalLabAppointment(models.Model):
     @api.depends(
         'notes_500', 'notes_200', 'notes_100', 'notes_50', 'notes_20', 'notes_10', 'coins_received',
         'return_500', 'return_200', 'return_100', 'return_50', 'return_20', 'return_10', 'coins_return',
-        'amount', 'online_paid_amount'
+        'amount', 'net_amount', 'online_paid_amount'
     )
     def _compute_cash_totals(self):
         for record in self:
@@ -285,8 +320,9 @@ class HospitalLabAppointment(models.Model):
             record.total_cash_received = total_recv
             record.total_cash_returned = total_ret
             
-            # The fixed amount they need to pay via cash
-            record.amount_to_collect = record.amount - record.online_paid_amount
+            # The fixed amount they need to pay via cash (round inline to avoid stale stored net_amount)
+            rounded_net = round(record.amount)
+            record.amount_to_collect = rounded_net - record.online_paid_amount
             
             # Balance Amount = Due by patient
             record.balance_amount = record.amount_to_collect - total_recv + total_ret
@@ -294,9 +330,8 @@ class HospitalLabAppointment(models.Model):
     def action_open_cash_wizard(self):
         self.ensure_one()
         
-        # Odoo's frontend treats 0.00 as a valid number, so it bypasses the frontend 'required' check.
-        # We manually catch 0.00 and spawn the native red toast notification to mimic frontend validation.
-
+        # Force recompute net_amount so it's never stale for existing records
+        self._compute_total_amount()
 
         # Find the form view for the cash wizard
         view_id = self.env.ref('hospital_management.view_hospital_lab_cash_wizard_form').id
@@ -365,6 +400,21 @@ class HospitalLabAppointment(models.Model):
         return super().write(vals)
 
 
+
+    def action_tech_save_lab_appointment(self):
+        self.ensure_one()
+        
+        self.state = 'completed'
+        
+        return {
+            'name': 'Print Lab Result',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.lab.result.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_lab_appointment_id': self.id}
+        }
+
     def action_save_lab_appointment(self):
         self.ensure_one()
 
@@ -372,7 +422,9 @@ class HospitalLabAppointment(models.Model):
             from odoo.exceptions import UserError
             raise UserError('Please add at least one test before saving.')
 
-        # Open the cash wizard directly!
+        if self.state == 'draft':
+            self.state = 'scheduled'
+
         return self.action_open_cash_wizard()
 
 
@@ -458,6 +510,8 @@ class HospitalLabAppointmentLine(models.Model):
         
     name = fields.Char(string='Description')
 
+    
+
     lab_test_id = fields.Many2one(
         'hospital.lab.test',
         string='Lab Test',
@@ -474,14 +528,38 @@ class HospitalLabAppointmentLine(models.Model):
     )
 
     category = fields.Selection(
+        [
+            ('hematology', 'Hematology'),
+            ('biochemistry', 'Biochemistry'),
+            ('microbiology', 'Microbiology'),
+            ('pathology', 'Pathology'),
+            ('cardiology', 'Cardiology'),
+            ('other', 'Other Testing'),
+        ],
         related='lab_test_id.category',
+        string='Old Category',
+        readonly=True,
+    )
+    lab_category_id = fields.Many2one(
+        related='lab_test_id.lab_category_id',
         string='Category',
         readonly=True,
     )
 
     sample_type = fields.Selection(
+        [
+            ('blood', 'Blood Testing'),
+            ('urine', 'Urine Testing'),
+            ('serum', 'Serum Testing'),
+            ('other', 'Other Testing'),
+        ],
         related='lab_test_id.sample_type',
-        string='Sample Type',
+        string='Old Sub Category',
+        readonly=True,
+    )
+    lab_sub_category_id = fields.Many2one(
+        related='lab_test_id.lab_sub_category_id',
+        string='Sub Category',
         readonly=True,
     )
 

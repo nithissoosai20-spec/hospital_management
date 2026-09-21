@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
     <record id="action_report_hospital_lab_receipt" model="ir.actions.report">
@@ -12,150 +12,200 @@
         <field name="binding_type">report</field>
     </record>
 
+    <record id="action_report_hospital_lab_result" model="ir.actions.report">
+        <field name="name">Lab Result Report</field>
+        <field name="model">hospital.lab.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
+        <field name="report_name">hospital_management.report_hospital_lab_result</field>
+        <field name="report_file">hospital_management.report_hospital_lab_result</field>
+        <field name="binding_model_id" ref="hospital_management.model_hospital_lab_appointment"/>
+        <field name="binding_type">report</field>
+    </record>
+
     <template id="report_hospital_lab_receipt">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                <t t-call="web.basic_layout">
-<style>
-            /* Hide Odoo default footer in PDF and HTML preview */
-            .o_report_footer, footer, .o_footer,
-            #wkhtmltopdf-footer, .footer-block { display: none !important; }
-            /* A4 print settings */
-            @media print {
-                .o_report_footer, footer, .o_footer { display: none !important; }
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                
+                    <style>
+                        .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    </style>
 
-            body, .page, .article {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            }
-        </style>
-                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif;">
-                                                <!-- Edge-to-Edge Background -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
-                        <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
-                        <!-- Blue border edges -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        
-                        
-                        
-                        
-                        <!-- Content -->
-                        <div style="padding-top: 65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
+                    <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+                        <div class="page" style="position: relative; width: 210mm; height: 297mm; min-height: 297mm; overflow: hidden; margin: 0; padding: 0; box-sizing: border-box;">
                             
-                            <div style="text-align:center; margin:0 0 20px 0;">
-                                <h2 style="margin:0; padding:0; font-size:24px; font-weight:bold; color:#1e3a8a;">
-                                    LAB FEE RECEIPT
-                                </h2>
-                            </div>
-                            
-                            <div class="row mb-4 pt-4">
-                                <div class="col-6">
-                                    <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
-                                    <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/><br/>
-                                    <strong>Mobile Number:</strong> <span t-field="doc.patient_id.phone"/>
+                            <!-- BACKGROUND & BORDERS -->
+                            <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
+                                <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill; opacity: 1.0;"/>
                                 </div>
-                                <div class="col-6 text-end">
-                                    <strong>Date and Time:</strong> <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/> <span t-field="doc.appointment_time"/><br/>
-                                    <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
-                                    <strong>Payment Mode:</strong> 
-                                    <t t-if="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received &gt; 0">
-                                        <span t-field="doc.payment_mode"/> and Cash
-                                    </t>
-                                    <t t-elif="(not doc.payment_mode or doc.payment_mode == 'none') and doc.total_cash_received &gt; 0">
-                                        Cash
-                                    </t>
-                                    <t t-elif="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received == 0">
-                                        <span t-field="doc.payment_mode"/>
-                                    </t>
-                                    <t t-else="">
-                                        None
-                                    </t>
-                                </div>
-                            </div>
 
-                            <table class="table table-sm mt-4" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse; border: 1px solid #888; font-size: 13px;">
-                                <thead>
-                                    <tr>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Code</th>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Lab Test Name</th>
-                                        <th class="text-end" style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Price (Rs.)</th>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Analysed Value</th>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000; text-align: center;">Indicator</th>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Units</th>
-                                        <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Normal range</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Extract unique categories dynamically -->
-                                    <t t-set="all_categories" t-value="[]"/>
-                                    <t t-foreach="doc.line_ids" t-as="l">
-                                        <t t-if="l.category not in all_categories">
-                                            <t t-set="dummy" t-value="all_categories.append(l.category)"/>
+                            <!-- CONTENT WRAPPER -->
+                            <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
+                                <div class="row mb-4">
+                                    <div class="col-6">
+                                        <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
+                                        <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/><br/>
+                                        <strong>Mobile Number:</strong> <span t-field="doc.patient_id.phone"/>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>Date and Time:</strong> <span t-field="doc.appointment_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/> <span t-field="doc.appointment_time"/><br/>
+                                        <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
+                                        <strong>Payment Mode:</strong>
+                                        <t t-if="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received &gt; 0">
+                                            <span t-field="doc.payment_mode"/> and Cash
                                         </t>
-                                    </t>
-                                    
-                                    <t t-foreach="all_categories" t-as="cat">
-                                        <!-- Category Header Row -->
+                                        <t t-elif="(not doc.payment_mode or doc.payment_mode == 'none') and doc.total_cash_received &gt; 0">
+                                            Cash
+                                        </t>
+                                        <t t-elif="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received == 0">
+                                            <span t-field="doc.payment_mode"/>
+                                        </t>
+                                        <t t-else="">None</t>
+                                    </div>
+                                </div>
+
+                                <table class="table table-sm mt-4" style="width: 100%; border-collapse: collapse; border: 1px solid #888; font-size: 13px;">
+                                    <thead>
                                         <tr>
-                                            <td colspan="7" style="background-color: #e2e8f0; font-weight: bold; font-size: 14px; padding: 6px 10px; border: 1px solid #888; color: #000;">
-                                                <t t-if="cat == 'hematology'">Hematology</t>
-                                                <t t-elif="cat == 'biochemistry'">Biochemistry</t>
-                                                <t t-elif="cat == 'microbiology'">Microbiology</t>
-                                                <t t-elif="cat == 'pathology'">Pathology</t>
-                                                <t t-elif="cat == 'radiology'">Radiology</t>
-                                                <t t-elif="cat == 'cardiology'">Cardiology</t>
-                                                <t t-elif="cat == 'other'">Other</t>
-                                                <t t-else="">Uncategorized</t>
-                                            </td>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Code</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Lab Test Name</th>
+                                            <th class="text-end" style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Price (Rs.)</th>
                                         </tr>
-                                        <!-- Tests within this Category -->
-                                        <t t-foreach="doc.line_ids.filtered(lambda l: l.category == cat)" t-as="line">
-                                            <tr>
-                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.test_code"/></td>
-                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.lab_test_id"/></td>
-                                                <td class="text-end" style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.price"/></td>
-                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.result_value"/></td>
-                                                <td style="padding: 6px 8px; border: 1px solid #888; text-align: center;"><span t-field="line.result_indicator"/></td>
-                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.unit"/></td>
-                                                <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.normal_range_display"/></td>
-                                            </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="all_categories" t-value="[]"/>
+                                        <t t-foreach="doc.line_ids" t-as="l">
+                                            <t t-if="l.lab_category_id.name not in all_categories">
+                                                <t t-set="dummy" t-value="all_categories.append(l.lab_category_id.name)"/>
+                                            </t>
                                         </t>
-                                    </t>
-                                </tbody>
-                            </table>
+                                        <t t-foreach="all_categories" t-as="cat">
+                                            <tr>
+                                                <td colspan="3" style="background-color: #e2e8f0; font-weight: bold; font-size: 14px; padding: 6px 10px; border: 1px solid #888; color: #000;">
+                                                    <t t-if="cat == 'hematology'">Hematology</t>
+                                                    <t t-elif="cat == 'biochemistry'">Biochemistry</t>
+                                                    <t t-elif="cat == 'microbiology'">Microbiology</t>
+                                                    <t t-elif="cat == 'pathology'">Pathology</t>
+                                                    <t t-elif="cat == 'radiology'">Radiology</t>
+                                                    <t t-elif="cat == 'cardiology'">Cardiology</t>
+                                                    <t t-elif="cat == 'other'">Other</t>
+                                                    <t t-else="">Uncategorized</t>
+                                                </td>
+                                            </tr>
+                                            <t t-foreach="doc.line_ids.filtered(lambda l: l.lab_category_id.name == cat)" t-as="line">
+                                                <tr>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.test_code"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.lab_test_id"/></td>
+                                                    <td class="text-end" style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.price"/></td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
 
-                            <div class="row justify-content-end mt-3">
-                                <div class="col-5">
-                                    <table class="table table-sm table-borderless" style="width: 100%;">
-                                        <tr style="border-top: 1px solid black;">
-                                            <td style="padding-top: 10px;"><strong>Total Amount:</strong></td>
-                                            <td class="text-end" style="padding-top: 10px;">
-                                                <strong><span t-field="doc.amount"/></strong>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <div class="row justify-content-end mt-3">
+                                    <div class="col-5">
+                                        <table class="table table-sm table-borderless" style="width: 100%;">
+                                            <tr style="border-top: 1px solid black;">
+                                                <td style="padding-top: 10px;"><strong>Total Amount:</strong></td>
+                                                <td class="text-end" style="padding-top: 10px;">
+                                                    <strong><span t-field="doc.amount"/></strong>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            
-
                         </div>
                     </div>
-                </t>
+                
+            </t>
+        </t>
+    </template>
+
+    <template id="report_hospital_lab_result">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                
+                    <style>
+                        .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    </style>
+
+                    <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+                        <div class="page" style="position: relative; width: 210mm; height: 297mm; min-height: 297mm; overflow: hidden; margin: 0; padding: 0; box-sizing: border-box;">
+                            
+                            <!-- BACKGROUND & BORDERS -->
+                            <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
+                                <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill; opacity: 1.0;"/>
+                                </div>
+
+                            <!-- CONTENT WRAPPER -->
+                            <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
+                                <div class="row mb-4">
+                                    <div class="col-6">
+                                        <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
+                                        <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/><br/>
+                                        <strong>Age/Gender:</strong> <span t-field="doc.patient_id.age"/> / <span t-field="doc.patient_id.gender"/><br/>
+                                        <strong>Mobile Number:</strong> <span t-field="doc.patient_id.phone"/>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <strong>Report Date:</strong> <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M')"/><br/>
+                                        <strong>Collection Date:</strong> <span t-field="doc.appointment_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/> <span t-field="doc.appointment_time"/><br/>
+                                        <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/>
+                                    </div>
+                                </div>
+
+                                <table class="table table-sm mt-4" style="width: 100%; border-collapse: collapse; border: 1px solid #888; font-size: 13px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Code</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Lab Test Name</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Analysed Value</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000; text-align: center;">Indicator</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Units</th>
+                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Normal range</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="all_categories" t-value="[]"/>
+                                        <t t-foreach="doc.line_ids" t-as="l">
+                                            <t t-if="l.lab_category_id.name not in all_categories">
+                                                <t t-set="dummy" t-value="all_categories.append(l.lab_category_id.name)"/>
+                                            </t>
+                                        </t>
+                                        <t t-foreach="all_categories" t-as="cat">
+                                            <tr>
+                                                <td colspan="6" style="background-color: #e2e8f0; font-weight: bold; font-size: 14px; padding: 6px 10px; border: 1px solid #888; color: #000;">
+                                                    <t t-if="cat == 'hematology'">Hematology</t>
+                                                    <t t-elif="cat == 'biochemistry'">Biochemistry</t>
+                                                    <t t-elif="cat == 'microbiology'">Microbiology</t>
+                                                    <t t-elif="cat == 'pathology'">Pathology</t>
+                                                    <t t-elif="cat == 'radiology'">Radiology</t>
+                                                    <t t-elif="cat == 'cardiology'">Cardiology</t>
+                                                    <t t-elif="cat == 'other'">Other</t>
+                                                    <t t-else="">Uncategorized</t>
+                                                </td>
+                                            </tr>
+                                            <t t-foreach="doc.line_ids.filtered(lambda l: l.lab_category_id.name == cat)" t-as="line">
+                                                <tr>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.test_code"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.lab_test_id"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888; font-weight: bold;"><span t-field="line.result_value"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888; text-align: center;"><span t-field="line.result_indicator"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.unit"/></td>
+                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.normal_range_display"/></td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                
             </t>
         </t>
     </template>
 </odoo>
-
-
-
-
-
-
-

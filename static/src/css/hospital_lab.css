@@ -82,3 +82,12 @@
     font-size: 15px;
     font-weight: 700;
 }
+
+/* Change "New" button text for Lab Appointments */
+.o_action_manager:has(.custom_lab_list) .o_control_panel .o_list_button_add {
+    font-size: 0 !important;
+}
+.o_action_manager:has(.custom_lab_list) .o_control_panel .o_list_button_add::after {
+    content: "New Lab Appointment";
+    font-size: 14px;
+}

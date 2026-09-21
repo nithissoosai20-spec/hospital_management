@@ -42,14 +42,28 @@ class HospitalPharmacyStock(models.Model):
         ('Tablet', 'Tablets'),
         ('Syrup', 'Syrup'),
         ('Capsule', 'Capsules'),
-        ('Injection', 'Injections'),
-        ('Ointment', 'Ointments'),
-        ('Drops', 'Drops'),
-        ('Gel', 'Gel'),
-        ('Cream', 'Cream'),
-        ('Lotion', 'Lotion'),
+        ('Lotions', 'Lotions'),
         ('Other', 'Other')
-    ], string='Category', default='Tablet')
+    ], string='Old Category', default='Tablet')
+    
+    pharmacy_category_id = fields.Many2one(
+        'hospital.category.master', 
+        string='Category', 
+        domain="[('category_type', '=', 'pharmacy_category')]",
+        compute='_compute_pharmacy_category_id',
+        store=True,
+        readonly=False
+    )
+    
+    @api.depends('category')
+    def _compute_pharmacy_category_id(self):
+        for rec in self:
+            if rec.category and not rec.pharmacy_category_id:
+                master = self.env['hospital.category.master'].search([
+                    ('name', 'ilike', rec.category), 
+                    ('category_type', '=', 'pharmacy_category')
+                ], limit=1)
+                rec.pharmacy_category_id = master.id
 
     # BATCH INFORMATION
 
@@ -79,12 +93,34 @@ class HospitalPharmacyStock(models.Model):
         ('strip', 'Strips'),
         ('pack', 'Packs'),
         ('box', 'Boxes'),
-        ('bottle', 'Bottles'),
-        ('vial', 'Vials'),
         ('ampoule', 'Ampoules'),
         ('tube', 'Tubes'),
         ('piece', 'Pieces'),
-    ], string='Item Category', default='strip')
+    ], string='Old Item Category', default='strip')
+    
+    pharmacy_item_category_id = fields.Many2one(
+        'hospital.category.master', 
+        string='Item Category', 
+        domain="[('category_type', '=', 'pharmacy_item_category')]",
+        compute='_compute_pharmacy_item_category_id',
+        store=True,
+        readonly=False
+    )
+    
+    @api.depends('item_category')
+    def _compute_pharmacy_item_category_id(self):
+        for rec in self:
+            if rec.item_category and not rec.pharmacy_item_category_id:
+                name_map = {
+                    'strip': 'Strips', 'pack': 'Packs', 'box': 'Boxes',
+                    'ampoule': 'Ampoules', 'tube': 'Tubes', 'piece': 'Pieces'
+                }
+                search_name = name_map.get(rec.item_category, rec.item_category)
+                master = self.env['hospital.category.master'].search([
+                    ('name', 'ilike', search_name), 
+                    ('category_type', '=', 'pharmacy_item_category')
+                ], limit=1)
+                rec.pharmacy_item_category_id = master.id
     
     qty_in_category = fields.Integer(
         string='Qty in Category',

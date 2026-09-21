@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <record id="paperformat_purchase_invoice" model="report.paperformat">
         <field name="name">Purchase Invoice Paperformat</field>
@@ -11,7 +11,7 @@
         <field name="margin_right">0</field>
         <field name="header_line" eval="False"/>
         <field name="header_spacing">0</field>
-        <field name="dpi">90</field>
+        <field name="disable_shrinking">True</field><field name="dpi">96</field>
     </record>
 
     <!-- Purchase Order Report Action -->
@@ -30,41 +30,21 @@
     <!-- Purchase Order Report Template -->
     <template id="report_pharmacy_purchase_order">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <t t-call="web.basic_layout">
-<style>
-            /* Hide Odoo default footer in PDF and HTML preview */
-            .o_report_footer, footer, .o_footer,
-            #wkhtmltopdf-footer, .footer-block { display: none !important; }
-            /* A4 print settings */
-            @media print {
-                .o_report_footer, footer, .o_footer { display: none !important; }
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            <t t-foreach="docs" t-as="doc">
+               
+                    <style>
+                        .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
+                        @media print {
+                            .o_report_footer, footer, .o_footer { display: none !important; }
+                            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        }
+                    </style>
 
-            body, .page, .article {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            }
-        </style>
-                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif;">
-                                                <!-- Edge-to-Edge Background -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
-                        <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
-                        <!-- Blue border edges -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        
-                        
-                        
-                        
-                        <!-- Content -->
-                        <div style="padding-top: 65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
-                            
-                            <div class="row mb-4 pt-4">
+                    <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif; position: relative; width: 210mm; height: 297mm; min-height: 297mm; overflow: hidden; box-sizing: border-box;">
+                        <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
+                            <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill;"/>
+                        </div>
+                        <div class="row mb-4 pt-4" style="position: relative; z-index: 1; ">
                                 <div class="col-6">
                                     <h4 style="color: #1e3a8a;"><strong>Purchase Order: </strong> <span t-field="o.name"/></h4>
                                     <strong>Supplier:</strong><br/>
@@ -130,9 +110,9 @@
                                 </div>
                             </div>
                             
-                        </div>
+                        
                     </div>
-                </t>
+                
             </t>
         </t>
     </template>
@@ -153,41 +133,21 @@
     <!-- Report Template -->
     <template id="report_pharmacy_purchase_invoice">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <t t-call="web.basic_layout">
-<style>
-            /* Hide Odoo default footer in PDF and HTML preview */
-            .o_report_footer, footer, .o_footer,
-            #wkhtmltopdf-footer, .footer-block { display: none !important; }
-            /* A4 print settings */
-            @media print {
-                .o_report_footer, footer, .o_footer { display: none !important; }
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            <t t-foreach="docs" t-as="doc">
+                
+                    <style>
+                        .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
+                        @media print {
+                            .o_report_footer, footer, .o_footer { display: none !important; }
+                            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        }
+                    </style>
 
-            body, .page, .article {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            }
-        </style>
-                    <div class="page" style="position: relative; width: 100%; height: 1052px; z-index: 1; font-family: Arial, sans-serif;">
-                                                <!-- Edge-to-Edge Background -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('/hospital_management/static/src/img/purchase_bg.png'); background-size: 100% 297mm; background-position: top left; background-repeat: no-repeat; z-index: -2;"></div>
-                        <!-- White mask to hide the footer graphic -->
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 150mm; background-color: white; z-index: -1;"></div>
-                        <!-- Blue border edges -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; left: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; top: 0; right: 0; width: 8px; height: 100%; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 8px; background: #1e3a8a; z-index: 1000; pointer-events: none;"></div>
-                        
-                        
-                        
-                        
-                        <!-- Content -->
-                        <div style="padding-top: 65mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 30mm;">
-                            
-                            <div class="row mb-4 pt-4">
+                    <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif; position: relative; width: 210mm; height: 297mm; min-height: 297mm; overflow: hidden; box-sizing: border-box;">
+                        <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
+                            <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill;"/>
+                        </div>
+                        <div class="row mb-4 pt-4" style="position: relative; z-index: 1; ">
                                 <div class="col-6">
                                     <h4 style="color: #1e3a8a;"><strong>Purchase Invoice: </strong> <span t-field="o.name"/></h4>
                                     <strong>Supplier:</strong><br/>
@@ -253,16 +213,10 @@
                                 </div>
                             </div>
                             
-                        </div>
+                        
                     </div>
-                </t>
+                
             </t>
         </t>
     </template>
 </odoo>
-
-
-
-
-
-

@@ -868,6 +868,9 @@
         <field name="name">Appointments</field>
         <field name="res_model">hospital.appointment</field>
         <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_appointment_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_appointment_form')})]"/>
     </record>
 
 

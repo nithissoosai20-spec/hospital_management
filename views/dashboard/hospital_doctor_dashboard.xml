@@ -2,6 +2,32 @@
 
 <odoo>
 
+    <!-- Doctor's Pending Queue List View -->
+    <record id="view_hospital_doctor_patients_queue_list" model="ir.ui.view">
+        <field name="name">hospital.doctor.patients.queue.list</field>
+        <field name="model">hospital.appointment</field>
+        <field name="arch" type="xml">
+            <list string="My Patients Queue">
+                <field name="patient_code" string="Patient ID"/>
+                <field name="patient_name" string="Full Name"/>
+                <field name="patient_gender" string="Gender"/>
+                <field name="patient_age" string="Age"/>
+                <field name="patient_phone" string="Phone"/>
+                <field name="patient_blood_group" string="Blood Group"/>
+                <field name="patient_active" string="Active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Doctor's Pending Queue Action -->
+    <record id="action_hospital_doctor_patients_queue" model="ir.actions.act_window">
+        <field name="name">My Patients Queue</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" eval="False"/>
+        <field name="domain">[('appointment_ids.state', 'in', ('draft', 'booked')), ('appointment_ids.doctor_id.odoo_user_id', '=', uid)]</field>
+    </record>
+
     <record id="view_hospital_doctor_dashboard_form" model="ir.ui.view">
         <field name="name">hospital.doctor.dashboard.form</field>
         <field name="model">hospital.doctor.dashboard</field>
@@ -23,31 +49,31 @@
                         <!-- ROW 1 : 5 KPI TILES -->
                         <div class="ddb-row1">
 
-                            <button name="%(action_hospital_appointment)d" type="action" class="ddb-tile ddb-green">
+                            <button name="%(action_hospital_appointment)d" type="action" class="ddb-tile">
                                 <span class="ddb-tile-icon">📋</span>
                                 <span class="ddb-tile-num"><field name="my_appointments" nolabel="1" readonly="1"/></span>
                                 <span class="ddb-tile-lbl">My Appointments</span>
                             </button>
 
-                            <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-tile ddb-blue">
+                            <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-tile">
                                 <span class="ddb-tile-icon">📅</span>
                                 <span class="ddb-tile-num"><field name="today_appointments" nolabel="1" readonly="1"/></span>
                                 <span class="ddb-tile-lbl">Today's Appointments</span>
                             </button>
 
-                            <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-tile ddb-cyan">
+                            <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-tile">
                                 <span class="ddb-tile-icon">✅</span>
                                 <span class="ddb-tile-num"><field name="completed_appointments" nolabel="1" readonly="1"/></span>
                                 <span class="ddb-tile-lbl">Completed</span>
                             </button>
 
-                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-tile ddb-orange">
+                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-tile">
                                 <span class="ddb-tile-icon">⏳</span>
                                 <span class="ddb-tile-num"><field name="pending_appointments" nolabel="1" readonly="1"/></span>
                                 <span class="ddb-tile-lbl">Pending</span>
                             </button>
 
-                            <button name="%(action_hospital_patient)d" type="action" class="ddb-tile ddb-purple">
+                            <button name="%(action_hospital_doctor_patients_queue)d" type="action" class="ddb-tile">
                                 <span class="ddb-tile-icon">🧑‍⚕️</span>
                                 <span class="ddb-tile-num"><field name="my_patients" nolabel="1" readonly="1"/></span>
                                 <span class="ddb-tile-lbl">My Patients</span>
@@ -100,7 +126,7 @@
                                             <span class="ddb-pstat-lbl">Today</span>
                                         </div>
                                     </div>
-                                    <button name="%(action_hospital_patient)d" type="action" class="ddb-open-btn">
+                                    <button name="%(action_hospital_doctor_patients_queue)d" type="action" class="ddb-open-btn">
                                         Open Patients →
                                     </button>
                                 </div>
@@ -136,48 +162,7 @@
 
                         </div>
 
-                        <!-- ROW 3 : QUICK ACTIONS -->
-                        <div class="ddb-row3">
-
-                            <button name="%(action_hospital_appointment_today)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">📅</span>
-                                <strong>Today</strong>
-                                <span>Today's list</span>
-                            </button>
-
-                            <button name="%(action_hospital_appointment)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">📋</span>
-                                <strong>Appointments</strong>
-                                <span>All appointments</span>
-                            </button>
-
-                            <button name="%(action_hospital_patient)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">🧑‍⚕️</span>
-                                <strong>Patients</strong>
-                                <span>Patient records</span>
-                            </button>
-
-                            <button name="%(action_hospital_appointment_waiting)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">⏳</span>
-                                <strong>Waiting</strong>
-                                <span>Pending queue</span>
-                            </button>
-
-                            <button name="%(action_hospital_appointment_completed)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">✅</span>
-                                <strong>Completed</strong>
-                                <span>Done today</span>
-                            </button>
-
-                            <button name="%(action_hospital_appointment_booked)d" type="action" class="ddb-action">
-                                <span class="ddb-action-icon">📌</span>
-                                <strong>Booked</strong>
-                                <span>Booked slots</span>
-                            </button>
-
                         </div>
-
-                    </div>
 
                 </sheet>
             </form>

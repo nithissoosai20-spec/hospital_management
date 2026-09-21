@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_category_master_list" model="ir.ui.view">
+        <field name="name">hospital.category.master.list</field>
+        <field name="model">hospital.category.master</field>
+        <field name="arch" type="xml">
+            <list multi_edit="1">
+                <field name="category_type"/>
+                <field name="name"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    
+    
+    
+    
+    <record id="view_hospital_category_master_form" model="ir.ui.view">
+        <field name="name">hospital.category.master.form</field>
+        <field name="model">hospital.category.master</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active == True"/>
+                    
+                    <div class="row align-items-center mb-4 pb-3 border-bottom">
+                        <div class="col-8">
+                            <h2 class="text-primary mb-0" style="color: #1e3a8a !important; font-weight: 600;">
+                                <i class="fa fa-tags me-2"></i>Category Configuration
+                            </h2>
+                        </div>
+                        <div class="col-4 text-end">
+                            <field name="active" widget="boolean_toggle" class="oe_inline"/>
+                            <label for="active" class="ms-2 fw-bold text-muted"/>
+                        </div>
+                    </div>
+                    
+                    <div class="px-3 py-2">
+                        <group>
+                            <group>
+                                <field name="category_type" required="1" class="fw-bold"/>
+                                <field name="name" required="1" placeholder="e.g. Tablets" class="fw-bold"/>
+                            </group>
+                            <group>
+                                <!-- Empty group to prevent taking full width -->
+                            </group>
+                        </group>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top bg-light p-3 rounded">
+                        <button name="action_save_and_close" type="object" string="Save" class="btn btn-primary fw-bold px-4 py-2 shadow-sm" invisible="id != False" style="background-color: #1e3a8a; border-color: #1e3a8a;"/>
+                        <button name="action_go_back" type="object" string="Close" class="btn btn-secondary fw-bold px-4 py-2 shadow-sm"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+
+
+    <record id="view_hospital_category_master_search" model="ir.ui.view">
+        <field name="name">hospital.category.master.search</field>
+        <field name="model">hospital.category.master</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="category_type"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Category Type" name="group_by_type" context="{'group_by': 'category_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_hospital_category_master" model="ir.actions.act_window">
+        <field name="name">Master Categories</field>
+        <field name="res_model">hospital.category.master</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

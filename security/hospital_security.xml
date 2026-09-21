@@ -209,7 +209,7 @@
         id="group_hospital_lab_technician"
         model="res.groups"
     >
-        <field name="name">Lab Technician</field>
+        <field name="name">Lab Manager</field>
         <field name="sequence">70</field>
 
         <field

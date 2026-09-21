@@ -144,11 +144,50 @@ class HospitalPharmacyBill(models.Model):
         store=True,
     )
 
+    
+    round_off = fields.Float(
+        string='Round Off',
+        compute='_compute_amounts',
+        store=True,
+    )
+
     total_amount = fields.Float(
         string='Total Amount',
         compute='_compute_amounts',
         store=True,
     )
+
+
+    prescription_ids = fields.Many2many(
+        'hospital.prescription',
+        string='Prescriptions'
+    )
+
+    @api.onchange('patient_id')
+    def _onchange_patient_id(self):
+        if self.patient_id:
+            prescriptions = self.env['hospital.prescription'].search([
+                ('patient_id', '=', self.patient_id.id),
+                ('state', '=', 'draft')
+            ])
+            if prescriptions:
+                self.prescription_ids = [(6, 0, prescriptions.ids)]
+                lines = []
+                for p in prescriptions:
+                    for p_line in p.line_ids:
+                        lines.append((0, 0, {
+                            'stock_id': p_line.medicine_id.id,
+                            'medicine_name': p_line.medicine_id.medicine_name,
+                            'qty': p_line.qty,
+                            'mrp': p_line.medicine_id.selling_price,
+                            'available_stock': p_line.medicine_id.quantity,
+                            'batch': p_line.medicine_id.batch_number or '',
+                            'expiry': p_line.medicine_id.expiry_date or '',
+                            'cgst_percent': p_line.medicine_id.cgst,
+                            'sgst_percent': p_line.medicine_id.sgst,
+                            'igst_percent': p_line.medicine_id.igst,
+                        }))
+                self.line_ids = lines
 
     @api.onchange('doctor_id')
     def _onchange_doctor_id(self):
@@ -156,6 +195,7 @@ class HospitalPharmacyBill(models.Model):
             self.doctor_department_id = self.doctor_id.department_id
         else:
             self.doctor_department_id = False
+
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -167,19 +207,31 @@ class HospitalPharmacyBill(models.Model):
                     'hospital.pharmacy.bill'
                 ) or 'PH-BILL-000001'
 
+            # Auto-link prescriptions if patient_id is provided and no prescriptions linked
+            if vals.get('patient_id') and 'prescription_ids' not in vals:
+                prescriptions = self.env['hospital.prescription'].search([
+                    ('patient_id', '=', vals['patient_id']),
+                    ('state', '=', 'draft')
+                ])
+                if prescriptions:
+                    vals['prescription_ids'] = [(6, 0, prescriptions.ids)]
+
         records = super().create(vals_list)
         for record in records:
             if record.state == 'paid':
                 record._reduce_stock()
+                record.prescription_ids.write({'state': 'billed'})
         return records
 
+
     def write(self, vals):
-        # Check if transitioning to paid
         res = super().write(vals)
         if vals.get('state') == 'paid':
             for record in self:
                 record._reduce_stock()
+                record.prescription_ids.write({'state': 'billed'})
         return res
+
 
     def _reduce_stock(self):
         for line in self.line_ids:
@@ -209,14 +261,18 @@ class HospitalPharmacyBill(models.Model):
             line_gst = sum(bill.line_ids.mapped('gst_amount'))
             
             taxable = subtotal - line_discount - bill.bill_discount
-            if taxable < 0:
-                taxable = 0.0
+            
+            total_calculated = sum(bill.line_ids.mapped('total_amount')) - bill.bill_discount
+            
+            rounded_total = round(total_calculated)
+            round_off = rounded_total - total_calculated
 
             bill.subtotal = subtotal
             bill.discount_amount = line_discount + bill.bill_discount
             bill.taxable_amount = taxable
             bill.gst_amount = line_gst
-            bill.total_amount = sum(bill.line_ids.mapped('total_amount')) - bill.bill_discount
+            bill.round_off = round_off
+            bill.total_amount = rounded_total
 
     def action_save_draft(self):
         for bill in self:
@@ -262,8 +318,9 @@ class HospitalPharmacyBill(models.Model):
                     line.stock_id.total_stock -= line.qty
 
             bill.state = 'paid'
-
+            bill.prescription_ids.write({'state': 'billed'})
         return True
+
 
 
 class HospitalPharmacyBillLine(models.Model):
@@ -360,6 +417,13 @@ class HospitalPharmacyBillLine(models.Model):
 
     gst_amount = fields.Float(
         string='GST Amount',
+        compute='_compute_amounts',
+        store=True,
+    )
+
+    
+    round_off = fields.Float(
+        string='Round Off',
         compute='_compute_amounts',
         store=True,
     )

@@ -103,6 +103,18 @@ class HospitalAppointment(models.Model):
         readonly=True
     )
 
+    patient_blood_group = fields.Selection(
+        string='Blood Group',
+        related='patient_id.blood_group',
+        readonly=True
+    )
+
+    patient_active = fields.Boolean(
+        string='Active',
+        related='patient_id.active',
+        readonly=True
+    )
+
     # DOCTOR / APPOINTMENT
 
     doctor_id = fields.Many2one(
@@ -216,6 +228,65 @@ class HospitalAppointment(models.Model):
 
     has_lab_test = fields.Boolean(compute='_compute_has_lab_test', store=False)
 
+    pharmacy_bill_ids = fields.One2many(
+        'hospital.pharmacy.bill',
+        'appointment_id',
+        string='Pharmacy Prescriptions'
+    )
+    pharmacy_bill_count = fields.Integer(
+        string='Pharmacy Bills',
+        compute='_compute_pharmacy_bill_count'
+    )
+    lab_appointment_ids = fields.One2many(
+        'hospital.lab.appointment',
+        'hospital_appointment_id',
+        string='Lab Tests'
+    )
+    lab_appointment_count = fields.Integer(
+        string='Lab Tests Count',
+        compute='_compute_lab_appointment_count'
+    )
+
+    def _compute_pharmacy_bill_count(self):
+        for rec in self:
+            rec.pharmacy_bill_count = len(rec.pharmacy_bill_ids)
+            
+    def _compute_lab_appointment_count(self):
+        for rec in self:
+            rec.lab_appointment_count = len(rec.lab_appointment_ids)
+
+    def action_open_pharmacy_prescriptions(self):
+        self.ensure_one()
+        return {
+            'name': 'Prescribe Medicines',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.pharmacy.bill',
+            'view_mode': 'list,form',
+            'domain': [('appointment_id', '=', self.id)],
+            'context': {
+                'default_appointment_id': self.id,
+                'default_patient_id': self.patient_id.id if self.patient_id else False,
+                'default_doctor_id': self.doctor_id.id if self.doctor_id else False,
+            }
+        }
+        
+    def action_open_lab_prescriptions(self):
+        self.ensure_one()
+        return {
+            'name': 'Prescribe Lab Tests',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.lab.appointment',
+            'view_mode': 'list,form',
+            'domain': [('hospital_appointment_id', '=', self.id)],
+            'context': {
+                'default_hospital_appointment_id': self.id,
+                'default_patient_id': self.patient_id.id if self.patient_id else False,
+                'default_doctor_id': self.doctor_id.id if self.doctor_id else False,
+                'default_appointment_date': self.appointment_date,
+            }
+        }
+
+
     def _compute_has_lab_test(self):
         for rec in self:
             lab_count = self.env['hospital.lab.appointment'].search_count([('hospital_appointment_id', '=', rec.id)])
@@ -231,6 +302,13 @@ class HospitalAppointment(models.Model):
     discount = fields.Float(
         string='Discount',
         default=0.0
+    )
+
+    
+    round_off = fields.Float(
+        string='Round Off',
+        compute='_compute_net_amount',
+        store=True
     )
 
     net_amount = fields.Float(
@@ -379,6 +457,9 @@ class HospitalAppointment(models.Model):
             
         if self.online_paid_amount <= 0:
             self.payment_mode = 'none'
+            
+        if not self.patient_id and self.new_patient_name:
+            self._create_patient_from_appointment()
             
         self.payment_status = 'paid'
         # Book the appointment and mark as paid
@@ -806,6 +887,7 @@ class HospitalAppointment(models.Model):
                 # No validation required for new_patient_email.
 
                 # Create patient
+                record._create_patient_from_appointment()
 
             # APPOINTMENT VALIDATION
 
@@ -1282,17 +1364,30 @@ class HospitalAppointment(models.Model):
             if not self.patient_id:
                 raise UserError('Please select a patient before opening Lab Tests.')
 
-            lab_appointment = self.env['hospital.lab.appointment'].create({
-                'patient_id': self.patient_id.id,
-                'hospital_appointment_id': self.id,
-                'doctor_id': self.doctor_id.id if self.doctor_id else False,
-                'appointment_date': self.appointment_date,
-                'appointment_time': self.appointment_time,
-                'priority': self.priority,
-                'state': 'draft',
-                'payment_mode': 'none',
-                'payment_status': 'pending',
-            })
+            # Check if doctor already created a draft lab appointment without an appointment ID
+            lab_appointment = self.env['hospital.lab.appointment'].search([
+                ('patient_id', '=', self.patient_id.id),
+                ('state', '=', 'draft'),
+                ('hospital_appointment_id', '=', False)
+            ], limit=1)
+            
+            if lab_appointment:
+                lab_appointment.write({
+                    'hospital_appointment_id': self.id,
+                    'doctor_id': self.doctor_id.id if self.doctor_id else lab_appointment.doctor_id.id,
+                })
+            else:
+                lab_appointment = self.env['hospital.lab.appointment'].create({
+                    'patient_id': self.patient_id.id,
+                    'hospital_appointment_id': self.id,
+                    'doctor_id': self.doctor_id.id if self.doctor_id else False,
+                    'appointment_date': self.appointment_date,
+                    'appointment_time': self.appointment_time,
+                    'priority': self.priority,
+                    'state': 'draft',
+                    'payment_mode': 'none',
+                    'payment_status': 'pending',
+                })
 
         return {
             'type': 'ir.actions.act_window',

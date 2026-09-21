@@ -36,6 +36,12 @@ class HospitalDoctorDashboard(models.Model):
         compute='_compute_dashboard'
     )
 
+    today_appointment_ids = fields.Many2many(
+        'hospital.appointment',
+        string="Today's Appointment List",
+        compute='_compute_dashboard'
+    )
+
     @api.depends()
     def _compute_dashboard(self):
         Appointment = self.env['hospital.appointment']
@@ -52,6 +58,7 @@ class HospitalDoctorDashboard(models.Model):
                 record.completed_appointments = 0
                 record.pending_appointments = 0
                 record.my_patients = 0
+                record.today_appointment_ids = False
                 continue
 
             appointments = Appointment.search([
@@ -62,11 +69,11 @@ class HospitalDoctorDashboard(models.Model):
 
             record.my_appointments = len(appointments)
 
-            record.today_appointments = len(
-                appointments.filtered(
-                    lambda a: a.appointment_date == today
-                )
+            today_appts = appointments.filtered(
+                lambda a: a.appointment_date == today
             )
+            record.today_appointments = len(today_appts)
+            record.today_appointment_ids = today_appts.ids
 
             record.completed_appointments = len(
                 appointments.filtered(

@@ -20,13 +20,37 @@ class HospitalLabTestSelectorLine(models.TransientModel):
         readonly=True
     )
     category = fields.Selection(
+        [
+            ('hematology', 'Hematology'),
+            ('biochemistry', 'Biochemistry'),
+            ('microbiology', 'Microbiology'),
+            ('pathology', 'Pathology'),
+            ('cardiology', 'Cardiology'),
+            ('other', 'Other Testing'),
+        ],
         related='test_id.category',
+        string='Old Category',
+        readonly=True
+    )
+    lab_category_id = fields.Many2one(
+        related='test_id.lab_category_id',
         string='Category',
         readonly=True
     )
     sample_type = fields.Selection(
+        [
+            ('blood', 'Blood Testing'),
+            ('urine', 'Urine Testing'),
+            ('serum', 'Serum Testing'),
+            ('other', 'Other Testing'),
+        ],
         related='test_id.sample_type',
-        string='Sample Type',
+        string='Old Sub Category',
+        readonly=True
+    )
+    lab_sub_category_id = fields.Many2one(
+        related='test_id.lab_sub_category_id',
+        string='Sub Category',
         readonly=True
     )
     price = fields.Float(
@@ -44,88 +68,62 @@ class HospitalLabTestSelector(models.TransientModel):
     _name = 'hospital.lab.test.selector'
     _description = 'Lab Test Selector Wizard'
 
+    patient_id = fields.Many2one('hospital.patient', string='Patient')
     lab_appointment_id = fields.Many2one(
         'hospital.lab.appointment',
         string='Lab Appointment'
     )
 
-    filter_category = fields.Selection(
-        [
-            ('hematology', 'Hematology'),
-            ('biochemistry', 'Biochemistry'),
-            ('microbiology', 'Microbiology'),
-            ('pathology', 'Pathology'),
-            ('radiology', 'Radiology'),
-            ('cardiology', 'Cardiology'),
-            ('other', 'Other'),
-        ],
-        string='Category'
+    filter_lab_category_id = fields.Many2one(
+        'hospital.category.master',
+        string='Category',
+        domain="[('category_type', '=', 'lab_category')]"
     )
 
-    filter_sample_type = fields.Selection(
-        [
-            ('blood', 'Blood'),
-            ('urine', 'Urine'),
-            ('stool', 'Stool'),
-            ('swab', 'Swab'),
-            ('serum', 'Serum'),
-            ('other', 'Other'),
-        ],
-        string='Sample Type'
+    filter_lab_sub_category_id = fields.Many2one(
+        'hospital.category.master',
+        string='Sub Category',
+        domain="[('category_type', '=', 'lab_sub_category')]"
     )
-    
 
     line_ids = fields.One2many(
         'hospital.lab.test.selector.line',
         'wizard_id',
-        string='Lab Tests'
+        string='Test Lines'
     )
 
-    @api.model
-    def default_get(self, fields_list):
-        res = super().default_get(fields_list)
-        res['line_ids'] = []
-        return res
 
-    @api.onchange('filter_category', 'filter_sample_type')
+    @api.onchange('filter_lab_category_id', 'filter_lab_sub_category_id')
     def _onchange_filters(self):
-        if not self.filter_category and not self.filter_sample_type:
-            self.line_ids = [(5, 0, 0)]
-            return
-            
         domain = [('is_profile', '=', False)]
-        if self.filter_category:
-            domain.append(('category', '=', self.filter_category))
-        if self.filter_sample_type:
-            domain.append(('sample_type', '=', self.filter_sample_type))
+        if self.filter_lab_category_id:
+            domain.append(('lab_category_id', '=', self.filter_lab_category_id.id))
+        if self.filter_lab_sub_category_id:
+            domain.append(('lab_sub_category_id', '=', self.filter_lab_sub_category_id.id))
 
         tests = self.env['hospital.lab.test'].search(domain)
         
-        # Check if the existing lines already match the current filters.
-        # If they do, this onchange was triggered by a form reload (e.g. after clicking Select All)
-        # and we MUST return early so we don't wipe out the checkboxes.
-        if self.line_ids:
-            match = True
-            for line in self.line_ids:
-                if not line.test_id:
-                    continue
-                if self.filter_category and line.test_id.category != self.filter_category:
-                    match = False
-                    break
-                if self.filter_sample_type and line.test_id.sample_type != self.filter_sample_type:
-                    match = False
-                    break
-            if match:
-                return
+        # Keep currently selected tests even if they don't match the filter!
+        selected_test_ids = [line.test_id.id for line in self.line_ids if line.selected and line.test_id]
         
-        # Otherwise, the user actually changed the filters, so we load the new tests.
         self.line_ids = [(5, 0, 0)]
         new_lines = []
-        for test in tests:
+        
+        # Add retained selected tests
+        for test_id in selected_test_ids:
             new_lines.append((0, 0, {
-                'test_id': test.id,
-                'selected': False,
+                'test_id': test_id,
+                'selected': True,
             }))
+            
+        # Add filtered tests that aren't already in new_lines
+        for test in tests:
+            if test.id not in selected_test_ids:
+                new_lines.append((0, 0, {
+                    'test_id': test.id,
+                    'selected': False,
+                }))
+                
         self.line_ids = new_lines
 
     def action_select_all(self):
@@ -155,15 +153,55 @@ class HospitalLabTestSelector(models.TransientModel):
         }
 
     def action_add_selected(self):
-        """Add all selected tests to the lab appointment lines."""
-        appointment = self.lab_appointment_id
+        selected_lines = self.line_ids.filtered('selected')
+        
+        # Find or create appointment
+        appointment = False
+        if self.lab_appointment_id:
+            appointment = self.lab_appointment_id
+        elif self.patient_id:
+            appointment = self.env['hospital.lab.appointment'].search([
+                ('patient_id', '=', self.patient_id.id),
+                ('state', '=', 'draft')
+            ], limit=1)
+            
+            if not appointment:
+                if not selected_lines:
+                    return {'type': 'ir.actions.act_window_close'}
+                
+                # Check for active consultation to link bidirectionally!
+                active_h_appt = self.env['hospital.appointment'].search([
+                    ('patient_id', '=', self.patient_id.id),
+                    ('state', 'in', ['draft', 'booked'])
+                ], limit=1)
+                
+                doctor = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
+                appointment = self.env['hospital.lab.appointment'].create({
+                    'patient_id': self.patient_id.id,
+                    'doctor_id': doctor.id if doctor else False,
+                    'hospital_appointment_id': active_h_appt.id if active_h_appt else False,
+                    'state': 'draft',
+                    'appointment_date': fields.Datetime.now()
+                })
+            else:
+                # Link to active consultation if not linked
+                if not appointment.hospital_appointment_id:
+                    active_h_appt = self.env['hospital.appointment'].search([
+                        ('patient_id', '=', self.patient_id.id),
+                        ('state', 'in', ['draft', 'booked'])
+                    ], limit=1)
+                    if active_h_appt:
+                        appointment.hospital_appointment_id = active_h_appt.id
+                        
         if not appointment:
             return {'type': 'ir.actions.act_window_close'}
 
-        existing_test_ids = appointment.line_ids.mapped('lab_test_id.id')
-        new_lines = []
+        # Clear existing lines to replace with current selection
+        appointment.line_ids.unlink()
 
-        for line in self.line_ids.filtered('selected'):
+        new_lines = []
+        existing_test_ids = []
+        for line in selected_lines:
             test = line.test_id
             if test.is_profile:
                 for param in test.parameter_ids:
@@ -176,11 +214,9 @@ class HospitalLabTestSelector(models.TransientModel):
                     existing_test_ids.append(test.id)
 
         if new_lines:
-            # Reconstruct the list safely for Odoo 17/19 one2many commands
-            appointment.write({
-                'line_ids': [(4, l.id) for l in appointment.line_ids] + new_lines
-            })
+            appointment.write({'line_ids': new_lines})
 
-        # Return a client action to completely reload the parent view so new lines appear instantly
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
-
+        # If called from lab appointment, reload the client to show tests
+        if self.lab_appointment_id:
+            return {'type': 'ir.actions.client', 'tag': 'reload'}
+        return {'type': 'ir.actions.act_window_close'}

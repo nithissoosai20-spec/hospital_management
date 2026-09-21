@@ -422,6 +422,12 @@
                     <div>Total Received Payment: <span style="color:#16a34a;"><t t-esc="state.totalAmountPaid ? state.totalAmountPaid.toFixed(2) : '0.00'"/></span></div>
                 </div>
 
+                <!-- ROUND OFF ROW -->
+                <div t-if="state.autoRoundOff !== 0" style="margin-top:14px; padding:10px 16px; background:#fefce8; border:1px solid #fde047; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:700; color:#92400e; font-size:14px;">⬆ Round Off Applied</span>
+                    <span style="font-weight:800; color:#92400e; font-size:16px;"><t t-esc="(state.autoRoundOff >= 0 ? '+' : '') + state.autoRoundOff.toFixed(2)"/></span>
+                </div>
+
                 <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
                     <button class="btn btn-outline-secondary" t-on-click="closePaymentModal">Cancel</button>
                     <button class="btn btn-warning" style="background:#eab308; color:white; border:none; padding:8px 24px;" t-on-click="saveAsHold">Hold</button>

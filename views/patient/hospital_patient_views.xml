@@ -1,135 +1,307 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <odoo>
 
     <!-- PATIENT LIST VIEW -->
-
     <record id="view_hospital_patient_list" model="ir.ui.view">
-
         <field name="name">hospital.patient.list</field>
-
         <field name="model">hospital.patient</field>
-
         <field name="arch" type="xml">
-
             <list>
-
                 <field name="patient_id" readonly="1"/>
                 <field name="name"/>
-                <field name="gender"/>
-                <field name="age"/>
-                <field name="phone"/>
-                <field name="blood_group"/>
+                <field name="gender" readonly="1"/>
+                <field name="age" readonly="1"/>
+                <field name="phone" readonly="1"/>
+                <field name="blood_group" readonly="1"/>
                 <field name="active"/>
-
             </list>
-
         </field>
-
     </record>
-
 
     <!-- PATIENT FORM VIEW -->
-
     <record id="view_hospital_patient_form" model="ir.ui.view">
-
         <field name="name">hospital.patient.form</field>
-
         <field name="model">hospital.patient</field>
-
         <field name="arch" type="xml">
-
             <form>
+                
+                <sheet style="padding: 0; margin: 0; max-width: 100%; border: none; box-shadow: none; height: 100%;">
+                    
+                    
+                    <!-- Professional Dashboard Layout -->
+                    <style>
+                        .o_form_view:has(.pro-patient-dashboard),
+                        .o_form_view:has(.pro-patient-dashboard) .o_form_sheet_bg,
+                        .o_form_view:has(.pro-patient-dashboard) .o_form_sheet {
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            max-width: 100% !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            overflow: hidden !important;
+                            background: #f1f5f9 !important;
+                            border: none !important;
+                        }
+                        
+                        .o_action:has(.pro-patient-dashboard) .o_control_panel { display: none !important; }
 
-                <sheet>
+                        .pro-patient-dashboard {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 15px;
+                            padding: 15px;
+                            height: calc(100vh - 80px);
+                            box-sizing: border-box;
+                            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                        }
 
-                    <!-- PATIENT NAME -->
+                        .pro-card {
+                            background: #ffffff;
+                            border-radius: 12px;
+                            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                            padding: 20px;
+                            border: 1px solid #e2e8f0;
+                            display: flex;
+                            flex-direction: column;
+                        }
 
-                    <div class="oe_title">
+                        .pro-row {
+                            display: flex;
+                            gap: 15px;
+                        }
 
-                        <h1>
-                            <field name="name"/>
-                        </h1>
+                        .pro-title {
+                            font-size: 14px;
+                            font-weight: 700;
+                            color: #334155;
+                            margin-bottom: 15px;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            border-bottom: 2px solid #f1f5f9;
+                            padding-bottom: 8px;
+                        }
+
+                        .pt-header-pro {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 15px;
+                        }
+
+                        .pt-name-pro span, .pt-name-pro input {
+                            font-size: 24px !important;
+                            font-weight: 800 !important;
+                            color: #0f172a !important;
+                            margin: 0;
+                        }
+
+                        .pt-badge-pro {
+                            background: #eff6ff;
+                            color: #2563eb;
+                            padding: 6px 12px;
+                            border-radius: 20px;
+                            font-weight: 700;
+                            font-size: 14px;
+                            border: 1px solid #bfdbfe;
+                        }
+
+                        .pro-grid-4 {
+                            display: grid;
+                            grid-template-columns: repeat(4, 1fr);
+                            gap: 12px;
+                        }
+
+                        .pro-field label {
+                            font-size: 11px;
+                            color: #64748b;
+                            font-weight: 600;
+                            text-transform: uppercase;
+                            margin-bottom: 4px;
+                            display: block;
+                        }
+
+                        .pro-field .o_field_widget {
+                            font-size: 14px;
+                            color: #1e293b;
+                            font-weight: 500;
+                            width: 100%;
+                        }
+                        
+                        .pro-field-box .o_field_widget {
+                            background: #f8fafc;
+                            border: 1px solid #cbd5e1;
+                            border-radius: 6px;
+                            padding: 8px 12px;
+                        }
+
+                        .pro-actions {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        
+                        .pro-actions-left {
+                            display: flex;
+                            gap: 10px;
+                        }
+
+                        .btn-pro {
+                            padding: 10px 20px;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            font-size: 14px;
+                            border: none;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            transition: all 0.2s;
+                            color: white;
+                        }
+
+                        .btn-pro:hover { transform: translateY(-1px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                        .btn-meds { background: #3b82f6; }
+                        .btn-labs { background: #8b5cf6; }
+                        .btn-hist { background: #475569; }
+                        .btn-done { background: #10b981; }
+
+                        .pro-notes textarea {
+                            background: #f8fafc;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                            padding: 12px;
+                            width: 100%;
+                            height: 100px;
+                            resize: none;
+                            font-size: 14px;
+                            color: #334155;
+                        }
+                        
+                        .pro-list-container {
+                            flex: 1;
+                            min-height: 0;
+                            display: flex;
+                            flex-direction: column;
+                        }
+                        
+                        .pro-list-container .o_field_widget {
+                            height: 100%;
+                            overflow: auto;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                        }
+                    </style>
+
+                    <div class="pro-patient-dashboard">
+                        
+                        <!-- ROW 1: Details & Notes (Side by Side) -->
+                        <div class="pro-row">
+                            
+                            <!-- LEFT: Details -->
+                            <div class="pro-card" style="flex: 1.2;">
+                                <div class="pt-header-pro">
+                                    <div class="pt-name-pro">
+                                        <field name="name" readonly="1"/>
+                                    </div>
+                                    <div class="pt-badge-pro">
+                                        ID: <field name="patient_id" readonly="1" nolabel="1"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="pro-grid-4">
+                                    <div class="pro-field">
+                                        <label for="age">Age</label>
+                                        <field name="age" readonly="1"/>
+                                    </div>
+                                    <div class="pro-field">
+                                        <label for="gender">Gender</label>
+                                        <field name="gender" readonly="1"/>
+                                    </div>
+                                    <div class="pro-field">
+                                        <label for="blood_group">Blood Group</label>
+                                        <field name="blood_group" readonly="1"/>
+                                    </div>
+                                    <div class="pro-field">
+                                        <label for="phone">Phone</label>
+                                        <field name="phone" readonly="1"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="pro-field" style="margin-top: 15px;">
+                                    <label for="address">Address</label>
+                                    <field name="address" readonly="1"/>
+                                </div>
+                            </div>
+                            
+                            <!-- RIGHT: Notes -->
+                            <div class="pro-card" style="flex: 1;">
+                                <div class="pro-title">&#128221; Clinical Notes</div>
+                                <div class="pro-row" style="gap: 15px;">
+                                    <div class="pro-field pro-notes" style="flex: 1;">
+                                        <label for="suggestions_before_test">Suggestions Before Test</label>
+                                        <field name="suggestions_before_test" placeholder="e.g. Fasting for 12 hours..."/>
+                                    </div>
+                                    <div class="pro-field pro-notes" style="flex: 1;">
+                                        <label for="suggestions_after_test">Suggestions After Test</label>
+                                        <field name="suggestions_after_test" placeholder="e.g. Drink plenty of water..."/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ROW 2: Actions -->
+                        <div class="pro-actions">
+                            <div class="pro-actions-left">
+                                <button name="action_prescribe_medicine" string="Prescribe Medicines" type="object" class="btn-pro btn-meds" icon="fa-medkit" groups="hospital_management.group_hospital_doctor"/>
+                                <button name="action_prescribe_lab_test" string="Prescribe Lab Tests" type="object" class="btn-pro btn-labs" icon="fa-flask" groups="hospital_management.group_hospital_doctor"/>
+                                <button name="action_view_appointments" string="Appointment History" type="object" class="btn-pro btn-hist" icon="fa-history"/>
+                            </div>
+                            <button name="action_complete_doctor_appointment" string="Mark as Completed" type="object" class="btn-pro btn-done" icon="fa-check" groups="hospital_management.group_hospital_doctor"/>
+                        </div>
+
+                        <!-- ROW 3: Meds & Labs (Side by Side) -->
+                        <div class="pro-row" style="flex: 1; min-height: 0;">
+                            
+                            <!-- LEFT: Meds -->
+                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
+                                <div class="pro-title" style="margin-bottom: 10px;">&#128138; Prescribed Medicines</div>
+                                <field name="prescription_ids" readonly="1">
+                                    <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                        <field name="date_prescribed" string="Date"/>
+                                        <field name="medicine_names" string="Medicines"/>
+                                        <field name="state" string="Status" widget="badge"/>
+                                    </list>
+                                </field>
+                            </div>
+                            
+                            <!-- RIGHT: Labs -->
+                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
+                                <div class="pro-title" style="margin-bottom: 10px;">&#129516; Prescribed Lab Tests</div>
+                                <field name="lab_appointment_ids" readonly="1">
+                                    <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                        <field name="appointment_date" string="Date"/>
+                                        <field name="test_names" string="Tests"/>
+                                        <field name="state" string="Status" widget="badge"/>
+                                    </list>
+                                </field>
+                            </div>
+                            
+                        </div>
 
                     </div>
-
-
-                    <!-- BASIC DETAILS -->
-
-                    <group>
-
-                        <group>
-
-                            <field name="patient_id"/>
-                            <field name="gender"/>
-                            <field name="blood_group"/>
-
-                        </group>
-
-                        <group>
-
-                            <field name="phone"/>
-                            <field name="email"/>
-                            <field name="active"/>
-
-                        </group>
-
-                    </group>
-
-
-                    <!-- ADDRESS -->
-
-                    <group>
-
-                        <field name="address"/>
-
-                    </group>
-
-
-                    <!-- PATIENT HISTORY -->
-
-                    <notebook>
-
-                        <page string="Appointment History">
-
-                            <field name="appointment_ids"
-                                   readonly="1">
-
-                                <list>
-
-                                    <field name="name"/>
-                                    <field name="appointment_date"/>
-                                    <field name="doctor_id"/>
-                                    <field name="department_id"/>
-                                    <field name="state"/>
-
-                                </list>
-
-                            </field>
-
-                        </page>
-
-                    </notebook>
-
                 </sheet>
-
             </form>
-
         </field>
-
     </record>
 
-
     <!-- PATIENT ACTION -->
-
     <record id="action_hospital_patient" model="ir.actions.act_window">
-
         <field name="name">Patients</field>
-
         <field name="res_model">hospital.patient</field>
-
         <field name="view_mode">list,form</field>
-
     </record>
 
 </odoo>
