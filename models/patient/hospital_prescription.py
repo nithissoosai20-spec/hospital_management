@@ -53,7 +53,7 @@ class HospitalPrescription(models.Model):
     @api.depends('line_ids', 'line_ids.medicine_id')
     def _compute_medicine_names(self):
         for rec in self:
-            rec.medicine_names = ', '.join(rec.line_ids.mapped('medicine_id.name'))
+            rec.medicine_names = ', '.join([line.medicine_id.display_name for line in rec.line_ids if line.medicine_id])
     
     @api.model_create_multi
     def create(self, vals_list):
@@ -78,6 +78,9 @@ class HospitalPrescriptionLine(models.Model):
         string='Medicine',
         required=True
     )
+
+    state = fields.Selection(related='prescription_id.state', string='Status', store=False)
+    date_prescribed = fields.Datetime(related='prescription_id.date_prescribed', string='Date', store=False)
     
     qty = fields.Integer(string='Total Qty', default=1)
     

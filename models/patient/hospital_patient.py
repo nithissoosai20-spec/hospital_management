@@ -72,6 +72,36 @@ class HospitalPatient(models.Model):
         string='Lab Tests'
     )
 
+    current_prescription_line_ids = fields.Many2many(
+        'hospital.prescription.line',
+        compute='_compute_current_prescriptions',
+        string='Current Medicines'
+    )
+
+    current_lab_line_ids = fields.Many2many(
+        'hospital.lab.appointment.line',
+        compute='_compute_current_labs',
+        string='Current Lab Tests'
+    )
+
+    @api.depends('prescription_ids', 'prescription_ids.line_ids')
+    def _compute_current_prescriptions(self):
+        today = fields.Date.context_today(self)
+        for rec in self:
+            lines = rec.prescription_ids.filtered(
+                lambda p: p.date_prescribed and p.date_prescribed.date() == today
+            ).mapped('line_ids')
+            rec.current_prescription_line_ids = lines
+
+    @api.depends('lab_appointment_ids', 'lab_appointment_ids.line_ids')
+    def _compute_current_labs(self):
+        today = fields.Date.context_today(self)
+        for rec in self:
+            lines = rec.lab_appointment_ids.filtered(
+                lambda l: l.appointment_date == today
+            ).mapped('line_ids')
+            rec.current_lab_line_ids = lines
+
     appointment_ids = fields.One2many(
         'hospital.appointment',
         'patient_id',
@@ -103,15 +133,35 @@ class HospitalPatient(models.Model):
             'context': {'default_patient_id': self.id}
         }
 
+    all_prescription_line_ids = fields.Many2many(
+        'hospital.prescription.line',
+        compute='_compute_all_history_lines',
+        string='All Medicines History'
+    )
+
+    all_lab_line_ids = fields.Many2many(
+        'hospital.lab.appointment.line',
+        compute='_compute_all_history_lines',
+        string='All Lab Tests History'
+    )
+
+    def _compute_all_history_lines(self):
+        for rec in self:
+            rec.all_prescription_line_ids = rec.prescription_ids.mapped('line_ids')
+            rec.all_lab_line_ids = rec.lab_appointment_ids.mapped('line_ids')
+
     def action_view_appointments(self):
         self.ensure_one()
+        view_id = self.env.ref('hospital_management.view_hospital_patient_history_form').id
         return {
-            'name': 'Appointments',
+            'name': f'Clinical History - {self.name}',
             'type': 'ir.actions.act_window',
-            'res_model': 'hospital.appointment',
-            'view_mode': 'list,form',
-            'domain': [('patient_id', '=', self.id)],
-            'context': {'default_patient_id': self.id}
+            'res_model': 'hospital.patient',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'view_id': view_id,
+            'target': 'new',
+            'context': {'create': False, 'edit': False}
         }
 
 
@@ -136,9 +186,7 @@ class HospitalPatient(models.Model):
         return super().create(vals_list)
 
     def action_complete_doctor_appointment(self):
-
         self.ensure_one()
-        # Find active appointments for this patient and this doctor
         appointments = self.env['hospital.appointment'].search([
             ('patient_id', '=', self.id),
             ('doctor_id.odoo_user_id', '=', self.env.uid),
@@ -146,25 +194,13 @@ class HospitalPatient(models.Model):
         ])
         if appointments:
             appointments.write({'state': 'completed'})
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Success',
-                    'message': 'Appointment marked as completed.',
-                    'type': 'success',
-                    'sticky': False,
-                    'next': {'type': 'ir.actions.act_window_close'}
-                }
-            }
+            
+        return self.action_close_patient()
+
+    def action_close_patient(self):
+        if self.env.user.has_group('hospital_management.group_hospital_doctor'):
+            action = self.env['ir.actions.act_window']._for_xml_id('hospital_management.action_hospital_doctor_patients_queue')
         else:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'Info',
-                    'message': 'No pending appointments found for you and this patient.',
-                    'type': 'warning',
-                    'sticky': False,
-                }
-            }
+            action = self.env['ir.actions.act_window']._for_xml_id('hospital_management.action_hospital_patient')
+        action['target'] = 'main'
+        return action

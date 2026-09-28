@@ -135,7 +135,7 @@
 
         <field name="arch" type="xml">
 
-            <list limit="14" class="custom_lab_list">
+            <list limit="14" class="custom_lab_list" create="0">
 
                 <field name="name"/>
                 <field name="patient_id"/>

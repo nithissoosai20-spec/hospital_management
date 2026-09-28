@@ -1,7 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
-
 class HospitalUser(models.Model):
     availability_status = fields.Char(
         string="Availability",
@@ -38,14 +37,6 @@ class HospitalUser(models.Model):
         }
 
     _order = 'name'
-
-    ROLE_GROUPS = {
-        'doctor': 'hospital_management.group_hospital_doctor',
-        'nurse': 'hospital_management.group_hospital_nurse',
-        'receptionist': 'hospital_management.group_hospital_receptionist',
-        'pharmacist': 'hospital_management.group_hospital_pharmacist',
-        'staff': 'hospital_management.group_hospital_user',
-    }
 
     # PERSONAL DETAILS
 
@@ -262,27 +253,6 @@ class HospitalUser(models.Model):
             'hospital_management.group_hospital_user'
         )
 
-
-
-    def _get_role_group(self):
-        self.ensure_one()
-
-        if not self.role_id:
-            return self.env.ref(
-                'hospital_management.group_hospital_user'
-            )
-
-        role_key = self.role_id.name.strip().lower()
-
-        xml_id = self.ROLE_GROUPS.get(role_key)
-
-        if not xml_id:
-            return self.env.ref(
-                'hospital_management.group_hospital_user'
-            )
-
-        return self.env.ref(xml_id)
-
     # CREATE ODOO USER
 
     def _create_odoo_user(self, password):
@@ -311,7 +281,7 @@ class HospitalUser(models.Model):
                 f'An Odoo user already exists with login: {self.login}'
             )
 
-        role_group = self._get_role_group()
+        role_group = self._get_odoo_group_for_role()
 
         user_vals = {
             'name': self.name,
@@ -336,7 +306,6 @@ class HospitalUser(models.Model):
             self.odoo_user_id.sudo().write({
                 'password': password,
             })
-
 
     # UPDATE ODOO USER GROUP
 
@@ -430,7 +399,6 @@ class HospitalUser(models.Model):
                 'user_agent': self.env.context.get('user_agent'),
             })
 
-
     # SAVE ACTION  (explicit Save button on the form)
 
     def action_save_user(self):
@@ -451,7 +419,6 @@ class HospitalUser(models.Model):
         }
 
     # CREATE
-
 
     @api.model
     def _validate_password_strength(self, password):
@@ -523,7 +490,6 @@ class HospitalUser(models.Model):
             )
 
         return records
-
 
     # WRITE
 

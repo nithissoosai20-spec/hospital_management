@@ -502,6 +502,9 @@ class HospitalLabAppointmentLine(models.Model):
         ondelete='cascade',
     )
 
+    state = fields.Selection(related='lab_appointment_id.state', string='Status', store=False)
+    appointment_date = fields.Date(related='lab_appointment_id.appointment_date', string='Date', store=False)
+
     # LAB TEST
     
     display_type = fields.Selection([

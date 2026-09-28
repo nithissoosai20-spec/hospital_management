@@ -259,7 +259,10 @@
                                 <button name="action_prescribe_lab_test" string="Prescribe Lab Tests" type="object" class="btn-pro btn-labs" icon="fa-flask" groups="hospital_management.group_hospital_doctor"/>
                                 <button name="action_view_appointments" string="Appointment History" type="object" class="btn-pro btn-hist" icon="fa-history"/>
                             </div>
-                            <button name="action_complete_doctor_appointment" string="Mark as Completed" type="object" class="btn-pro btn-done" icon="fa-check" groups="hospital_management.group_hospital_doctor"/>
+                            <div style="display: flex; gap: 10px;">
+                                <button name="action_complete_doctor_appointment" string="Mark as Completed" type="object" class="btn-pro btn-done" icon="fa-check" groups="hospital_management.group_hospital_doctor"/>
+                                <button name="action_close_patient" string="Close" type="object" class="btn btn-secondary" style="font-weight: bold; background-color: #6c757d; color: white;" icon="fa-times"/>
+                            </div>
                         </div>
 
                         <!-- ROW 3: Meds & Labs (Side by Side) -->
@@ -268,10 +271,10 @@
                             <!-- LEFT: Meds -->
                             <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
                                 <div class="pro-title" style="margin-bottom: 10px;">&#128138; Prescribed Medicines</div>
-                                <field name="prescription_ids" readonly="1">
+                                <field name="current_prescription_line_ids" readonly="1">
                                     <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
                                         <field name="date_prescribed" string="Date"/>
-                                        <field name="medicine_names" string="Medicines"/>
+                                        <field name="medicine_id" string="Medicine"/>
                                         <field name="state" string="Status" widget="badge"/>
                                     </list>
                                 </field>
@@ -280,10 +283,10 @@
                             <!-- RIGHT: Labs -->
                             <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
                                 <div class="pro-title" style="margin-bottom: 10px;">&#129516; Prescribed Lab Tests</div>
-                                <field name="lab_appointment_ids" readonly="1">
+                                <field name="current_lab_line_ids" readonly="1">
                                     <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
                                         <field name="appointment_date" string="Date"/>
-                                        <field name="test_names" string="Tests"/>
+                                        <field name="lab_test_id" string="Test"/>
                                         <field name="state" string="Status" widget="badge"/>
                                     </list>
                                 </field>
@@ -293,6 +296,60 @@
 
                     </div>
                 </sheet>
+            </form>
+        </field>
+    </record>
+
+    
+    <!-- PATIENT CLINICAL HISTORY POPUP -->
+    <record id="view_hospital_patient_history_form" model="ir.ui.view">
+        <field name="name">hospital.patient.history.form</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <form string="Patient Clinical History" create="0" edit="0">
+                <sheet>
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        <h1><field name="name" readonly="1"/></h1>
+                        <h3>ID: <field name="patient_id" readonly="1"/></h3>
+                    </div>
+                    
+                    <notebook>
+                        <page string="Past Visits" name="visits">
+                            <field name="appointment_ids" readonly="1">
+                                <list>
+                                    <field name="appointment_date" string="Date"/>
+                                    <field name="doctor_id" string="Doctor"/>
+                                    <field name="department_id" string="Department"/>
+                                    <field name="visit_type" string="Visit Type"/>
+                                    <field name="reason" string="Reason / Notes"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Medicines History" name="medicines">
+                            <field name="all_prescription_line_ids" readonly="1">
+                                <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                    <field name="date_prescribed" string="Date"/>
+                                    <field name="medicine_id" string="Medicine"/>
+                                    <field name="qty" string="Qty"/>
+                                    <field name="timing" string="Timing"/>
+                                    <field name="state" string="Status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lab Tests History" name="lab_tests">
+                            <field name="all_lab_line_ids" readonly="1">
+                                <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                    <field name="appointment_date" string="Date"/>
+                                    <field name="lab_test_id" string="Lab Test"/>
+                                    <field name="state" string="Status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>
