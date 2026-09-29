@@ -212,6 +212,14 @@
         groups="hospital_management.group_hospital_pharmacist"
     />
 
+    <menuitem 
+        id="menu_hospital_pharmacy_category" 
+        name="Category" 
+        parent="menu_hospital_management" 
+        action="action_hospital_pharmacy_category" 
+        sequence="25"
+        groups="hospital_management.group_hospital_pharmacist"/>
+        
     <menuitem
         id="menu_hospital_pharmacy_stock"
         name="Stock"

@@ -40,7 +40,8 @@
                     <div class="px-3 py-2">
                         <group>
                             <group>
-                                <field name="category_type" required="1" class="fw-bold"/>
+                                <field name="category_type" invisible="context.get('pharmacy_view')" required="not context.get('pharmacy_view')" class="fw-bold"/>
+                                <field name="pharmacy_category_type" invisible="not context.get('pharmacy_view')" required="context.get('pharmacy_view')" class="fw-bold"/>
                                 <field name="name" required="1" placeholder="e.g. Tablets" class="fw-bold"/>
                             </group>
                             <group>
@@ -83,4 +84,12 @@
         <field name="context">{}</field>
     </record>
 
+
+    <record id="action_hospital_pharmacy_category" model="ir.actions.act_window">
+        <field name="name">Pharmacy Categories</field>
+        <field name="res_model">hospital.category.master</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('category_type', 'in', ['pharmacy_category', 'pharmacy_item_category'])]</field>
+        <field name="context">{'default_category_type': 'pharmacy_category', 'pharmacy_view': True}</field>
+    </record>
 </odoo>
