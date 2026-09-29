@@ -75,22 +75,5 @@
             <field name="category_type">lab_category</field>
         </record>
 
-        <!-- Lab Sub Categories -->
-        <record id="cat_lab_sub_blood" model="hospital.category.master">
-            <field name="name">Blood Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="cat_lab_sub_urine" model="hospital.category.master">
-            <field name="name">Urine Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="cat_lab_sub_serum" model="hospital.category.master">
-            <field name="name">Serum Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="cat_lab_sub_other" model="hospital.category.master">
-            <field name="name">Other Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-    </data>
+            </data>
 </odoo>
