@@ -1,130 +1,688 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-
-    <record id="lab_test_cbc" model="hospital.lab.test">
-
-        <field name="name">
-            Complete Blood Count
-        </field>
-
-        <field name="code">CBC001</field>
-
-        <field name="category">hematology</field>
-
-        <field name="sample_type">blood</field>
-
-        <field name="price">450</field>
-
-        <field name="turnaround_time">
-            4 Hours
-        </field>
-
+  <data noupdate="1">
+    <record id="lab_cat_alfa_fetoprotein_others" model="hospital.category.master">
+      <field name="name">ALFA FETOPROTEIN &amp; OTHERS</field>
+      <field name="category_type">lab_category</field>
     </record>
-
-
-    <record id="lab_test_blood_sugar" model="hospital.lab.test">
-
-        <field name="name">
-            Blood Sugar
-        </field>
-
-        <field name="code">BS001</field>
-
-        <field name="category">biochemistry</field>
-
-        <field name="sample_type">blood</field>
-
-        <field name="price">150</field>
-
-        <field name="turnaround_time">
-            2 Hours
-        </field>
-
+    <record id="lab_cat_biochemistry" model="hospital.category.master">
+      <field name="name">BIOCHEMISTRY</field>
+      <field name="category_type">lab_category</field>
     </record>
-
-
-    <record id="lab_test_lipid_profile" model="hospital.lab.test">
-
-        <field name="name">
-            Lipid Profile
-        </field>
-
-        <field name="code">LP001</field>
-
-        <field name="category">biochemistry</field>
-
-        <field name="sample_type">blood</field>
-
-        <field name="price">700</field>
-
-        <field name="turnaround_time">
-            6 Hours
-        </field>
-
+    <record id="lab_cat_clinical_pathology" model="hospital.category.master">
+      <field name="name">CLINICAL PATHOLOGY</field>
+      <field name="category_type">lab_category</field>
     </record>
-
-
-    <record id="lab_test_lft" model="hospital.lab.test">
-
-        <field name="name">
-            Liver Function Test
-        </field>
-
-        <field name="code">LFT001</field>
-
-        <field name="category">biochemistry</field>
-
-        <field name="sample_type">blood</field>
-
-        <field name="price">900</field>
-
-        <field name="turnaround_time">
-            8 Hours
-        </field>
-
+    <record id="lab_cat_ecg" model="hospital.category.master">
+      <field name="name">ECG</field>
+      <field name="category_type">lab_category</field>
     </record>
-
-
-    <record id="lab_test_kft" model="hospital.lab.test">
-
-        <field name="name">
-            Kidney Function Test
-        </field>
-
-        <field name="code">KFT001</field>
-
-        <field name="category">biochemistry</field>
-
-        <field name="sample_type">blood</field>
-
-        <field name="price">850</field>
-
-        <field name="turnaround_time">
-            8 Hours
-        </field>
-
+    <record id="lab_cat_haematology" model="hospital.category.master">
+      <field name="name">HAEMATOLOGY</field>
+      <field name="category_type">lab_category</field>
     </record>
-
-
-    <record id="lab_test_urine" model="hospital.lab.test">
-
-        <field name="name">
-            Urine Routine Examination
-        </field>
-
-        <field name="code">UR001</field>
-
-        <field name="category">pathology</field>
-
-        <field name="sample_type">urine</field>
-
-        <field name="price">200</field>
-
-        <field name="turnaround_time">
-            3 Hours
-        </field>
-
+    <record id="lab_cat_hormonal_assay" model="hospital.category.master">
+      <field name="name">HORMONAL ASSAY</field>
+      <field name="category_type">lab_category</field>
     </record>
-
+    <record id="lab_cat_packages" model="hospital.category.master">
+      <field name="name">PACKAGES</field>
+      <field name="category_type">lab_category</field>
+    </record>
+    <record id="lab_cat_serology" model="hospital.category.master">
+      <field name="name">SEROLOGY</field>
+      <field name="category_type">lab_category</field>
+    </record>
+    <record id="lab_test_244_albumin_sugar_deposits" model="hospital.lab.test">
+      <field name="name">(Albumin, Sugar, Deposits)</field>
+      <field name="code">ALBSUGDEP</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_172_8_am_cortisol" model="hospital.lab.test">
+      <field name="name">8 AM Cortisol</field>
+      <field name="code">8_AM_CORTISOL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_119_a_eosinophil_count" model="hospital.lab.test">
+      <field name="name">A.Eosinophil Count</field>
+      <field name="code">A.EOSINOPHIL_COUNT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_191_acetone" model="hospital.lab.test">
+      <field name="name">Acetone</field>
+      <field name="code">ACETONE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_177_alfa_fetoprotein" model="hospital.lab.test">
+      <field name="name">Alfa Fetoprotein</field>
+      <field name="code">ALFA_FETOPROTEIN</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_141_alkaline_phosphatase" model="hospital.lab.test">
+      <field name="name">Alkaline Phosphatase</field>
+      <field name="code">ALKALINE_PHOSPHATASE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_144_amylase" model="hospital.lab.test">
+      <field name="name">Amylase</field>
+      <field name="code">AMYLASE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_159_ana" model="hospital.lab.test">
+      <field name="name">ANA</field>
+      <field name="code">ANA</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_153_anti_ccp" model="hospital.lab.test">
+      <field name="name">Anti CCP</field>
+      <field name="code">ANTI_CCP</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_150_anti_hav_igm" model="hospital.lab.test">
+      <field name="name">Anti HAV - IgM</field>
+      <field name="code">ANTI_HAV_-_IGM</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_149_anti_hcv" model="hospital.lab.test">
+      <field name="name">Anti HCV</field>
+      <field name="code">ANTI_HCV</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_125_aptt" model="hospital.lab.test">
+      <field name="name">APTT</field>
+      <field name="code">APTT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_151_aso_titre" model="hospital.lab.test">
+      <field name="name">ASO Titre</field>
+      <field name="code">ASO_TITRE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_123_b_t_c_t" model="hospital.lab.test">
+      <field name="name">B.T., C.T.</field>
+      <field name="code">B.T.,_C.T.</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_190_bile_salts_bile_pigments" model="hospital.lab.test">
+      <field name="name">Bile Salts, Bile Pigments</field>
+      <field name="code">BILE_SALTS,_BILE_PIG</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_139_bilirubin_total_d_id" model="hospital.lab.test">
+      <field name="name">Bilirubin-Total/D&amp;ID</field>
+      <field name="code">BILIRUBIN-TOTAL/D&amp;ID</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_202_blood" model="hospital.lab.test">
+      <field name="name">Blood</field>
+      <field name="code">BLOOD</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_126_blood_grouping_rh" model="hospital.lab.test">
+      <field name="name">Blood Grouping &amp; Rh</field>
+      <field name="code">BLOOD_GROUPING_&amp;_RH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_127_blood_sugar" model="hospital.lab.test">
+      <field name="name">Blood Sugar</field>
+      <field name="code">BLOOD_SUGAR_FASTING</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_136_blood_urea" model="hospital.lab.test">
+      <field name="name">Blood Urea</field>
+      <field name="code">BLOOD_UREA</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_175_c_peptide" model="hospital.lab.test">
+      <field name="name">C-Peptide</field>
+      <field name="code">C-PEPTIDE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_135_calcium" model="hospital.lab.test">
+      <field name="name">Calcium</field>
+      <field name="code">CALCIUM</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_143_calcium_ionized" model="hospital.lab.test">
+      <field name="name">Calcium Ionized</field>
+      <field name="code">CALCIUM_IONIZED</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_133_cholesterol" model="hospital.lab.test">
+      <field name="name">Cholesterol</field>
+      <field name="code">CHOLESTEROL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_183_ck_mb" model="hospital.lab.test">
+      <field name="name">CK-MB</field>
+      <field name="code">CK-MB</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_113_complete_haemogram" model="hospital.lab.test">
+      <field name="name">Complete Haemogram</field>
+      <field name="code">COMPLETE_HAEMOGRAM</field>
+      <field name="price">1500.0</field>
+      <field name="is_profile">True</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_184_cpk" model="hospital.lab.test">
+      <field name="name">CPK</field>
+      <field name="code">CPK</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_154_crp" model="hospital.lab.test">
+      <field name="name">CRP</field>
+      <field name="code">CRP</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_200_culture_sensitivity_of_urine" model="hospital.lab.test">
+      <field name="name">Culture / Sensitivity of Urine</field>
+      <field name="code">CULTURE_/_SENSITIVIT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_160_dengue_ns1_igm_igg" model="hospital.lab.test">
+      <field name="name">Dengue - Ns1 / IgM / IgG</field>
+      <field name="code">DENGUE_-_NS1_/_IGM_/</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_203_ecg" model="hospital.lab.test">
+      <field name="name">ECG</field>
+      <field name="code">ECG</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_ecg"/>
+    </record>
+    <record id="lab_test_164_electrolytes_na_k_cl" model="hospital.lab.test">
+      <field name="name">Electrolytes (Na, K, Cl)</field>
+      <field name="code">ELECTROLYTES_(NA,_K,</field>
+      <field name="price">1500.0</field>
+      <field name="is_profile">True</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_116_esr" model="hospital.lab.test">
+      <field name="name">ESR</field>
+      <field name="code">ESR</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_173_estradiol" model="hospital.lab.test">
+      <field name="name">Estradiol</field>
+      <field name="code">ESTRADIOL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_243_fasting" model="hospital.lab.test">
+      <field name="name">Fasting</field>
+      <field name="code">FASTING</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_122_ferritin" model="hospital.lab.test">
+      <field name="name">Ferritin</field>
+      <field name="code">FERRITIN</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_171_free_testosterone" model="hospital.lab.test">
+      <field name="name">Free Testosterone</field>
+      <field name="code">FREE_TESTOSTERONE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_167_fsh" model="hospital.lab.test">
+      <field name="name">FSH</field>
+      <field name="code">FSH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_163_ft3_ft4_tsh" model="hospital.lab.test">
+      <field name="name">FT3 FT4 TSH</field>
+      <field name="code">FT3_FT4_TSH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_130_glucose_challenge_test" model="hospital.lab.test">
+      <field name="name">Glucose Challenge Test</field>
+      <field name="code">GLUCOSE_CHALLENGE_TE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_118_haematocrit_p_c_v" model="hospital.lab.test">
+      <field name="name">Haematocrit (P C V)</field>
+      <field name="code">HAEMATOCRIT_(P_C_V)</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_114_hb_rbc_count" model="hospital.lab.test">
+      <field name="name">Hb / RBC Count</field>
+      <field name="code">HB_/_RBC_COUNT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_131_hba1c" model="hospital.lab.test">
+      <field name="name">HbA1c</field>
+      <field name="code">HBA1C</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_148_hbs_ag" model="hospital.lab.test">
+      <field name="name">Hbs Ag</field>
+      <field name="code">HBS_AG</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_178_hcg_beta" model="hospital.lab.test">
+      <field name="name">HCG - Beta</field>
+      <field name="code">HCG_-_BETA</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_147_hiv_i_ii" model="hospital.lab.test">
+      <field name="name">HIV I &amp; II</field>
+      <field name="code">HIV_I_&amp;_II</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_179_homocystine" model="hospital.lab.test">
+      <field name="name">Homocystine</field>
+      <field name="code">HOMOCYSTINE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_176_insulin_f_pp" model="hospital.lab.test">
+      <field name="name">Insulin (F) / (PP)</field>
+      <field name="code">INSULIN_(F)_/_(PP)</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_196_lactose" model="hospital.lab.test">
+      <field name="name">Lactose</field>
+      <field name="code">LACTOSE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_168_lh" model="hospital.lab.test">
+      <field name="name">LH</field>
+      <field name="code">LH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_132_lipid_profile" model="hospital.lab.test">
+      <field name="name">Lipid Profile</field>
+      <field name="code">LIPID_PROFILE</field>
+      <field name="price">1500.0</field>
+      <field name="is_profile">True</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_185_liver_function_test" model="hospital.lab.test">
+      <field name="name">LIVER FUNCTION TEST</field>
+      <field name="code">LIVER_FUNCTION_TEST</field>
+      <field name="price">1500.0</field>
+      <field name="is_profile">True</field>
+      <field name="lab_category_id" ref="lab_cat_packages"/>
+    </record>
+    <record id="lab_test_187_master_health_check_up_i" model="hospital.lab.test">
+      <field name="name">MASTER HEALTH CHECK UP - I</field>
+      <field name="code">MASTER_HEALTH_CHECK_</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_packages"/>
+    </record>
+    <record id="lab_test_188_master_health_check_up_ii" model="hospital.lab.test">
+      <field name="name">MASTER HEALTH CHECK UP - II</field>
+      <field name="code">MASTER_HEALTH_CHECK_</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_packages"/>
+    </record>
+    <record id="lab_test_194_motion_ova_cyst" model="hospital.lab.test">
+      <field name="name">Motion : Ova, Cyst</field>
+      <field name="code">MOTION_:_OVA,_CYST</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_195_occult_blood" model="hospital.lab.test">
+      <field name="name">Occult Blood</field>
+      <field name="code">OCCULT_BLOOD</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_121_peripheral_smear" model="hospital.lab.test">
+      <field name="name">Peripheral Smear</field>
+      <field name="code">PERIPHERAL_SMEAR</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_117_platelets_count" model="hospital.lab.test">
+      <field name="name">Platelets Count</field>
+      <field name="code">PLATELETS_COUNT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_129_postprandial" model="hospital.lab.test">
+      <field name="name">Postprandial</field>
+      <field name="code">POSTPRANDIAL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_193_pregnancy_test" model="hospital.lab.test">
+      <field name="name">Pregnancy Test</field>
+      <field name="code">PREGNANCY_TEST</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_174_progestrone" model="hospital.lab.test">
+      <field name="name">Progestrone</field>
+      <field name="code">PROGESTRONE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_169_prolactin" model="hospital.lab.test">
+      <field name="name">Prolactin</field>
+      <field name="code">PROLACTIN</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_124_prothrombin_time" model="hospital.lab.test">
+      <field name="name">Prothrombin Time</field>
+      <field name="code">PROTHROMBIN_TIME</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_157_psa" model="hospital.lab.test">
+      <field name="name">PSA</field>
+      <field name="code">PSA</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_201_pus" model="hospital.lab.test">
+      <field name="name">Pus</field>
+      <field name="code">PUS</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_128_random" model="hospital.lab.test">
+      <field name="name">Random</field>
+      <field name="code">RANDOM</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_120_rapid_method_for_mp" model="hospital.lab.test">
+      <field name="name">Rapid method for MP</field>
+      <field name="code">RAPID_METHOD_FOR_MP</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_197_reducing_substance" model="hospital.lab.test">
+      <field name="name">Reducing Substance</field>
+      <field name="code">REDUCING_SUBSTANCE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_186_renal_function_test" model="hospital.lab.test">
+      <field name="name">RENAL FUNCTION TEST</field>
+      <field name="code">RENAL_FUNCTION_TEST</field>
+      <field name="price">1500.0</field>
+      <field name="is_profile">True</field>
+      <field name="lab_category_id" ref="lab_cat_packages"/>
+    </record>
+    <record id="lab_test_152_rheumatoid_factor" model="hospital.lab.test">
+      <field name="name">Rheumatoid Factor</field>
+      <field name="code">RHEUMATOID_FACTOR</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_137_serum_creatinine" model="hospital.lab.test">
+      <field name="name">Serum Creatinine</field>
+      <field name="code">SERUM_CREATININE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_181_serum_iron" model="hospital.lab.test">
+      <field name="name">Serum Iron</field>
+      <field name="code">SERUM_IRON</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_138_serum_uric_acid" model="hospital.lab.test">
+      <field name="name">Serum Uric Acid</field>
+      <field name="code">SERUM_URIC_ACID</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_140_sgot_sgpt" model="hospital.lab.test">
+      <field name="name">SGOT / SGPT</field>
+      <field name="code">SGOT_/_SGPT</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_199_skin_scraping_for_fungus" model="hospital.lab.test">
+      <field name="name">Skin Scraping for Fungus</field>
+      <field name="code">SKIN_SCRAPING_FOR_FU</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_162_t3_t4_tsh" model="hospital.lab.test">
+      <field name="name">T3 T4 TSH</field>
+      <field name="code">T3_T4_TSH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_115_tc_dc" model="hospital.lab.test">
+      <field name="name">TC, DC</field>
+      <field name="code">TC,_DC</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_haematology"/>
+    </record>
+    <record id="lab_test_170_testosterone" model="hospital.lab.test">
+      <field name="name">Testosterone</field>
+      <field name="code">TESTOSTERONE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_182_thyroid_antibodies" model="hospital.lab.test">
+      <field name="name">Thyroid Antibodies</field>
+      <field name="code">THYROID_ANTIBODIES</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_180_torch_panel_igm_igg" model="hospital.lab.test">
+      <field name="name">Torch Panel (IgM &amp; IgG)</field>
+      <field name="code">TORCH_PANEL_(IGM_&amp;_I</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_alfa_fetoprotein_others"/>
+    </record>
+    <record id="lab_test_158_total_ige" model="hospital.lab.test">
+      <field name="name">Total IgE</field>
+      <field name="code">TOTAL_IGE</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_165_total_immunoglobulin" model="hospital.lab.test">
+      <field name="name">Total Immunoglobulin</field>
+      <field name="code">TOTAL_IMMUNOGLOBULIN</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_142_total_protein_a_g_ratio" model="hospital.lab.test">
+      <field name="name">Total Protein, A/G Ratio</field>
+      <field name="code">TOTAL_PROTEIN,_A/G_R</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_134_triglycerides" model="hospital.lab.test">
+      <field name="name">Triglycerides</field>
+      <field name="code">TRIGLYCERIDES</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_biochemistry"/>
+    </record>
+    <record id="lab_test_161_tsh" model="hospital.lab.test">
+      <field name="name">TSH</field>
+      <field name="code">TSH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_166_tsh" model="hospital.lab.test">
+      <field name="name">TSH</field>
+      <field name="code">TSH</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_hormonal_assay"/>
+    </record>
+    <record id="lab_test_189_urine_complete_analysis" model="hospital.lab.test">
+      <field name="name">Urine Complete Analysis</field>
+      <field name="code">URINE_COMPLETE_ANALY</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_192_urine_for_microalbumin" model="hospital.lab.test">
+      <field name="name">Urine for Microalbumin</field>
+      <field name="code">URINE_FOR_MICROALBUM</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_198_vaginal_smear" model="hospital.lab.test">
+      <field name="name">Vaginal Smear</field>
+      <field name="code">VAGINAL_SMEAR</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_clinical_pathology"/>
+    </record>
+    <record id="lab_test_146_vdrl" model="hospital.lab.test">
+      <field name="name">VDRL</field>
+      <field name="code">VDRL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_156_vit_b12" model="hospital.lab.test">
+      <field name="name">Vit B12</field>
+      <field name="code">VIT_B12</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_155_vit_d_25_oh" model="hospital.lab.test">
+      <field name="name">Vit D (25-OH)</field>
+      <field name="code">VIT_D_(25-OH)</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+    <record id="lab_test_145_widal" model="hospital.lab.test">
+      <field name="name">Widal</field>
+      <field name="code">WIDAL</field>
+      <field name="price">500.0</field>
+      <field name="is_profile">False</field>
+      <field name="lab_category_id" ref="lab_cat_serology"/>
+    </record>
+  </data>
 </odoo>

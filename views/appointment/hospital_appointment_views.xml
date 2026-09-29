@@ -816,7 +816,7 @@
                             type="object"
                             class="btn-primary"
                             icon="fa-flask"
-                            invisible="context.get('view_only') or state != 'booked' or not token_generated"
+                            invisible="context.get('view_only') or state not in ('booked', 'completed') or not token_generated"
                         />
 
                         <!-- PRINT TOKEN -->

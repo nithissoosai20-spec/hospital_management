@@ -117,3 +117,6 @@ access_ir_actions_report_doctor,access.ir.actions.report.doctor,base.model_ir_ac
 access_hospital_pharmacy_bill_doctor,hospital.pharmacy.bill.doctor,model_hospital_pharmacy_bill,hospital_management.group_hospital_doctor,1,1,1,0
 access_hospital_pharmacy_bill_line_doctor,hospital.pharmacy.bill.line.doctor,model_hospital_pharmacy_bill_line,hospital_management.group_hospital_doctor,1,1,1,0
 access_hospital_category_master,access.hospital.category.master,model_hospital_category_master,base.group_user,1,1,1,1
+access_hospital_lab_subtest,hospital.lab.subtest,model_hospital_lab_subtest,base.group_user,1,1,1,1
+access_hospital_lab_subtest_wizard,hospital.lab.subtest.wizard,model_hospital_lab_subtest_wizard,base.group_user,1,1,1,1
+access_hospital_lab_subtest_wizard_line,hospital.lab.subtest.wizard.line,model_hospital_lab_subtest_wizard_line,base.group_user,1,1,1,1

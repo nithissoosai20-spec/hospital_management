@@ -1,50 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Lab Categories -->
-        <record id="lab_cat_hematology" model="hospital.category.master">
-            <field name="name">Hematology</field>
-            <field name="category_type">lab_category</field>
-        </record>
-        <record id="lab_cat_biochemistry" model="hospital.category.master">
-            <field name="name">Biochemistry</field>
-            <field name="category_type">lab_category</field>
-        </record>
-        <record id="lab_cat_microbiology" model="hospital.category.master">
-            <field name="name">Microbiology</field>
-            <field name="category_type">lab_category</field>
-        </record>
-        <record id="lab_cat_pathology" model="hospital.category.master">
-            <field name="name">Pathology</field>
-            <field name="category_type">lab_category</field>
-        </record>
-        <record id="lab_cat_cardiology" model="hospital.category.master">
-            <field name="name">Cardiology</field>
-            <field name="category_type">lab_category</field>
-        </record>
-        <record id="lab_cat_other" model="hospital.category.master">
-            <field name="name">Other Testing</field>
-            <field name="category_type">lab_category</field>
-        </record>
-
-        <!-- Lab Sub Categories -->
-        <record id="lab_sub_blood" model="hospital.category.master">
-            <field name="name">Blood Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="lab_sub_urine" model="hospital.category.master">
-            <field name="name">Urine Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="lab_sub_serum" model="hospital.category.master">
-            <field name="name">Serum Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-        <record id="lab_sub_other" model="hospital.category.master">
-            <field name="name">Other Testing</field>
-            <field name="category_type">lab_sub_category</field>
-        </record>
-
         <!-- Pharmacy Categories -->
         <record id="pharmacy_cat_tablet" model="hospital.category.master">
             <field name="name">Tablets</field>

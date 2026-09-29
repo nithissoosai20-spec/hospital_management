@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_hospital_lab_subtest_list" model="ir.ui.view">
+        <field name="name">hospital.lab.subtest.list</field>
+        <field name="model">hospital.lab.subtest</field>
+        <field name="arch" type="xml">
+            <list string="Lab Sub-Tests" class="lab_subtest_list">
+                <field name="name"/>
+                <field name="lab_test_id"/>
+                <field name="category_id"/>
+                            <field name="package_id" placeholder="None" options="{'no_create': True, 'no_open': True}"/>
+                <field name="unit"/>
+                <field name="normal_range_display"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_hospital_lab_subtest_form" model="ir.ui.view">
+        <field name="name">hospital.lab.subtest.form</field>
+        <field name="model">hospital.lab.subtest</field>
+        <field name="arch" type="xml">
+            <form string="Lab Sub-Test">
+                <sheet>
+                    <div style="padding-left: 30px !important; padding-right: 30px !important;">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="lab_test_id"/>
+                            <field name="category_id"/>
+                            <field name="package_id" placeholder="None" options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="unit"/>
+                            <separator string="Normal Range"/>
+                                                        <field name="normal_range_min"/>
+                            <field name="normal_range_max"/>
+                        </group>
+                    </group>
+                    <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                        <button name="action_save_close" string="Save" type="object" class="btn btn-primary" style="margin-right: 10px;"/>
+                        <button name="action_cancel" string="Cancel" type="object" class="btn btn-secondary" style="margin-right: 10px;"/>
+                        <button name="action_close" string="Close" type="object" class="btn btn-secondary"/>
+                    </div>
+                </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_hospital_lab_subtests" model="ir.actions.act_window">
+        <field name="name">Lab Sub-Tests</field>
+        <field name="res_model">hospital.lab.subtest</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

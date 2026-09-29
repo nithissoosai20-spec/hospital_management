@@ -11,6 +11,24 @@ class HospitalPatient(models.Model):
         required=True
     )
 
+
+    last_appointment_time = fields.Datetime(
+        string='Last Appointment Time',
+        compute='_compute_last_appointment_time',
+        store=True
+    )
+
+    @api.depends('appointment_ids', 'appointment_ids.create_date')
+    def _compute_last_appointment_time(self):
+        for rec in self:
+            if rec.appointment_ids:
+                # get the max create_date from appointments
+                dates = rec.appointment_ids.mapped('create_date')
+                dates = [d for d in dates if d]
+                rec.last_appointment_time = max(dates) if dates else False
+            else:
+                rec.last_appointment_time = False
+
     patient_id = fields.Char(
         string='Patient ID',
         required=True,
@@ -100,7 +118,7 @@ class HospitalPatient(models.Model):
             lines = rec.lab_appointment_ids.filtered(
                 lambda l: l.appointment_date == today
             ).mapped('line_ids')
-            rec.current_lab_line_ids = lines
+            rec.current_lab_line_ids = lines.filtered(lambda l: not l.is_parameter)
 
     appointment_ids = fields.One2many(
         'hospital.appointment',

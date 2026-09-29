@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
-    <!-- LAB TEST MASTER -->
+    
 
-    <record id="view_hospital_lab_test_list"
-            model="ir.ui.view">
+    <record id="view_hospital_lab_test_list" model="ir.ui.view">
 
         <field name="name">hospital.lab.test.list</field>
         <field name="model">hospital.lab.test</field>
@@ -14,13 +12,12 @@
 
             <list limit="14">
 
-                <field name="code"/>
-                <field name="name"/>
-                <field name="lab_category_id"/>
-                <field name="lab_sub_category_id"/>
-                <field name="price"/>
-                <field name="turnaround_time"/>
-                <field name="active"/>
+                <field name="code" />
+                <field name="name" />
+                <field name="lab_category_id" />
+                                <field name="price" />
+                <field name="turnaround_time" />
+                <field name="active" />
 
             </list>
 
@@ -28,26 +25,24 @@
 
     </record>
 
-    <!-- LAB TEST SEARCH VIEW -->
+    
     <record id="view_hospital_lab_test_search" model="ir.ui.view">
         <field name="name">hospital.lab.test.search</field>
         <field name="model">hospital.lab.test</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="code"/>
-                <filter string="Is Profile" name="filter_is_profile" domain="[('is_profile', '=', True)]"/>
+                <field name="name" />
+                <field name="code" />
+                <filter string="Is Profile" name="filter_is_profile" domain="[('is_profile', '=', True)]" />
                 <group>
-                    <filter string="Category" name="group_by_category" context="{'group_by':'lab_category_id'}"/>
-                    <filter string="Sub Category" name="group_by_sample_type" context="{'group_by':'lab_sub_category_id'}"/>
-                </group>
+                    <filter string="Category" name="group_by_category" context="{'group_by':'lab_category_id'}" />
+                                    </group>
             </search>
         </field>
     </record>
 
 
-    <record id="view_hospital_lab_test_form"
-            model="ir.ui.view">
+    <record id="view_hospital_lab_test_form" model="ir.ui.view">
 
         <field name="name">hospital.lab.test.form</field>
         <field name="model">hospital.lab.test</field>
@@ -56,16 +51,16 @@
 
             <form js_class="lab_form_view" class="position-relative">
                 <sheet>
-                    <field name="is_profile" invisible="1"/>
-                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <field name="is_profile" invisible="1" />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     
                     <div style="padding: 20px;">
                         <div class="row mb-4">
                             <div class="col-12">
                                 <div class="oe_title">
-                                    <label for="name" string="Test Name" class="oe_edit_only" style="font-weight: 600; color: #1e3a8a;"/>
+                                    <label for="name" string="Test Name" class="oe_edit_only" style="font-weight: 600; color: #1e3a8a;" />
                                     <h1>
-                                        <field name="name" placeholder="e.g. Blood Sugar" style="width: 100%; max-width: 600px;"/>
+                                        <field name="name" placeholder="e.g. Blood Sugar" style="width: 100%; max-width: 600px;" />
                                     </h1>
                                 </div>
                             </div>
@@ -73,27 +68,26 @@
 
                         <group>
                             <group name="test_info" string="Test Information">
-                                <field name="code"/>
-                                <field name="lab_category_id"/>
-                                <field name="lab_sub_category_id"/>
-                            </group>
+                                <field name="code" />
+                                <field name="lab_category_id" />
+                                                            </group>
                             <group name="pricing_details" string="Pricing &amp; Details">
-                                <field name="price" string="Price (Rs.)"/>
-                                <field name="turnaround_time"/>
-                                <field name="active" widget="boolean_toggle"/>
+                                <field name="price" string="Price (Rs.)" />
+                                <field name="turnaround_time" />
+                                <field name="active" widget="boolean_toggle" />
                             </group>
                         </group>
                         <group invisible="is_profile">
                             <group name="normal_range" string="Normal Range">
-                                <label for="normal_range_min" string="Range"/>
+                                <label for="normal_range_min" string="Range" />
                                 <div class="o_row">
-                                    <field name="normal_range_min" class="oe_inline"/> <span class="mx-2 text-muted">-</span>
-                                    <field name="normal_range_max" class="oe_inline"/>
+                                    <field name="normal_range_min" class="oe_inline" /> <span class="mx-2 text-muted">-</span>
+                                    <field name="normal_range_max" class="oe_inline" />
                                 </div>
-                                <field name="unit"/>
+                                <field name="unit" />
                             </group>
                             <group>
-                                <!-- Empty group to keep the form 2-column balanced -->
+                                
                             </group>
                         </group>
 
@@ -101,21 +95,20 @@
                             <page string="Parameters" name="parameters">
                                 <field name="parameter_ids" widget="many2many">
                                     <list>
-                                        <field name="name"/>
-                                        <field name="lab_category_id"/>
-                                        <field name="lab_sub_category_id"/>
-                                    </list>
+                                        <field name="name" />
+                                        <field name="lab_category_id" />
+                                                                            </list>
                                 </field>
                             </page>
                         </notebook>
                     </div>
                 </sheet>
 
-                <!-- Floating Buttons always at the bottom right corner -->
+                
                 <div style="position: fixed; bottom: 80px; right: 30px; z-index: 9999; display: flex; gap: 10px; background: white; padding: 12px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e2e8f0;">
-                    <button name="action_save" string="Save" type="object" class="btn btn-primary hospital-save-btn" style="min-width: 100px; font-weight: bold;"/>
-                    <button name="action_clear" string="Clear" type="object" class="btn btn-light border" style="min-width: 100px; font-weight: bold; color: #334155;"/>
-                    <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 100px; font-weight: bold;"/>
+                    <button name="action_save" string="Save" type="object" class="btn btn-primary hospital-save-btn" style="min-width: 100px; font-weight: bold;" />
+                    <button name="action_clear" string="Clear" type="object" class="btn btn-light border" style="min-width: 100px; font-weight: bold; color: #334155;" />
+                    <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 100px; font-weight: bold;" />
                 </div>
             </form>
 
@@ -124,10 +117,9 @@
     </record>
 
 
-    <!-- LAB APPOINTMENT LIST -->
+    
 
-    <record id="view_hospital_lab_appointment_list"
-            model="ir.ui.view">
+    <record id="view_hospital_lab_appointment_list" model="ir.ui.view">
 
         <field name="name">hospital.lab.appointment.list</field>
 
@@ -137,26 +129,20 @@
 
             <list limit="14" class="custom_lab_list" create="0">
 
-                <field name="name"/>
-                <field name="patient_id"/>
-                <field name="test_names"/>
-                <field name="appointment_date"/>
-                <field name="appointment_time"
-                       widget="html_time"/>
+                <field name="name" />
+                <field name="patient_id" />
+                <field name="test_names" />
+                <field name="appointment_date" />
+                <field name="appointment_time" widget="html_time" />
 
-                <field name="doctor_id"/>
-                <field name="priority"
-                       widget="badge"/>
+                <field name="doctor_id" />
+                <field name="priority" widget="badge" />
 
-                <field name="amount"/><field name="round_off"/><field name="net_amount"/>
+                <field name="amount" /><field name="round_off" /><field name="net_amount" />
 
-                <field name="payment_status"
-                       widget="badge"/>
+                <field name="payment_status" widget="badge" />
 
-                <field
-                    name="receipt_ready"
-                    invisible="1"
-                />
+                <field name="receipt_ready" invisible="1" />
 
 
                 
@@ -169,9 +155,8 @@
 
 
     
-    <!-- LAB MANAGER FORM -->
-<record id="view_hospital_lab_appointment_tech_form"
-            model="ir.ui.view">
+    
+<record id="view_hospital_lab_appointment_tech_form" model="ir.ui.view">
 
         <field name="name">hospital.lab.appointment.tech.form</field>
         <field name="model">hospital.lab.appointment</field>
@@ -181,58 +166,40 @@
             <form js_class="lab_tech_form_view">
 
 
-                <!-- MAIN CONTENT -->
+                
 
                 <sheet>
-                    <field name="receipt_ready" invisible="1"/>
+                    <field name="receipt_ready" invisible="1" />
 
-                    <!-- PATIENT + APPOINTMENT INFORMATION -->
+                    
 
-                    <div
-                        style="
-                            border:1px solid #e5e5e5;
-                            border-radius:8px;
-                            padding:12px 16px;
-                            margin-bottom:10px;
-                            background:#ffffff;
-                        "
-                    >
+                    <div style="                             border:1px solid #e5e5e5;                             border-radius:8px;                             padding:12px 16px;                             margin-bottom:10px;                             background:#ffffff;                         ">
 
                         <group col="2">
 
-                            <!-- PATIENT INFORMATION -->
+                            
 
                             <group string="PATIENT INFORMATION">
 
-                                <field name="patient_id" readonly="1" options="{'no_open': True}"/>
+                                <field name="patient_id" readonly="1" options="{'no_open': True}" />
 
-                                <field name="hospital_appointment_id" readonly="1" options="{'no_open': True}"/>
+                                <field name="hospital_appointment_id" readonly="1" options="{'no_open': True}" />
 
-                                <field name="doctor_id" string="Referring Doctor" readonly="1" options="{'no_open': True}"/>
+                                <field name="doctor_id" string="Referring Doctor" readonly="1" options="{'no_open': True}" />
 
                             </group>
 
 
-                            <!-- APPOINTMENT INFORMATION -->
+                            
 
                             <group string="APPOINTMENT INFORMATION">
 
-                                <field
-                                    name="appointment_date"
-                                    readonly="1"
-                                />
+                                <field name="appointment_date" readonly="1" />
 
-                                <field
-                                    name="appointment_time"
-                                    widget="html_time"
-                                    readonly="1"
-                                />
+                                <field name="appointment_time" widget="html_time" readonly="1" />
 
-                                <field
-                                    name="priority"
-                                    readonly="1"
-                                />
-                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1"/>
+                                <field name="priority" readonly="1" />
+                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1" />
 
                             </group>
 
@@ -241,63 +208,24 @@
                     </div>
 
 
-                    <!-- SELECTED LABORATORY TESTS -->
-                    <!-- FULL WIDTH -->
+                    
+                    
                     <notebook>
                         <page string="Selected Laboratory Tests">
-                            <button name="action_open_test_selector" string="📋 Select Lab Test" type="object" class="btn btn-primary" style="margin-bottom: 10px;"/>
-                            <field
-                                name="line_ids"
-                                nolabel="1"
-                                class="custom_lab_table_wrapper"
-                            >
-                                <list
-                                    editable="bottom"
-                                    create="0"
-                                    delete="1"
-                                    limit="100"
-                                    class="hospital_lab_test_list"
-                                >
-                                    <field name="test_code" string="Code" width="70" readonly="1"/>
-                                    
-                                    <field
-                                        name="lab_test_id"
-                                        string="Test Name"
-                                        options="{'no_open': True, 'no_create': True}"
-                                        required="1"
-                                        readonly="1"
-                                        width="300"
-                                    />
-                                    <field name="lab_category_id" string="Category" readonly="1" width="120"/>
-                                    <field name="lab_sub_category_id" string="Sub Category" readonly="1" width="120"/>
-
-                                    
-                                    
-                                    <field
-                                        name="unit"
-                                        string="Units"
-                                        width="80"
-                                        readonly="1"
-                                    />
-
-                                    <field name="normal_range_display" string="Normal Range" width="120" readonly="1"/>
-
-                                    <field
-                                        name="result_value"
-                                        string="Analysed Value"
-                                        width="120"
-                                        readonly="parent.payment_status != 'paid'"
-                                    />
-                                    
-                                    <field
-                                        name="result_indicator"
-                                        string="N/↑/↓"
-                                        readonly="1"
-                                        width="60"
-                                    />
-
-                                    <field name="normal_range_min" column_invisible="True"/>
-                                    <field name="normal_range_max" column_invisible="True"/>
+                            
+                                                        <field name="result_line_ids" nolabel="1" class="custom_lab_table_wrapper" >
+                                <list editable="bottom" create="0" delete="0" limit="100" class="hospital_lab_test_list">
+                                    <field name="sequence" column_invisible="True"/>
+                                    <field name="name" widget="section_and_note_text" string="Test Name" readonly="1" />
+                                    <field name="subtest_id" string="Test Details" readonly="1" width="300" />
+                                    <field name="unit" string="Units" width="80" readonly="1" />
+                                    <field name="normal_range_display" string="Normal Range" width="120" readonly="1" />
+                                    <field name="payment_status" column_invisible="True" />
+                                    <field name="result_value" string="Analysed Value" width="120" readonly="display_type == 'line_section' or payment_status != 'paid'" />
+                                    <field name="result_indicator" string="N/&#8593;/&#8595;" readonly="1" width="60" />
+                                    <field name="normal_range_min" column_invisible="True" />
+                                    <field name="normal_range_max" column_invisible="True" />
+                                    <field name="display_type" column_invisible="True" />
                                 </list>
                             </field>
                         </page>
@@ -308,37 +236,10 @@
                     
                 
                     <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
-                        <button
-                            name="action_tech_save_lab_appointment"
-                            type="object"
-                            string="Save"
-                            class="btn-primary hospital-save-btn"
-                            icon="fa-save"
-                            invisible="state == 'completed' or payment_status != 'paid'"
-                        />
-                        <button
-                            name="action_cancel"
-                            type="object"
-                            string="Cancel"
-                            class="btn-danger hospital-cancel-btn"
-                            icon="fa-times"
-                            invisible="state != 'draft'"
-                        />
-                        <button
-                            name="action_close_to_appointments"
-                            type="object"
-                            string="Close"
-                            class="btn-secondary"
-                            icon="fa-arrow-left"
-                        />
-                        <button
-                            name="%(action_report_hospital_lab_result)d"
-                            type="action"
-                            string="Print"
-                            class="btn-info"
-                            icon="fa-print"
-                            invisible="receipt_ready == False"
-                        />
+                        <button name="action_tech_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="state == 'completed' or payment_status != 'paid'" />
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="state != 'draft'" />
+                        <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
+                        <button name="%(action_report_hospital_lab_result)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="receipt_ready == False" />
                     </div>
                 </sheet>
 
@@ -347,10 +248,9 @@
         </field>
 
     </record>
-    <!-- LAB APPOINTMENT FORM -->
+    
 
-    <record id="view_hospital_lab_appointment_form"
-            model="ir.ui.view">
+    <record id="view_hospital_lab_appointment_form" model="ir.ui.view">
 
         <field name="name">hospital.lab.appointment.form</field>
         <field name="model">hospital.lab.appointment</field>
@@ -360,68 +260,40 @@
             <form js_class="lab_form_view">
 
 
-                <!-- MAIN CONTENT -->
+                
 
                 <sheet>
-                    <field name="receipt_ready" invisible="1"/>
+                    <field name="receipt_ready" invisible="1" />
 
-                    <!-- PATIENT + APPOINTMENT INFORMATION -->
+                    
 
-                    <div
-                        style="
-                            border:1px solid #e5e5e5;
-                            border-radius:8px;
-                            padding:12px 16px;
-                            margin-bottom:10px;
-                            background:#ffffff;
-                        "
-                    >
+                    <div style="                             border:1px solid #e5e5e5;                             border-radius:8px;                             padding:12px 16px;                             margin-bottom:10px;                             background:#ffffff;                         ">
 
                         <group col="2">
 
-                            <!-- PATIENT INFORMATION -->
+                            
 
                             <group string="PATIENT INFORMATION">
 
-                                <field
-                                    name="patient_id"
-                                    readonly="1"
-                                />
+                                <field name="patient_id" readonly="1" />
 
-                                <field
-                                    name="hospital_appointment_id"
-                                    readonly="1"
-                                />
+                                <field name="hospital_appointment_id" readonly="1" />
 
-                                <field
-                                    name="doctor_id"
-                                    string="Referring Doctor"
-                                    readonly="1"
-                                />
+                                <field name="doctor_id" string="Referring Doctor" readonly="1" />
 
                             </group>
 
 
-                            <!-- APPOINTMENT INFORMATION -->
+                            
 
                             <group string="APPOINTMENT INFORMATION">
 
-                                <field
-                                    name="appointment_date"
-                                    readonly="1"
-                                />
+                                <field name="appointment_date" readonly="1" />
 
-                                <field
-                                    name="appointment_time"
-                                    widget="html_time"
-                                    readonly="1"
-                                />
+                                <field name="appointment_time" widget="html_time" readonly="1" />
 
-                                <field
-                                    name="priority"
-                                    readonly="1"
-                                />
-                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1"/>
+                                <field name="priority" readonly="1" />
+                                <field name="payment_status" widget="badge" decoration-success="payment_status == 'paid'" decoration-danger="payment_status == 'pending'" readonly="1" />
 
                             </group>
 
@@ -430,54 +302,15 @@
                     </div>
 
 
-                    <!-- SELECTED LABORATORY TESTS -->
-                    <!-- FULL WIDTH -->
+                    
+                    
                     <notebook>
                         <page string="Selected Laboratory Tests">
-                            <button name="action_open_test_selector" string="📋 Select Lab Test" type="object" class="btn btn-primary" style="margin-bottom: 10px;"/>
-                            <field
-                                name="line_ids"
-                                nolabel="1"
-                                class="custom_lab_table_wrapper"
-                            >
-                                <list
-                                    editable="bottom"
-                                    create="0"
-                                    delete="1"
-                                    limit="100"
-                                    class="hospital_lab_test_list"
-                                >
-                                    <field name="test_code" string="Code" width="70" readonly="1"/>
-                                    
-                                    <field
-                                        name="lab_test_id"
-                                        string="Test Name"
-                                        options="{'no_open': True, 'no_create': True}"
-                                        required="1"
-                                        readonly="1"
-                                        width="300"
-                                    />
-                                    <field name="lab_category_id" string="Category" readonly="1" width="120"/>
-                                    <field name="lab_sub_category_id" string="Sub Category" readonly="1" width="120"/>
-
-                                    <field
-                                        name="price"
-                                        string="Price"
-                                        width="70"
-                                        readonly="1"
-                                    />
-                                    
-                                    
-
-                                    
-
-                                    
-                                    
-                                    
-
-                                    <field name="normal_range_min" column_invisible="True"/>
-                                    <field name="normal_range_max" column_invisible="True"/>
-                                </list>
+                            <button name="action_open_test_selector" string="📋 Select Lab Test" type="object" class="btn btn-primary" style="margin-bottom: 10px;" />
+                            <field name="billing_line_ids" nolabel="1" class="custom_lab_table_wrapper">
+                                <list editable="bottom" create="0" delete="1" limit="100" class="hospital_lab_test_list">
+                                    <control /><field name="display_type" column_invisible="True" /><field name="sequence" column_invisible="True"/>
+                                    <field name="name" widget="section_and_note_text" optional="show" readonly="1" /><field name="lab_test_id" options="{'no_open': True, 'no_create': True}" /><field name="price" /></list>
                             </field>
                         </page>
                     </notebook>
@@ -487,37 +320,10 @@
                     
                 
                     <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
-                        <button
-                            name="action_save_lab_appointment"
-                            type="object"
-                            string="Save"
-                            class="btn-primary hospital-save-btn"
-                            icon="fa-save"
-                            invisible="payment_status == 'paid'"
-                        />
-                        <button
-                            name="action_cancel"
-                            type="object"
-                            string="Cancel"
-                            class="btn-danger hospital-cancel-btn"
-                            icon="fa-times"
-                            invisible="payment_status == 'paid'"
-                        />
-                        <button
-                            name="action_close_to_appointments"
-                            type="object"
-                            string="Close"
-                            class="btn-secondary"
-                            icon="fa-arrow-left"
-                        />
-                        <button
-                            name="%(action_report_hospital_lab_receipt)d"
-                            type="action"
-                            string="Print"
-                            class="btn-info"
-                            icon="fa-print"
-                            invisible="payment_status == 'pending'"
-                        />
+                        <button name="action_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="payment_status == 'paid'" />
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="payment_status == 'paid'" />
+                        <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
+                        <button name="%(action_report_hospital_lab_receipt)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="payment_status == 'pending'" />
                     </div>
                 </sheet>
 
@@ -526,64 +332,57 @@
         </field>
 
     </record>    
-    <!-- LAB TECHNICIAN LIST VIEW -->
+    
     <record id="view_hospital_lab_appointment_tech_list" model="ir.ui.view">
         <field name="name">hospital.lab.appointment.tech.list</field>
         <field name="model">hospital.lab.appointment</field>
         <field name="arch" type="xml">
             <list limit="14" class="custom_lab_list" create="0">
-                <field name="patient_id"/>
-                <field name="name" string="Lab Ref"/>
-                <field name="hospital_appointment_id" string="Token Ref"/>
-                <field name="appointment_date"/>
-                <field name="appointment_time" widget="html_time"/>
-                <field name="doctor_id"/>
-                <field name="priority" widget="badge"/>
-                <field name="payment_status" widget="badge"/>
+                <field name="patient_id" />
+                                <field name="hospital_appointment_id" string="Token Ref" />
+                <field name="appointment_date" />
+                <field name="appointment_time" widget="html_time" />
+                <field name="doctor_id" />
+                <field name="priority" widget="badge" />
+                <field name="payment_status" widget="badge" />
             </list>
         </field>
     </record>
 
-    <!-- LAB APPOINTMENT SEARCH VIEW -->
+    
     <record id="view_hospital_lab_appointment_search" model="ir.ui.view">
         <field name="name">hospital.lab.appointment.search</field>
         <field name="model">hospital.lab.appointment</field>
         <field name="arch" type="xml">
             <search>
-                <field name="patient_id" filter_domain="['|', '|', ('patient_id.name', 'ilike', self), ('patient_id.patient_id', 'ilike', self), ('patient_id.phone', 'ilike', self)]" string="Patient ID / Name / Phone"/>
-                <field name="name" string="Lab Reference"/>
-                <field name="hospital_appointment_id" string="Token Number"/>
-                <filter string="Today" name="today" domain="[('appointment_date', '=', context_today())]"/>
+                <field name="patient_id" filter_domain="['|', '|', ('patient_id.name', 'ilike', self), ('patient_id.patient_id', 'ilike', self), ('patient_id.phone', 'ilike', self)]" string="Patient ID / Name / Phone" />
+                <field name="name" string="Lab Reference" />
+                <field name="hospital_appointment_id" string="Token Number" />
+                <filter string="Today" name="today" domain="[('appointment_date', '=', context_today())]" />
             </search>
         </field>
     </record>
 
-    <!-- LAB TECHNICIAN ACTION -->
+    
     <record id="action_hospital_lab_technician_appointments" model="ir.actions.act_window">
         <field name="name">Lab Appointments</field>
         <field name="res_model">hospital.lab.appointment</field>
         <field name="view_mode">list,form</field>
-        <field name="search_view_id" ref="view_hospital_lab_appointment_search"/>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_tech_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_tech_form')})]"/>
+        <field name="search_view_id" ref="view_hospital_lab_appointment_search" />
+        <field name="view_ids" eval="[(5, 0, 0),             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_tech_list')}),             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_tech_form')})]" />
     </record>
 
-    <!-- ACTIONS -->
+    
 
-    <record id="action_hospital_lab_appointments"
-            model="ir.actions.act_window">
+    <record id="action_hospital_lab_appointments" model="ir.actions.act_window">
         <field name="name">Lab Appointments</field>
         <field name="res_model">hospital.lab.appointment</field>
         <field name="view_mode">list,form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_form')})]"/>
+        <field name="view_ids" eval="[(5, 0, 0),             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_lab_appointment_list')}),             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_lab_appointment_form')})]" />
     </record>
 
 
-    <record id="action_hospital_lab_tests"
-            model="ir.actions.act_window">
+    <record id="action_hospital_lab_tests" model="ir.actions.act_window">
 
         <field name="name">Lab Fees</field>
 
@@ -600,41 +399,41 @@
         <field name="priority">999</field>
         <field name="arch" type="xml">
             <form string="Collect Payment" style="padding: 0; background: #f8fafc;">
-                <!-- We hide the native modal header using CSS -->
+                
                 <style>
                     .modal-header { display: none !important; }
                     .modal-body { padding: 0 !important; }
                 </style>
                 
-                <!-- CUSTOM HEADER -->
+                
                 <div style="background:#1e3a8a; color:white; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
                     <h3 style="margin:0; font-size:18px; font-weight:700; color:white;">Collect Payment</h3>
-                    <button special="cancel" class="btn btn-link" style="color:white; font-size:22px; font-weight:bold; line-height:1; padding:0; text-decoration:none;"><i class="fa fa-times"/></button>
+                    <button special="cancel" class="btn btn-link" style="color:white; font-size:22px; font-weight:bold; line-height:1; padding:0; text-decoration:none;"><i class="fa fa-times" /></button>
                 </div>
 
                 <div style="padding:20px; background: white;">
-                    <!-- TOP INFO -->
+                    
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;">
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div style="display: flex; align-items: center;">
                                 <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Type of Digital Payment:</span>
-                                <field name="payment_mode" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;"/>
+                                <field name="payment_mode" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;" />
                                 
                                 <span style="font-weight:600; color:#334155; margin-left: 20px; margin-right: 10px;">Transaction ID:</span>
-                                <field name="transaction_id" nolabel="1" style="display:inline-block; width:150px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;" required="payment_mode != 'none' and payment_mode != False"/>
+                                <field name="transaction_id" nolabel="1" style="display:inline-block; width:150px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px;" required="payment_mode != 'none' and payment_mode != False" />
                             </div>
                             <div style="display: flex; align-items: center;">
                                 <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Online Paid Amount:</span>
-                                <field name="online_paid_amount" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px; text-align:right;" required="payment_mode != 'none' and payment_mode != False"/>
+                                <field name="online_paid_amount" nolabel="1" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height: 30px; text-align:right;" required="payment_mode != 'none' and payment_mode != False" />
                             </div>
                         </div>
                         <div style="text-align:right;">
                             <span style="font-weight:700; font-size:16px; color:#1e293b;">Net amount: </span>
-                            <field name="amount_to_collect" nolabel="1" class="fw-bold text-primary" style="font-size: 24px;" readonly="1" force_save="1"/>
+                            <field name="amount_to_collect" nolabel="1" class="fw-bold text-primary" style="font-size: 24px;" readonly="1" force_save="1" />
                         </div>
                     </div>
 
-                    <!-- TABLE -->
+                    
                     <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
                         <thead>
                             <tr style="background:#e2e8f0; color:#334155; font-weight:bold;">
@@ -646,86 +445,86 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- 500 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">500 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_500" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_500_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- 200 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">200 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_200" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_200_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- 100 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">100 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_100" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_100_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- 50 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">50 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_50" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_50_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- 20 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">20 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_20" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_20_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- 10 -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">10 X</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_recv" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_ret" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="notes_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_recv" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="return_10" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="amt_10_ret" nolabel="1" readonly="1" /></td>
                             </tr>
-                            <!-- Coins -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" colspan="2">Coins</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_received" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_return" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_received" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" />
+                                <td style="border:1px solid #cbd5e1; padding:6px;"><field name="coins_return" nolabel="1" class="text-center" style="width:70px;" widget="number_spinner" /></td>
                             </tr>
-                            <!-- Totals -->
+                            
                             <tr>
                                 <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" colspan="2">Total</td>
-                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_received" nolabel="1" readonly="1"/></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"></td>
-                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_returned" nolabel="1" readonly="1"/></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_received" nolabel="1" readonly="1" /></td>
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;" />
+                                <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;"><field name="total_cash_returned" nolabel="1" readonly="1" /></td>
                             </tr>
                         </tbody>
                     </table>
 
                     <div style="margin-top: 15px; font-weight: bold;">
                         <div>
-                            Balance Amount: <field name="balance_amount" nolabel="1" class="text-danger" readonly="1"/>
+                            Balance Amount: <field name="balance_amount" nolabel="1" class="text-danger" readonly="1" />
                         </div>
                         <div style="margin-top: 5px;">
-                            Total Received Payment: <field name="total_cash_received" nolabel="1" class="text-success" readonly="1"/>
+                            Total Received Payment: <field name="total_cash_received" nolabel="1" class="text-success" readonly="1" />
                         </div>
                     </div>
                 </div>
 
                 <footer style="background:#f8fafc; padding:15px 20px; border-top:1px solid #e2e8f0;">
                     <div class="w-100 d-flex justify-content-end" style="gap: 10px;">
-                        <button string="Cancel" class="btn-outline-secondary btn" special="cancel"/>
-                        <button string="Hold" name="action_hold_cash" type="object" class="btn-warning btn"/>
-                        <button string="Confirm and Pay" name="action_confirm_cash" type="object" class="btn-success btn"/>
+                        <button string="Cancel" class="btn-outline-secondary btn" special="cancel" />
+                        <button string="Hold" name="action_hold_cash" type="object" class="btn-warning btn" />
+                        <button string="Confirm and Pay" name="action_confirm_cash" type="object" class="btn-success btn" />
                     </div>
                 </footer>
             </form>
@@ -733,6 +532,3 @@
     </record>
 
 </odoo>
-
-
-

@@ -4,6 +4,7 @@ from odoo import models, fields, api
 class HospitalLabTestSelectorLine(models.TransientModel):
     _name = 'hospital.lab.test.selector.line'
     _description = 'Lab Test Selector Line'
+    _order = 'selected desc, id asc'
 
     wizard_id = fields.Many2one(
         'hospital.lab.test.selector',
@@ -95,7 +96,7 @@ class HospitalLabTestSelector(models.TransientModel):
 
     @api.onchange('filter_lab_category_id', 'filter_lab_sub_category_id')
     def _onchange_filters(self):
-        domain = [('is_profile', '=', False)]
+        domain = []
         if self.filter_lab_category_id:
             domain.append(('lab_category_id', '=', self.filter_lab_category_id.id))
         if self.filter_lab_sub_category_id:
@@ -198,25 +199,37 @@ class HospitalLabTestSelector(models.TransientModel):
 
         # Clear existing lines to replace with current selection
         appointment.line_ids.unlink()
+        appointment.write({'appointment_date': fields.Date.today()})
 
         new_lines = []
         existing_test_ids = []
+        
+        # Group selected tests by category
+        from collections import defaultdict
+        tests_by_category = defaultdict(list)
         for line in selected_lines:
-            test = line.test_id
-            if test.is_profile:
-                for param in test.parameter_ids:
-                    if param.id not in existing_test_ids:
-                        new_lines.append((0, 0, {'lab_test_id': param.id}))
-                        existing_test_ids.append(param.id)
-            else:
+            tests_by_category[line.test_id.lab_category_id].append(line.test_id)
+            
+        for category, tests in tests_by_category.items():
+            if category:
+                new_lines.append((0, 0, {'name': category.name, 'display_type': 'line_section', 'is_parameter': False}))
+            elif len(tests_by_category) > 1 or tests_by_category.get(False):
+                # If there are tests without category, add an 'Others' section
+                new_lines.append((0, 0, {'name': 'Others', 'display_type': 'line_section', 'is_parameter': False}))
+                
+            for test in tests:
                 if test.id not in existing_test_ids:
-                    new_lines.append((0, 0, {'lab_test_id': test.id}))
+                    new_lines.append((0, 0, {'lab_test_id': test.id, 'is_parameter': False}))
                     existing_test_ids.append(test.id)
+                
+                if test.is_profile:
+                    for param in test.with_context(active_test=False).parameter_ids:
+                        if param.id not in existing_test_ids:
+                            new_lines.append((0, 0, {'lab_test_id': param.id, 'is_parameter': True}))
+                            existing_test_ids.append(param.id)
 
         if new_lines:
             appointment.write({'line_ids': new_lines})
 
-        # If called from lab appointment, reload the client to show tests
-        if self.lab_appointment_id:
-            return {'type': 'ir.actions.client', 'tag': 'reload'}
-        return {'type': 'ir.actions.act_window_close'}
+        # Always reload to refresh the underlying view (patient dashboard or lab appointment)
+        return {'type': 'ir.actions.client', 'tag': 'reload'}

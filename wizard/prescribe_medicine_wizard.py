@@ -45,7 +45,7 @@ class PrescribeMedicineWizard(models.TransientModel):
         
         if not prescription:
             if not self.line_ids:
-                return {'type': 'ir.actions.act_window_close'}
+                return {'type': 'ir.actions.client', 'tag': 'reload'}
             prescription = self.env['hospital.prescription'].create({
                 'patient_id': self.patient_id.id,
                 'doctor_id': doctor.id if doctor else False,
@@ -54,6 +54,8 @@ class PrescribeMedicineWizard(models.TransientModel):
         else:
             # Clear existing lines to replace with the new ones from the wizard
             prescription.line_ids.unlink()
+            from odoo import fields
+            prescription.write({'date_prescribed': fields.Datetime.now()})
             
         for line in self.line_ids:
             self.env['hospital.prescription.line'].create({
@@ -67,7 +69,7 @@ class PrescribeMedicineWizard(models.TransientModel):
                 'timing': line.timing
             })
             
-        return {'type': 'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
             
         doctor = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
         
@@ -89,7 +91,7 @@ class PrescribeMedicineWizard(models.TransientModel):
                 'timing': line.timing
             })
             
-        return {'type': 'ir.actions.act_window_close'}
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
 
 class PrescribeMedicineWizardLine(models.TransientModel):

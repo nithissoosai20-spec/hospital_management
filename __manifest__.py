@@ -94,6 +94,8 @@
         'views/appointment/hospital_appointment_reports.xml',
         'views/lab/hospital_lab_reports.xml',
         'views/lab/hospital_lab_views.xml',
+        'views/lab/hospital_lab_subtest_views.xml',
+        'wizard/hospital_lab_subtest_wizard_views.xml',
         'views/lab/lab_receipt_wizard_views.xml',
         'views/lab/hospital_lab_test_selector_views.xml',
 

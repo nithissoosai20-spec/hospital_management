@@ -93,6 +93,20 @@ class HospitalLabAppointment(models.Model):
         'lab_appointment_id',
         string='Lab Tests',
     )
+    
+    billing_line_ids = fields.One2many(
+        'hospital.lab.appointment.line',
+        'lab_appointment_id',
+        string='Billing Lines',
+        domain=[('is_parameter', '=', False)]
+    )
+    
+    result_line_ids = fields.One2many(
+        'hospital.lab.appointment.line',
+        'lab_appointment_id',
+        string='Result Lines',
+        domain=[('is_parameter', '=', True)]
+    )
 
     appointment_date = fields.Date(
         string='Appointment Date',
@@ -159,10 +173,10 @@ class HospitalLabAppointment(models.Model):
     # =========================================================================
     # COMPUTE METHODS
     # =========================================================================
-    @api.depends('line_ids', 'line_ids.price')
+    @api.depends('billing_line_ids', 'billing_line_ids.price')
     def _compute_total_amount(self):
         for record in self:
-            calc_amt = sum(record.line_ids.mapped('price'))
+            calc_amt = sum(record.billing_line_ids.mapped('price'))
             rounded_amt = round(calc_amt)
             record.amount = calc_amt
             record.round_off = rounded_amt - calc_amt
@@ -488,10 +502,98 @@ class HospitalLabAppointment(models.Model):
 
 # LAB APPOINTMENT LINE
 
+
+    def action_open_subtest_selector(self):
+        self.ensure_one()
+        # Find all tests currently in the appointment that are NOT subtests/parameters
+        main_tests = self.line_ids.filtered(lambda l: not l.is_parameter and l.display_type != 'line_section').mapped('lab_test_id')
+        
+        # Find all available subtests for these main tests
+        available_subtests = self.env['hospital.lab.subtest'].search([('lab_test_id', 'in', main_tests.ids)])
+        
+        wizard_lines = []
+        for st in available_subtests:
+            wizard_lines.append((0, 0, {
+                'subtest_id': st.id,
+                'lab_test_id': st.lab_test_id.id,
+                'selected': False
+            }))
+            
+        wizard = self.env['hospital.lab.subtest.wizard'].create({
+            'lab_appointment_id': self.id,
+            'line_ids': wizard_lines
+        })
+        
+        return {
+            'name': 'Select Sub-Tests',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.lab.subtest.wizard',
+            'view_mode': 'form',
+            'res_id': wizard.id,
+            'target': 'new'
+        }
+
+
 class HospitalLabAppointmentLine(models.Model):
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        lines = super(HospitalLabAppointmentLine, self).create(vals_list)
+        new_sub_vals = []
+        for line in lines:
+            # When a main test is added (not a parameter, not a section/note)
+            if not line.is_parameter and not line.display_type and line.lab_test_id:
+                subtests = self.env['hospital.lab.subtest'].search(['|', ('lab_test_id', '=', line.lab_test_id.id), ('package_id', '=', line.lab_test_id.id)])
+                
+                # Insert Section Header for the Main Test
+                new_sub_vals.append({
+                    'lab_appointment_id': line.lab_appointment_id.id,
+                    'lab_test_id': line.lab_test_id.id,
+                    'is_parameter': True,
+                    'display_type': 'line_section',
+                    'name': line.lab_test_id.name,
+                })
+                
+                if subtests:
+                    for st in subtests:
+                        new_sub_vals.append({
+                            'lab_appointment_id': line.lab_appointment_id.id,
+                            'lab_test_id': st.lab_test_id.id,
+                            'subtest_id': st.id,
+                            'is_parameter': True,
+                            'name': False,
+                        })
+                else:
+                    # If it has no subtests, create a dummy subtest line for the main test
+                    new_sub_vals.append({
+                        'lab_appointment_id': line.lab_appointment_id.id,
+                        'lab_test_id': line.lab_test_id.id,
+                        'subtest_id': False,
+                        'is_parameter': True,
+                        'name': False,
+                    })
+        if new_sub_vals:
+            self.create(new_sub_vals)
+        return lines
+
+    def unlink(self):
+        # When a main test is deleted, also delete its auto-generated subtests
+        for line in self:
+            if not line.is_parameter and line.lab_test_id:
+                children = self.search([
+                    ('lab_appointment_id', '=', line.lab_appointment_id.id),
+                    ('lab_test_id', '=', line.lab_test_id.id),
+                    ('is_parameter', '=', True)
+                ])
+                children.unlink()
+        return super(HospitalLabAppointmentLine, self).unlink()
+
 
     _name = 'hospital.lab.appointment.line'
     _description = 'Hospital Lab Appointment Line'
+    _order = 'sequence, id'
+
+    sequence = fields.Integer(string='Sequence', default=10)
 
     # APPOINTMENT
 
@@ -502,8 +604,9 @@ class HospitalLabAppointmentLine(models.Model):
         ondelete='cascade',
     )
 
-    state = fields.Selection(related='lab_appointment_id.state', string='Status', store=False)
-    appointment_date = fields.Date(related='lab_appointment_id.appointment_date', string='Date', store=False)
+    state = fields.Selection(related='lab_appointment_id.state', string='Status', store=True)
+    payment_status = fields.Selection(related='lab_appointment_id.payment_status', string='Payment Status', store=True)
+    appointment_date = fields.Date(related='lab_appointment_id.appointment_date', string='Date', store=True)
 
     # LAB TEST
     
@@ -512,6 +615,90 @@ class HospitalLabAppointmentLine(models.Model):
         ('line_note', "Note")], default=False)
         
     name = fields.Char(string='Description')
+    is_parameter = fields.Boolean(string='Is Parameter', default=False)
+    subtest_id = fields.Many2one('hospital.lab.subtest', string='Sub Test')
+
+    display_test_name = fields.Char(string='Test Name', compute='_compute_display_test_name')
+    
+    @api.depends('lab_test_id', 'subtest_id')
+    def _compute_display_test_name(self):
+        for rec in self:
+            if rec.subtest_id:
+                rec.display_test_name = rec.subtest_id.name
+            else:
+                rec.display_test_name = rec.lab_test_id.name
+
+    display_test_code = fields.Char(string='Code', compute='_compute_display_test_code')
+    
+    @api.depends('lab_test_id', 'subtest_id')
+    def _compute_test_details(self):
+        for rec in self:
+            if rec.subtest_id:
+                rec.unit = rec.subtest_id.unit
+                rec.normal_range_min = rec.subtest_id.normal_range_min
+                rec.normal_range_max = rec.subtest_id.normal_range_max
+            else:
+                rec.unit = rec.lab_test_id.unit
+                rec.normal_range_min = rec.lab_test_id.normal_range_min
+                rec.normal_range_max = rec.lab_test_id.normal_range_max
+
+    def _compute_display_test_code(self):
+        for rec in self:
+            if rec.subtest_id:
+                rec.display_test_code = ''
+            else:
+                rec.display_test_code = rec.lab_test_id.code
+
+
+    
+    def action_select_subtests(self):
+        self.ensure_one()
+        # Find all available subtests for THIS main test
+        available_subtests = self.env['hospital.lab.subtest'].search([('lab_test_id', '=', self.lab_test_id.id)])
+        
+        wizard_lines = []
+        for st in available_subtests:
+            wizard_lines.append((0, 0, {
+                'subtest_id': st.id,
+                'lab_test_id': self.lab_test_id.id,
+                'selected': False
+            }))
+            
+        wizard = self.env['hospital.lab.subtest.wizard'].create({
+            'lab_appointment_id': self.lab_appointment_id.id,
+            'appointment_line_id': self.id,
+            'line_ids': wizard_lines
+        })
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Select Sub-Tests for %s' % (self.lab_test_id.name or self.name),
+            'res_model': 'hospital.lab.subtest.wizard',
+            'res_id': wizard.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    def unlink(self):
+        # If we are deleting a section header, also delete all tests under that category in the same appointment
+        for record in self:
+            if record.display_type == 'line_section':
+                # Find the category by name
+                category = self.env['hospital.category.master'].search([('name', '=', record.name)], limit=1)
+                
+                domain = [('lab_appointment_id', '=', record.lab_appointment_id.id), ('id', '!=', record.id)]
+                if category:
+                    domain.append(('lab_test_id.lab_category_id', '=', category.id))
+                elif record.name == 'Others':
+                    domain.append(('lab_test_id.lab_category_id', '=', False))
+                else:
+                    continue # Safety check, don't delete everything if we can't match
+                    
+                related_lines = self.env['hospital.lab.appointment.line'].search(domain)
+                related_lines.unlink()
+                
+        return super(HospitalLabAppointmentLine, self).unlink()
+
 
     
 
@@ -567,20 +754,23 @@ class HospitalLabAppointmentLine(models.Model):
     )
 
     normal_range_min = fields.Float(
-        related='lab_test_id.normal_range_min',
         string='Min Value',
+        compute='_compute_test_details',
+        store=True,
         readonly=True,
     )
 
     normal_range_max = fields.Float(
-        related='lab_test_id.normal_range_max',
         string='Max Value',
+        compute='_compute_test_details',
+        store=True,
         readonly=True,
     )
 
     unit = fields.Char(
-        related='lab_test_id.unit',
         string='Unit',
+        compute='_compute_test_details',
+        store=True,
         readonly=True,
     )
 
@@ -602,12 +792,19 @@ class HospitalLabAppointmentLine(models.Model):
     @api.depends('normal_range_min', 'normal_range_max')
     def _compute_normal_range_display(self):
         for line in self:
-            if line.normal_range_min and line.normal_range_max:
+            has_min = line.normal_range_min != 0.0 or str(line.normal_range_min) == '0.0'
+            has_max = line.normal_range_max != 0.0 or str(line.normal_range_max) == '0.0'
+            
+            # In Odoo Float fields, 0.0 is the default. If both are 0.0, we assume empty.
+            if line.normal_range_min == 0.0 and line.normal_range_max == 0.0:
+                line.normal_range_display = ""
+            elif line.normal_range_min != 0.0 and line.normal_range_max != 0.0:
                 line.normal_range_display = f"{line.normal_range_min} - {line.normal_range_max}"
-            elif line.normal_range_min:
+            elif line.normal_range_min == 0.0 and line.normal_range_max != 0.0:
+                # User entered 0 for min, something for max
+                line.normal_range_display = f"0.0 - {line.normal_range_max}"
+            elif line.normal_range_min != 0.0 and line.normal_range_max == 0.0:
                 line.normal_range_display = f"> {line.normal_range_min}"
-            elif line.normal_range_max:
-                line.normal_range_display = f"< {line.normal_range_max}"
             else:
                 line.normal_range_display = ""
 

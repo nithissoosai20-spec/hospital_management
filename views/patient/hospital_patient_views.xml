@@ -1,24 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
 
-    <!-- PATIENT LIST VIEW -->
+    
     <record id="view_hospital_patient_list" model="ir.ui.view">
         <field name="name">hospital.patient.list</field>
         <field name="model">hospital.patient</field>
         <field name="arch" type="xml">
             <list>
-                <field name="patient_id" readonly="1"/>
-                <field name="name"/>
-                <field name="gender" readonly="1"/>
-                <field name="age" readonly="1"/>
-                <field name="phone" readonly="1"/>
-                <field name="blood_group" readonly="1"/>
-                <field name="active"/>
+                <field name="patient_id" readonly="1" />
+                <field name="name" />
+                <field name="gender" readonly="1" />
+                <field name="age" readonly="1" />
+                <field name="phone" readonly="1" />
+                <field name="blood_group" readonly="1" />
+                <field name="active" />
             </list>
         </field>
     </record>
 
-    <!-- PATIENT FORM VIEW -->
+    
     <record id="view_hospital_patient_form" model="ir.ui.view">
         <field name="name">hospital.patient.form</field>
         <field name="model">hospital.patient</field>
@@ -28,7 +28,7 @@
                 <sheet style="padding: 0; margin: 0; max-width: 100%; border: none; box-shadow: none; height: 100%;">
                     
                     
-                    <!-- Professional Dashboard Layout -->
+                    
                     <style>
                         .o_form_view:has(.pro-patient-dashboard),
                         .o_form_view:has(.pro-patient-dashboard) .o_form_sheet_bg,
@@ -197,98 +197,95 @@
 
                     <div class="pro-patient-dashboard">
                         
-                        <!-- ROW 1: Details & Notes (Side by Side) -->
+                        
                         <div class="pro-row">
                             
-                            <!-- LEFT: Details -->
+                            
                             <div class="pro-card" style="flex: 1.2;">
                                 <div class="pt-header-pro">
                                     <div class="pt-name-pro">
-                                        <field name="name" readonly="1"/>
+                                        <field name="name" readonly="1" />
                                     </div>
                                     <div class="pt-badge-pro">
-                                        ID: <field name="patient_id" readonly="1" nolabel="1"/>
+                                        ID: <field name="patient_id" readonly="1" nolabel="1" />
                                     </div>
                                 </div>
                                 
                                 <div class="pro-grid-4">
                                     <div class="pro-field">
                                         <label for="age">Age</label>
-                                        <field name="age" readonly="1"/>
+                                        <field name="age" readonly="1" />
                                     </div>
                                     <div class="pro-field">
                                         <label for="gender">Gender</label>
-                                        <field name="gender" readonly="1"/>
+                                        <field name="gender" readonly="1" />
                                     </div>
                                     <div class="pro-field">
                                         <label for="blood_group">Blood Group</label>
-                                        <field name="blood_group" readonly="1"/>
+                                        <field name="blood_group" readonly="1" />
                                     </div>
                                     <div class="pro-field">
                                         <label for="phone">Phone</label>
-                                        <field name="phone" readonly="1"/>
+                                        <field name="phone" readonly="1" />
                                     </div>
                                 </div>
                                 
                                 <div class="pro-field" style="margin-top: 15px;">
                                     <label for="address">Address</label>
-                                    <field name="address" readonly="1"/>
+                                    <field name="address" readonly="1" />
                                 </div>
                             </div>
                             
-                            <!-- RIGHT: Notes -->
+                            
                             <div class="pro-card" style="flex: 1;">
-                                <div class="pro-title">&#128221; Clinical Notes</div>
+                                <div class="pro-title">📝 Clinical Notes</div>
                                 <div class="pro-row" style="gap: 15px;">
                                     <div class="pro-field pro-notes" style="flex: 1;">
                                         <label for="suggestions_before_test">Suggestions Before Test</label>
-                                        <field name="suggestions_before_test" placeholder="e.g. Fasting for 12 hours..."/>
+                                        <field name="suggestions_before_test" placeholder="e.g. Fasting for 12 hours..." />
                                     </div>
                                     <div class="pro-field pro-notes" style="flex: 1;">
                                         <label for="suggestions_after_test">Suggestions After Test</label>
-                                        <field name="suggestions_after_test" placeholder="e.g. Drink plenty of water..."/>
+                                        <field name="suggestions_after_test" placeholder="e.g. Drink plenty of water..." />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- ROW 2: Actions -->
+                        
                         <div class="pro-actions">
                             <div class="pro-actions-left">
-                                <button name="action_prescribe_medicine" string="Prescribe Medicines" type="object" class="btn-pro btn-meds" icon="fa-medkit" groups="hospital_management.group_hospital_doctor"/>
-                                <button name="action_prescribe_lab_test" string="Prescribe Lab Tests" type="object" class="btn-pro btn-labs" icon="fa-flask" groups="hospital_management.group_hospital_doctor"/>
-                                <button name="action_view_appointments" string="Appointment History" type="object" class="btn-pro btn-hist" icon="fa-history"/>
+                                <button name="action_prescribe_medicine" string="Prescribe Medicines" type="object" class="btn-pro btn-meds" icon="fa-medkit" groups="hospital_management.group_hospital_doctor" />
+                                <button name="action_prescribe_lab_test" string="Prescribe Lab Tests" type="object" class="btn-pro btn-labs" icon="fa-flask" groups="hospital_management.group_hospital_doctor" />
+                                <button name="action_view_appointments" string="Appointment History" type="object" class="btn-pro btn-hist" icon="fa-history" />
                             </div>
                             <div style="display: flex; gap: 10px;">
-                                <button name="action_complete_doctor_appointment" string="Mark as Completed" type="object" class="btn-pro btn-done" icon="fa-check" groups="hospital_management.group_hospital_doctor"/>
-                                <button name="action_close_patient" string="Close" type="object" class="btn btn-secondary" style="font-weight: bold; background-color: #6c757d; color: white;" icon="fa-times"/>
+                                <button name="action_complete_doctor_appointment" string="Mark as Completed" type="object" class="btn-pro btn-done" icon="fa-check" groups="hospital_management.group_hospital_doctor" />
+                                <button name="action_close_patient" string="Close" type="object" class="btn btn-secondary" style="font-weight: bold; background-color: #6c757d; color: white;" icon="fa-times" />
                             </div>
                         </div>
 
-                        <!-- ROW 3: Meds & Labs (Side by Side) -->
+                        
                         <div class="pro-row" style="flex: 1; min-height: 0;">
                             
-                            <!-- LEFT: Meds -->
-                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
-                                <div class="pro-title" style="margin-bottom: 10px;">&#128138; Prescribed Medicines</div>
+                            
+                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px; max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                                <div class="pro-title" style="margin-bottom: 10px;">💊 Prescribed Medicines</div>
                                 <field name="current_prescription_line_ids" readonly="1">
                                     <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
-                                        <field name="date_prescribed" string="Date"/>
-                                        <field name="medicine_id" string="Medicine"/>
-                                        <field name="state" string="Status" widget="badge"/>
-                                    </list>
+                                        <field name="date_prescribed" string="Date" />
+                                        <field name="medicine_id" string="Medicine" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="state" string="Status" widget="badge" />
+                                    <button name="unlink" type="object" icon="fa-trash" /></list>
                                 </field>
                             </div>
                             
-                            <!-- RIGHT: Labs -->
-                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px;">
-                                <div class="pro-title" style="margin-bottom: 10px;">&#129516; Prescribed Lab Tests</div>
+                            
+                            <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px; max-height: 300px; overflow-y: auto; overflow-x: hidden;">
+                                <div class="pro-title" style="margin-bottom: 10px;">🧬 Prescribed Lab Tests</div>
                                 <field name="current_lab_line_ids" readonly="1">
                                     <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
-                                        <field name="appointment_date" string="Date"/>
-                                        <field name="lab_test_id" string="Test"/>
-                                        <field name="state" string="Status" widget="badge"/>
-                                    </list>
+                                        <control /><field name="display_type" column_invisible="1" /><field name="name" widget="section_and_note_text" optional="show" /><field name="appointment_date" string="Date" /><field name="lab_test_id" string="Test" options="{'no_open': True, 'no_create': True}" /><field name="state" string="Status" widget="badge" /><button name="unlink" type="object" icon="fa-trash" /></list>
                                 </field>
                             </div>
                             
@@ -301,7 +298,7 @@
     </record>
 
     
-    <!-- PATIENT CLINICAL HISTORY POPUP -->
+    
     <record id="view_hospital_patient_history_form" model="ir.ui.view">
         <field name="name">hospital.patient.history.form</field>
         <field name="model">hospital.patient</field>
@@ -309,52 +306,52 @@
             <form string="Patient Clinical History" create="0" edit="0">
                 <sheet>
                     <div class="oe_title" style="margin-bottom: 20px;">
-                        <h1><field name="name" readonly="1"/></h1>
-                        <h3>ID: <field name="patient_id" readonly="1"/></h3>
+                        <h1><field name="name" readonly="1" /></h1>
+                        <h3>ID: <field name="patient_id" readonly="1" /></h3>
                     </div>
                     
                     <notebook>
                         <page string="Past Visits" name="visits">
                             <field name="appointment_ids" readonly="1">
                                 <list>
-                                    <field name="appointment_date" string="Date"/>
-                                    <field name="doctor_id" string="Doctor"/>
-                                    <field name="department_id" string="Department"/>
-                                    <field name="visit_type" string="Visit Type"/>
-                                    <field name="reason" string="Reason / Notes"/>
+                                    <field name="appointment_date" string="Date" />
+                                    <field name="doctor_id" string="Doctor" />
+                                    <field name="department_id" string="Department" />
+                                    <field name="visit_type" string="Visit Type" />
+                                    <field name="reason" string="Reason / Notes" />
                                 </list>
                             </field>
                         </page>
                         <page string="Medicines History" name="medicines">
                             <field name="all_prescription_line_ids" readonly="1">
                                 <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
-                                    <field name="date_prescribed" string="Date"/>
-                                    <field name="medicine_id" string="Medicine"/>
-                                    <field name="qty" string="Qty"/>
-                                    <field name="timing" string="Timing"/>
-                                    <field name="state" string="Status" widget="badge"/>
+                                    <field name="date_prescribed" string="Date" />
+                                    <field name="medicine_id" string="Medicine" options="{'no_open': True, 'no_create': True}" />
+                                    <field name="qty" string="Qty" />
+                                    <field name="timing" string="Timing" />
+                                    <field name="state" string="Status" widget="badge" />
                                 </list>
                             </field>
                         </page>
                         <page string="Lab Tests History" name="lab_tests">
                             <field name="all_lab_line_ids" readonly="1">
                                 <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
-                                    <field name="appointment_date" string="Date"/>
-                                    <field name="lab_test_id" string="Lab Test"/>
-                                    <field name="state" string="Status" widget="badge"/>
+                                    <field name="appointment_date" string="Date" />
+                                    <field name="lab_test_id" string="Lab Test" options="{'no_open': True, 'no_create': True}" />
+                                    <field name="state" string="Status" widget="badge" />
                                 </list>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Close" class="btn-secondary" special="cancel" />
                 </footer>
             </form>
         </field>
     </record>
 
-    <!-- PATIENT ACTION -->
+    
     <record id="action_hospital_patient" model="ir.actions.act_window">
         <field name="name">Patients</field>
         <field name="res_model">hospital.patient</field>

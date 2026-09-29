@@ -261,4 +261,13 @@
         action="action_hospital_category_master"
         sequence="90"
         groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_admin"
-    />\n</odoo>
+    />
+    <menuitem
+        id="menu_hospital_lab_subtest"
+        name="Lab Sub-Tests"
+        parent="menu_hospital_management"
+        action="action_hospital_lab_subtests"
+        sequence="25"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_lab_technician"
+    />
+</odoo>

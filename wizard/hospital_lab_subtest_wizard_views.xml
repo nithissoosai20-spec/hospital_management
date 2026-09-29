@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_lab_subtest_wizard_form" model="ir.ui.view">
+        <field name="name">hospital.lab.subtest.wizard.form</field>
+        <field name="model">hospital.lab.subtest.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Sub-Tests">
+                <sheet>
+                    <field name="line_ids">
+                        <list editable="bottom" create="0" delete="0">
+                            <field name="selected" widget="boolean_toggle"/>
+                            <field name="lab_test_id" readonly="1"/>
+                            <field name="subtest_id" readonly="1"/>
+                        </list>
+                    </field>
+                    <footer class="d-flex justify-content-end">
+                        <button name="action_add_subtests" string="Add Sub-Tests" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

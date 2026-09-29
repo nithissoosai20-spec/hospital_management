@@ -10,9 +10,9 @@
 
 /* Make the list section scrollable — shows ~5 rows then scrolls */
 .custom_lab_table_wrapper .o_list_renderer {
-    max-height: 240px !important;
+    max-height: 350px !important;
     overflow-y: auto !important;
-    display: block !important;
+    overflow-x: hidden !important;
 }
 
 /* Code (col 1) - small */
@@ -86,4 +86,14 @@
 /* Remove "New" button for Lab Appointments */
 .o_action_manager:has(.custom_lab_list) .o_control_panel .o_list_button_add {
     display: none !important;
+}
+
+
+/* Rename New button via :has */
+html body:has(.lab_subtest_list) .o_control_panel button.o_list_button_add {
+    font-size: 0 !important;
+}
+html body:has(.lab_subtest_list) .o_control_panel button.o_list_button_add::after {
+    content: "New Lab Subtest" !important;
+    font-size: 13px !important;
 }

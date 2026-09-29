@@ -1100,7 +1100,7 @@ class HospitalAppointment(models.Model):
         # ONLY AFTER BOOKING
         # -----------------------------------------------------
 
-        if self.state != 'booked':
+        if self.state not in ('booked', 'completed'):
             raise UserError(
                 'Lab Fees can be selected only after '
                 'booking the appointment.'

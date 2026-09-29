@@ -1,11 +1,26 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
+    <record id="paperformat_pharmacy_dot_matrix" model="report.paperformat">
+        <field name="name">Dot Matrix Pharmacy</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">140</field>
+        <field name="page_width">215</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">28</field>
+        <field name="dpi">96</field>
+    </record>
 
     <record id="action_report_hospital_pharmacy_bill" model="ir.actions.report">
         <field name="name">Pharmacy Bill</field>
         <field name="model">hospital.pharmacy.bill</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="paperformat_id" ref="hospital_management.paperformat_hospital_a4"/>
+        <field name="paperformat_id" ref="hospital_management.paperformat_pharmacy_dot_matrix"/>
         <field name="report_name">hospital_management.report_hospital_pharmacy_bill</field>
         <field name="report_file">hospital_management.report_hospital_pharmacy_bill</field>
         <field name="binding_model_id" ref="hospital_management.model_hospital_pharmacy_bill"/>
@@ -15,115 +30,103 @@
     <template id="report_hospital_pharmacy_bill">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
-                
-                    <style>
-                        .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
-                        @media print {
-                            .o_report_footer, footer, .o_footer { display: none !important; }
-                            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        }
-                    </style>
-
-                    <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
-                        <div class="page" style="position: relative; width: 210mm; height: 297mm; min-height: 297mm; overflow: hidden; margin: 0; padding: 0; box-sizing: border-box;">
-                            
-                            <!-- BACKGROUND & BORDERS -->
-                            <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
-                                <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill; opacity: 1.0;"/>
-                                </div>
-
-                            <!-- CONTENT WRAPPER -->
-                            <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
-                                <div class="row mb-4 pt-4">
-                                    <div class="col-6">
-                                        <h4 style="color: #1e3a8a;"><strong>Pharmacy Bill: </strong> <span t-field="doc.name"/></h4>
-                                        <t t-if="doc.customer_type == 'patient'">
-                                            <strong>Patient:</strong> <span t-field="doc.patient_id.name"/><br/>
-                                            <strong>UHID:</strong> <span t-field="doc.patient_id.patient_id"/>
-                                        </t>
-                                        <t t-else="">
-                                            <strong>Customer:</strong> <span t-field="doc.walkin_name"/><br/>
-                                            <strong>Phone:</strong> <span t-field="doc.walkin_phone"/>
-                                        </t>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <strong>Date:</strong> <span t-field="doc.create_date" t-options="{&quot;widget&quot;: &quot;datetime&quot;, &quot;format&quot;: &quot;dd-MMM-yyyy HH:mm&quot;}"/><br/>
-                                        <strong>Doctor:</strong> <span t-field="doc.doctor_id.name"/><br/>
-                                        <strong>Department:</strong> <span t-field="doc.doctor_department_id.name"/><br/>
-                                        <strong>Payment Mode:</strong> <span style="text-transform:uppercase;" t-field="doc.payment_mode"/>
-                                    </div>
-                                </div>
-
-                                <table class="table table-sm mt-4" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse;">
-                                    <thead>
-                                        <tr>
-                                            <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">S.No</th>
-                                            <th style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Item Name</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Qty</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Price</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">CGST</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">SGST</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">IGST</th>
-                                            <th class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: 2px solid black !important; border-bottom: 2px solid black !important;">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <t t-set="sno" t-value="1"/>
-                                        <t t-foreach="doc.line_ids" t-as="line">
-                                            <tr>
-                                                <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><t t-esc="sno"/></td>
-                                                <td style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.medicine_name"/></td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.qty"/></td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.mrp"/></td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;">0.00</td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;">0.00</td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;">0.00</td>
-                                                <td class="text-end" style="padding: 8px 4px; border-left: none; border-right: none; border-top: none; border-bottom: 1px solid black !important;"><span t-field="line.amount"/></td>
-                                            </tr>
-                                            <t t-set="sno" t-value="sno + 1"/>
-                                        </t>
-                                    </tbody>
-                                </table>
-
-                                <div class="row justify-content-end mt-3">
-                                    <div class="col-5">
-                                        <table class="table table-sm table-borderless" style="width: 100%;">
-                                            <tr>
-                                                <td style="padding-top: 5px;"><strong>Sub Total:</strong></td>
-                                                <td class="text-end" style="padding-top: 5px;"><span t-field="doc.subtotal"/></td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding-top: 5px;"><strong>Discount:</strong></td>
-                                                <td class="text-end" style="padding-top: 5px;"><span t-field="doc.bill_discount"/></td>
-                                            </tr>
-                                            
-                                            <tr>
-                                                <td style="padding-top: 5px;"><strong>Round Off:</strong></td>
-                                                <td class="text-end" style="padding-top: 5px;"><span t-field="doc.round_off"/></td>
-                                            </tr>
-                                            <tr style="border-top: 1px solid black;">
-
-                                                <td style="padding-top: 10px;"><strong>Net Amount:</strong></td>
-                                                <td class="text-end" style="padding-top: 10px;">
-                                                    <strong><span t-field="doc.total_amount"/></strong>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <div class="row" style="margin-top: 50px;">
-                                    <div class="col-8">
-                                    </div>
-                                    <div class="col-3 text-center">
-                                        <br/><br/><br/>
-                                        <strong>Signature</strong>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="header">
+                    <div class="row" style="border-bottom: 2px solid black; padding-bottom: 5px;">
+                        <div class="col-6">
+                            <img src="/hospital_management/static/src/img/hospital_header_left.png" style="max-height: 25mm; max-width: 100%;"/>
+                        </div>
+                        <div class="col-6 text-end">
+                            <img src="/hospital_management/static/src/img/hospital_header_right.png" style="max-height: 25mm; max-width: 100%;"/>
                         </div>
                     </div>
-                
+                </div>
+
+                <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
+                    <div class="page" style="width: 100%;">
+                        <div class="row mb-4 pt-2">
+                            <div class="col-6">
+                                <h5 style="color: #000;"><strong>Pharmacy Bill: </strong> <span t-field="doc.name"/></h5>
+                                <t t-if="doc.customer_type == 'patient'">
+                                    <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
+                                    <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/>
+                                </t>
+                                <t t-else="">
+                                    <strong>Customer:</strong> <span t-field="doc.walkin_name"/><br/>
+                                    <strong>Phone:</strong> <span t-field="doc.walkin_phone"/>
+                                </t>
+                            </div>
+                            <div class="col-6 text-end">
+                                <strong>Date:</strong> <span t-field="doc.create_date" t-options='{"widget": "datetime", "format": "dd-MMM-yyyy HH:mm"}'/><br/>
+                                <strong>Doctor Name:</strong> <span t-field="doc.doctor_id.name"/><br/>
+                                <strong>Department:</strong> <span t-field="doc.doctor_department_id.name"/><br/>
+                                <strong>Payment Mode:</strong> <span style="text-transform:uppercase;" t-field="doc.payment_mode"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm mt-2" style="width: 100%; margin-bottom: 1rem; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">S.No</th>
+                                    <th style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">Item Name</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">Qty</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">Price</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">CGST</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">SGST</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">IGST</th>
+                                    <th class="text-end" style="padding: 4px; border-top: 1px solid black !important; border-bottom: 1px solid black !important;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="sno" t-value="1"/>
+                                <t t-foreach="doc.line_ids" t-as="line">
+                                    <tr>
+                                        <td style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><t t-esc="sno"/></td>
+                                        <td style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.medicine_name"/></td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.qty"/></td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.mrp"/></td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;">0.00</td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;">0.00</td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;">0.00</td>
+                                        <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.amount"/></td>
+                                    </tr>
+                                    <t t-set="sno" t-value="sno + 1"/>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <div class="row justify-content-end mt-2">
+                            <div class="col-6">
+                                <table class="table table-sm table-borderless" style="width: 100%; font-size: 12px;">
+                                    <tr>
+                                        <td style="padding-top: 2px;"><strong>Sub Total:</strong></td>
+                                        <td class="text-end" style="padding-top: 2px;"><span t-field="doc.subtotal"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding-top: 2px;"><strong>Discount:</strong></td>
+                                        <td class="text-end" style="padding-top: 2px;"><span t-field="doc.bill_discount"/></td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td style="padding-top: 2px;"><strong>Round Off:</strong></td>
+                                        <td class="text-end" style="padding-top: 2px;"><span t-field="doc.round_off"/></td>
+                                    </tr>
+                                    <tr style="border-top: 1px solid black;">
+                                        <td style="padding-top: 5px;"><strong>Net Amount:</strong></td>
+                                        <td class="text-end" style="padding-top: 5px;">
+                                            <strong><span t-field="doc.total_amount"/></strong>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <div class="footer text-center" style="width: 100%; border-top: 1px solid #000; padding-top: 5px;">
+                    <img src="/hospital_management/static/src/img/hospital_footer.png" style="max-height: 15mm; max-width: 100%;"/>
+                </div>
             </t>
         </t>
     </template>
