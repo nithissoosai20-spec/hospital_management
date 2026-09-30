@@ -1,11 +1,15 @@
 /* Hide Discuss/Messaging icon in Systray */
-.o_MessagingMenu,
-.o-mail-MessagingMenu {
+.o_menu_systray .dropdown:has(.fa-comments),
+.o_menu_systray div:has(> .dropdown > .bg-transparent > .fa-comments),
+.o_menu_systray i.fa-comments,
+.o_menu_systray .o-mail-MessagingMenu-counter {
     display: none !important;
 }
 
 /* Hide Activities/Clock icon in Systray */
-.o_ActivityMenu,
-.o-mail-ActivityMenu {
+.o_menu_systray .dropdown:has(.fa-clock-o),
+.o_menu_systray div:has(> .dropdown > .bg-transparent > .fa-clock-o),
+.o_menu_systray i.fa-clock-o,
+.o_menu_systray .o-mail-ActivityMenu-counter {
     display: none !important;
 }
