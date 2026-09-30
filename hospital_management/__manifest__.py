@@ -11,6 +11,9 @@
         'web',
         'hr',
         'maintenance',
+        'hr_attendance',
+        'hr_holidays',
+        'hr_expense',
     ],
 
     'assets': {

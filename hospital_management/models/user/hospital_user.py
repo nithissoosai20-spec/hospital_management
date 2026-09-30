@@ -283,6 +283,9 @@ class HospitalUser(models.Model):
 
         role_group = self._get_odoo_group_for_role()
 
+        dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard_form', raise_if_not_found=False)
+        action_id = dashboard_action.id if dashboard_action else False
+
         user_vals = {
             'name': self.name,
             'login': self.login,
@@ -290,6 +293,9 @@ class HospitalUser(models.Model):
             'password': password,
             'group_ids': [(6, 0, [role_group.id])],
         }
+        if action_id:
+            user_vals['action_id'] = action_id
+
 
         odoo_user = self.env['res.users'].sudo().create(user_vals)
 

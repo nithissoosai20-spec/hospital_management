@@ -52,6 +52,14 @@
         <field name="name">Radiology</field>
     </record>
 
+    <record id="department_human_resources" model="hospital.department">
+        <field name="name">Human Resources</field>
+    </record>
+
+    <record id="department_maintenance" model="hospital.department">
+        <field name="name">Maintenance</field>
+    </record>
+
 
     <!-- ROLES -->
 
@@ -103,6 +111,20 @@
         <field name="department_ids" eval="[(6, 0, [
             ref('department_operations'),
             ref('department_laboratory')
+        ])]"/>
+    </record>
+
+    <record id="role_hr_manager" model="hospital.role">
+        <field name="name">HR Manager</field>
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_human_resources')
+        ])]"/>
+    </record>
+
+    <record id="role_asset_manager" model="hospital.role">
+        <field name="name">Asset Manager</field>
+        <field name="department_ids" eval="[(6, 0, [
+            ref('department_maintenance')
         ])]"/>
     </record>
 
@@ -248,6 +270,23 @@
     <record id="designation_office_assistant" model="hospital.designation">
         <field name="name">Office Assistant</field>
         <field name="department_id" ref="department_operations"/>
+    </record>
+
+
+
+    <!-- Human Resources -->
+
+    <record id="designation_hr_manager" model="hospital.designation">
+        <field name="name">HR Manager</field>
+        <field name="department_id" ref="department_human_resources"/>
+    </record>
+
+
+    <!-- Maintenance -->
+
+    <record id="designation_asset_manager" model="hospital.designation">
+        <field name="name">Asset Manager</field>
+        <field name="department_id" ref="department_maintenance"/>
     </record>
 
 
