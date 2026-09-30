@@ -1,0 +1,11 @@
+/* Hide Discuss/Messaging icon in Systray */
+.o_MessagingMenu,
+.o-mail-MessagingMenu {
+    display: none !important;
+}
+
+/* Hide Activities/Clock icon in Systray */
+.o_ActivityMenu,
+.o-mail-ActivityMenu {
+    display: none !important;
+}

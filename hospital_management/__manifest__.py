@@ -22,6 +22,7 @@
             'hospital_management/static/src/xml/list_view_override.xml',
             'hospital_management/static/src/css/reception_dashboard.css',
             'hospital_management/static/src/css/admin_dashboard.css',
+            'hospital_management/static/src/css/hide_systray.css',
             'hospital_management/static/src/css/pharmacy_dashboard.css',
             'hospital_management/static/src/css/doctor_dashboard.css',
 
