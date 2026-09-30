@@ -9,6 +9,8 @@
     'depends': [
         'base',
         'web',
+        'hr',
+        'maintenance',
     ],
 
     'assets': {

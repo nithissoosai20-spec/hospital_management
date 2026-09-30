@@ -278,4 +278,35 @@
         sequence="25"
         groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_lab_technician"
     />
+
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="name">HR Management</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="sequence">100</field>
+        <field name="group_ids" eval="[
+            (6, 0, [
+                ref('group_hospital_admin'),
+                ref('group_hospital_super_admin'),
+                ref('group_hospital_hr')
+            ])
+        ]"/>
+    </record>
+
+    <!-- ========================================= -->
+    <!-- ODOO ASSET MANAGEMENT INSIDE HOSPITAL -->
+    <!-- ========================================= -->
+
+    <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
+        <field name="name">Asset Management</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="sequence">110</field>
+        <field name="group_ids" eval="[
+            (6, 0, [
+                ref('group_hospital_admin'),
+                ref('group_hospital_super_admin')
+            ])
+        ]"/>
+    </record>
+
+    
 </odoo>

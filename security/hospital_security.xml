@@ -69,9 +69,12 @@
 
         <field
             name="implied_ids"
-            eval="[(4, ref('group_hospital_user'))]"
+            eval="[
+                (4, ref('group_hospital_user')),
+                (4, ref('hr.group_hr_manager')),
+                (4, ref('maintenance.group_equipment_manager'))
+            ]"
         />
-
         <field name="comment">
             Hospital administrator with full hospital management access.
         </field>
@@ -259,7 +262,7 @@
         id="group_hospital_hr"
         model="res.groups"
     >
-        <field name="name">HR Executive</field>
+        <field name="name">HR Manager</field>
         <field name="sequence">90</field>
 
         <field
@@ -269,13 +272,17 @@
 
         <field
             name="implied_ids"
-            eval="[(4, ref('group_hospital_user'))]"
+            eval="[
+                (4, ref('group_hospital_user')),
+                (4, ref('hr.group_hr_manager'))
+            ]"
         />
 
         <field name="comment">
-            HR executive with human resources-related access.
+            HR Manager with access to Odoo HR management and hospital HR functions.
         </field>
     </record>
+
 
     <record id="access_hospital_lab_appointment_admin"
             model="ir.model.access">
