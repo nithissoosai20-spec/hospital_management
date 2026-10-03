@@ -24,4 +24,9 @@
         <field name="group_ids" eval="[(4, ref('hospital_management.group_hospital_hr'))]"/>
     </record>
 
+    <!-- Allow Asset Manager to see the Asset Management menu -->
+    <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
+        <field name="group_ids" eval="[(4, ref('hospital_hr_asset.group_hospital_asset_manager'))]"/>
+    </record>
+
 </odoo>

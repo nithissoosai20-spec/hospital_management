@@ -8,7 +8,7 @@
         id="menu_hospital_management"
         name="Hospital"
         sequence="10"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_doctor,hospital_management.group_hospital_receptionist,hospital_management.group_hospital_pharmacist,hospital_management.group_hospital_lab_technician"
+        groups="hospital_management.group_hospital_user"
         web_icon="hospital_management,static/description/icon.png"
     />
 

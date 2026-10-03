@@ -283,7 +283,7 @@ class HospitalUser(models.Model):
 
         role_group = self._get_odoo_group_for_role()
 
-        dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard_form', raise_if_not_found=False)
+        dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
         action_id = dashboard_action.id if dashboard_action else False
 
         user_vals = {
