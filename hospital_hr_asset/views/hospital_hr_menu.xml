@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Attendances -> Hospital -->
+    <record id="hr_attendance.menu_hr_attendance_root" model="ir.ui.menu">
+        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
+        <field name="sequence">101</field>
+    </record>
+
+    <!-- Time Off -> Hospital -->
+    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
+        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
+        <field name="sequence">102</field>
+    </record>
+
+    <!-- Expenses -> Hospital -->
+    <record id="hr_expense.menu_hr_expense_root" model="ir.ui.menu">
+        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
+        <field name="sequence">103</field>
+    </record>
+
+    <!-- Allow HR Manager to see the Hospital root menu -->
+    <record id="hospital_management.menu_hospital_management" model="ir.ui.menu">
+        <field name="group_ids" eval="[(4, ref('hospital_management.group_hospital_hr'))]"/>
+    </record>
+
+</odoo>
