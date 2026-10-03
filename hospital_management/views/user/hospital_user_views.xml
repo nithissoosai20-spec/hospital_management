@@ -146,14 +146,14 @@
                         </div>
                         <div class="col-md-5 custom-field-container">
                             <label for="password" class="custom-label">Password</label>
-                            <field name="password" class="w-100" password="True" required="not id"/>
+                            <field name="password" class="w-100" widget="password" required="not id"/>
                             <small class="pwd-helper" style="color: red !important; font-weight: bold;">
                                 Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
                             </small>
                         </div>
                         <div class="col-md-5 custom-field-container">
                             <label for="password_confirm" class="custom-label">Re-enter Password</label>
-                            <field name="password_confirm" class="w-100" password="True" required="not id"/>
+                            <field name="password_confirm" class="w-100" widget="password" required="not id"/>
                         </div>
                     </div>
 
