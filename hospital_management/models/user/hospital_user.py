@@ -580,6 +580,20 @@ class HospitalUser(models.Model):
         result = super().write(vals)
 
         # -------------------------------------------------
+        # Sync with actual Odoo login account
+        # -------------------------------------------------
+        odoo_vals = {}
+        if 'name' in vals: odoo_vals['name'] = vals['name']
+        if 'login' in vals: odoo_vals['login'] = vals['login']
+        if 'email' in vals: odoo_vals['email'] = vals['email']
+        if 'active' in vals: odoo_vals['active'] = vals['active']
+
+        if odoo_vals:
+            for record in self:
+                if record.odoo_user_id:
+                    record.odoo_user_id.sudo().write(odoo_vals)
+
+        # -------------------------------------------------
         # Update actual Odoo login password
         # -------------------------------------------------
 
