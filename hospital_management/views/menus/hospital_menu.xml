@@ -280,7 +280,7 @@
     />
 
     <record id="hr.menu_hr_root" model="ir.ui.menu">
-        <field name="name">HR Management</field>
+        <field name="name">Employees</field>
         <field name="parent_id" ref="menu_hospital_management"/>
         <field name="sequence">100</field>
         <field name="group_ids" eval="[
