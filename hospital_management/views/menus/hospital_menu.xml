@@ -328,4 +328,14 @@
         <field name="active" eval="False"/>
     </record>
 
+
+    <!-- Hide Apps and Settings from regular users -->
+    <record id="base.menu_management" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
+
+    <record id="base.menu_administration" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
+
 </odoo>
