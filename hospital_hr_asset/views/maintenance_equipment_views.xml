@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hospital_equipment_view_form" model="ir.ui.view">
+        <field name="name">hospital.maintenance.equipment.form</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//form" position="attributes">
+                <attribute name="class">asset_custom_form</attribute>
+            </xpath>
+            <xpath expr="//sheet" position="attributes">
+                <attribute name="style">padding-left: 30px; padding-right: 30px;</attribute>
+            </xpath>
+            <xpath expr="//widget[@name='web_ribbon']" position="replace"/>
+
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <widget name="web_ribbon" title="Scrapped" bg_color="text-bg-danger" invisible="asset_status != 'scrap'"/>
+                <widget name="web_ribbon" title="Maintenance" bg_color="text-bg-warning" invisible="asset_status != 'maintenance'"/>
+                
+            </xpath>
+
+            <xpath expr="//group[@name='service_info_group']" position="replace">
+                <group name="top_info_group">
+                    <group>
+                        <field name="asset_status" invisible="1"/>
+                        <field name="category_id"/>
+                        <field name="make"/>
+                        <field name="model"/>
+                        <field name="serial_no"/>
+                    </group>
+                    <group>
+                        <field name="owner_user_id" string="Assigned To (User)" domain="[]"/>
+                        <field name="assign_date" string="Date Assigned"/>
+                        <field name="maintenance_team_id" string="Maintenance Team"/>
+                        <field name="technician_user_id" string="Default Technician"/>
+                    </group>
+                </group>
+            </xpath>
+
+            <xpath expr="//notebook" position="replace">
+                <notebook>
+                    <!-- Tab 1: Product Specs -->
+                    <page string="Product Specs" name="product_specs">
+                        <div style="max-height: 150px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 5px;">
+                            <field name="specs" placeholder="Enter detailed specifications (RAM, Processor, Dimensions, Material, etc.)"/>
+                        </div>
+                        <separator string="Additional Notes"/>
+                        <div style="max-height: 150px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 5px;">
+                            <field name="note"/>
+                        </div>
+                    </page>
+                    
+                    <!-- Tab 2: Purchase &amp; Vendor Info -->
+                    <page string="Purchase &amp; Vendor Info" name="vendor_info">
+                        <group>
+                            <group string="Vendor Details">
+                                <field name="partner_id" string="Vendor"/>
+                                <field name="vendor_gst"/>
+                                <field name="partner_ref" string="Vendor Reference"/>
+                            </group>
+                            <group string="Financials">
+                                <field name="purchase_date"/>
+                                <field name="cost" string="Rate / Cost" widget="monetary"/>
+                                <field name="discount" string="Discount (%)"/>
+                            </group>
+                        </group>
+                    </page>
+
+                    <!-- Tab 3: Warranty &amp; Servicing -->
+                    <page string="Warranty &amp; Servicing" name="warranty_servicing">
+                        <group>
+                            <group string="Warranty Details">
+                                <field name="warranty_date" string="Warranty Expiry Date"/>
+                                <field name="guaranty_details" placeholder="Enter guaranty conditions..."/>
+                            </group>
+                            <group string="Service Terms">
+                                <field name="service_type"/>
+                                <field name="service_contact"/>
+                            </group>
+                        </group>
+                        <separator string="Service Log"/>
+                        <field name="service_log_ids">
+                            <list editable="bottom">
+                                <field name="date"/>
+                                <field name="issue"/>
+                                <field name="amount_paid" widget="monetary"/>
+                            </list>
+                        </field>
+                    </page>
+
+                    <!-- Tab 4: Lifecycle &amp; Age -->
+                    <page string="Lifecycle &amp; Age" name="lifecycle">
+                        <group>
+                            <group>
+                                <field name="installed_date"/>
+                                <field name="expected_lifetime_years"/>
+                            </group>
+                            <group>
+                                <field name="age_years" readonly="1" string="Current Age (Years)"/>
+                                <field name="scrap_date" string="Auto-Scrap Date (Triggered)" readonly="1" invisible="asset_status != 'scrap'"/>
+                            </group>
+                        </group>
+                        <div class="alert alert-info mt-3" role="alert">
+                            The system will automatically flag this asset as "Scrap for Resale" when its Current Age reaches the Expected Lifetime.
+                        </div>
+                    </page>
+                    
+                    
+                    <!-- Tab 6: Allocation History -->
+                    <page string="Allocation History" name="allocation_history">
+                        <field name="allocation_log_ids" readonly="1">
+                            <list decoration-success="status == 'active'" decoration-muted="status == 'returned'">
+                                <field name="user_id"/>
+                                <field name="date_assigned"/>
+                                <field name="date_returned"/>
+                                <field name="assigned_by"/>
+                                <field name="status" widget="badge"/>
+                            </list>
+                        </field>
+                    </page>
+
+                    <!-- Tab 5: Advanced Maintenance Stats -->
+                    <page string="Advanced Maintenance" name="advanced_maintenance">
+                        <group>
+                            <group name="statistics">
+                                <label for="expected_mtbf" string="Expected Mean Time Between Failure" />
+                                <div class="o_row">
+                                    <field name="expected_mtbf" /> days
+                                </div>
+                                <label for="mtbf" string="Mean Time Between Failure" />
+                                <div class="o_row">
+                                    <field name="mtbf" /> days
+                                </div>
+                                <label for="estimated_next_failure" string="Estimated Next Failure" />
+                                <div class="o_row">
+                                    <field name="estimated_next_failure" />
+                                </div>
+                                <field name="latest_failure_date" string="Latest Failure" />
+                                <label for="mttr" string="Mean Time To Repair" />
+                                <div class="o_row">
+                                    <field name="mttr" /> days
+                                </div>
+                            </group>
+                        </group>
+                    
+                    </page>
+                </notebook>
+                <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                    <button string="Clear" name="action_custom_clear" type="object" class="btn-secondary"/>
+                    <button string="Cancel" name="action_custom_cancel" type="object" class="btn-secondary"/>
+                    <button string="Save" name="action_custom_save" type="object" class="btn-primary"/>
+                </div>
+
+            </xpath>
+
+            
+
+            <xpath expr="//div[hasclass('oe_title')]" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+            <xpath expr="//group[@name='top_info_group']" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+            <xpath expr="//notebook" position="attributes">
+                <attribute name="style">margin-left: 20px; margin-right: 20px;</attribute>
+            </xpath>
+            <xpath expr="//chatter" position="replace"/>
+        </field>
+    </record>
+
+    
+    <record id="hospital_equipment_view_tree" model="ir.ui.view">
+        <field name="name">hospital.maintenance.equipment.list</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='serial_no']" position="after">
+                <field name="asset_status" widget="badge" 
+                    decoration-success="asset_status == 'active'" 
+                    decoration-warning="asset_status == 'maintenance'" 
+                    decoration-danger="asset_status == 'scrap'"/>
+            </xpath>
+            <!-- Add owner_user_id before asset_status (or anywhere) and hide employee/dept if they exist -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="owner_user_id" string="Assigned To (User)"/>
+            </xpath>
+            <xpath expr="//field[@name='employee_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='department_id']" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <!-- Remove editable bottom from team list -->
+    <record id="hospital_maintenance_team_view_tree_inherit" model="ir.ui.view">
+        <field name="name">hospital.maintenance.team.list.inherit</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="editable"></attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add custom buttons to team form -->
+    <record id="hospital_maintenance_team_view_form_inherit" model="ir.ui.view">
+        <field name="name">hospital.maintenance.team.form.inherit</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
+                    <button name="action_custom_clear" string="Clear" type="object" class="btn-secondary"/>
+                    <button name="action_custom_save" string="Save" type="object" class="btn-primary"/>
+                </div>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+            <xpath expr="//sheet/group" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

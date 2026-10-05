@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Action -->
+    <record id="action_hospital_asset_replacement_wizard" model="ir.actions.act_window">
+        <field name="name">Assign Replacement</field>
+        <field name="res_model">hospital.asset.replacement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_request_id': active_id}</field>
+    </record>
+
+    <record id="hospital_asset_replacement_wizard_view_form" model="ir.ui.view">
+        <field name="name">hospital.asset.replacement.wizard.form</field>
+        <field name="model">hospital.asset.replacement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assign Replacement Asset">
+                <sheet>
+                    <group>
+                        <field name="request_id" invisible="1"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="broken_equipment_id" readonly="1"/>
+                        <field name="new_equipment_id" options="{'no_create': True}"/>
+                    </group>
+                    <footer>
+                        <button name="action_assign_replacement" string="Confirm Replacement" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+                </field>
+    </record>
+
+    <!-- Inherit Maintenance Request Form to add button -->
+    <record id="hospital_maintenance_request_view_form_inherit" model="ir.ui.view">
+        <field name="name">hospital.maintenance.request.form.inherit</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form"/>
+        <field name="arch" type="xml">
+            
+            
+            <!-- Move Cancel button out of header -->
+            <xpath expr="//header/button[@name='archive_equipment_request']" position="replace"/>
+            
+            <!-- Add both buttons to the bottom of the sheet -->
+            <xpath expr="//sheet" position="inside">
+                <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
+                    
+                    
+                    <button name="%(hospital_hr_asset.action_hospital_asset_replacement_wizard)d" string="Assign Replacement" type="action" class="btn-primary" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                </div>
+            </xpath>
+
+            <xpath expr="//div[hasclass('oe_title')]" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+            <xpath expr="//sheet/group" position="attributes">
+                <attribute name="style">margin-left: 20px;</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='maintenance_type']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+                <attribute name="widget">selection_badge</attribute>
+            </xpath>
+            <xpath expr="//field[@name='maintenance_team_id']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+            </xpath>
+            <xpath expr="//field[@name='schedule_date']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+            </xpath>
+            
+            <xpath expr="//field[@name='priority']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+            </xpath>
+
+            
+            <xpath expr="//field[@name='schedule_end']" position="attributes">
+                <attribute name="groups">hospital_hr_asset.group_hospital_asset_manager</attribute>
+            </xpath>
+
+            <xpath expr="//chatter" position="replace"/>
+
+            <xpath expr="//label[@for='recurring_maintenance']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='recurring_maintenance']/.." position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+                </field>
+    </record>
+</odoo>

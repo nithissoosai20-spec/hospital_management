@@ -1,0 +1,9 @@
+.o_field_invalid, .o_field_invalid input, .o_field_invalid select {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
+
+.asset_custom_form .o_form_sheet {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+}
