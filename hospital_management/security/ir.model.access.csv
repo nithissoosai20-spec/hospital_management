@@ -120,3 +120,4 @@ access_hospital_category_master,access.hospital.category.master,model_hospital_c
 access_hospital_lab_subtest,hospital.lab.subtest,model_hospital_lab_subtest,base.group_user,1,1,1,1
 access_hospital_lab_subtest_wizard,hospital.lab.subtest.wizard,model_hospital_lab_subtest_wizard,base.group_user,1,1,1,1
 access_hospital_lab_subtest_wizard_line,hospital.lab.subtest.wizard.line,model_hospital_lab_subtest_wizard_line,base.group_user,1,1,1,1
+access_hospital_role_user,hospital.role.user,model_hospital_role,hospital_management.group_hospital_user,1,0,0,0

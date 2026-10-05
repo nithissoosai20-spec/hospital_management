@@ -23,6 +23,7 @@
             'hospital_management/static/src/css/reception_dashboard.css',
             'hospital_management/static/src/css/admin_dashboard.css',
             'hospital_management/static/src/css/hide_systray.css',
+            'hospital_management/static/src/css/invalid_field.css',
             'hospital_management/static/src/js/hide_systray.js',
             'hospital_management/static/src/css/pharmacy_dashboard.css',
             'hospital_management/static/src/css/doctor_dashboard.css',
