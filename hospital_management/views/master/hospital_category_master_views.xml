@@ -50,10 +50,12 @@
                         </group>
                     </div>
                     
-                    <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top bg-light p-3 rounded">
-                        <button name="action_save_and_close" type="object" string="Save" class="btn btn-primary fw-bold px-4 py-2 shadow-sm" invisible="id != False" style="background-color: #1e3a8a; border-color: #1e3a8a;"/>
-                        <button name="action_go_back" type="object" string="Close" class="btn btn-secondary fw-bold px-4 py-2 shadow-sm"/>
-                    </div>
+                    <footer>
+                        <div class="d-flex justify-content-end w-100 gap-2">
+                            <button special="save" data-hotkey="s" string="Save" class="btn-primary"/>
+                            <button special="cancel" data-hotkey="x" string="Discard" class="btn-secondary"/>
+                        </div>
+                    </footer>
                 </sheet>
             </form>
         </field>

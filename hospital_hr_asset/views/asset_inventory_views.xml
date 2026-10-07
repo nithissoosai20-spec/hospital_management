@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Dashboard -->
+    <record id="action_asset_dashboard" model="ir.actions.act_window">
+        <field name="name">Asset Dashboard</field>
+        <field name="res_model">hospital.asset.item</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Items -->
+    <record id="action_asset_item" model="ir.actions.act_window">
+        <field name="name">Items</field>
+        <field name="res_model">hospital.asset.item</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_item_list" model="ir.ui.view">
+        <field name="name">hospital.asset.item.list</field>
+        <field name="model">hospital.asset.item</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="item_name"/>
+                <field name="item_code"/>
+                <field name="asset_category_id"/>
+                <field name="quantity"/>
+                <field name="uom"/>
+                <field name="purchase_price"/>
+                <field name="mrp"/>
+                <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status == 'out' or stock_status == 'critical'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_item_form" model="ir.ui.view">
+        <field name="name">hospital.asset.item.form</field>
+        <field name="model">hospital.asset.item</field>
+        <field name="arch" type="xml">
+            <form string="Asset Item" js_class="hospital_asset_item_form_view">
+                <sheet>
+                    <!-- VENDOR & STATUS -->
+                    <div class="oe_title" style="margin-bottom: 20px;">
+                        
+
+                        <div name="options" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 20px;">
+                            <!-- Vendor Dropdown -->
+                            <div style="display: flex; align-items: center; flex-grow: 1;">
+                                <label for="vendor_ids" string="Vendor Name" style="font-weight: 600; margin-right: 16px; white-space: nowrap; font-size: 16px;"/>
+                                <div style="flex-grow: 1;">
+                                    <field
+                                        name="vendor_ids"
+                                        widget="many2many_tags"
+                                        domain="[('supplier_rank', '>', 0)]"
+                                        can_create="True"
+                                        options="{'no_quick_create': False, 'no_create_edit': False, 'create': []}"
+                                        placeholder="Select connected vendors..."
+                                        context="{'res_partner_search_mode': 'supplier', 'default_supplier_rank': 1}"
+                                        style="width: 100% !important;"
+                                    />
+                                </div>
+                            </div>
+
+                            <!-- Active Toggle -->
+                            <div style="display: flex; align-items: center;">
+                                <label for="active" string="Active" style="font-weight: 600; margin-right: 10px; font-size: 16px;"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3-COLUMN PROFESSIONAL LAYOUT -->
+                    <div class="row" style="margin-top: 40px !important;">
+                        
+                        <!-- COLUMN 1: Basic & Batch Details -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Item &amp; Batch Details</h5>
+                            <group>
+                                <field name="item_name" placeholder="e.g. Printer"/>
+                                <field name="item_code" placeholder="e.g. AST001"/>
+                                <field name="asset_category_id" string="Category" context="{'default_category_type': 'asset_category'}" options="{'no_create': False, 'no_create_edit': False}"/>
+                                <field name="batch_number"/>
+                                <field name="expiry_date"/>
+                                <field name="hsn_code"/>
+                            </group>
+                        </div>
+
+                        <!-- COLUMN 2: Stock & Inventory -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Stock &amp; Inventory</h5>
+                            <group>
+                                <field name="total_stock"/>
+                                <field name="emergency_stock"/>
+                                <field name="reorder_level"/>
+                                <field name="quantity" class="fw-bold text-success"/>
+                                <field name="stock_status" widget="badge" decoration-success="stock_status == 'available'" decoration-warning="stock_status == 'low'" decoration-danger="stock_status in ('critical', 'out')"/>
+                                <field name="is_reorder_needed" widget="boolean_toggle" readonly="1"/>
+                            </group>
+                        </div>
+
+                        <!-- COLUMN 3: Pricing Information -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Pricing Information</h5>
+                            <group>
+                                <label for="purchase_price" string="Pur. Price"/>
+                                <div class="o_row">
+                                    <field name="purchase_price"/>
+                                    <span class="ms-2 me-1 text-muted">MRP</span>
+                                    <field name="mrp"/>
+                                </div>
+                                
+                                <label for="uom" string="Item Unit"/>
+                                <div class="o_row">
+                                    <field name="uom"/>
+                                </div>
+                                
+                                <label for="supplier" string="Supplier (Text)"/>
+                                <div class="o_row">
+                                    <field name="supplier"/>
+                                </div>
+                            </group>
+                        </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;">
+                        <a role="button" class="btn btn-secondary btn-custom-clear" style="color: white; background-color: #6c757d; border-color: #6c757d; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;">Clear</a>
+                        <a role="button" class="btn btn-danger btn-custom-close" style="color: white; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem;">Close</a>
+                        <button name="action_save" string="Save" type="object" class="oe_highlight" />
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Specification -->
+    <record id="action_asset_specification" model="ir.actions.act_window">
+        <field name="name">Item Specification</field>
+        <field name="res_model">hospital.asset.specification</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_specification_list" model="ir.ui.view">
+        <field name="name">hospital.asset.specification.list</field>
+        <field name="model">hospital.asset.specification</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="manufacturer"/>
+                <field name="model_number"/>
+                <field name="warranty_period"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_specification_form" model="ir.ui.view">
+        <field name="name">hospital.asset.specification.form</field>
+        <field name="model">hospital.asset.specification</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1>
+                            <field name="name" placeholder="Specification Name"/>
+                        </h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="manufacturer"/>
+                            <field name="model_number"/>
+                        </group>
+                        <group>
+                            <field name="warranty_period"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group style="margin-left: 20px;">
+                        <field name="description"/>
+                    </group>
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+        <!-- Purchase Request -->
+    <record id="action_asset_purchase_request" model="ir.actions.act_window">
+        <field name="name">My Asset Requests</field>
+        <field name="res_model">hospital.asset.purchase.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('requested_by_id', '=', uid)]</field>
+        <field name="context">{'default_requested_by_id': uid}</field>
+    </record>
+
+    <record id="action_asset_purchase_request_manager" model="ir.actions.act_window">
+        <field name="name">All Asset Requests</field>
+        <field name="res_model">hospital.asset.purchase.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_asset_purchase_request_list" model="ir.ui.view">
+        <field name="name">hospital.asset.purchase.request.list</field>
+        <field name="model">hospital.asset.purchase.request</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="requested_by_id"/>
+                <field name="item_id"/>
+                <field name="quantity"/>
+                <field name="request_date"/>
+                <field name="state" widget="badge" 
+                    decoration-info="state == 'submitted'"
+                    decoration-success="state in ('ready', 'received')"
+                    decoration-warning="state == 'ordered'"
+                    decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_asset_purchase_request_form" model="ir.ui.view">
+        <field name="name">hospital.asset.purchase.request.form</field>
+        <field name="model">hospital.asset.purchase.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,ready,received"/>
+                </header>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="requested_by_id"/>
+                            <field name="request_date"/>
+                        </group>
+                        <group>
+                            <field name="item_id" options="{'no_create': True}"/>
+                            <field name="quantity"/>
+                        </group>
+                    </group>
+                    <group style="margin-left: 20px;">
+                        <field name="reason"/>
+                        <field name="po_id" invisible="po_id == False"/>
+                    </group>
+                    
+                    <!-- Action Buttons at bottom as requested by UI rules -->
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
+                        <!-- Employee Buttons -->
+                        <button name="action_submit" string="Submit Request" type="object" class="btn-primary" invisible="state != 'draft' or requested_by_id != uid"/>
+                        
+                        <!-- Manager Buttons (Wait, we can restrict invisible by group but let's just use state for now, 
+                             Odoo standard uses groups="hospital_hr_asset.group_hospital_asset_manager") -->
+                        <button name="action_accept_ready" string="Accept (In Stock &amp; Ready)" type="object" class="btn-success" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        <button name="action_approve_order" string="Approve (Needs Ordering)" type="object" class="btn-warning" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                    </div>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Asset PO -->
+    <record id="action_asset_po" model="ir.actions.act_window">
+        <field name="name">Asset PO</field>
+        <field name="res_model">hospital.asset.po</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_po_list" model="ir.ui.view">
+        <field name="name">hospital.asset.po.list</field>
+        <field name="model">hospital.asset.po</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_po_form" model="ir.ui.view">
+        <field name="name">hospital.asset.po.form</field>
+        <field name="model">hospital.asset.po</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,received"/>
+                </header>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="vendor_id"/>
+                            <field name="order_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Order Lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="item_id"/>
+                                    <field name="request_id" optional="show"/>
+                                    <field name="quantity"/>
+                                    <field name="price_unit"/>
+                                    <field name="subtotal" sum="Total"/>
+                                </list>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="total_amount" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_confirm" string="Confirm Order" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_receive" string="Receive Products (Inward)" type="object" class="btn-success" invisible="state != 'confirmed'"/>
+                    </div>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Asset Purchase Invoice -->
+    <record id="action_asset_purchase_invoice" model="ir.actions.act_window">
+        <field name="name">Asset Purchase Invoice</field>
+        <field name="res_model">hospital.asset.invoice</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Inward -->
+    <record id="action_asset_inward" model="ir.actions.act_window">
+        <field name="name">Inward</field>
+        <field name="res_model">hospital.asset.inward</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_inward_list" model="ir.ui.view">
+        <field name="name">hospital.asset.inward.list</field>
+        <field name="model">hospital.asset.inward</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="po_id"/>
+                <field name="vendor_id"/>
+                <field name="date_received"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_inward_form" model="ir.ui.view">
+        <field name="name">hospital.asset.inward.form</field>
+        <field name="model">hospital.asset.inward</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="po_id"/>
+                            <field name="vendor_id"/>
+                        </group>
+                        <group>
+                            <field name="date_received"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Items Received">
+                            <field name="line_ids" readonly="state == 'done'">
+                                <list editable="bottom">
+                                    <field name="item_id" />
+                                    <field name="requested_qty" readonly="1" force_save="1" />
+                                    <field name="approved_qty" readonly="1" force_save="1" />
+                                    <field name="received_qty" />
+                                    <field name="damaged_qty" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_view_invoice" string="View Invoice" type="object" class="btn-secondary" invisible="state != 'done'"/>
+                        <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Outward -->
+    <record id="action_asset_outward" model="ir.actions.act_window">
+        <field name="name">Outward</field>
+        <field name="res_model">hospital.asset.outward</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_outward_list" model="ir.ui.view">
+        <field name="name">hospital.asset.outward.list</field>
+        <field name="model">hospital.asset.outward</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="assigned_to"/>
+                <field name="date_outward"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_outward_form" model="ir.ui.view">
+        <field name="name">hospital.asset.outward.form</field>
+        <field name="model">hospital.asset.outward</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="assigned_to"/>
+                        </group>
+                        <group>
+                            <field name="date_outward"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Items Assigned">
+                            <field name="line_ids" readonly="state == 'done'">
+                                <list editable="bottom">
+                                    <field name="item_id"/>
+                                    <field name="quantity"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Damage -->
+    <record id="action_asset_damage" model="ir.actions.act_window">
+        <field name="name">Damaged &amp; Expiry</field>
+        <field name="res_model">hospital.asset.damage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_asset_damage_list" model="ir.ui.view">
+        <field name="name">hospital.asset.damage.list</field>
+        <field name="model">hospital.asset.damage</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="item_id"/>
+                <field name="quantity"/>
+                <field name="date"/>
+                <field name="source_document"/>
+                <field name="po_id"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_asset_damage_form" model="ir.ui.view">
+        <field name="name">hospital.asset.damage.form</field>
+        <field name="model">hospital.asset.damage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="margin-left: 20px;">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group style="margin-left: 20px;">
+                        <group>
+                            <field name="item_id"/>
+                            <field name="quantity"/>
+                            <field name="reason"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="source_document"/>
+                            <field name="po_id"/>
+                            <field name="state" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>
+
+
+
+
+
+

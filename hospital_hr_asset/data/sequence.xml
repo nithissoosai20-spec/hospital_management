@@ -1,26 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data noupdate="1">
+        <record id="seq_hospital_asset_request" model="ir.sequence">
+            <field name="name">Asset Request Sequence</field>
+            <field name="code">hospital.asset.request.seq</field>
+            <field name="prefix">AST/REQ/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False" />
+        </record>
+
         <record id="seq_hospital_asset_purchase" model="ir.sequence">
             <field name="name">Asset Purchase Sequence</field>
             <field name="code">hospital.asset.purchase.seq</field>
             <field name="prefix">AST/PO/</field>
             <field name="padding">5</field>
-            <field name="company_id" eval="False"/>
+            <field name="company_id" eval="False" />
         </record>
         <record id="seq_hospital_asset_scrap" model="ir.sequence">
             <field name="name">Asset Scrap Sequence</field>
             <field name="code">hospital.asset.scrap.seq</field>
             <field name="prefix">SCRAP/</field>
             <field name="padding">5</field>
-            <field name="company_id" eval="False"/>
+            <field name="company_id" eval="False" />
         </record>
         <record id="seq_hospital_asset_invoice" model="ir.sequence">
             <field name="name">Asset Invoice Sequence</field>
             <field name="code">hospital.asset.invoice.seq</field>
             <field name="prefix">BILL/</field>
             <field name="padding">5</field>
-            <field name="company_id" eval="False"/>
+            <field name="company_id" eval="False" />
         </record>
     </data>
+<record id="seq_hospital_asset_po" model="ir.sequence"><field name="name">Asset PO Sequence</field><field name="code">hospital.asset.po.seq</field><field name="prefix">AST/PO/</field><field name="padding">4</field><field name="company_id" eval="False" /></record>
+<record id="seq_hospital_asset_damage" model="ir.sequence"><field name="name">Asset Damage Sequence</field><field name="code">hospital.asset.damage.seq</field><field name="prefix">AST/DMG/</field><field name="padding">4</field><field name="company_id" eval="False" /></record>
+<record id="seq_hospital_asset_inward" model="ir.sequence"><field name="name">Asset Inward Sequence</field><field name="code">hospital.asset.inward.seq</field><field name="prefix">AST/IN/</field><field name="padding">4</field><field name="company_id" eval="False" /></record>
+<record id="seq_hospital_asset_outward" model="ir.sequence"><field name="name">Asset Outward Sequence</field><field name="code">hospital.asset.outward.seq</field><field name="prefix">AST/OUT/</field><field name="padding">4</field><field name="company_id" eval="False" /></record>
 </odoo>

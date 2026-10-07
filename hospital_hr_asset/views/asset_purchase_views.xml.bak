@@ -77,7 +77,7 @@
         <field name="context">{'default_state': 'po'}</field>
     </record>
 
-    <menuitem id="menu_asset_purchase_intent" name="Asset Purchase Intents" parent="hospital_management.menu_hospital_management" action="action_asset_purchase_intent" sequence="117"/>
-    <menuitem id="menu_asset_purchase_order" name="Asset Purchase Orders" parent="hospital_management.menu_hospital_management" action="action_asset_purchase_order" sequence="118"/>
+    
+    
 
 </odoo>

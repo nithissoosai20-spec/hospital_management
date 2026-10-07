@@ -1,4 +1,4 @@
-﻿from odoo import models, fields, api
+from odoo import models, fields, api
 
 class HospitalCategoryMaster(models.Model):
     _name = 'hospital.category.master'
@@ -10,6 +10,7 @@ class HospitalCategoryMaster(models.Model):
         ('pharmacy_category', 'Pharmacy Category'),
         ('pharmacy_item_category', 'Pharmacy Item Category'),
         ('lab_category', 'Lab Category'),
+        ('asset_category', 'Item Category'),
         
     ], string='Module / Type', required=True)
     active = fields.Boolean(default=True)

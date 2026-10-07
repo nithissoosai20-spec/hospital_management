@@ -1,77 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Time Off -> Restricted to HR, Admin, Super Admin -->
-    <record id="hr_holidays.menu_hr_holidays_root" model="ir.ui.menu">
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_hr'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <!-- Expenses -> Restricted to HR, Admin, Super Admin -->
-    <record id="hr_expense.menu_hr_expense_root" model="ir.ui.menu">
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_hr'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <!-- Attendances -> Restricted to HR, Admin, Super Admin -->
-    <record id="hr_attendance.menu_hr_attendance_root" model="ir.ui.menu">
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_hr'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <!-- Asset Management App Menu -->
-    <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
-        <field name="name">Asset Management</field>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <!-- Create a new folder menu "Asset Management" to hold all the clutter -->
-    <menuitem id="menu_asset_management_clutter"
-              name="Asset Management"
-              parent="maintenance.menu_maintenance_title"
-              sequence="1"/>
-
-    <!-- Reparent standard clutter under this new dropdown -->
+    <!-- Hide the default Maintenance app menus -->
     <record id="maintenance.menu_m_dashboard" model="ir.ui.menu">
-        <field name="parent_id" ref="hospital_hr_asset.menu_asset_management_clutter"/>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+        <field name="active" eval="False"/>
     </record>
-
-    <record id="maintenance.menu_m_request" model="ir.ui.menu">
-        <field name="name">Repair Tickets</field>
-        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
-        <field name="sequence">116</field>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <record id="maintenance.maintenance_reporting" model="ir.ui.menu">
-        <field name="parent_id" ref="hospital_hr_asset.menu_asset_management_clutter"/>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <record id="maintenance.menu_maintenance_configuration" model="ir.ui.menu">
-        <field name="parent_id" ref="hospital_hr_asset.menu_asset_management_clutter"/>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
-    </record>
-
-    <!-- Keep Equipment menu accessible directly on the navbar -->
     <record id="maintenance.menu_equipment_form" model="ir.ui.menu">
-        <field name="name">Equipment</field>
-        <field name="sequence">115</field>
-        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
-        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+        <field name="active" eval="False"/>
+    </record>
+    <record id="maintenance.maintenance_reporting" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="maintenance.menu_maintenance_configuration" model="ir.ui.menu">
+        <field name="active" eval="False"/>
     </record>
 
-
-    <!-- Staff Asset Requests Menu -->
-    <menuitem id="menu_hospital_my_asset_requests" 
-              name="My Asset Requests" 
-              parent="hospital_management.menu_hospital_management" 
-              action="action_hospital_my_asset_requests" 
-              sequence="116" 
-              groups="hospital_management.group_hospital_user"/>
-
-
-    <!-- Make Equipment menu open List view by default -->
-    <record id="maintenance.hr_equipment_action" model="ir.actions.act_window">
-        <field name="view_mode">list,kanban,form</field>
-        <field name="view_id" ref="maintenance.hr_equipment_view_tree"/>
+    <!-- Hide the old hospital menus -->
+    <record id="maintenance.menu_m_request" model="ir.ui.menu">
+        <field name="active" eval="False"/>
     </record>
+
+    <!-- Create the 9 Nav Items directly under the Hospital app -->
+    <menuitem id="menu_asset_inv_dashboard" name="Dashboard" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_dashboard" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="10"/>
+    <menuitem id="menu_asset_inv_items" name="Items" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_item" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="20"/>
+    <menuitem id="menu_asset_inv_specs" name="Item Specification" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_specification" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="30"/>
+    
+    <menuitem id="menu_asset_my_requests" name="My Asset Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request" groups="hospital_management.group_hospital_user" sequence="35"/>
+    <menuitem id="menu_asset_all_requests" name="All Asset Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_manager" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="40"/>
+
+    <menuitem id="menu_asset_inv_po" name="Asset PO" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_po" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="50"/>
+    <menuitem id="menu_asset_inv_invoice" name="Asset Purchase Invoice" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_invoice" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="60"/>
+    <menuitem id="menu_asset_inv_inward" name="Inward" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_inward" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="70"/>
+    <menuitem id="menu_asset_inv_outward" name="Outward" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_outward" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="80"/>
+    <menuitem id="menu_asset_inv_damage" name="Damaged &amp; Expiry" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_damage" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="90"/>
 
 </odoo>

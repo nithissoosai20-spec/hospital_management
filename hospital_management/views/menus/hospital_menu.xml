@@ -8,7 +8,7 @@
         id="menu_hospital_management"
         name="Hospital"
         sequence="10"
-        groups="hospital_management.group_hospital_user"
+        groups="hospital_management.group_hospital_user,hospital_hr_asset.group_hospital_asset_manager"
         web_icon="hospital_management,static/description/icon.png"
     />
 
@@ -298,12 +298,14 @@
 
     <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
         <field name="name">Asset Management</field>
+        <field name="active" eval="True"/>
         <field name="parent_id" ref="menu_hospital_management"/>
         <field name="sequence">110</field>
         <field name="group_ids" eval="[
             (6, 0, [
                 ref('group_hospital_admin'),
-                ref('group_hospital_super_admin')
+                ref('group_hospital_super_admin'),
+                ref('hospital_hr_asset.group_hospital_asset_manager')
             ])
         ]"/>
     </record>

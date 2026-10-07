@@ -291,7 +291,10 @@ class HospitalUser(models.Model):
             'login': self.login,
             'email': self.email or self.login,
             'password': password,
-            'group_ids': [(6, 0, [role_group.id])],
+            'group_ids': [
+                (4, self.env.ref('base.group_user').id),
+                (4, role_group.id),
+            ],
         }
         if action_id:
             user_vals['action_id'] = action_id
@@ -324,7 +327,11 @@ class HospitalUser(models.Model):
         group = self._get_odoo_group_for_role()
 
         self.odoo_user_id.sudo().write({
-            'group_ids': [(6, 0, [group.id])],
+            'group_ids': [
+                (5, 0, 0),
+                (4, self.env.ref('base.group_user').id),
+                (4, group.id),
+            ],
         })
 
     # UPDATE ODOO USER ACCOUNT

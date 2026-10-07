@@ -17,12 +17,17 @@
         'views/maintenance_equipment_views.xml',
         'views/hospital_asset_request_views.xml',
         'views/hospital_asset_replacement_views.xml',
+        'views/asset_inventory_views.xml',
         'views/hospital_hr_menu.xml',
-        'views/asset_purchase_views.xml',
         'views/asset_scrap_views.xml',
         'views/asset_invoice_views.xml',
     ],
     'installable': True,
     'application': False,
     'license': 'LGPL-3',
+    'assets': {
+        'web.assets_backend': [
+            'hospital_hr_asset/static/src/js/hospital_asset_item_form.js',
+        ],
+    },
 }
