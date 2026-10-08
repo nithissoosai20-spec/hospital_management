@@ -7,6 +7,7 @@ class HospitalAssetSpecification(models.Model):
     _rec_name = 'name'
 
     name = fields.Char(string='Specification Name', required=True)
+    item_id = fields.Many2one('hospital.asset.item', string='Item')
     description = fields.Text(string='Description')
     manufacturer = fields.Char(string='Manufacturer')
     model_number = fields.Char(string='Model Number')
