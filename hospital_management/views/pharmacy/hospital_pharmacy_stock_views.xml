@@ -18,7 +18,7 @@
         model="ir.actions.act_window"
     >
 
-        <field name="name">Pharmacy Stock</field>
+        <field name="name">Items</field>
 
         <field name="res_model">hospital.pharmacy.stock</field>
 
@@ -27,11 +27,11 @@
         <field name="help" type="html">
 
             <p class="o_view_nocontent_smiling_face">
-                Create your first medicine stock record.
+                Create your first item record.
             </p>
 
             <p>
-                Manage medicines, batches, expiry dates and quantities.
+                Manage items, batches, expiry dates and quantities.
             </p>
 
         </field>
@@ -52,23 +52,29 @@
         <field name="arch" type="xml">
 
             <list limit="14"
-                string="Pharmacy Stock"
+                string="Items"
                 default_order="medicine_name asc"
             >
 
                 <field
                     name="medicine_code"
-                    string="Code"
+                    string="Item Code"
                 />
 
                 <field
                     name="medicine_name"
-                    string="Medicine"
+                    string="Item Name"
                 />
 
                 <field
-                    name="category"
-                    string="Category"
+                    name="item_type"
+                    string="Type"
+                />
+
+                <field
+                    name="primary_category_id"
+                    string="Primary Category"
+                    optional="show"
                 />
 
                 <field
@@ -126,16 +132,14 @@
 
         <field name="arch" type="xml">
 
-            <form string="Medicine Stock" js_class="hospital_pharmacy_stock_form_view">
+            <form string="Item Details" js_class="hospital_pharmacy_stock_form_view">
 
                 <sheet>
-
                     <!-- =====================================================
                          VENDOR & STATUS
                          ===================================================== -->
 
                     <div class="oe_title" style="margin-bottom: 20px;">
-                        <h1>Vendor &amp; Status</h1>
 
                         <div name="options" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 20px;">
 
@@ -176,15 +180,17 @@
                     <!-- =====================================================
                          3-COLUMN PROFESSIONAL LAYOUT
                          ===================================================== -->
-                    <div class="row" style="margin-top: 40px !important;">
+                    <notebook>
+                        <page string="General Info">
+                            <div class="row" style="margin-top: 40px !important;">
                         
                         <!-- COLUMN 1: Basic & Batch Details -->
                         <div class="col-md-4">
                             <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Item &amp; Batch Details</h5>
                             <group>
-                                <field name="medicine_name" placeholder="e.g. Paracetamol 500mgs"/>
-                                <field name="medicine_code" placeholder="e.g. MED001"/>
-                                <field name="pharmacy_category_id"/>
+                                <field name="item_type"/>
+                                <field name="medicine_name" placeholder="e.g. Paracetamol 500mgs / Dell Laptop" string="Item Name"/>
+                                <field name="medicine_code" placeholder="e.g. MED001 / IT-001" string="Item Code"/>
                                 <field name="batch_number"/>
                                 <field name="expiry_date"/>
                                 <field name="hsn_code"/>
@@ -195,6 +201,9 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Stock &amp; Inventory</h5>
                             <group>
+                                <field name="primary_category_id" options="{'no_open': True}"/>
+                                <field name="pharmacy_category_id" options="{'no_create': True, 'no_open': True}" readonly="item_type == 'non_consumable'"/>
+                                <field name="additional_category_id" options="{'no_create': True, 'no_open': True}" readonly="item_type == 'non_consumable'"/>
                                 <field name="total_stock"/>
                                 <field name="emergency_stock"/>
                                 <field name="reorder_level"/>
@@ -218,7 +227,7 @@
                                 
                                 <label for="pharmacy_item_category_id" string="Item Category"/>
                                 <div class="o_row">
-                                    <field name="pharmacy_item_category_id"/>
+                                    <field name="pharmacy_item_category_id" readonly="item_type == 'non_consumable'" options="{'no_open': True}"/>
                                     <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Qty in Category</span>
                                     <field name="qty_in_category"/>
                                 </div>
@@ -227,7 +236,7 @@
                                 <div class="o_row">
                                     <field name="amount_per_item" readonly="1" force_save="1" class="o_input bg-light"/>
                                     <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Discount %</span>
-                                    <field name="discount_percent"/>
+                                    <field name="discount_percent" readonly="item_type == 'non_consumable'"/>
                                     <span class="ms-2 me-1 text-muted">Amt</span>
                                     <field name="discount_amount" readonly="1" force_save="1" class="o_input bg-light"/>
                                 </div>
@@ -267,6 +276,82 @@
                         </div>
 
                     </div>
+                    </page>
+                    <page string="Specifications">
+                        <div class="row mt-4">
+                            <!-- SECTION 1: PHYSICAL -->
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Physical Specifications</h5>
+                                <group>
+                                    <field name="spec_material"/>
+                                    <field name="spec_colour"/>
+                                    <label for="spec_length" string="Length / Width"/>
+                                    <div class="o_row">
+                                        <field name="spec_length"/> <span class="ms-1 me-2">cm</span>
+                                        <field name="spec_width"/> <span class="ms-1">cm</span>
+                                    </div>
+                                    <label for="spec_height" string="Height / Weight"/>
+                                    <div class="o_row">
+                                        <field name="spec_height"/> <span class="ms-1 me-2">cm</span>
+                                        <field name="spec_weight"/> <span class="ms-1">gm</span>
+                                    </div>
+                                    <field name="spec_shape"/>
+                                    <field name="spec_measurement_range"/>
+                                    <field name="spec_accuracy"/>
+                                </group>
+                            </div>
+
+                            <!-- SECTION 2: USAGE & CALIBRATION -->
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Usage &amp; Calibration</h5>
+                                <group>
+                                    <field name="spec_display_type"/>
+                                    <field name="spec_power_source"/>
+                                    <field name="spec_battery_type"/>
+                                    <field name="spec_calibration_required"/>
+                                    <field name="spec_calibration_frequency" invisible="spec_calibration_required != 'yes'"/>
+                                    <field name="spec_sterilization_compatible"/>
+                                </group>
+                            </div>
+
+                            <!-- SECTION 3: TECHNICAL -->
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Technical Specs</h5>
+                                <group>
+                                    <field name="spec_operating_voltage"/>
+                                    <field name="spec_power_consumption"/>
+                                    <field name="spec_response_time"/>
+                                    <field name="spec_memory_function"/>
+                                </group>
+                            </div>
+
+                            <!-- SECTION 4: ORIGIN & COMPLIANCE -->
+                            <div class="col-md-6 mb-4">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Origin &amp; Compliance</h5>
+                                <group>
+                                    <field name="spec_water_resistance"/>
+                                    <field name="spec_compatibility"/>
+                                    <field name="spec_country_of_origin"/>
+                                    <field name="spec_certification"/>
+                                </group>
+                            </div>
+                        </div>
+                    </page>
+                    <page string="Attachments &amp; Compliance">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Item Image</h5>
+                                <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920', 'size': [256, 256]}" style="margin: 0;"/>
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Documents</h5>
+                                <p class="text-muted" style="margin-top: 10px;">
+                                    Please use the standard Odoo attachments (paperclip icon at the top) or chatter to upload PDF documents, manuals, and compliance certificates.
+                                </p>
+                            </div>
+                        </div>
+                    </page>
+                    </notebook>
 
                     <!-- =====================================================
                          ACTION BUTTONS
@@ -308,6 +393,23 @@
 
         </field>
 
+    </record>
+
+    <!-- EMPTY SPECS WIZARD VIEW -->
+    <record id="view_hospital_empty_specs_wizard_form" model="ir.ui.view">
+        <field name="name">hospital.empty.specs.wizard.form</field>
+        <field name="model">hospital.empty.specs.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Missing Specifications">
+                <div class="alert alert-warning" role="alert" style="margin-bottom: 20px; font-size: 15px;">
+                    <strong>Warning:</strong> No specifications have been entered for this item. Do you want to proceed anyway?
+                </div>
+                <footer class="d-flex justify-content-end gap-2">
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                    <button name="action_proceed" string="Proceed &amp; Save" type="object" class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
     </record>
 
 </odoo>

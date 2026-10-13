@@ -91,6 +91,12 @@
                 />
 
                 <field
+                    name="treatment_type_id"
+                    string="Treatment Type"
+                    optional="show"
+                />
+
+                <field
                     name="priority"
                     string="Priority"
                 />
@@ -219,7 +225,7 @@
                             name="search_patient"
                             placeholder="Patient ID or Mobile Number"
                             nolabel="1"
-                            readonly="context.get('view_only')"
+                            readonly="context.get('view_only') or state != 'draft'"
                         />
 
                         <!-- SEARCH BUTTON -->
@@ -230,7 +236,7 @@
                             type="object"
                             class="btn-primary hospital_search_button"
                             icon="fa-search"
-                            invisible="context.get('view_only')"
+                            invisible="context.get('view_only') or state != 'draft'"
                         />
 
                         
@@ -242,7 +248,7 @@
                             type="object"
                             class="btn-secondary hospital_clear_button"
                             icon="fa-eraser"
-                            invisible="context.get('view_only')"
+                            invisible="context.get('view_only') or state != 'draft'"
                         />
 
                         <!-- HISTORY (near Clear) -->
@@ -423,6 +429,7 @@
                                         <field
                                             name="new_patient_name"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                          />
                                     </div>
 
@@ -438,6 +445,7 @@
                                         <field
                                             name="new_patient_phone"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                          />
                                     </div>
 
@@ -453,6 +461,7 @@
                                         <field
                                             name="new_patient_age"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                          />
                                     </div>
 
@@ -468,6 +477,7 @@
                                         <field
                                             name="new_patient_gender"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                          />
                                     </div>
 
@@ -483,6 +493,7 @@
                                         <field
                                             name="new_patient_blood_group"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                         />
                                     </div>
 
@@ -498,6 +509,7 @@
                                         <field
                                             name="new_patient_email"
                                             nolabel="1"
+                                            readonly="context.get('view_only') or state != 'draft'"
                                         />
                                     </div>
 
@@ -516,6 +528,7 @@
                                     <field
                                         name="new_patient_address"
                                         nolabel="1"
+                                        readonly="context.get('view_only') or state != 'draft'"
                                      />
 
                                 </div>
@@ -547,10 +560,7 @@
                                     <field
                                         name="doctor_id"
                                         nolabel="1"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
@@ -583,10 +593,7 @@
                                         name="appointment_date"
                                         widget="date"
                                         options="{'format': 'dd/MM/yyyy'}"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
@@ -603,10 +610,7 @@
                                         name="appointment_time"
                                         widget="html_time"
                                         nolabel="1"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
@@ -622,10 +626,25 @@
                                     <field
                                         name="visit_type"
                                         nolabel="1"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
+                                    />
+                                </div>
+
+
+                                <!-- TREATMENT TYPE -->
+
+                                <div>
+                                    <label
+                                        for="treatment_type_id"
+                                        string="Treatment Type"
+                                    />
+
+                                    <field
+                                        name="treatment_type_id"
+                                        nolabel="1"
+                                        placeholder="Select Treatment Type..."
+                                        options="{'no_open': False, 'no_create_edit': False}"
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
@@ -641,10 +660,7 @@
                                     <field
                                         name="priority"
                                         nolabel="1"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
@@ -659,17 +675,14 @@
                                     <field
                                         name="appointment_mode"
                                         nolabel="1"
-                                        readonly="
-                                            context.get('view_only')
-                                            or state in ('completed','cancelled')
-                                        "
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>
 
 
                                 <!-- TOKEN NUMBER -->
 
-                                <div class="hospital-token-wrapper">
+                                <div class="hospital-token-wrapper" style="grid-column: span 2;">
 
                                     <div class="hospital-token-label">
                                         🎟 TOKEN NUMBER
@@ -730,6 +743,7 @@
                                     <field
                                         name="consultation_fee"
                                         nolabel="1"
+                                        readonly="context.get('view_only') or state != 'draft'"
                                         groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
                                     />
 
@@ -748,6 +762,7 @@
                                     <field
                                         name="discount"
                                         nolabel="1"
+                                        readonly="context.get('view_only') or state != 'draft'"
                                     />
 
                                 </div>

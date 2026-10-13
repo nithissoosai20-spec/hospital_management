@@ -7,12 +7,16 @@ class HospitalCategoryMaster(models.Model):
 
     name = fields.Char(string='Category Name', required=True)
     category_type = fields.Selection([
+        ('item_primary_category', 'Primary Item Category'),
+        ('item_additional_category', 'Additional Item Category'),
         ('pharmacy_category', 'Pharmacy Category'),
         ('pharmacy_item_category', 'Pharmacy Item Category'),
         ('lab_category', 'Lab Category'),
         ('asset_category', 'Item Category'),
         
     ], string='Module / Type', required=True)
+    parent_id = fields.Many2one('hospital.category.master', string='Parent Category', ondelete='cascade')
+    child_ids = fields.One2many('hospital.category.master', 'parent_id', string='Sub Categories')
     active = fields.Boolean(default=True)
 
     _sql_constraints = [

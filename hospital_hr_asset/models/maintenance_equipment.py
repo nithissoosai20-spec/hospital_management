@@ -103,11 +103,22 @@ class MaintenanceEquipment(models.Model):
     
     def action_custom_save(self):
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'Equipments',
-            'res_model': 'maintenance.equipment',
-            'view_mode': 'list,form',
-            'target': 'current',
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Success',
+                'message': 'Record saved successfully!',
+                'type': 'success',
+                'sticky': False,
+                'next': {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Equipments',
+                    'res_model': 'maintenance.equipment',
+                    'view_mode': 'list,form',
+                    'views': [[False, 'list'], [False, 'form']],
+                    'target': 'current'
+                }
+            }
         }
 
     def action_custom_cancel(self):

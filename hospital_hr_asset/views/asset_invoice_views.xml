@@ -6,29 +6,101 @@
         <field name="arch" type="xml">
             <form string="Asset Invoice">
                 <sheet>
-                    <div class="oe_title" style="margin-left: 20px;">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
+                    <div class="row mb-4" style="margin-left: 10px; margin-right: 10px;">
+                        <div class="col-6">
+                            <div style="font-size: 10px; font-weight: bold; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">INVOICE REFERENCE</div>
+                            <h2 class="fw-bold m-0" style="color: #1e3a8a; font-size: 15px;">
+                                <field name="name" readonly="1" nolabel="1"/>
+                            </h2>
+                        </div>
+                        <div class="col-6 text-end">
+                            <div style="font-size: 10px; font-weight: bold; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">LAST PAYMENT DATE</div>
+                            <div class="fw-bold m-0" style="color: #4b5563; font-size: 13px;">
+                                <field name="payment_date" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
                     </div>
-                    <group style="margin-left: 20px;">
-                        <group>
-                            <field name="purchase_id"/>
-                            <field name="vendor_id"/>
-                            <field name="payment_date"/>
-                        </group>
-                        <group>
-                            <field name="amount"/>
-                            <field name="paid_amount"/>
-                            <field name="balance_amount"/>
-                            <field name="state" readonly="1"/>
-                        </group>
-                    </group>
-                    <group style="margin-left: 20px;">
-                        <field name="notes" placeholder="Adjustment notes..."/>
-                    </group>
-                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
-                        <button name="action_register_payment" string="Register Payment" type="object" class="btn-primary" invisible="state == 'paid'"/>
+
+                    <div class="row" style="margin-left: 10px; margin-right: 10px; border-top: 1px solid #e5e7eb; padding-top: 25px;">
+                        <!-- Left Column: Source -->
+                        <div class="col-md-6" style="border-right: 1px solid #e5e7eb; padding-right: 25px;">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 4px; height: 16px; background-color: #1e3a8a; margin-right: 8px;"></div>
+                                <h5 class="fw-bold m-0" style="color: #1e3a8a; font-size: 13px; text-transform: uppercase;">1. INVOICE SOURCE</h5>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="fw-bold" style="font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">VENDOR</div>
+                                <div><field name="vendor_id" readonly="1" nolabel="1" style="color: #3b82f6; font-size: 13px;"/></div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="fw-bold" style="font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">PURCHASE ORDER</div>
+                                <div><field name="purchase_id" readonly="1" nolabel="1" style="color: #3b82f6; font-size: 13px;"/></div>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="fw-bold" style="font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">ADJUSTMENT NOTES</div>
+                                <div><field name="notes" placeholder="Generated from Inward Receipt." nolabel="1" style="color: #4b5563; font-size: 13px;"/></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Details -->
+                        <div class="col-md-6" style="padding-left: 25px;">
+                            <div class="d-flex align-items-center mb-4">
+                                <div style="width: 4px; height: 16px; background-color: #1e3a8a; margin-right: 8px;"></div>
+                                <h5 class="fw-bold m-0" style="color: #1e3a8a; font-size: 13px; text-transform: uppercase;">2. INVOICE DETAILS</h5>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <div class="fw-bold" style="font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">STATUS</div>
+                                    <div><field name="state" readonly="1" nolabel="1" style="color: #4b5563; font-size: 13px;"/></div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="fw-bold" style="font-size: 10px; color: #9ca3af; text-transform: uppercase; margin-bottom: 4px;">TOTAL AMOUNT</div>
+                                    <div class="fw-bold" style="color: #4b5563; font-size: 13px;"><field name="amount" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Box -->
+                            <div class="mt-2" style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; padding: 20px;">
+                                <div class="row text-center">
+                                    <div class="col-4" style="border-right: 1px solid #e5e7eb;">
+                                        <div class="fw-bold mb-2" style="font-size: 10px; color: #9ca3af; text-transform: uppercase;">PENDING BALANCE</div>
+                                        <div class="fw-bold" style="color: #1e3a8a; font-size: 15px;"><field name="balance_amount" readonly="1" nolabel="1"/></div>
+                                    </div>
+                                    <div class="col-4" style="border-right: 1px solid #e5e7eb;">
+                                        <div class="fw-bold mb-2" style="font-size: 10px; color: #9ca3af; text-transform: uppercase;">PREVIOUSLY PAID</div>
+                                        <div class="fw-bold" style="color: #4b5563; font-size: 15px;"><field name="paid_amount" readonly="1" nolabel="1"/></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold mb-2" style="font-size: 10px; color: #9ca3af; text-transform: uppercase;">PAY NOW</div>
+                                        <div class="fw-bold" style="color: #111827; font-size: 15px;"><field name="current_payment_amount" readonly="state == 'paid'" nolabel="1"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 30px; margin-left: 10px; margin-right: 10px;">
+                        <div class="col-md-6" style="padding-right: 25px;">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Payment History</h5>
+                            <group>
+                                <field name="payment_ids" readonly="1" nolabel="1">
+                                    <list no_open="1" create="0" edit="0" delete="0">
+                                        <field name="date" widget="datetime" string="Date &amp; Time"/>
+                                        <field name="amount" sum="Total" string="Paid Amount"/>
+                                        <field name="remaining_balance" string="Remaining Balance"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 10px;">
+                        <button name="action_pay" string="Pay" type="object" class="btn-primary" invisible="state == 'paid'"/>
+                        <button string="Close" name="action_close" type="object" class="btn-secondary"/>
                     </div>
                 </sheet>
             </form>

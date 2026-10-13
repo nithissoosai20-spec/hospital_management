@@ -6,13 +6,41 @@ class HospitalAssetSpecification(models.Model):
     _description = 'Asset Specification'
     _rec_name = 'name'
 
-    name = fields.Char(string='Specification Name', required=True)
-    item_id = fields.Many2one('hospital.asset.item', string='Item')
-    description = fields.Text(string='Description')
+    name = fields.Char(string='Specification Name', compute='_compute_name', store=True, readonly=False, default='Specification')
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Item')
+    
+    # Hardware
+    processor = fields.Char(string='Processor (CPU)')
+    ram = fields.Char(string='RAM / Memory')
+    storage = fields.Char(string='Storage (HDD/SSD)')
+    display_size = fields.Char(string='Display / Screen Size')
+    
+    # Network & Software
+    operating_system = fields.Char(string='Operating System')
+    mac_address = fields.Char(string='MAC Address')
+    ip_address = fields.Char(string='Default IP Address')
+    
+    # Device Details
+    serial_number = fields.Char(string='Serial Number / Service Tag')
+    color = fields.Char(string='Color / Form Factor')
+    
+    # Warranty & Support
+    description = fields.Text(string='Additional Notes')
     manufacturer = fields.Char(string='Manufacturer')
     model_number = fields.Char(string='Model Number')
     warranty_period = fields.Integer(string='Warranty Period (Months)')
+    warranty_expiry_date = fields.Date(string='Warranty Expiry Date')
+    support_contact = fields.Char(string='Support Contact / Phone')
+    
     active = fields.Boolean(string='Active', default=True)
+
+    @api.depends('item_id', 'item_id.medicine_name')
+    def _compute_name(self):
+        for rec in self:
+            if rec.item_id and rec.item_id.medicine_name:
+                rec.name = f"{rec.item_id.medicine_name} Specification"
+            elif not rec.name or rec.name == 'New':
+                rec.name = "Specification"
 
 
 class HospitalAssetItem(models.Model):
@@ -109,7 +137,19 @@ class HospitalAssetItem(models.Model):
 
 
     def action_save(self):
-        return True
+        return {
+            'effect': {
+                'fadeout': 'slow',
+                'message': 'Saved successfully!',
+                'type': 'rainbow_man',
+            },
+            'type': 'ir.actions.act_window',
+            'name': 'Items',
+            'res_model': 'hospital.asset.item',
+            'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
+            'target': 'current'
+        }
 
 
 class HospitalAssetPurchaseRequest(models.Model):
@@ -120,7 +160,7 @@ class HospitalAssetPurchaseRequest(models.Model):
     requested_by_id = fields.Many2one('res.users', string='Requested By', default=lambda self: self.env.user, readonly=True)
     request_date = fields.Date(string='Request Date', default=fields.Date.context_today, readonly=True)
     
-    item_id = fields.Many2one('hospital.asset.item', string='Requested Item', required=True)
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Requested Item', required=True)
     quantity = fields.Integer(string='Quantity Needed', default=1, required=True)
     reason = fields.Text(string='Reason for Request', required=True)
     po_id = fields.Many2one('hospital.asset.po', string='Purchase Order', readonly=True)
@@ -145,10 +185,28 @@ class HospitalAssetPurchaseRequest(models.Model):
     def action_submit(self):
         for rec in self:
             rec.state = 'submitted'
+        action = self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
+        action['effect'] = {
+            'fadeout': 'slow',
+            'message': 'Request submitted successfully!',
+            'type': 'rainbow_man',
+        }
+        return action
+
+    def action_close(self):
+        return self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
 
     def action_accept_ready(self):
         for rec in self:
             rec.state = 'ready'
+            # Auto-create draft outward record
+            self.env['hospital.asset.outward'].create({
+                'assigned_to': rec.requested_by_id.id,
+                'line_ids': [(0, 0, {
+                    'item_id': rec.item_id.id,
+                    'quantity': rec.quantity
+                })]
+            })
 
     def action_approve_order(self):
         for rec in self:
@@ -248,7 +306,7 @@ class HospitalAssetPoLine(models.Model):
     _description = 'Asset PO Line'
 
     po_id = fields.Many2one('hospital.asset.po', string='Purchase Order', required=True, ondelete='cascade')
-    item_id = fields.Many2one('hospital.asset.item', string='Item', required=True)
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Item', required=True)
     request_id = fields.Many2one('hospital.asset.purchase.request', string='Source Request')
     quantity = fields.Float(string='Quantity', default=1.0)
     price_unit = fields.Float(string='Unit Price')
@@ -302,8 +360,7 @@ class HospitalAssetInward(models.Model):
                         ('item_id', '=', line.item_id.id),
                         ('state', 'in', ['submitted', 'ordered'])
                     ], order='request_date asc, id asc')
-                    
-                    available = good_qty
+                    available = line.item_id.total_stock - line.item_id.emergency_stock
                     for req in pending_requests:
                         if available >= req.quantity:
                             self.env['hospital.asset.outward'].create({
@@ -327,7 +384,7 @@ class HospitalAssetInward(models.Model):
                     price = line.po_line_id.price_unit if line.po_line_id else 0
                     total_invoice_amount += good_qty * price
                     if line.damaged_qty > 0:
-                        damaged_notes.append(f"Reduced by {line.damaged_qty} for damaged {line.item_id.item_name}.")
+                        damaged_notes.append(f"Reduced by {line.damaged_qty} for damaged {line.item_id.medicine_name}.")
                 
                 notes_text = "Generated from Inward Receipt.\n" + "\n".join(damaged_notes)
                 
@@ -354,13 +411,23 @@ class HospitalAssetInward(models.Model):
                     'target': 'current',
                 }
 
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Inward',
+            'res_model': 'hospital.asset.inward',
+            'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
+            'target': 'current'
+        }
+
 class HospitalAssetInwardLine(models.Model):
     _name = 'hospital.asset.inward.line'
     _description = 'Asset Inward Line'
 
     inward_id = fields.Many2one('hospital.asset.inward', string='Inward Reference')
     po_line_id = fields.Many2one('hospital.asset.po.line', string='PO Line')
-    item_id = fields.Many2one('hospital.asset.item', string='Item')
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Item')
     
     requested_qty = fields.Float(string='Requested Qty', compute='_compute_qtys', store=True)
     approved_qty = fields.Float(string='Approved Qty', compute='_compute_qtys', store=True)
@@ -410,18 +477,39 @@ class HospitalAssetOutward(models.Model):
         for rec in self:
             for line in rec.line_ids:
                 if line.item_id.quantity < line.quantity:
-                    raise ValidationError(f"Not enough stock for item {line.item_id.item_name}")
+                    raise ValidationError(f"Not enough stock for item {line.item_id.medicine_name}")
                 line.item_id.total_stock -= line.quantity
+                
+                # Update any matching pending requests to 'received'
+                matching_requests = self.env['hospital.asset.purchase.request'].search([
+                    ('item_id', '=', line.item_id.id),
+                    ('requested_by_id', '=', rec.assigned_to.id),
+                    ('state', 'in', ['submitted', 'ordered', 'ready'])
+                ])
+                for req in matching_requests:
+                    # We just fulfill the first match we find if they requested this item
+                    req.state = 'received'
+                    
             rec.state = 'done'
             if rec.name == 'New':
                 rec.name = self.env['ir.sequence'].next_by_code('hospital.asset.outward.seq') or 'New'
+
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Outward',
+            'res_model': 'hospital.asset.outward',
+            'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
+            'target': 'current'
+        }
 
 class HospitalAssetOutwardLine(models.Model):
     _name = 'hospital.asset.outward.line'
     _description = 'Asset Outward Line'
 
     outward_id = fields.Many2one('hospital.asset.outward', string='Outward Reference')
-    item_id = fields.Many2one('hospital.asset.item', string='Item')
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Item')
     quantity = fields.Float(string='Quantity')
 
 class HospitalAssetDamage(models.Model):
@@ -429,7 +517,7 @@ class HospitalAssetDamage(models.Model):
     _description = 'Damaged & Expiry'
 
     name = fields.Char(string='Reference', required=True, copy=False, readonly=True, default='New')
-    item_id = fields.Many2one('hospital.asset.item', string='Item', required=True)
+    item_id = fields.Many2one('hospital.pharmacy.stock', string='Item', required=True)
     quantity = fields.Float(string='Quantity', required=True)
     date = fields.Date(string='Date', default=fields.Date.context_today)
     reason = fields.Text(string='Reason')
@@ -443,4 +531,14 @@ class HospitalAssetDamage(models.Model):
             if isinstance(vals, dict) and vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('hospital.asset.damage.seq') or 'New'
         return super(HospitalAssetDamage, self).create(vals_list)
+
+    def action_close(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Damaged & Expiry',
+            'res_model': 'hospital.asset.damage',
+            'view_mode': 'list,form',
+            'views': [(False, 'list'), (False, 'form')],
+            'target': 'current'
+        }
 

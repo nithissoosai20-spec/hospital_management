@@ -49,7 +49,7 @@ export class PharmacyStockFormController extends FormController {
     }
 
     displayName() {
-        return "STOCK DETAILS";
+        return "ITEM DETAILS";
     }
 
     async beforeLeave(options = {}) {

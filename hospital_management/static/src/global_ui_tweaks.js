@@ -151,6 +151,9 @@ function injectPageTitle() {
     if (!pageName) return;
 
     let banner = document.querySelector('.hospital-page-title-banner');
+    if (banner && banner.dataset.pageName === pageName) {
+        return;
+    }
     if (!banner) {
         let actionManager = document.querySelector('.o_action_manager');
         if (!actionManager) return;
@@ -232,6 +235,7 @@ function injectPageTitle() {
     }
 
     banner.innerHTML = innerHtml;
+    banner.dataset.pageName = pageName;
 
     // Attach direct click listeners on tab elements so OWL can't intercept
     banner.querySelectorAll('.custom-pi-tab, .custom-po-tab').forEach(tab => {
@@ -274,6 +278,19 @@ if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', startObserving);
 } else {
     startObserving();
+}
+
+async function getActionId(xmlId) {
+    try {
+        const res = await fetch('/web/action/load', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: Date.now(), params: { action_id: xmlId } })
+        });
+        const data = await res.json();
+        return data?.result?.id || null;
+    } catch(e) { return null; }
 }
 
 // Global tab handlers for Purchase Intent & Purchase Orders
@@ -577,18 +594,6 @@ async function _fetchAndNavigate(xmlId) {
     const INTENT_NEW_XMLID = 'hospital_management.action_hospital_purchase_intent_new';
     const ORDERS_NEW_XMLID = 'hospital_management.action_hospital_pharmacy_purchase_list_new';
 
-    async function getActionId(xmlId) {
-        try {
-            const res = await fetch('/web/action/load', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'same-origin',
-                body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: Date.now(), params: { action_id: xmlId } })
-            });
-            const data = await res.json();
-            return data?.result?.id || null;
-        } catch(e) { return null; }
-    }
 
     let intentActionId = null;
     let ordersActionId = null;
@@ -647,4 +652,41 @@ async function _fetchAndNavigate(xmlId) {
             observer.observe(document.body, { childList: true, subtree: true });
         }
     });
+})();
+
+// --- DYNAMIC NEW BUTTON TEXT (Hospital UI Tweak) ---
+(function() {
+    function updateNewButtons() {
+        let modelName = '';
+        const breadcrumbs = document.querySelectorAll('.o_control_panel_breadcrumbs .breadcrumb-item, .o_breadcrumb li');
+        if (breadcrumbs.length > 0) {
+            modelName = breadcrumbs[0].textContent.trim();
+        }
+        if (!modelName) {
+            let fullTitle = document.title || '';
+            modelName = fullTitle.split(' - ')[0].trim();
+        }
+        
+        if (!modelName || modelName === 'Odoo') return;
+        
+        if (modelName.toLowerCase().includes('specification')) modelName = 'Specification';
+        else if (modelName === 'Items') modelName = 'Item';
+        else if (modelName.includes('Requests')) modelName = 'Asset Request';
+        else if (modelName.includes('Damaged')) modelName = 'Damage Record';
+        else if (modelName.endsWith('s') && modelName !== 'Asset PO') modelName = modelName.substring(0, modelName.length - 1);
+        
+        const listBtn = document.querySelector('.o_list_button_add');
+        const formBtn = document.querySelector('.o_form_button_create');
+        
+        if (listBtn && listBtn.textContent.trim() === 'New') listBtn.textContent = 'New ' + modelName;
+        if (formBtn && formBtn.textContent.trim() === 'New') formBtn.textContent = 'New ' + modelName;
+    }
+
+    const observer = new MutationObserver(() => { updateNewButtons(); });
+    const initInterval = setInterval(() => {
+        if (document.body) {
+            observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+            clearInterval(initInterval);
+        }
+    }, 100);
 })();

@@ -177,6 +177,11 @@ class HospitalAppointment(models.Model):
         default='new'
     )
 
+    treatment_type_id = fields.Many2one(
+        'hospital.treatment.type',
+        string='Treatment Type',
+    )
+
     priority = fields.Selection(
         [
             ('normal', 'Normal'),
@@ -531,6 +536,7 @@ class HospitalAppointment(models.Model):
         'doctor_id',
         'doctor_id.department_id',
         'doctor_id.designation_id',
+        'treatment_type_id',
     )
     def _compute_consultation_fee(self):
 
@@ -549,14 +555,55 @@ class HospitalAppointment(models.Model):
             if not department or not designation:
                 continue
 
-            fee = Fee.search(
-                [
-                    ('department_id', '=', department.id),
-                    ('designation_id', '=', designation.id),
-                    ('active', '=', True),
-                ],
-                limit=1,
-            )
+            treatment_type = record.treatment_type_id
+            fee = False
+
+            # Priority 1: Doctor-specific + Treatment Type
+            if treatment_type:
+                fee = Fee.search(
+                    [
+                        ('doctor_id', '=', record.doctor_id.id),
+                        ('treatment_type_id', '=', treatment_type.id),
+                        ('active', '=', True),
+                    ],
+                    limit=1,
+                )
+
+            # Priority 2: Doctor-specific (any treatment / general)
+            if not fee:
+                fee = Fee.search(
+                    [
+                        ('doctor_id', '=', record.doctor_id.id),
+                        ('treatment_type_id', '=', False),
+                        ('active', '=', True),
+                    ],
+                    limit=1,
+                )
+
+            # Priority 3: Dept + Designation + Treatment Type (Department standard for this treatment)
+            if not fee and treatment_type:
+                fee = Fee.search(
+                    [
+                        ('department_id', '=', department.id),
+                        ('designation_id', '=', designation.id),
+                        ('treatment_type_id', '=', treatment_type.id),
+                        ('doctor_id', '=', False),
+                        ('active', '=', True),
+                    ],
+                    limit=1,
+                )
+
+            # Priority 4: Dept + Designation (General fallback)
+            if not fee:
+                fee = Fee.search(
+                    [
+                        ('department_id', '=', department.id),
+                        ('designation_id', '=', designation.id),
+                        ('doctor_id', '=', False),
+                        ('active', '=', True),
+                    ],
+                    limit=1,
+                )
 
             if fee:
                 record.consultation_fee = fee.amount
@@ -628,6 +675,7 @@ class HospitalAppointment(models.Model):
 
             'doctor_id': False,
             'department_id': False,
+            'treatment_type_id': False,
 
             # -------------------------------------------------
             # TOKEN

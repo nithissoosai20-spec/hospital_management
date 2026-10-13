@@ -222,7 +222,7 @@
         
     <menuitem
         id="menu_hospital_pharmacy_stock"
-        name="Stock"
+        name="Items"
         parent="menu_hospital_management"
         action="action_hospital_pharmacy_stock_records"
         sequence="30"
@@ -248,6 +248,15 @@
         parent="menu_hospital_fees_root"
         action="action_hospital_consultation_fees"
         sequence="10"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
+    <menuitem
+        id="menu_hospital_treatment_types"
+        name="Treatment Types"
+        parent="menu_hospital_fees_root"
+        action="action_hospital_treatment_types"
+        sequence="15"
         groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
     />
 

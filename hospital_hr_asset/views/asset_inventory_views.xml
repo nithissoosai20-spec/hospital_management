@@ -4,7 +4,7 @@
     <!-- Dashboard -->
     <record id="action_asset_dashboard" model="ir.actions.act_window">
         <field name="name">Asset Dashboard</field>
-        <field name="res_model">hospital.asset.item</field>
+        <field name="res_model">hospital.pharmacy.stock</field>
         <field name="view_mode">list,form</field>
     </record>
 
@@ -143,7 +143,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
                 <field name="item_id"/>
                             <field name="manufacturer"/>
                 <field name="model_number"/>
@@ -162,22 +162,49 @@
                             <field name="name" placeholder="Specification Name"/>
                         </h1>
                     </div>
-                    <group style="margin-left: 20px;">
-                        <group>
-                            <field name="item_id"/>
-                            <field name="manufacturer"/>
-                            <field name="model_number"/>
-                        </group>
-                        <group>
-                            <field name="warranty_period"/>
-                            <field name="active"/>
-                        </group>
-                    </group>
-                    <group style="margin-left: 20px;">
+                    
+                    <div class="row mt-4" style="margin-left: 10px; margin-right: 10px;">
+                        <!-- Column 1: Hardware -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Hardware Details</h5>
+                            <group>
+                                <field name="item_id"/>
+                                <field name="processor"/>
+                                <field name="ram"/>
+                                <field name="storage"/>
+                                <field name="display_size"/>
+                            </group>
+                        </div>
+                        
+                        <!-- Column 2: Software & Network -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Software &amp; Device</h5>
+                            <group>
+                                <field name="operating_system"/>
+                                <field name="ip_address"/>
+                                <field name="mac_address"/>
+                                <field name="serial_number"/>
+                                <field name="color"/>
+                            </group>
+                        </div>
+                        
+                        <!-- Column 3: Warranty & Support -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Warranty &amp; Support</h5>
+                            <group>
+                                <field name="manufacturer"/>
+                                <field name="model_number"/>
+                                <field name="warranty_period"/>
+                                <field name="warranty_expiry_date"/>
+                                <field name="support_contact"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </group>
+                        </div>
+                    </div>
+                    
+                    <group style="margin-left: 20px;" class="mt-4">
                         <field name="description"/>
                     </group>
-                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2">
-                    </div>
                 </sheet>
             </form>
         </field>
@@ -204,14 +231,15 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
                 <field name="requested_by_id"/>
                 <field name="item_id"/>
                 <field name="quantity"/>
                 <field name="request_date"/>
                 <field name="state" widget="badge" 
                     decoration-info="state == 'submitted'"
-                    decoration-success="state in ('ready', 'received')"
+                    decoration-primary="state == 'ready'"
+                    decoration-success="state == 'received'"
                     decoration-warning="state == 'ordered'"
                     decoration-danger="state == 'rejected'"/>
             </list>
@@ -228,23 +256,21 @@
                 </header>
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
-                        <h1>
-                            <field name="name"/>
-                <field name="item_id"/>
-                        </h1>
+                        <h1 invisible="name != 'New'">Asset Request</h1>
+                        <h1 invisible="name == 'New'"><field name="name" readonly="1"/></h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
-                            <field name="requested_by_id"/>
-                            <field name="request_date"/>
+                            <field name="requested_by_id" readonly="1" force_save="1"/>
+                            <field name="request_date" readonly="1" force_save="1"/>
                         </group>
                         <group>
-                            <field name="item_id" options="{'no_create': True}"/>
-                            <field name="quantity"/>
+                            <field name="item_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                            <field name="quantity" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <group style="margin-left: 20px;">
-                        <field name="reason"/>
+                        <field name="reason" readonly="state != 'draft'"/>
                         <field name="po_id" invisible="po_id == False"/>
                     </group>
                     
@@ -253,11 +279,13 @@
                         <!-- Employee Buttons -->
                         <button name="action_submit" string="Submit Request" type="object" class="btn-primary" invisible="state != 'draft' or requested_by_id != uid"/>
                         
-                        <!-- Manager Buttons (Wait, we can restrict invisible by group but let's just use state for now, 
-                             Odoo standard uses groups="hospital_hr_asset.group_hospital_asset_manager") -->
+                        <!-- Manager Buttons -->
                         <button name="action_accept_ready" string="Accept (In Stock &amp; Ready)" type="object" class="btn-success" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         <button name="action_approve_order" string="Approve (Needs Ordering)" type="object" class="btn-warning" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        
+                        <!-- Close Button -->
+                        <button string="Close" name="action_close" type="object" class="btn-secondary"/>
                     </div>
                 </sheet>
 
@@ -277,7 +305,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
             </list>
         </field>
     </record>
@@ -292,7 +320,7 @@
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
                         <h1><field name="name"/>
-                <field name="item_id"/></h1>
+                </h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
@@ -345,7 +373,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
                 <field name="po_id"/>
                 <field name="vendor_id"/>
                 <field name="date_received"/>
@@ -361,7 +389,7 @@
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
                         <h1><field name="name"/>
-                <field name="item_id"/></h1>
+                </h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
@@ -387,6 +415,7 @@
                         </page>
                     </notebook>
                     <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
                         <button name="action_view_invoice" string="View Invoice" type="object" class="btn-secondary" invisible="state != 'done'"/>
                         <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
                     </div>
@@ -407,7 +436,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
                 <field name="assigned_to"/>
                 <field name="date_outward"/>
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
@@ -422,7 +451,7 @@
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
                         <h1><field name="name"/>
-                <field name="item_id"/></h1>
+                </h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
@@ -433,17 +462,19 @@
                             <field name="state" readonly="1"/>
                         </group>
                     </group>
-                    <notebook>
-                        <page string="Items Assigned">
-                            <field name="line_ids" readonly="state == 'done'">
+                    <group style="margin-left: 20px;">
+                        <group string="Items Assigned">
+                            <field name="line_ids" nolabel="1" readonly="state == 'done'" colspan="2">
                                 <list editable="bottom">
                                     <field name="item_id"/>
                                     <field name="quantity"/>
                                 </list>
                             </field>
-                        </page>
-                    </notebook>
+                        </group>
+                        <group></group>
+                    </group>
                     <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
                         <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
                     </div>
                 </sheet>
@@ -463,7 +494,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="item_id"/>
+                
                 <field name="item_id"/>
                 <field name="quantity"/>
                 <field name="date"/>
@@ -481,7 +512,7 @@
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
                         <h1><field name="name"/>
-                <field name="item_id"/></h1>
+                </h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
@@ -496,6 +527,9 @@
                             <field name="state" readonly="1"/>
                         </group>
                     </group>
+                    <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
+                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
+                    </div>
                 </sheet>
             </form>
         </field>

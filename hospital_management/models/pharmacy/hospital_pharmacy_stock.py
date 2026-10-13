@@ -25,45 +25,49 @@ class HospitalPharmacyStock(models.Model):
 
 
 
+    # IMAGES & SPECS
+    image_1920 = fields.Image("Image", max_width=1920, max_height=1920)
+    specification_line_ids = fields.One2many(
+        'hospital.item.specification.line',
+        'stock_id',
+        string='Specifications'
+    )
+
     # BASIC MEDICINE INFORMATION
+    
+    item_type = fields.Selection([
+        ('consumable', 'Consumable'),
+        ('non_consumable', 'Non-Consumable')
+    ], string='Item Type', default='consumable', required=True)
+    
+    primary_category_id = fields.Many2one(
+        'hospital.category.master',
+        string='Primary Category',
+        domain="[('category_type', '=', 'item_primary_category')]"
+    )
 
     medicine_name = fields.Char(
-        string='Medicine Name',
+        string='Item Name',
         required=True,
     )
 
     medicine_code = fields.Char(
-        string='Medicine Code',
+        string='Item Code',
         required=True,
         copy=False,
     )
 
-    category = fields.Selection([
-        ('Tablet', 'Tablets'),
-        ('Syrup', 'Syrup'),
-        ('Capsule', 'Capsules'),
-        ('Lotions', 'Lotions'),
-        ('Other', 'Other')
-    ], string='Old Category', default='Tablet')
-    
     pharmacy_category_id = fields.Many2one(
         'hospital.category.master', 
-        string='Category', 
-        domain="[('category_type', '=', 'pharmacy_category')]",
-        compute='_compute_pharmacy_category_id',
-        store=True,
-        readonly=False
+        string='Secondary Category', 
+        domain="[('parent_id', '=', primary_category_id), ('parent_id', '!=', False)]"
     )
     
-    @api.depends('category')
-    def _compute_pharmacy_category_id(self):
-        for rec in self:
-            if rec.category and not rec.pharmacy_category_id:
-                master = self.env['hospital.category.master'].search([
-                    ('name', 'ilike', rec.category), 
-                    ('category_type', '=', 'pharmacy_category')
-                ], limit=1)
-                rec.pharmacy_category_id = master.id
+    additional_category_id = fields.Many2one(
+        'hospital.category.master',
+        string='Category',
+        domain="[('category_type', '=', 'item_additional_category')]"
+    )
 
     # BATCH INFORMATION
 
@@ -139,6 +143,11 @@ class HospitalPharmacyStock(models.Model):
         store=True,
     )
     
+    @api.onchange('item_type')
+    def _onchange_item_type(self):
+        if self.item_type == 'non_consumable':
+            self.discount_percent = 0.0
+    
     cgst = fields.Float(
         string='CGST (%)',
         default=0.0,
@@ -189,32 +198,40 @@ class HospitalPharmacyStock(models.Model):
         store=True,
     )
 
-    @api.depends('purchase_price', 'mrp', 'qty_in_category', 'discount_percent', 'cgst', 'sgst', 'igst')
+    @api.depends('purchase_price', 'mrp', 'qty_in_category', 'discount_percent', 'cgst', 'sgst', 'igst', 'item_type')
     def _compute_pricing(self):
         for record in self:
             qty = record.qty_in_category if record.qty_in_category > 0 else 1
             amt_per_item = record.purchase_price / qty
             
-            # Calculate Selling Amount derived from MRP
-            sell_amt = record.mrp / qty
-            
-            # Discount calculates against the Selling Amount
-            disc_amt = sell_amt * (record.discount_percent / 100.0)
+            if record.item_type == 'non_consumable':
+                sell_amt = 0.0
+                disc_amt = 0.0
+            else:
+                sell_amt = record.mrp / qty
+                disc_amt = sell_amt * (record.discount_percent / 100.0)
             
             record.amount_per_item = amt_per_item
             record.discount_amount = disc_amt
             
             discounted_sell_amt = sell_amt - disc_amt
             
-            # Taxes calculate on top of the discounted Selling Amount
-            record.cgst_amount = discounted_sell_amt * (record.cgst / 100.0)
-            record.sgst_amount = discounted_sell_amt * (record.sgst / 100.0)
-            record.igst_amount = discounted_sell_amt * (record.igst / 100.0)
-            
-            record.selling_price = sell_amt
-            
-            # Total Amount = (Selling Amount - Discount) + Taxes
-            record.total_amount = discounted_sell_amt + record.cgst_amount + record.sgst_amount + record.igst_amount
+            # Taxes calculate on top of the discounted Selling Amount for consumables. 
+            # For non-consumables, if selling amount is 0, these will be 0 as well. 
+            # If they want tax on purchase price for non-consumables, we can calculate it against amt_per_item.
+            # But normally tax here is Sales Tax. We will calculate it against discounted_sell_amt.
+            if record.item_type == 'non_consumable':
+                record.cgst_amount = amt_per_item * (record.cgst / 100.0)
+                record.sgst_amount = amt_per_item * (record.sgst / 100.0)
+                record.igst_amount = amt_per_item * (record.igst / 100.0)
+                record.selling_price = 0.0
+                record.total_amount = amt_per_item + record.cgst_amount + record.sgst_amount + record.igst_amount
+            else:
+                record.cgst_amount = discounted_sell_amt * (record.cgst / 100.0)
+                record.sgst_amount = discounted_sell_amt * (record.sgst / 100.0)
+                record.igst_amount = discounted_sell_amt * (record.igst / 100.0)
+                record.selling_price = sell_amt
+                record.total_amount = discounted_sell_amt + record.cgst_amount + record.sgst_amount + record.igst_amount
 
     # STOCK
 
@@ -243,7 +260,7 @@ class HospitalPharmacyStock(models.Model):
     def _compute_stock_in_hand(self):
         for record in self:
             # Calculate reserved stock from active draft/held bills
-            lines = self.env['hospital.pharmacy.bill.line'].search([
+            lines = self.env['hospital.pharmacy.bill.line'].sudo().search([
                 ('stock_id', '=', record.id),
                 ('bill_id.state', 'in', ['draft', 'held'])
             ])
@@ -353,6 +370,29 @@ class HospitalPharmacyStock(models.Model):
         # Trigger the automated reorder engine immediately so user doesn't have to wait for cron
         self._cron_auto_reorder()
         
+        specs_empty = not any([
+            self.spec_material, self.spec_colour, self.spec_length, self.spec_width,
+            self.spec_weight, self.spec_height, self.spec_shape, self.spec_measurement_range,
+            self.spec_accuracy, self.spec_display_type, self.spec_power_source,
+            self.spec_battery_type, self.spec_calibration_required, self.spec_calibration_frequency,
+            self.spec_sterilization_compatible, self.spec_operating_voltage, self.spec_power_consumption,
+            self.spec_response_time, self.spec_memory_function, self.spec_water_resistance,
+            self.spec_compatibility, self.spec_country_of_origin, self.spec_certification
+        ])
+
+        if specs_empty and not self.env.context.get('ignore_empty_specs'):
+            return {
+                'name': 'Missing Specifications Warning',
+                'type': 'ir.actions.act_window',
+                'res_model': 'hospital.empty.specs.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'default_stock_id': self.id}
+            }
+        
+        return self._action_save_proceed()
+
+    def _action_save_proceed(self):
         # Load the fully-formed action from the database so Odoo's frontend doesn't crash missing the 'views' mapping
         # We use sudo() here because regular users don't have direct read access to 'ir.actions.act_window' records
         action = self.env.ref('hospital_management.action_hospital_pharmacy_stock_records').sudo().read()[0]
@@ -437,7 +477,7 @@ class HospitalPharmacyStock(models.Model):
         
         for med in low_stock_medicines:
             # Check if an Intent or Draft Order already exists for this medicine
-            existing_order = self.env['hospital.pharmacy.purchase.line'].search([
+            existing_order = self.env['hospital.pharmacy.purchase.line'].sudo().search([
                 ('medicine_id', '=', med.id),
                 ('purchase_id.state', 'in', ['intent', 'draft'])
             ], limit=1)
@@ -466,6 +506,57 @@ class HospitalPharmacyStock(models.Model):
                     if hasattr(vendor, 'state_id') and vendor.state_id: parts.append(vendor.state_id.name)
                     intent_vals['address'] = ", ".join(parts) if parts else ""
                     
-                self.env['hospital.pharmacy.purchase'].create(intent_vals)
+                self.env['hospital.pharmacy.purchase'].sudo().create(intent_vals)
 
+    # GENERAL SPECIFICATIONS
+    spec_material = fields.Char(string='Material / Composition')
+    spec_colour = fields.Char(string='Colour / Finish')
+    spec_length = fields.Float(string='Length')
+    spec_width = fields.Float(string='Width')
+    spec_weight = fields.Float(string='Weight')
+    spec_height = fields.Float(string='Height')
+    spec_shape = fields.Char(string='Shape')
+    spec_measurement_range = fields.Char(string='Measurement Range')
+    spec_accuracy = fields.Char(string='Accuracy')
+    spec_display_type = fields.Char(string='Display Type')
+    spec_power_source = fields.Char(string='Power Source')
+    spec_battery_type = fields.Char(string='Battery Type')
+    spec_calibration_required = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Calibration Required')
+    spec_calibration_frequency = fields.Integer(string='Calibration Frequency (Months)')
+    spec_sterilization_compatible = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Sterilization Compatible')
 
+    # TECHNICAL SPECIFICATIONS
+    spec_operating_voltage = fields.Char(string='Operating Voltage')
+    spec_power_consumption = fields.Char(string='Power Consumption')
+    spec_response_time = fields.Char(string='Response Time')
+    spec_memory_function = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Memory Function')
+    spec_water_resistance = fields.Char(string='Water Resistance')
+    spec_compatibility = fields.Char(string='Compatibility')
+    spec_country_of_origin = fields.Char(string='Country of Origin')
+    spec_certification = fields.Char(string='Certification / Standard')
+
+class HospitalItemSpecificationLine(models.Model):
+    _name = 'hospital.item.specification.line'
+    _description = 'Item Specification Line'
+
+    stock_id = fields.Many2one('hospital.pharmacy.stock', string='Item', ondelete='cascade', required=True)
+    name = fields.Char(string='Specification Name', required=True)
+    data_type = fields.Selection([
+        ('text', 'Text'),
+        ('number', 'Number'),
+        ('boolean', 'Boolean')
+    ], string='Data Type', default='text', required=True)
+    
+    value = fields.Char(string='Value')
+    
+    unit = fields.Char(string='Unit', help='e.g., cm, kg, Yes/No')
+    is_required = fields.Boolean(string='Required', default=False)
+
+class HospitalEmptySpecsWizard(models.TransientModel):
+    _name = 'hospital.empty.specs.wizard'
+    _description = 'Empty Specs Warning Wizard'
+    
+    stock_id = fields.Many2one('hospital.pharmacy.stock', required=True)
+    
+    def action_proceed(self):
+        return self.stock_id.with_context(ignore_empty_specs=True)._action_save_proceed()

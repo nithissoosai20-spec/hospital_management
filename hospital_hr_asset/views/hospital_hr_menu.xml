@@ -19,9 +19,8 @@
         <field name="active" eval="False"/>
     </record>
 
-    <!-- Create the 9 Nav Items directly under the Hospital app -->
-    <menuitem id="menu_asset_inv_dashboard" name="Dashboard" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_dashboard" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="10"/>
-    <menuitem id="menu_asset_inv_items" name="Items" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_item" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="20"/>
+    <!-- Create the Nav Items directly under the Hospital app -->
+    <menuitem id="menu_asset_inv_items" name="Items" parent="hospital_management.menu_hospital_management" action="hospital_management.action_hospital_pharmacy_stock_records" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="10"/>
     <menuitem id="menu_asset_inv_specs" name="Item Specification" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_specification" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="30"/>
     
     <menuitem id="menu_asset_my_requests" name="My Asset Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request" groups="hospital_management.group_hospital_user" sequence="35"/>
