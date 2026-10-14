@@ -2,6 +2,12 @@
 
 import { App } from "@odoo/owl";
 
+// Auto-clean stale treatment hash from URL if user had old page open
+if (window.location.hash && window.location.hash.includes('treatment')) {
+    window.location.hash = '';
+    window.location.reload();
+}
+
 // ─── PRINT PREVIEW MODAL ─────────────────────────────────────────────────────
 (function () {
     function showPrintPreviewModal(reportHtmlUrl, reportPdfUrl) {
@@ -292,6 +298,23 @@ async function getActionId(xmlId) {
         return data?.result?.id || null;
     } catch(e) { return null; }
 }
+
+// Intercept Close buttons on forms in capture phase to prevent Odoo's form validation
+window.addEventListener('click', function(e) {
+    const closeBtn = e.target.closest('.btn-custom-close-request, button[name="action_close"]');
+    if (closeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const match = window.location.href.match(/action-(\d+)/);
+        if (match) {
+            window.location.href = '/odoo/action-' + match[1];
+        } else {
+            window.history.back();
+        }
+    }
+}, true);
 
 // Global tab handlers for Purchase Intent & Purchase Orders
 window.addEventListener('click', async function(e) {
@@ -587,21 +610,23 @@ async function _fetchAndNavigate(xmlId) {
 })();
 
 // ============================================================
-// FORCE FULL RELOAD when clicking Purchase Intent / Purchase Orders nav links
+// FORCE FULL RELOAD when clicking Purchase Intent / Purchase Orders / Purchase Invoices nav links
 // This ensures the NEW tab always loads with fresh data
 // ============================================================
 (async function forcePurchaseNavReload() {
     const INTENT_NEW_XMLID = 'hospital_management.action_hospital_purchase_intent_new';
     const ORDERS_NEW_XMLID = 'hospital_management.action_hospital_pharmacy_purchase_list_new';
-
+    const INVOICES_NEW_XMLID = 'hospital_management.action_hospital_pharmacy_purchase_invoice_new';
 
     let intentActionId = null;
     let ordersActionId = null;
+    let invoicesActionId = null;
 
     // Pre-fetch action IDs once
     document.addEventListener('DOMContentLoaded', async () => {
         intentActionId = await getActionId(INTENT_NEW_XMLID);
         ordersActionId = await getActionId(ORDERS_NEW_XMLID);
+        invoicesActionId = await getActionId(INVOICES_NEW_XMLID);
     });
 
     // Intercept nav menu clicks and force full page reload to the correct "new" tab action
@@ -610,14 +635,36 @@ async function _fetchAndNavigate(xmlId) {
         if (!link) return;
         const text = link.textContent.trim();
 
-        if (text === 'Purchase Intent' && intentActionId) {
+        if (text === 'Purchase Intent') {
             e.preventDefault();
             e.stopImmediatePropagation();
-            window.location.href = '/odoo/action-' + intentActionId;
-        } else if (text === 'Purchase Orders' && ordersActionId) {
+            if (intentActionId) {
+                window.location.href = '/odoo/action-' + intentActionId;
+            } else {
+                getActionId(INTENT_NEW_XMLID).then(id => {
+                    if (id) window.location.href = '/odoo/action-' + id;
+                });
+            }
+        } else if (text === 'Purchase Orders') {
             e.preventDefault();
             e.stopImmediatePropagation();
-            window.location.href = '/odoo/action-' + ordersActionId;
+            if (ordersActionId) {
+                window.location.href = '/odoo/action-' + ordersActionId;
+            } else {
+                getActionId(ORDERS_NEW_XMLID).then(id => {
+                    if (id) window.location.href = '/odoo/action-' + id;
+                });
+            }
+        } else if (text === 'Purchase Invoices') {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (invoicesActionId) {
+                window.location.href = '/odoo/action-' + invoicesActionId;
+            } else {
+                getActionId(INVOICES_NEW_XMLID).then(id => {
+                    if (id) window.location.href = '/odoo/action-' + id;
+                });
+            }
         }
     }, true); // true = capture phase so we intercept before Odoo's router
 })();
@@ -637,6 +684,8 @@ async function _fetchAndNavigate(xmlId) {
                         newBtn.textContent = 'New Payment';
                     } else if (title === 'CONSULTATION FEES') {
                         newBtn.textContent = 'New Consultation Fees';
+                    } else if (title === 'CONSULTATION TYPES') {
+                        newBtn.textContent = 'New Consultation Type';
                     } else if (title === 'LAB FEES') {
                         newBtn.textContent = 'New Lab Fees';
                     } else if (title === 'USERS') {
@@ -689,4 +738,55 @@ async function _fetchAndNavigate(xmlId) {
             clearInterval(initInterval);
         }
     }, 100);
+})();
+
+// ============================================================
+// DOCTOR PROFILE: Filter out already selected Consultation Types from dropdown
+// ============================================================
+(function () {
+    function filterDoctorConsultationDropdown(input) {
+        const table = input.closest('.doctor_consultation_table');
+        if (!table) return;
+
+        // Collect all consultation types selected in other rows
+        const currentTr = input.closest('tr');
+        const selectedNames = new Set();
+
+        table.querySelectorAll('tbody tr.o_data_row').forEach(tr => {
+            if (tr === currentTr) return;
+            const typeCell = tr.querySelector('[name="consultation_type_id"]');
+            if (typeCell) {
+                const text = typeCell.textContent.trim().toLowerCase();
+                if (text) selectedNames.add(text);
+            }
+        });
+
+        // Hide matching options in the open autocomplete menu
+        const dropdown = input.closest('.o-autocomplete')?.querySelector('.o-autocomplete--dropdown-menu');
+        if (dropdown) {
+            dropdown.querySelectorAll('.o-autocomplete--dropdown-item').forEach(item => {
+                const itemText = item.textContent.trim().toLowerCase();
+                if (selectedNames.has(itemText)) {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    }
+
+    document.addEventListener('focusin', function (e) {
+        const input = e.target.closest('.doctor_consultation_table .o-autocomplete--input');
+        if (!input) return;
+
+        const acContainer = input.closest('.o-autocomplete');
+        if (!acContainer) return;
+
+        const observer = new MutationObserver(() => {
+            filterDoctorConsultationDropdown(input);
+        });
+
+        observer.observe(acContainer, { childList: true, subtree: true });
+        setTimeout(() => filterDoctorConsultationDropdown(input), 50);
+        setTimeout(() => filterDoctorConsultationDropdown(input), 150);
+        setTimeout(() => filterDoctorConsultationDropdown(input), 300);
+    });
 })();

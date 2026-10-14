@@ -76,6 +76,26 @@ export class AppointmentFormController extends FormController {
                     return false;
                 }
             }
+
+            if (!record.data.doctor_id) {
+                this.notification.add("Please select a Doctor.", { type: "danger" });
+                const formEl = document.querySelector('.hospital_appointment_form');
+                if (formEl) {
+                    const el = formEl.querySelector('[name="doctor_id"]');
+                    if (el) (el.closest('.o_field_widget') || el).classList.add('o_field_invalid');
+                }
+                return false;
+            }
+
+            if (!record.data.consultation_type_id) {
+                this.notification.add("Please select a Consultation Type.", { type: "danger" });
+                const formEl = document.querySelector('.hospital_appointment_form');
+                if (formEl) {
+                    const el = formEl.querySelector('[name="consultation_type_id"]');
+                    if (el) (el.closest('.o_field_widget') || el).classList.add('o_field_invalid');
+                }
+                return false;
+            }
         }
         return super.beforeExecuteActionButton(clickParams);
     }

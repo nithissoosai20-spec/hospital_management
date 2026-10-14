@@ -177,10 +177,24 @@ class HospitalAppointment(models.Model):
         default='new'
     )
 
-    treatment_type_id = fields.Many2one(
-        'hospital.treatment.type',
-        string='Treatment Type',
+    consultation_type_id = fields.Many2one(
+        'hospital.consultation.type',
+        string='Consultation Type',
     )
+
+    available_consultation_type_ids = fields.Many2many(
+        'hospital.consultation.type',
+        compute='_compute_available_consultation_types',
+        string='Available Consultation Types',
+    )
+
+    @api.depends('doctor_id', 'doctor_id.consultation_line_ids.consultation_type_id')
+    def _compute_available_consultation_types(self):
+        for record in self:
+            if record.doctor_id and record.doctor_id.consultation_line_ids:
+                record.available_consultation_type_ids = record.doctor_id.consultation_line_ids.mapped('consultation_type_id')
+            else:
+                record.available_consultation_type_ids = self.env['hospital.consultation.type']
 
     priority = fields.Selection(
         [
@@ -536,77 +550,76 @@ class HospitalAppointment(models.Model):
         'doctor_id',
         'doctor_id.department_id',
         'doctor_id.designation_id',
-        'treatment_type_id',
+        'doctor_id.consultation_line_ids',
+        'doctor_id.consultation_line_ids.fee',
+        'doctor_id.consultation_line_ids.consultation_type_id',
+        'consultation_type_id',
     )
     def _compute_consultation_fee(self):
-
         Fee = self.env['hospital.consultation.fee']
 
         for record in self:
-
             record.consultation_fee = 0.0
 
-            if not record.doctor_id:
+            # Mandatory rule: If doctor or consultation type is not selected, fee must be 0.0
+            if not record.doctor_id or not record.consultation_type_id:
                 continue
 
             department = record.doctor_id.department_id
             designation = record.doctor_id.designation_id
+            consultation_type = record.consultation_type_id
 
-            if not department or not designation:
+            # 1. Primary: Doctor-specific Consultation Type Line
+            doctor_line = record.doctor_id.consultation_line_ids.filtered(
+                lambda l: l.consultation_type_id.id == consultation_type.id
+            )
+            if doctor_line:
+                record.consultation_fee = doctor_line[0].fee
                 continue
 
-            treatment_type = record.treatment_type_id
-            fee = False
+            # 2. Secondary: Consultation fee master rule for Doctor + Consultation Type
+            fee = Fee.search([
+                ('doctor_id', '=', record.doctor_id.id),
+                ('consultation_type_id', '=', consultation_type.id),
+                ('active', '=', True),
+            ], limit=1)
 
-            # Priority 1: Doctor-specific + Treatment Type
-            if treatment_type:
-                fee = Fee.search(
-                    [
-                        ('doctor_id', '=', record.doctor_id.id),
-                        ('treatment_type_id', '=', treatment_type.id),
-                        ('active', '=', True),
-                    ],
-                    limit=1,
-                )
-
-            # Priority 2: Doctor-specific (any treatment / general)
-            if not fee:
-                fee = Fee.search(
-                    [
-                        ('doctor_id', '=', record.doctor_id.id),
-                        ('treatment_type_id', '=', False),
-                        ('active', '=', True),
-                    ],
-                    limit=1,
-                )
-
-            # Priority 3: Dept + Designation + Treatment Type (Department standard for this treatment)
-            if not fee and treatment_type:
-                fee = Fee.search(
-                    [
-                        ('department_id', '=', department.id),
-                        ('designation_id', '=', designation.id),
-                        ('treatment_type_id', '=', treatment_type.id),
-                        ('doctor_id', '=', False),
-                        ('active', '=', True),
-                    ],
-                    limit=1,
-                )
-
-            # Priority 4: Dept + Designation (General fallback)
-            if not fee:
-                fee = Fee.search(
-                    [
-                        ('department_id', '=', department.id),
-                        ('designation_id', '=', designation.id),
-                        ('doctor_id', '=', False),
-                        ('active', '=', True),
-                    ],
-                    limit=1,
-                )
+            # 3. Department standard fee for this Consultation Type
+            if not fee and department and designation:
+                fee = Fee.search([
+                    ('department_id', '=', department.id),
+                    ('designation_id', '=', designation.id),
+                    ('consultation_type_id', '=', consultation_type.id),
+                    ('doctor_id', '=', False),
+                    ('active', '=', True),
+                ], limit=1)
 
             if fee:
                 record.consultation_fee = fee.amount
+            else:
+                record.consultation_fee = 0.0
+
+    @api.onchange('doctor_id')
+    def _onchange_doctor_id(self):
+        self.consultation_type_id = False
+        self.consultation_fee = 0.0
+        self._compute_net_amount()
+        if self.doctor_id and self.doctor_id.consultation_line_ids:
+            return {
+                'domain': {
+                    'consultation_type_id': [('id', 'in', self.doctor_id.consultation_line_ids.mapped('consultation_type_id.id'))]
+                }
+            }
+        return {
+            'domain': {
+                'consultation_type_id': [('id', 'in', [])]
+            }
+        }
+
+    @api.onchange('consultation_type_id')
+    def _onchange_consultation_type_id(self):
+        self._compute_consultation_fee()
+        self._compute_net_amount()
 
 
 
@@ -675,7 +688,7 @@ class HospitalAppointment(models.Model):
 
             'doctor_id': False,
             'department_id': False,
-            'treatment_type_id': False,
+            'consultation_type_id': False,
 
             # -------------------------------------------------
             # TOKEN
@@ -951,6 +964,12 @@ class HospitalAppointment(models.Model):
                     'Doctor does not have a Department assigned.'
                 )
 
+            # Consultation Type
+            if not record.consultation_type_id:
+                raise UserError(
+                    'Please select a Consultation Type.'
+                )
+
             # Appointment Date
             if not record.appointment_date:
                 raise UserError(
@@ -1067,6 +1086,15 @@ class HospitalAppointment(models.Model):
         if not self.doctor_id:
             raise UserError(
                 'Please select a doctor before booking '
+                'the appointment.'
+            )
+
+        # ---------------------------------------------------------
+        # CONSULTATION TYPE REQUIRED
+        # ---------------------------------------------------------
+        if not self.consultation_type_id:
+            raise UserError(
+                'Please select a Consultation Type before booking '
                 'the appointment.'
             )
 

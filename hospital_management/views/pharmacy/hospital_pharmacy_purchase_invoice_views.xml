@@ -5,7 +5,7 @@
         <field name="name">hospital.pharmacy.purchase.invoice.list</field>
         <field name="model">hospital.pharmacy.purchase.invoice</field>
         <field name="arch" type="xml">
-            <list string="Purchase Invoices" limit="14" decoration-warning="state == 'pending'" decoration-success="state == 'successful'">
+            <list string="Purchase Invoices" limit="14" js_class="purchase_invoice_list" decoration-warning="state == 'pending'" decoration-success="state == 'successful'">
                 <field name="name" string="Invoice No."/>
                 <field name="purchase_id" string="Purchase Order"/>
                 <field name="supplier_id"/>
@@ -53,6 +53,7 @@
                         }
                     </style>
 
+                    <field name="order_type" invisible="1"/>
                     <div class="row">
                         <div class="col-md-6">
                             <h3 style="color:#1e3a8a; margin:0;"><field name="name" readonly="1"/></h3>
@@ -170,16 +171,48 @@
         </field>
     </record>
 
-    <!-- Action -->
+    <!-- Actions for Purchase Invoices (New / Existing) -->
+    <record id="action_hospital_pharmacy_purchase_invoice_new" model="ir.actions.act_window">
+        <field name="name">Purchase Invoices</field>
+        <field name="res_model">hospital.pharmacy.purchase.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+        <field name="context">{'default_state': 'pending'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_form')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No pending purchase invoices!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_hospital_pharmacy_purchase_invoice_existing" model="ir.actions.act_window">
+        <field name="name">Existing Purchase Invoices</field>
+        <field name="res_model">hospital.pharmacy.purchase.invoice</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'successful')]</field>
+        <field name="context">{}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_form')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No existing purchase invoices yet!
+            </p>
+        </field>
+    </record>
+
+    <!-- Backward-compatible Action Alias -->
     <record id="action_hospital_pharmacy_purchase_invoice" model="ir.actions.act_window">
         <field name="name">Purchase Invoices</field>
         <field name="res_model">hospital.pharmacy.purchase.invoice</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('state', '=', 'pending')]</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Create your first purchase invoice!
-            </p>
-        </field>
+        <field name="context">{'default_state': 'pending'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_invoice_form')})]"/>
     </record>
 </odoo>

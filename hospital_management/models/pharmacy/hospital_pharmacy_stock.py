@@ -476,6 +476,24 @@ class HospitalPharmacyStock(models.Model):
         low_stock_medicines = self.search([('is_reorder_needed', '=', True)])
         
         for med in low_stock_medicines:
+            if 'hospital.asset.purchase.request' in self.env:
+                existing_req = self.env['hospital.asset.purchase.request'].sudo().search([
+                    ('item_id', '=', med.id),
+                    ('state', 'in', ['draft', 'submitted', 'ordered'])
+                ], limit=1)
+                
+                if not existing_req:
+                    deficit = (med.reorder_level - med.quantity) if med.reorder_level > med.quantity else 100.0
+                    order_qty = max(int(deficit), 10)
+                    self.env['hospital.asset.purchase.request'].sudo().create({
+                        'item_id': med.id,
+                        'quantity': order_qty,
+                        'department': 'pharmacy',
+                        'reason': 'Auto-generated: Low Stock Warning (Available: %s, Reorder Level: %s)' % (int(med.quantity), int(med.reorder_level)),
+                        'state': 'submitted',
+                    })
+                continue
+
             # Check if an Intent or Draft Order already exists for this medicine
             existing_order = self.env['hospital.pharmacy.purchase.line'].sudo().search([
                 ('medicine_id', '=', med.id),

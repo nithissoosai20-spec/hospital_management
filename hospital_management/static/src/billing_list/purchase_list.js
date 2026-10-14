@@ -30,6 +30,8 @@ async function resolveActionId(xmlId) {
     'hospital_management.action_hospital_purchase_intent_existing',
     'hospital_management.action_hospital_pharmacy_purchase_list_new',
     'hospital_management.action_hospital_pharmacy_purchase_list_existing',
+    'hospital_management.action_hospital_pharmacy_purchase_invoice_new',
+    'hospital_management.action_hospital_pharmacy_purchase_invoice_existing',
 ].forEach(resolveActionId);
 
 // ── Factory ──────────────────────────────────────────────────────────────────
@@ -87,7 +89,7 @@ function makePurchaseListController(newActionXmlid, existingActionXmlid, hideNew
                 if (leftArea) {
                     // Remove native "New" button from DOM
                     controlPanel.querySelectorAll(
-                        ".o_form_button_create, button[data-hotkey='c']"
+                        ".o_form_button_create, .o_list_button_add, button[data-hotkey='c']"
                     ).forEach(btn => btn.remove());
                     leftArea.prepend(tabs);
                 } else {
@@ -152,6 +154,17 @@ registry.category("views").add("purchase_intent_list", {
     Controller: makePurchaseListController(
         "hospital_management.action_hospital_purchase_intent_new",
         "hospital_management.action_hospital_purchase_intent_existing",
+        true,
+        false
+    ),
+});
+
+// Purchase Invoices — tabs LEFT, no New button
+registry.category("views").add("purchase_invoice_list", {
+    ...listView,
+    Controller: makePurchaseListController(
+        "hospital_management.action_hospital_pharmacy_purchase_invoice_new",
+        "hospital_management.action_hospital_pharmacy_purchase_invoice_existing",
         true,
         false
     ),

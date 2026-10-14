@@ -39,6 +39,7 @@
                         }
                     </style>
                     
+                    <field name="order_type" invisible="1"/>
                     <div class="row align-items-center mb-3 pb-2 border-bottom">
                         <div class="col-md-6">
                             <span class="custom-label">Payment Reference</span>
@@ -150,7 +151,8 @@
         <field name="name">Vendor Payments</field>
         <field name="res_model">hospital.pharmacy.payment</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_group_vendor': 1}</field>
+        <field name="domain">[('order_type', '=', 'pharmacy')]</field>
+        <field name="context">{'default_order_type': 'pharmacy', 'search_default_group_vendor': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a new vendor payment!

@@ -12,46 +12,42 @@
  */
 
 document.addEventListener("keydown", function (event) {
-
-    // Only handle ENTER
     if (event.key !== "Enter") {
         return;
     }
 
-    // Find the currently focused element
     const input = event.target;
-
-    // Only work with the Patient Search field
-    if (
-        !input ||
-        input.getAttribute("name") !== "search_patient"
-    ) {
+    if (!input) {
         return;
     }
 
-    // Find the Hospital Appointment form
-    const form = input.closest(
-        ".hospital_appointment_form"
-    );
+    // Check if the focused element is the Patient Search field
+    const isSearchInput = (
+        input.getAttribute && (
+            input.getAttribute("name") === "search_patient" ||
+            input.getAttribute("placeholder") === "Patient ID or Mobile Number"
+        )
+    ) || Boolean(input.closest && input.closest('[name="search_patient"]'));
 
+    if (!isSearchInput) {
+        return;
+    }
+
+    const form = input.closest(".hospital_appointment_form") || document.querySelector(".hospital_appointment_form");
     if (!form) {
         return;
     }
 
-    // Prevent normal browser/form Enter behavior
+    // Prevent default form Enter submission
     event.preventDefault();
     event.stopPropagation();
 
-    // Find the existing Search button
-    const searchButton = form.querySelector(
-        'button[name="action_search_patient"]'
-    );
+    // Commit input value to model
+    input.dispatchEvent(new Event("change", { bubbles: true }));
 
-    if (!searchButton) {
-        return;
+    // Trigger Search button
+    const searchButton = form.querySelector('button[name="action_search_patient"]');
+    if (searchButton) {
+        searchButton.click();
     }
-
-    // Trigger the exact same action as clicking Search
-    searchButton.click();
-
-});
+}, true);

@@ -23,8 +23,8 @@
         <field name="name">Purchase Intent</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'intent')]</field>
-        <field name="context">{'default_state': 'intent'}</field>
+        <field name="domain">[('state', '=', 'intent'), ('order_type', '=', 'pharmacy')]</field>
+        <field name="context">{'default_state': 'intent', 'default_order_type': 'pharmacy'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_intent_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
@@ -34,7 +34,8 @@
         <field name="name">Existing Purchase Intents</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', 'in', ('draft', 'done', 'cancelled'))]</field>
+        <field name="domain">[('state', 'in', ('draft', 'done', 'cancelled')), ('order_type', '=', 'pharmacy')]</field>
+        <field name="context">{'default_order_type': 'pharmacy'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_intent_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
@@ -44,8 +45,8 @@
         <field name="name">Purchase Orders</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'draft')]</field>
-        <field name="context">{'default_state': 'draft'}</field>
+        <field name="domain">[('state', '=', 'draft'), ('order_type', '=', 'pharmacy')]</field>
+        <field name="context">{'default_state': 'draft', 'default_order_type': 'pharmacy'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
@@ -55,7 +56,8 @@
         <field name="name">Existing Purchase Orders</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'done')]</field>
+        <field name="domain">[('state', '=', 'done'), ('order_type', '=', 'pharmacy')]</field>
+        <field name="context">{'default_order_type': 'pharmacy'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_hospital_pharmacy_purchase_list')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_hospital_pharmacy_purchase_form')})]"/>
@@ -86,6 +88,7 @@
                 
                 <sheet>
                     <field name="state" invisible="1"/>
+                    <field name="order_type" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="invoice_count == 0">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
@@ -125,7 +128,7 @@
                     <div class="row">
                         <div class="col-md-3 custom-field-container">
                             <label for="supplier_id" class="custom-label">Supplier *</label>
-                            <field name="supplier_id" class="w-100" placeholder="Select supplier..." domain="[('is_pharmacy_vendor', '=', True)]" context="{'default_is_pharmacy_vendor': True}"/>
+                            <field name="supplier_id" class="w-100" placeholder="Select supplier..." domain="['|', ('is_pharmacy_vendor', '=', True), ('supplier_rank', '>', 0)]"/>
                         </div>
                         <div class="col-md-3 custom-field-container">
                             <label for="invoice_no" class="custom-label">Invoice No. *</label>
@@ -190,7 +193,7 @@
 
                     <div class="d-flex justify-content-end mt-4 mb-2">
                         <button name="action_create_order" string="Create Order" type="object" class="btn-primary me-2" invisible="state != 'intent'"/>
-                        <button name="%(hospital_management.action_hospital_pharmacy_purchase_list_new)d" string="Open Orders List" type="action" class="btn-info me-2" invisible="state != 'draft' or context.get('default_state') != 'intent'"/>
+                        <button name="action_open_orders_list" string="Open Orders List" type="object" class="btn-info me-2" invisible="state != 'draft' or context.get('default_state') != 'intent'"/>
                         <button name="action_confirm" string="Confirm &amp; Generate Invoice" type="object" class="btn-primary me-2" invisible="state != 'draft' or context.get('default_state') == 'intent'"/>
                         <button name="action_view_invoices" string="Open Pending Invoice" type="object" class="btn-warning me-2" invisible="state != 'done' or invoice_status != 'pending'"/>
                         <button name="action_print_order" string="Print Order" type="object" class="btn-secondary me-2" invisible="(state != 'draft' and state != 'done') or context.get('default_state') == 'intent'"/>

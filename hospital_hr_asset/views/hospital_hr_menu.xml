@@ -21,13 +21,22 @@
 
     <!-- Create the Nav Items directly under the Hospital app -->
     <menuitem id="menu_asset_inv_items" name="Items" parent="hospital_management.menu_hospital_management" action="hospital_management.action_hospital_pharmacy_stock_records" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="10"/>
-    <menuitem id="menu_asset_inv_specs" name="Item Specification" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_specification" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="30"/>
-    
-    <menuitem id="menu_asset_my_requests" name="My Asset Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request" groups="hospital_management.group_hospital_user" sequence="35"/>
-    <menuitem id="menu_asset_all_requests" name="All Asset Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_manager" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="40"/>
 
-    <menuitem id="menu_asset_inv_po" name="Asset PO" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_po" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="50"/>
-    <menuitem id="menu_asset_inv_invoice" name="Asset Purchase Invoice" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_invoice" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="60"/>
+    <!-- Obsolete menus disabled: Item Specification is now embedded in Item form, and Purchase Intent is merged into Item Requests -->
+    <record id="menu_asset_inv_specs" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="menu_asset_inv_intent" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    
+    <menuitem id="menu_asset_my_requests" name="Item Request" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_router" groups="hospital_management.group_hospital_user" sequence="32"/>
+    <menuitem id="menu_asset_all_requests" name="All Item Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_manager" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="35"/>
+
+    <menuitem id="menu_asset_inv_po" name="Purchase Orders" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_order" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="50"/>
+    <menuitem id="menu_asset_inv_invoice" name="Purchase Invoices" parent="hospital_management.menu_hospital_management" action="hospital_management.action_hospital_pharmacy_purchase_invoice_new" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="60"/>
+    <menuitem id="menu_asset_inv_payment" name="Payments" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_payment" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="65"/>
+
     <menuitem id="menu_asset_inv_inward" name="Inward" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_inward" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="70"/>
     <menuitem id="menu_asset_inv_outward" name="Outward" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_outward" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="80"/>
     <menuitem id="menu_asset_inv_damage" name="Damaged &amp; Expiry" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_damage" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="90"/>

@@ -154,18 +154,63 @@ class HospitalAssetItem(models.Model):
 
 class HospitalAssetPurchaseRequest(models.Model):
     _name = 'hospital.asset.purchase.request'
-    _description = 'Asset Request'
+    _description = 'Item Request'
+    _order = 'id desc'
 
     name = fields.Char(string='Request Reference', required=True, copy=False, readonly=True, default='New')
+
+    @api.model
+    def _get_user_department(self, user=None):
+        if not user:
+            user = self.env.user
+        h_user = self.env['hospital.user'].sudo().search([('odoo_user_id', '=', user.id)], limit=1)
+        if h_user:
+            if h_user.role_id and h_user.role_id.name:
+                return h_user.role_id.name
+            if h_user.department_id and h_user.department_id.name:
+                return h_user.department_id.name
+        # Fallbacks based on user groups
+        if user.has_group('hospital_management.group_hospital_super_admin'):
+            return 'Super Admin'
+        if user.has_group('hospital_management.group_hospital_admin'):
+            return 'Admin'
+        if user.has_group('hospital_management.group_hospital_hr'):
+            return 'HR Manager'
+        if user.has_group('hospital_management.group_hospital_pharmacist'):
+            return 'Pharmacist'
+        if user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
+            return 'Asset Manager'
+        if user.has_group('hospital_management.group_hospital_doctor'):
+            return 'Doctor'
+        if user.has_group('hospital_management.group_hospital_receptionist'):
+            return 'Receptionist'
+        if user.has_group('hospital_management.group_hospital_lab_technician') or user.has_group('hospital_management.group_hospital_lab_manager'):
+            return 'Lab Manager'
+        if user.has_group('hospital_management.group_hospital_nurse'):
+            return 'Nurse'
+        if user.has_group('hospital_management.group_hospital_billing'):
+            return 'Billing'
+        return 'General'
+
+    def _default_department(self):
+        return self._get_user_department(self.env.user)
+
     requested_by_id = fields.Many2one('res.users', string='Requested By', default=lambda self: self.env.user, readonly=True)
-    request_date = fields.Date(string='Request Date', default=fields.Date.context_today, readonly=True)
-    
+    request_date = fields.Datetime(string='Request Date & Time', default=fields.Datetime.now, readonly=True)
+    department = fields.Char(string='Department', default=_default_department, readonly=True, index=True)
+
     item_id = fields.Many2one('hospital.pharmacy.stock', string='Requested Item', required=True)
+    available_stock = fields.Float(related='item_id.total_stock', string='Current In-Stock', readonly=True)
     quantity = fields.Integer(string='Quantity Needed', default=1, required=True)
     reason = fields.Text(string='Reason for Request', required=True)
-    po_id = fields.Many2one('hospital.asset.po', string='Purchase Order', readonly=True)
+    po_id = fields.Many2one('hospital.asset.po', string='Legacy Purchase Order', readonly=True)
+    purchase_id = fields.Many2one('hospital.pharmacy.purchase', string='Purchase Order', readonly=True)
 
-    
+    @api.onchange('requested_by_id')
+    def _onchange_requested_by_id(self):
+        if self.requested_by_id:
+            self.department = self._get_user_department(self.requested_by_id)
+
     state = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Waiting Approval'),
@@ -178,14 +223,21 @@ class HospitalAssetPurchaseRequest(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if isinstance(vals, dict) and vals.get('name', 'New') == 'New':
-                vals['name'] = self.env['ir.sequence'].next_by_code('hospital.asset.request.seq') or 'New'
+            if isinstance(vals, dict):
+                if vals.get('name', 'New') == 'New':
+                    vals['name'] = self.env['ir.sequence'].next_by_code('hospital.asset.request.seq') or 'New'
+                if not vals.get('department'):
+                    user = self.env['res.users'].browse(vals['requested_by_id']) if vals.get('requested_by_id') else self.env.user
+                    vals['department'] = self._get_user_department(user)
         return super(HospitalAssetPurchaseRequest, self).create(vals_list)
 
     def action_submit(self):
         for rec in self:
             rec.state = 'submitted'
-        action = self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
+        if self.env.user.has_group('hospital_management.group_hospital_pharmacist') and not self.env.user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
+            action = self.env.ref('hospital_hr_asset.action_pharmacy_item_request').sudo().read()[0]
+        else:
+            action = self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
         action['effect'] = {
             'fadeout': 'slow',
             'message': 'Request submitted successfully!',
@@ -194,6 +246,10 @@ class HospitalAssetPurchaseRequest(models.Model):
         return action
 
     def action_close(self):
+        if self.env.user.has_group('hospital_management.group_hospital_pharmacist') and not self.env.user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
+            return self.env.ref('hospital_hr_asset.action_pharmacy_item_request').sudo().read()[0]
+        elif self.env.user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
+            return self.env.ref('hospital_hr_asset.action_asset_purchase_request_manager').sudo().read()[0]
         return self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
 
     def action_accept_ready(self):
@@ -212,33 +268,46 @@ class HospitalAssetPurchaseRequest(models.Model):
         for rec in self:
             # Check if there is a vendor connected to this item
             vendor_id = False
+            mobile_number = False
+            address = False
             if rec.item_id.vendor_ids:
-                vendor_id = rec.item_id.vendor_ids[0].id
-            
-            if not vendor_id:
-                raise ValidationError("Please assign at least one connected vendor to the item before ordering.")
+                vendor = rec.item_id.vendor_ids[0]
+                vendor_id = vendor.id
+                mobile_number = vendor.phone or ''
+                parts = []
+                if hasattr(vendor, 'street') and vendor.street: parts.append(vendor.street)
+                if hasattr(vendor, 'street2') and vendor.street2: parts.append(vendor.street2)
+                if hasattr(vendor, 'city') and vendor.city: parts.append(vendor.city)
+                if hasattr(vendor, 'state_id') and vendor.state_id: parts.append(vendor.state_id.name)
+                address = ", ".join(parts) if parts else ""
 
-            # Create PO
+            order_type = 'pharmacy' if rec.department and 'pharmac' in rec.department.lower() else 'asset'
+
+            # Create Pharmacy Purchase with corresponding order_type
             po_vals = {
-                'vendor_id': vendor_id,
+                'order_type': order_type,
+                'state': 'draft',
+                'supplier_id': vendor_id,
+                'mobile_number': mobile_number or '',
+                'address': address or '',
+                'request_id': rec.id,
                 'line_ids': [(0, 0, {
-                    'item_id': rec.item_id.id,
-                    'quantity': rec.quantity,
-                    'price_unit': rec.item_id.purchase_price or 0.0,
-                    'request_id': rec.id
+                    'medicine_id': rec.item_id.id,
+                    'qty': float(rec.quantity),
+                    'purchase_price': rec.item_id.purchase_price or 0.0,
                 })]
             }
-            po = self.env['hospital.asset.po'].create(po_vals)
-            rec.po_id = po.id
+            purchase = self.env['hospital.pharmacy.purchase'].create(po_vals)
+            rec.purchase_id = purchase.id
             rec.state = 'ordered'
             
             return {
-                'name': 'Asset PO',
+                'name': 'Purchase Order',
                 'type': 'ir.actions.act_window',
-                'res_model': 'hospital.asset.po',
+                'res_model': 'hospital.pharmacy.purchase',
                 'view_mode': 'form',
-                'views': [(self.env.ref('hospital_hr_asset.view_asset_po_form').id, 'form')],
-                'res_id': po.id,
+                'views': [(self.env.ref('hospital_management.view_hospital_pharmacy_purchase_form').id, 'form')],
+                'res_id': purchase.id,
                 'target': 'current',
             }
 
@@ -541,4 +610,35 @@ class HospitalAssetDamage(models.Model):
             'views': [(False, 'list'), (False, 'form')],
             'target': 'current'
         }
+
+
+class HospitalPharmacyPurchaseAssetExt(models.Model):
+    _inherit = 'hospital.pharmacy.purchase'
+
+    request_id = fields.Many2one('hospital.asset.purchase.request', string='Item Request', readonly=True)
+
+
+class HospitalPharmacyPurchaseInvoiceAssetExt(models.Model):
+    _inherit = 'hospital.pharmacy.purchase.invoice'
+
+    def action_update_stock(self):
+        res = super().action_update_stock()
+        for rec in self:
+            if rec.order_type == 'asset':
+                if rec.purchase_id and hasattr(rec.purchase_id, 'request_id') and rec.purchase_id.request_id:
+                    if rec.purchase_id.request_id.state in ('submitted', 'ordered'):
+                        rec.purchase_id.request_id.state = 'ready'
+                for pline in rec.line_ids:
+                    if pline.medicine_id:
+                        preqs = self.env['hospital.asset.purchase.request'].sudo().search([
+                            ('item_id', '=', pline.medicine_id.id),
+                            ('state', 'in', ['submitted', 'ordered'])
+                        ], order='request_date asc, id asc')
+                        avail = pline.medicine_id.total_stock - pline.medicine_id.emergency_stock
+                        for pr in preqs:
+                            if avail >= pr.quantity:
+                                pr.state = 'ready'
+                                avail -= pr.quantity
+        return res
+
 

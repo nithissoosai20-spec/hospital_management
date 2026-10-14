@@ -9,7 +9,6 @@ class HospitalConsultationFee(models.Model):
 
     def init(self):
         super().init()
-        # Drop old unique constraint if present from earlier versions so department+designation can have multiple treatment types / doctors
         self.env.cr.execute("""
             ALTER TABLE hospital_consultation_fee 
             DROP CONSTRAINT IF EXISTS hospital_consultation_fee_unique_department_id_designation_id;
@@ -24,17 +23,14 @@ class HospitalConsultationFee(models.Model):
                 parts.append(rec.department_id.name)
             if rec.designation_id:
                 parts.append(rec.designation_id.name)
-            if rec.treatment_type_id:
-                parts.append(rec.treatment_type_id.name)
+            if rec.consultation_type_id:
+                parts.append(rec.consultation_type_id.name)
             if rec.doctor_id:
                 parts.append(f"Dr. {rec.doctor_id.name}")
             rec.display_name = " - ".join(parts) if parts else "Consultation Fee"
 
-    _constraints = [
-        models.Constraint(
-            'CHECK(amount >= 0)',
-            'Consultation Fee cannot be negative.',
-        ),
+    _sql_constraints = [
+        ('check_amount_positive', 'CHECK(amount >= 0)', 'Consultation Fee cannot be negative.'),
     ]
 
     department_id = fields.Many2one(
@@ -52,9 +48,9 @@ class HospitalConsultationFee(models.Model):
         domain="[('department_id', '=', department_id)]",
     )
 
-    treatment_type_id = fields.Many2one(
-        'hospital.treatment.type',
-        string='Treatment Type',
+    consultation_type_id = fields.Many2one(
+        'hospital.consultation.type',
+        string='Consultation Type',
     )
 
     doctor_id = fields.Many2one(
@@ -93,14 +89,13 @@ class HospitalConsultationFee(models.Model):
         for rec in self:
             rec.department_id = False
             rec.designation_id = False
-            rec.treatment_type_id = False
+            rec.consultation_type_id = False
             rec.doctor_id = False
             rec.amount = 0.0
             rec.active = True
 
     def action_close(self):
         return self.env.ref('hospital_management.action_hospital_consultation_fees').sudo().read()[0]
-
 
     @api.onchange('department_id')
     def _onchange_department_id(self):
@@ -127,7 +122,7 @@ class HospitalConsultationFee(models.Model):
                     'The selected Designation does not belong to the selected Department.'
                 )
 
-    @api.constrains('department_id', 'designation_id', 'treatment_type_id', 'doctor_id')
+    @api.constrains('department_id', 'designation_id', 'consultation_type_id', 'doctor_id')
     def _check_unique_consultation_fee(self):
         for record in self:
             if not record.active:
@@ -137,13 +132,12 @@ class HospitalConsultationFee(models.Model):
                 ('active', '=', True),
                 ('department_id', '=', record.department_id.id),
                 ('designation_id', '=', record.designation_id.id),
-                ('treatment_type_id', '=', record.treatment_type_id.id if record.treatment_type_id else False),
+                ('consultation_type_id', '=', record.consultation_type_id.id if record.consultation_type_id else False),
                 ('doctor_id', '=', record.doctor_id.id if record.doctor_id else False),
             ]
             if self.search_count(domain) > 0:
                 doc_str = f" for Doctor '{record.doctor_id.name}'" if record.doctor_id else ""
-                treat_str = f" and Treatment '{record.treatment_type_id.name}'" if record.treatment_type_id else ""
+                type_str = f" and Consultation Type '{record.consultation_type_id.name}'" if record.consultation_type_id else ""
                 raise ValidationError(
-                    f"A consultation fee already exists for this Department, Designation{treat_str}{doc_str}."
+                    f"A consultation fee already exists for this Department, Designation{type_str}{doc_str}."
                 )
-

@@ -177,40 +177,38 @@
     />
 
 
-    <menuitem
-        id="menu_hospital_pharmacy_purchase_root"
-        name="Purchase Orders"
-        parent="menu_hospital_management"
-        action="action_hospital_pharmacy_purchase_list_new"
-        sequence="50"
-        groups="hospital_management.group_hospital_pharmacist"
-    />
+    <record id="menu_hospital_pharmacy_purchase_root" model="ir.ui.menu">
+        <field name="name">Purchase Orders</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_pharmacy_purchase_list_new"/>
+        <field name="sequence">50</field>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
 
+    <record id="menu_hospital_pharmacy_payment" model="ir.ui.menu">
+        <field name="name">Payments</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_pharmacy_payment"/>
+        <field name="sequence">65</field>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
 
-    <menuitem 
-        id="menu_hospital_pharmacy_payment" 
-        name="Payments" 
-        parent="menu_hospital_management" 
-        action="action_hospital_pharmacy_payment" 
-        sequence="65"
-        groups="hospital_management.group_hospital_pharmacist"/>
-
-    <menuitem 
-        id="menu_hospital_pharmacy_purchase_invoice" 
-        name="Purchase Invoices" 
-        parent="menu_hospital_management" 
-        action="action_hospital_pharmacy_purchase_invoice" 
-        sequence="60"
-        groups="hospital_management.group_hospital_pharmacist"/>
+    <record id="menu_hospital_pharmacy_purchase_invoice" model="ir.ui.menu">
+        <field name="name">Purchase Invoices</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_pharmacy_purchase_invoice_new"/>
+        <field name="sequence">60</field>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
         
-    <menuitem
-        id="menu_hospital_purchase_intent_root"
-        name="Purchase Intent"
-        parent="menu_hospital_management"
-        action="action_hospital_purchase_intent_new"
-        sequence="40"
-        groups="hospital_management.group_hospital_pharmacist"
-    />
+    <record id="menu_hospital_purchase_intent_root" model="ir.ui.menu">
+        <field name="name">Purchase Intent</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_purchase_intent_new"/>
+        <field name="sequence">40</field>
+        <field name="active" eval="False"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
 
     <menuitem 
         id="menu_hospital_pharmacy_category" 
@@ -252,10 +250,10 @@
     />
 
     <menuitem
-        id="menu_hospital_treatment_types"
-        name="Treatment Types"
+        id="menu_hospital_consultation_types"
+        name="Consultation Types"
         parent="menu_hospital_fees_root"
-        action="action_hospital_treatment_types"
+        action="action_hospital_consultation_types"
         sequence="15"
         groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
     />

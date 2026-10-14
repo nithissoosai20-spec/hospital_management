@@ -91,8 +91,8 @@
                 />
 
                 <field
-                    name="treatment_type_id"
-                    string="Treatment Type"
+                    name="consultation_type_id"
+                    string="Consultation Type"
                     optional="show"
                 />
 
@@ -300,6 +300,11 @@
 
                     <field
                         name="token_printed"
+                        invisible="1"
+                    />
+
+                    <field
+                        name="available_consultation_type_ids"
                         invisible="1"
                     />
 
@@ -631,19 +636,20 @@
                                 </div>
 
 
-                                <!-- TREATMENT TYPE -->
+                                <!-- CONSULTATION TYPE -->
 
                                 <div>
                                     <label
-                                        for="treatment_type_id"
-                                        string="Treatment Type"
+                                        for="consultation_type_id"
+                                        string="Consultation Type"
                                     />
 
                                     <field
-                                        name="treatment_type_id"
+                                        name="consultation_type_id"
                                         nolabel="1"
-                                        placeholder="Select Treatment Type..."
-                                        options="{'no_open': False, 'no_create_edit': False}"
+                                        placeholder="Select Consultation Type..."
+                                        domain="[('id', 'in', available_consultation_type_ids)]"
+                                        options="{'no_open': True, 'no_create': True, 'no_create_edit': True, 'no_quick_create': True}"
                                         readonly="context.get('view_only') or state != 'draft'"
                                     />
                                 </div>

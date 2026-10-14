@@ -52,6 +52,11 @@ class HospitalPharmacyPurchase(models.Model):
         ('stock', 'Stock Purchase'),
         ('return', 'Return Purchase')
     ], string='Purchase Type', default='stock', required=True)
+
+    order_type = fields.Selection([
+        ('pharmacy', 'Pharmacy'),
+        ('asset', 'Asset'),
+    ], string='Order Type', default='pharmacy', required=True, index=True)
     
     gst_no = fields.Char(string='GST No.')
     mobile_number = fields.Char(string='Mobile Number')
@@ -117,9 +122,14 @@ class HospitalPharmacyPurchase(models.Model):
             'res_model': 'hospital.pharmacy.purchase.invoice',
             'view_mode': 'list,form',
             'domain': [('purchase_id', '=', self.id)],
-            'context': {'default_purchase_id': self.id},
+            'context': {'default_purchase_id': self.id, 'default_order_type': self.order_type},
         }
 
+    def action_open_orders_list(self):
+        self.ensure_one()
+        if self.order_type == 'asset':
+            return self.env.ref('hospital_hr_asset.action_asset_purchase_order').sudo().read()[0]
+        return self.env.ref('hospital_management.action_hospital_pharmacy_purchase_list_new').sudo().read()[0]
 
     def action_print_order(self):
         return self.env.ref('hospital_management.action_report_pharmacy_purchase_order').report_action(self)
@@ -164,13 +174,14 @@ class HospitalPharmacyPurchase(models.Model):
                             'qty': line.qty,
                             
                             'unit': line.unit,
-                            'purchase_price': line.medicine_id.purchase_price,
+                            'purchase_price': line.purchase_price or line.medicine_id.purchase_price,
                         }))
 
                 # Generate Invoice
                 if invoice_lines:
                     self.env['hospital.pharmacy.purchase.invoice'].with_context(default_state='pending').create({
                         'purchase_id': rec.id,
+                        'order_type': rec.order_type,
                         'supplier_id': rec.supplier_id.id,
                         'line_ids': invoice_lines,
                     })
@@ -210,5 +221,8 @@ class HospitalPharmacyPurchaseLine(models.Model):
     def _onchange_medicine(self):
         if self.medicine_id:
             self.batch_no = self.medicine_id.batch_number
-            self.qty = 200.0
+            if not self.qty or self.qty == 200.0:
+                self.qty = 1.0 if (self.purchase_id and self.purchase_id.order_type == 'asset') else 200.0
+            if self.medicine_id.purchase_price:
+                self.purchase_price = self.medicine_id.purchase_price
 

@@ -7,8 +7,17 @@ class HospitalPharmacyPayment(models.Model):
     _order = 'date desc, id desc'
 
     name = fields.Char(string='Payment Reference', required=True, copy=False, readonly=True, default='New Payment')
-    vendor_id = fields.Many2one('res.partner', string='Vendor', domain=[('is_pharmacy_vendor', '=', True)], required=True)
+    order_type = fields.Selection([
+        ('pharmacy', 'Pharmacy'),
+        ('asset', 'Asset'),
+    ], string='Order Type', default='pharmacy', required=True, index=True)
+    vendor_id = fields.Many2one('res.partner', string='Vendor', domain="['|', ('is_pharmacy_vendor', '=', True), ('supplier_rank', '>', 0)]", required=True)
     invoice_id = fields.Many2one('hospital.pharmacy.purchase.invoice', string='Purchase Invoice', domain="[('supplier_id', '=', vendor_id)]")
+    
+    @api.onchange('invoice_id')
+    def _onchange_invoice_id(self):
+        if self.invoice_id and self.invoice_id.order_type:
+            self.order_type = self.invoice_id.order_type
     
     invoice_total = fields.Float(string='Invoice Total', related='invoice_id.total_amount', store=True)
     invoice_balance = fields.Float(string='Pending Balance', related='invoice_id.balance_amount', store=True)
@@ -41,7 +50,7 @@ class HospitalPharmacyPayment(models.Model):
     def action_confirm(self):
         for rec in self:
             rec.state = 'done'
-        return self.env.ref('hospital_management.action_hospital_pharmacy_payment').sudo().read()[0]
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
             
     def action_draft(self):
         for rec in self:

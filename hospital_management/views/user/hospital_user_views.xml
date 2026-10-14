@@ -45,9 +45,6 @@
                 
 
                 <sheet>
-                    <div style="text-align: center; width: 100%; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; padding-bottom: 10px;">
-                        <h1 style="color: #29398f; font-weight: 800; text-transform: uppercase; font-size: 18px; margin: 0;">USER DETAILS</h1>
-                    </div>
                     <style>
                         .pwd-helper {
                             display: none;
@@ -79,96 +76,155 @@
                         .custom-field-container {
                             margin-bottom: 12px;
                         }
+
+                        /* Consultation Types and Fees Table - No horizontal scroll and wide columns */
+                        .doctor_consultation_table,
+                        .doctor_consultation_table .table-responsive,
+                        .doctor_consultation_table .o_list_renderer {
+                            overflow-x: hidden !important;
+                            overflow-y: visible !important;
+                            width: 100% !important;
+                            max-width: 100% !important;
+                        }
+
+                        .doctor_consultation_table table.o_list_table {
+                            table-layout: fixed !important;
+                            width: 100% !important;
+                        }
+
+                        .doctor_consultation_table table.o_list_table th,
+                        .doctor_consultation_table table.o_list_table th span,
+                        .doctor_consultation_table table.o_list_table th div,
+                        .doctor_consultation_table table.o_list_table th .text-truncate {
+                            white-space: nowrap !important;
+                            text-overflow: unset !important;
+                            overflow: visible !important;
+                        }
+
+                        .doctor_consultation_table th[data-name="consultation_type_id"],
+                        .doctor_consultation_table td[name="consultation_type_id"] {
+                            width: 65% !important;
+                        }
+
+                        .doctor_consultation_table th[data-name="fee"],
+                        .doctor_consultation_table td[name="fee"] {
+                            width: 30% !important;
+                            text-align: right !important;
+                        }
+
+                        .doctor_consultation_table th.o_list_record_remove_header,
+                        .doctor_consultation_table td.o_list_record_remove {
+                            width: 5% !important;
+                            text-align: center !important;
+                        }
                     </style>
 
-                    <div class="custom-section-title">1. Personal Information</div>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="name" class="custom-label">Full Name *</label>
-                            <field name="name" class="w-100" placeholder="Enter full name"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="employee_id" class="custom-label">Employee ID</label>
-                            <field name="employee_id" class="w-100" placeholder="e.g. EMP-001"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="login" class="custom-label">Username *</label>
-                            <field name="login" class="w-100" placeholder="Enter username"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="email" class="custom-label">Email Address</label>
-                            <field name="email" class="w-100" placeholder="example@hospital.com"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="mobile" class="custom-label">Mobile Number</label>
-                            <field name="mobile" class="w-100" placeholder="Enter mobile number"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="date_of_birth" class="custom-label">Date of Birth</label>
-                            <field name="date_of_birth" class="w-100"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="gender" class="custom-label">Gender</label>
-                            <field name="gender" class="w-100" required="1"/>
-                        </div>
-                        <div class="col-md-8 custom-field-container">
-                            <label for="address" class="custom-label">Address</label>
-                            <field name="address" class="w-100" placeholder="Enter full address"/>
-                        </div>
-                    </div>
+                    <field name="is_doctor" invisible="1"/>
+                    <field name="existing_consultation_type_ids" invisible="1"/>
 
-                    <div class="custom-section-title">2. Work Information</div>
-                    <field name="allowed_department_ids" invisible="1"/>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="role_id" class="custom-label">Role</label>
-                            <field name="role_id" class="w-100" options="{'no_create': True}" required="1"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="department_id" class="custom-label">Department</label>
-                            <field name="department_id" class="w-100" domain="[('id', 'in', allowed_department_ids)]" options="{'no_create': True}"/>
-                        </div>
-                        <div class="col-md-4 custom-field-container">
-                            <label for="designation_id" class="custom-label">Designation</label>
-                            <field name="designation_id" class="w-100" domain="[('department_id', '=', department_id)]" options="{'no_create': True}"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 custom-field-container">
-                            <label for="reporting_to_id" class="custom-label">Reporting To</label>
-                            <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
-                        </div>
-                    </div>
+                    <notebook>
+                        <page string="General Info" name="general_info">
+                            <div class="custom-section-title">1. Personal Information</div>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="name" class="custom-label">Full Name *</label>
+                                    <field name="name" class="w-100" placeholder="Enter full name"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="employee_id" class="custom-label">Employee ID</label>
+                                    <field name="employee_id" class="w-100" placeholder="e.g. EMP-001"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="login" class="custom-label">Username *</label>
+                                    <field name="login" class="w-100" placeholder="Enter username"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="email" class="custom-label">Email Address</label>
+                                    <field name="email" class="w-100" placeholder="example@hospital.com"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="mobile" class="custom-label">Mobile Number</label>
+                                    <field name="mobile" class="w-100" placeholder="Enter mobile number"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="date_of_birth" class="custom-label">Date of Birth</label>
+                                    <field name="date_of_birth" class="w-100"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="gender" class="custom-label">Gender</label>
+                                    <field name="gender" class="w-100" required="1"/>
+                                </div>
+                                <div class="col-md-8 custom-field-container">
+                                    <label for="address" class="custom-label">Address</label>
+                                    <field name="address" class="w-100" placeholder="Enter full address"/>
+                                </div>
+                            </div>
 
-                    <div class="custom-section-title">3. Access &amp; Security</div>
-                    <div class="row">
-                        <div class="col-md-2 custom-field-container">
-                            <label for="active" class="custom-label">Active</label>
-                            <field name="active" widget="boolean_toggle"/>
-                        </div>
-                        <div class="col-md-5 custom-field-container">
-                            <label for="password" class="custom-label">Password</label>
-                            <field name="password" class="w-100" password="True" required="not id"/>
-                            <small class="pwd-helper">
-                                Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
-                            </small>
-                        </div>
-                        <div class="col-md-5 custom-field-container">
-                            <label for="password_confirm" class="custom-label">Re-enter Password</label>
-                            <field name="password_confirm" class="w-100" password="True" required="not id"/>
-                        </div>
-                    </div>
+                            <div class="custom-section-title">2. Work Information</div>
+                            <field name="allowed_department_ids" invisible="1"/>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="role_id" class="custom-label">Role</label>
+                                    <field name="role_id" class="w-100" options="{'no_create': True}" required="1"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="department_id" class="custom-label">Department</label>
+                                    <field name="department_id" class="w-100" domain="[('id', 'in', allowed_department_ids)]" options="{'no_create': True}"/>
+                                </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="designation_id" class="custom-label">Designation</label>
+                                    <field name="designation_id" class="w-100" domain="[('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="reporting_to_id" class="custom-label">Reporting To</label>
+                                    <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                                </div>
+                            </div>
 
-                    
-                        
+                            <div class="custom-section-title">3. Access &amp; Security</div>
+                            <div class="row">
+                                <div class="col-md-2 custom-field-container">
+                                    <label for="active" class="custom-label">Active</label>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </div>
+                                <div class="col-md-5 custom-field-container">
+                                    <label for="password" class="custom-label">Password</label>
+                                    <field name="password" class="w-100" password="True" required="not id"/>
+                                    <small class="pwd-helper">
+                                        Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
+                                    </small>
+                                </div>
+                                <div class="col-md-5 custom-field-container">
+                                    <label for="password_confirm" class="custom-label">Re-enter Password</label>
+                                    <field name="password_confirm" class="w-100" password="True" required="not id"/>
+                                </div>
+                            </div>
+                        </page>
 
-    
-                    
-                
+                        <page string="Consultation Types &amp; Fees" name="consultation_types" invisible="not is_doctor">
+                            <div class="custom-section-title">
+                                Consultation Types &amp; Fees <span style="color: #ef4444;">*</span>
+                            </div>
+                            <div class="mb-4">
+                                <p class="text-muted" style="font-size: 13px; margin-bottom: 8px;">
+                                    Configure the consultation types offered by this doctor and their consultation fees. At least one consultation type is required for saving.
+                                </p>
+                                <field name="consultation_line_ids" class="doctor_consultation_table">
+                                    <list editable="bottom">
+                                        <field name="consultation_type_id" context="{'doctor_user_id': parent.id}" domain="[('id', 'not in', parent.existing_consultation_type_ids)]" placeholder="Select Consultation Type..." options="{'no_create': True, 'no_open': True}"/>
+                                        <field name="fee" string="Doctor Fee (Rs.)" required="1"/>
+                                    </list>
+                                </field>
+                            </div>
+                        </page>
+                    </notebook>
+
                     <div class="d-flex justify-content-end mt-4 mb-2 gap-2" style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;">
                         <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary"/>
                         <button

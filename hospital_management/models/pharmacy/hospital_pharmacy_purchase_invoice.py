@@ -7,14 +7,21 @@ class HospitalPharmacyPurchaseInvoice(models.Model):
 
     name = fields.Char(string='Invoice No.', required=True, copy=False, readonly=True, default='New Purchase Invoice')
     purchase_id = fields.Many2one('hospital.pharmacy.purchase', string='Purchase Order', readonly=True)
+    order_type = fields.Selection([
+        ('pharmacy', 'Pharmacy'),
+        ('asset', 'Asset'),
+    ], string='Order Type', default='pharmacy', required=True, index=True)
     
-    supplier_id = fields.Many2one('res.partner', string='Supplier Name', required=True, domain="[('is_pharmacy_vendor', '=', True)]")
+    supplier_id = fields.Many2one('res.partner', string='Supplier Name', required=True, domain="['|', ('is_pharmacy_vendor', '=', True), ('supplier_rank', '>', 0)]")
     invoice_date = fields.Date(string='Invoice Date', default=fields.Date.context_today, required=True)
     
     @api.onchange('purchase_id')
     def _onchange_purchase_id(self):
-        if self.purchase_id and self.purchase_id.supplier_id:
-            self.supplier_id = self.purchase_id.supplier_id
+        if self.purchase_id:
+            if self.purchase_id.supplier_id:
+                self.supplier_id = self.purchase_id.supplier_id
+            if self.purchase_id.order_type:
+                self.order_type = self.purchase_id.order_type
     
     # Lines
     line_ids = fields.One2many('hospital.pharmacy.purchase.invoice.line', 'invoice_id', string='Items')
@@ -97,6 +104,7 @@ class HospitalPharmacyPurchaseInvoice(models.Model):
                 self.env['hospital.pharmacy.payment'].create({
                     'vendor_id': rec.supplier_id.id,
                     'invoice_id': rec.id,
+                    'order_type': rec.order_type,
                     'amount': rec.total_amount,
                     'state': 'draft',
                     'reference': f"Payment for {rec.name}"

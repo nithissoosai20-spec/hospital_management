@@ -210,19 +210,76 @@
         </field>
     </record>
 
-        <!-- Purchase Request -->
+    <!-- Search View for Item Requests -->
+    <record id="view_asset_purchase_request_search" model="ir.ui.view">
+        <field name="name">hospital.asset.purchase.request.search</field>
+        <field name="model">hospital.asset.purchase.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="item_id"/>
+                <field name="requested_by_id"/>
+                <field name="department"/>
+                <separator/>
+                <filter string="Pharmacy" name="filter_pharmacy" domain="['|', ('department', 'ilike', 'pharmacy'), ('department', 'ilike', 'pharmacist')]"/>
+                <filter string="Receptionist" name="filter_receptionist" domain="[('department', 'ilike', 'reception')]"/>
+                <filter string="Doctor" name="filter_doctor" domain="[('department', 'ilike', 'doctor')]"/>
+                <filter string="HR" name="filter_hr" domain="['|', ('department', 'ilike', 'hr'), ('department', 'ilike', 'human resources')]"/>
+                <filter string="Admin" name="filter_admin" domain="['&amp;', '|', ('department', 'ilike', 'admin'), ('department', 'ilike', 'administration'), ('department', 'not ilike', 'super')]"/>
+                <filter string="Super Admin" name="filter_super_admin" domain="[('department', 'ilike', 'super admin')]"/>
+                <filter string="Asset / Maintenance" name="filter_asset" domain="['|', ('department', 'ilike', 'asset'), ('department', 'ilike', 'maintenance')]"/>
+                <separator/>
+                <filter string="Waiting Approval" name="filter_submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter string="Ready for Pickup" name="filter_ready" domain="[('state', '=', 'ready')]"/>
+                <filter string="Ordered" name="filter_ordered" domain="[('state', '=', 'ordered')]"/>
+                <group>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Item" name="group_item" context="{'group_by': 'item_id'}"/>
+                    <filter string="Requested By" name="group_user" context="{'group_by': 'requested_by_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Purchase Request -->
     <record id="action_asset_purchase_request" model="ir.actions.act_window">
-        <field name="name">My Asset Requests</field>
+        <field name="name">Item Request</field>
         <field name="res_model">hospital.asset.purchase.request</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('requested_by_id', '=', uid)]</field>
         <field name="context">{'default_requested_by_id': uid}</field>
+        <field name="search_view_id" ref="view_asset_purchase_request_search"/>
     </record>
 
     <record id="action_asset_purchase_request_manager" model="ir.actions.act_window">
-        <field name="name">All Asset Requests</field>
+        <field name="name">All Item Requests</field>
         <field name="res_model">hospital.asset.purchase.request</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_asset_purchase_request_search"/>
+        <field name="context">{'search_default_filter_submitted': 1}</field>
+    </record>
+
+    <record id="action_pharmacy_item_request" model="ir.actions.act_window">
+        <field name="name">Item Request</field>
+        <field name="res_model">hospital.asset.purchase.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">['|', ('department', 'ilike', 'pharmacy'), ('department', 'ilike', 'pharmacist')]</field>
+        <field name="context">{'search_default_filter_pharmacy': 1}</field>
+        <field name="search_view_id" ref="view_asset_purchase_request_search"/>
+    </record>
+
+    <!-- Router Action to direct Pharmacy vs General/Asset users -->
+    <record id="action_asset_purchase_request_router" model="ir.actions.server">
+        <field name="name">Item Request</field>
+        <field name="model_id" ref="model_hospital_asset_purchase_request"/>
+        <field name="state">code</field>
+        <field name="code">
+if env.user.has_group('hospital_management.group_hospital_pharmacist') and not env.user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
+    action = env.ref('hospital_hr_asset.action_pharmacy_item_request').sudo().read()[0]
+else:
+    action = env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
+        </field>
     </record>
 
     <record id="view_asset_purchase_request_list" model="ir.ui.view">
@@ -231,11 +288,12 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                
+                <field name="department" widget="badge"/>
                 <field name="requested_by_id"/>
                 <field name="item_id"/>
                 <field name="quantity"/>
-                <field name="request_date"/>
+                <field name="available_stock" string="In-Stock" groups="hospital_hr_asset.group_hospital_asset_manager" decoration-danger="available_stock &lt; quantity" decoration-success="available_stock &gt;= quantity"/>
+                <field name="request_date" string="Date &amp; Time"/>
                 <field name="state" widget="badge" 
                     decoration-info="state == 'submitted'"
                     decoration-primary="state == 'ready'"
@@ -256,22 +314,25 @@
                 </header>
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
-                        <h1 invisible="name != 'New'">Asset Request</h1>
+                        <h1 invisible="name != 'New'">Item Request</h1>
                         <h1 invisible="name == 'New'"><field name="name" readonly="1"/></h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
                             <field name="requested_by_id" readonly="1" force_save="1"/>
-                            <field name="request_date" readonly="1" force_save="1"/>
+                            <field name="request_date" string="Request Date &amp; Time" readonly="1" force_save="1"/>
+                            <field name="department" readonly="1" force_save="1"/>
                         </group>
                         <group>
                             <field name="item_id" options="{'no_create': True}" readonly="state != 'draft'"/>
                             <field name="quantity" readonly="state != 'draft'"/>
+                            <field name="available_stock" string="Current In-Stock" readonly="1" groups="hospital_hr_asset.group_hospital_asset_manager" decoration-danger="available_stock &lt; quantity" decoration-success="available_stock &gt;= quantity"/>
                         </group>
                     </group>
                     <group style="margin-left: 20px;">
                         <field name="reason" readonly="state != 'draft'"/>
-                        <field name="po_id" invisible="po_id == False"/>
+                        <field name="purchase_id" invisible="purchase_id == False" readonly="1"/>
+                        <field name="po_id" invisible="1"/>
                     </group>
                     
                     <!-- Action Buttons at bottom as requested by UI rules -->
@@ -285,7 +346,7 @@
                         <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         
                         <!-- Close Button -->
-                        <button string="Close" name="action_close" type="object" class="btn-secondary"/>
+                        <button string="Close" type="button" class="btn-secondary btn-custom-close-request"/>
                     </div>
                 </sheet>
 
@@ -293,19 +354,82 @@
         </field>
     </record>
 
-    <!-- Asset PO -->
-    <record id="action_asset_po" model="ir.actions.act_window">
-        <field name="name">Asset PO</field>
-        <field name="res_model">hospital.asset.po</field>
-        <field name="view_mode">list,form</field>
+    <!-- Asset Purchase Intent List View -->
+    <record id="view_asset_purchase_intent_list" model="ir.ui.view">
+        <field name="name">hospital.asset.purchase.intent.list</field>
+        <field name="model">hospital.pharmacy.purchase</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Intent List" limit="14">
+                <field name="name" string="Purchase No."/>
+                <field name="medicine_names" string="Product Name"/>
+                <field name="supplier_id" string="Supplier Name"/>
+                <field name="invoice_date"/>
+                <field name="purchase_type"/>
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'successful'" decoration-warning="invoice_status == 'pending'" invisible="state != 'done'"/>
+            </list>
+        </field>
     </record>
+
+    <!-- Asset Purchase Orders List View -->
+    <record id="view_asset_purchase_order_list" model="ir.ui.view">
+        <field name="name">hospital.asset.purchase.order.list</field>
+        <field name="model">hospital.pharmacy.purchase</field>
+        <field name="arch" type="xml">
+            <list string="Purchase Orders List" limit="14">
+                <field name="name" string="Purchase No."/>
+                <field name="medicine_names" string="Product Name"/>
+                <field name="supplier_id" string="Supplier Name"/>
+                <field name="invoice_date"/>
+                <field name="purchase_type"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'done'"/>
+                <field name="invoice_status" widget="badge" decoration-success="invoice_status == 'successful'" decoration-warning="invoice_status == 'pending'" invisible="state != 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Asset Purchase Intent Action -->
+    <record id="action_asset_purchase_intent" model="ir.actions.act_window">
+        <field name="name">Purchase Intent</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('order_type', '=', 'asset'), ('state', '=', 'intent')]</field>
+        <field name="context">{'default_order_type': 'asset', 'default_state': 'intent'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_asset_purchase_intent_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hospital_management.view_hospital_pharmacy_purchase_form')})]"/>
+    </record>
+
+    <!-- Asset Purchase Orders Action -->
+    <record id="action_asset_purchase_order" model="ir.actions.act_window">
+        <field name="name">Purchase Orders</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('order_type', '=', 'asset'), ('state', '!=', 'intent')]</field>
+        <field name="context">{'default_order_type': 'asset', 'default_state': 'draft'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_asset_purchase_order_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hospital_management.view_hospital_pharmacy_purchase_form')})]"/>
+    </record>
+
+    <!-- Legacy Action Alias -->
+    <record id="action_asset_po" model="ir.actions.act_window">
+        <field name="name">Purchase Orders</field>
+        <field name="res_model">hospital.pharmacy.purchase</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('order_type', '=', 'asset'), ('state', '!=', 'intent')]</field>
+        <field name="context">{'default_order_type': 'asset', 'default_state': 'draft'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_asset_purchase_order_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hospital_management.view_hospital_pharmacy_purchase_form')})]"/>
+    </record>
+
+    <!-- Legacy Model Views -->
     <record id="view_asset_po_list" model="ir.ui.view">
         <field name="name">hospital.asset.po.list</field>
         <field name="model">hospital.asset.po</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                
             </list>
         </field>
     </record>
@@ -319,8 +443,7 @@
                 </header>
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
-                        <h1><field name="name"/>
-                </h1>
+                        <h1><field name="name"/></h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
@@ -349,16 +472,32 @@
                         <button name="action_receive" string="Receive Products (Inward)" type="object" class="btn-success" invisible="state != 'confirmed'"/>
                     </div>
                 </sheet>
-
             </form>
         </field>
     </record>
 
-    <!-- Asset Purchase Invoice -->
+    <!-- Asset Purchase Invoices Action -->
     <record id="action_asset_purchase_invoice" model="ir.actions.act_window">
-        <field name="name">Asset Purchase Invoice</field>
-        <field name="res_model">hospital.asset.invoice</field>
+        <field name="name">Purchase Invoices</field>
+        <field name="res_model">hospital.pharmacy.purchase.invoice</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'pending')]</field>
+        <field name="context">{'default_state': 'pending'}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('hospital_management.view_hospital_pharmacy_purchase_invoice_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hospital_management.view_hospital_pharmacy_purchase_invoice_form')})]"/>
+    </record>
+
+    <!-- Asset Payments Action -->
+    <record id="action_asset_payment" model="ir.actions.act_window">
+        <field name="name">Payments</field>
+        <field name="res_model">hospital.pharmacy.payment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_group_vendor': 1}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('hospital_management.view_hospital_pharmacy_payment_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('hospital_management.view_hospital_pharmacy_payment_form')})]"/>
     </record>
 
     <!-- Inward -->
@@ -415,7 +554,7 @@
                         </page>
                     </notebook>
                     <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
-                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
+                        <button string="Close" type="button" class="btn-secondary btn-custom-close-request"/>
                         <button name="action_view_invoice" string="View Invoice" type="object" class="btn-secondary" invisible="state != 'done'"/>
                         <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
                     </div>
@@ -474,7 +613,7 @@
                         <group></group>
                     </group>
                     <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
-                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
+                        <button string="Close" type="button" class="btn-secondary btn-custom-close-request"/>
                         <button name="action_validate" string="Validate" type="object" class="btn-primary" invisible="state != 'draft'"/>
                     </div>
                 </sheet>
@@ -528,7 +667,7 @@
                         </group>
                     </group>
                     <div class="d-flex justify-content-end gap-2 mt-4 mb-2" style="margin-right: 20px;">
-                        <button name="action_close" string="Close" type="object" class="btn-secondary"/>
+                        <button string="Close" type="button" class="btn-secondary btn-custom-close-request"/>
                     </div>
                 </sheet>
             </form>

@@ -119,6 +119,38 @@ class HospitalUser(models.Model):
         ondelete='restrict'
     )
 
+    is_doctor = fields.Boolean(
+        string='Is Doctor',
+        compute='_compute_is_doctor',
+        store=True,
+    )
+
+    consultation_line_ids = fields.One2many(
+        'hospital.doctor.consultation.line',
+        'doctor_id',
+        string='Consultation Types & Fees',
+    )
+
+    existing_consultation_type_ids = fields.Many2many(
+        'hospital.consultation.type',
+        compute='_compute_existing_consultation_types',
+        string='Selected Consultation Types',
+    )
+
+    @api.depends('consultation_line_ids.consultation_type_id')
+    def _compute_existing_consultation_types(self):
+        for rec in self:
+            rec.existing_consultation_type_ids = rec.consultation_line_ids.mapped('consultation_type_id')
+
+    @api.onchange('consultation_line_ids')
+    def _onchange_consultation_line_ids(self):
+        self.existing_consultation_type_ids = self.consultation_line_ids.mapped('consultation_type_id')
+
+    @api.depends('role_id', 'role_id.name')
+    def _compute_is_doctor(self):
+        for rec in self:
+            rec.is_doctor = bool(rec.role_id and (rec.role_id.name or '').strip().lower() == 'doctor')
+
     odoo_user_id = fields.Many2one(
         'res.users',
         string='Odoo User',
@@ -416,6 +448,11 @@ class HospitalUser(models.Model):
 
     def action_save_user(self):
         self.ensure_one()
+        if self.is_doctor and not self.consultation_line_ids:
+            raise ValidationError(
+                "Doctor Configuration Incomplete!\n\n"
+                "Please add at least one Consultation Type and Fee in the 'Consultation Types & Fees' tab before saving."
+            )
         # The user requested to always redirect to the all users page
         action = self.env.ref('hospital_management.action_hospital_users').read()[0]
             
@@ -933,6 +970,23 @@ class HospitalUser(models.Model):
                     raise ValidationError(
                         'Reporting To must belong to the same department.'
                     )
+
+    @api.constrains('consultation_line_ids', 'role_id')
+    def _check_doctor_consultation_lines(self):
+        for record in self:
+            if record.role_id and (record.role_id.name or '').strip().lower() == 'doctor':
+                if not record.consultation_line_ids:
+                    raise ValidationError(
+                        "Doctor Configuration Incomplete!\n\n"
+                        "Please add at least one Consultation Type and Fee in the 'Consultation Types & Fees' tab before saving."
+                    )
+                type_ids = [line.consultation_type_id.id for line in record.consultation_line_ids if line.consultation_type_id]
+                if len(type_ids) != len(set(type_ids)):
+                    raise ValidationError(
+                        "Duplicate Consultation Types are not allowed for the same doctor. "
+                        "Each consultation type must be added only once."
+                    )
+
     def action_close(self):
         return {
             'type': 'ir.actions.act_window',
