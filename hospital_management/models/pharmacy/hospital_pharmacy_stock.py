@@ -43,7 +43,7 @@ class HospitalPharmacyStock(models.Model):
     primary_category_id = fields.Many2one(
         'hospital.category.master',
         string='Primary Category',
-        domain="[('category_type', '=', 'item_primary_category')]"
+        domain="[('parent_id', '=', False), ('category_type', 'not in', ['lab_category', 'pharmacy_item_category'])]"
     )
 
     medicine_name = fields.Char(
@@ -65,9 +65,20 @@ class HospitalPharmacyStock(models.Model):
     
     additional_category_id = fields.Many2one(
         'hospital.category.master',
-        string='Category',
-        domain="[('category_type', '=', 'item_additional_category')]"
+        string='Item Category',
+        domain="[('parent_id', '=', pharmacy_category_id), ('parent_id', '!=', False)]"
     )
+
+    @api.onchange('primary_category_id')
+    def _onchange_primary_category_id(self):
+        if self.pharmacy_category_id and self.pharmacy_category_id.parent_id != self.primary_category_id:
+            self.pharmacy_category_id = False
+            self.additional_category_id = False
+
+    @api.onchange('pharmacy_category_id')
+    def _onchange_pharmacy_category_id(self):
+        if self.additional_category_id and self.additional_category_id.parent_id != self.pharmacy_category_id:
+            self.additional_category_id = False
 
     # BATCH INFORMATION
 
@@ -104,7 +115,7 @@ class HospitalPharmacyStock(models.Model):
     
     pharmacy_item_category_id = fields.Many2one(
         'hospital.category.master', 
-        string='Item Category', 
+        string='Category', 
         domain="[('category_type', '=', 'pharmacy_item_category')]",
         compute='_compute_pharmacy_item_category_id',
         store=True,

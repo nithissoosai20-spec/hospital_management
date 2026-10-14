@@ -230,6 +230,7 @@
                 <filter string="Asset / Maintenance" name="filter_asset" domain="['|', ('department', 'ilike', 'asset'), ('department', 'ilike', 'maintenance')]"/>
                 <separator/>
                 <filter string="Waiting Approval" name="filter_submitted" domain="[('state', '=', 'submitted')]"/>
+                <filter string="Partially Fulfilled" name="filter_partial" domain="[('state', '=', 'partial')]"/>
                 <filter string="Ready for Pickup" name="filter_ready" domain="[('state', '=', 'ready')]"/>
                 <filter string="Ordered" name="filter_ordered" domain="[('state', '=', 'ordered')]"/>
                 <group>
@@ -296,9 +297,9 @@ else:
                 <field name="request_date" string="Date &amp; Time"/>
                 <field name="state" widget="badge" 
                     decoration-info="state == 'submitted'"
+                    decoration-warning="state in ('ordered', 'partial')"
                     decoration-primary="state == 'ready'"
                     decoration-success="state == 'received'"
-                    decoration-warning="state == 'ordered'"
                     decoration-danger="state == 'rejected'"/>
             </list>
         </field>
@@ -310,9 +311,23 @@ else:
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,ready,received"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,partial,ready,received"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_outward" type="object" class="oe_stat_button" icon="fa-truck" invisible="outward_id == False">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Outward</span>
+                                <span class="o_stat_value"><field name="delivered_qty"/> Delivered</span>
+                            </div>
+                        </button>
+                        <button name="action_view_purchase_order" type="object" class="oe_stat_button" icon="fa-shopping-cart" invisible="purchase_id == False">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Purchase Order</span>
+                                <span class="o_stat_value"><field name="ordered_qty"/> on Order</span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_title" style="margin-left: 20px;">
                         <h1 invisible="name != 'New'">Item Request</h1>
                         <h1 invisible="name == 'New'"><field name="name" readonly="1"/></h1>
@@ -331,8 +346,19 @@ else:
                     </group>
                     <group style="margin-left: 20px;">
                         <field name="reason" readonly="state != 'draft'"/>
-                        <field name="purchase_id" invisible="purchase_id == False" readonly="1"/>
                         <field name="po_id" invisible="1"/>
+                    </group>
+
+                    <group string="Fulfillment &amp; Procurement Tracking" style="margin-left: 20px;" invisible="state in ('draft', 'submitted')">
+                        <group>
+                            <field name="delivered_qty" string="Delivered Quantity" readonly="1"/>
+                            <field name="ordered_qty" string="Quantity on Order" readonly="1"/>
+                            <field name="remaining_qty" string="Remaining to Deliver" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="outward_id" readonly="1" invisible="outward_id == False"/>
+                            <field name="purchase_id" readonly="1" invisible="purchase_id == False"/>
+                        </group>
                     </group>
                     
                     <!-- Action Buttons at bottom as requested by UI rules -->
@@ -341,8 +367,10 @@ else:
                         <button name="action_submit" string="Submit Request" type="object" class="btn-primary" invisible="state != 'draft' or requested_by_id != uid"/>
                         
                         <!-- Manager Buttons -->
-                        <button name="action_accept_ready" string="Accept (In Stock &amp; Ready)" type="object" class="btn-success" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        <button name="action_accept_ready" string="Accept (In Stock &amp; Ready)" type="object" class="btn-success" invisible="state != 'submitted' or available_stock &lt; quantity" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        <button name="action_open_split_wizard" string="Partial Deliver &amp; Order Rest..." type="object" class="btn-primary" invisible="state != 'submitted' or available_stock &lt;= 0 or available_stock &gt;= quantity" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         <button name="action_approve_order" string="Approve (Needs Ordering)" type="object" class="btn-warning" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
+                        <button name="action_deliver_remaining" string="Deliver Remaining Items" type="object" class="btn-success" invisible="state != 'partial' or remaining_qty &lt;= 0" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         <button name="action_reject" string="Reject" type="object" class="btn-danger" invisible="state != 'submitted'" groups="hospital_hr_asset.group_hospital_asset_manager"/>
                         
                         <!-- Close Button -->
@@ -350,6 +378,37 @@ else:
                     </div>
                 </sheet>
 
+            </form>
+        </field>
+    </record>
+
+    <!-- Split Wizard Form View -->
+    <record id="view_hospital_asset_request_split_wizard_form" model="ir.ui.view">
+        <field name="name">hospital.asset.request.split.wizard.form</field>
+        <field name="model">hospital.asset.request.split.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Partial Delivery &amp; Purchase Allocation">
+                <sheet>
+                    <div class="alert alert-info" role="alert" style="margin-bottom: 15px;">
+                        <strong>Partial Stock Available:</strong> Adjust how many units to deliver immediately from in-hand stock, and how many units to order from the vendor.
+                    </div>
+                    <group>
+                        <group string="Request Summary">
+                            <field name="item_id"/>
+                            <field name="total_requested"/>
+                            <field name="available_stock"/>
+                        </group>
+                        <group string="Allocation Split">
+                            <field name="deliver_qty" string="Deliver Now (From In-Stock)" class="fw-bold text-success"/>
+                            <field name="order_qty" string="Order from Vendor (Purchase Order)" class="fw-bold text-primary"/>
+                            <field name="supplier_id" placeholder="Select supplier..."/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirm Allocation" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
             </form>
         </field>
     </record>
@@ -404,7 +463,7 @@ else:
         <field name="name">Purchase Orders</field>
         <field name="res_model">hospital.pharmacy.purchase</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('order_type', '=', 'asset'), ('state', '!=', 'intent')]</field>
+        <field name="domain">[('state', '!=', 'intent')]</field>
         <field name="context">{'default_order_type': 'asset', 'default_state': 'draft'}</field>
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'list', 'view_id': ref('view_asset_purchase_order_list')}),
@@ -564,24 +623,52 @@ else:
     </record>
 
     <!-- Outward -->
+    <record id="view_asset_outward_search" model="ir.ui.view">
+        <field name="name">hospital.asset.outward.search</field>
+        <field name="model">hospital.asset.outward</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="assigned_to"/>
+                <field name="department"/>
+                <separator/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Done" name="filter_done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter string="Pharmacy" name="filter_pharmacy" domain="['|', ('department', 'ilike', 'pharmacy'), ('department', 'ilike', 'pharmacist')]"/>
+                <filter string="Receptionist" name="filter_receptionist" domain="[('department', 'ilike', 'reception')]"/>
+                <filter string="Doctor" name="filter_doctor" domain="[('department', 'ilike', 'doctor')]"/>
+                <group>
+                    <filter string="Department" name="group_department" context="{'group_by': 'department'}"/>
+                    <filter string="Assigned To" name="group_user" context="{'group_by': 'assigned_to'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Date Outward" name="group_date" context="{'group_by': 'date_outward'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="action_asset_outward" model="ir.actions.act_window">
         <field name="name">Outward</field>
         <field name="res_model">hospital.asset.outward</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_asset_outward_search"/>
     </record>
+
     <record id="view_asset_outward_list" model="ir.ui.view">
         <field name="name">hospital.asset.outward.list</field>
         <field name="model">hospital.asset.outward</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                
                 <field name="assigned_to"/>
+                <field name="department" widget="badge"/>
                 <field name="date_outward"/>
                 <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'"/>
             </list>
         </field>
     </record>
+
     <record id="view_asset_outward_form" model="ir.ui.view">
         <field name="name">hospital.asset.outward.form</field>
         <field name="model">hospital.asset.outward</field>
@@ -589,15 +676,16 @@ else:
             <form>
                 <sheet>
                     <div class="oe_title" style="margin-left: 20px;">
-                        <h1><field name="name"/>
-                </h1>
+                        <h1><field name="name"/></h1>
                     </div>
                     <group style="margin-left: 20px;">
                         <group>
                             <field name="assigned_to"/>
+                            <field name="department" readonly="1" force_save="1"/>
                         </group>
                         <group>
                             <field name="date_outward"/>
+                            <field name="request_id" invisible="request_id == False" readonly="1"/>
                             <field name="state" readonly="1"/>
                         </group>
                     </group>

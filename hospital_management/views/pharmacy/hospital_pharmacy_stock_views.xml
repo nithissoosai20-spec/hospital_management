@@ -201,9 +201,9 @@
                         <div class="col-md-4">
                             <h5 class="fw-bold mb-3" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px;">Stock &amp; Inventory</h5>
                             <group>
-                                <field name="primary_category_id" options="{'no_open': True}"/>
-                                <field name="pharmacy_category_id" options="{'no_create': True, 'no_open': True}" readonly="item_type == 'non_consumable'"/>
-                                <field name="additional_category_id" options="{'no_create': True, 'no_open': True}" readonly="item_type == 'non_consumable'"/>
+                                <field name="primary_category_id" options="{'no_open': True}" context="{'is_primary_create': True, 'default_parent_id': False}"/>
+                                <field name="pharmacy_category_id" string="Secondary Category" options="{'no_open': True}" context="{'is_secondary_create': True, 'default_parent_id': primary_category_id}" readonly="item_type == 'non_consumable'"/>
+                                <field name="additional_category_id" string="Item Category" options="{'no_open': True}" context="{'is_item_create': True, 'default_parent_id': pharmacy_category_id}" readonly="item_type == 'non_consumable'"/>
                                 <field name="total_stock"/>
                                 <field name="emergency_stock"/>
                                 <field name="reorder_level"/>
@@ -225,9 +225,9 @@
                                     <field name="mrp"/>
                                 </div>
                                 
-                                <label for="pharmacy_item_category_id" string="Item Category"/>
+                                <label for="pharmacy_item_category_id" string="Category"/>
                                 <div class="o_row">
-                                    <field name="pharmacy_item_category_id" readonly="item_type == 'non_consumable'" options="{'no_open': True}"/>
+                                    <field name="pharmacy_item_category_id" readonly="item_type == 'non_consumable'" options="{'no_open': True}" context="{'default_category_type': 'pharmacy_item_category'}"/>
                                     <span class="ms-2 me-1 text-muted" style="white-space: nowrap;">Qty in Category</span>
                                     <field name="qty_in_category"/>
                                 </div>

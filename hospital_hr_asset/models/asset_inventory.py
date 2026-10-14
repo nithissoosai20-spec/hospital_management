@@ -205,6 +205,15 @@ class HospitalAssetPurchaseRequest(models.Model):
     reason = fields.Text(string='Reason for Request', required=True)
     po_id = fields.Many2one('hospital.asset.po', string='Legacy Purchase Order', readonly=True)
     purchase_id = fields.Many2one('hospital.pharmacy.purchase', string='Purchase Order', readonly=True)
+    outward_id = fields.Many2one('hospital.asset.outward', string='Outward Delivery', readonly=True)
+    delivered_qty = fields.Integer(string='Delivered Quantity', default=0, readonly=True)
+    ordered_qty = fields.Integer(string='Ordered Quantity', default=0, readonly=True)
+    remaining_qty = fields.Integer(string='Remaining Quantity', compute='_compute_remaining_qty', store=True)
+
+    @api.depends('quantity', 'delivered_qty')
+    def _compute_remaining_qty(self):
+        for rec in self:
+            rec.remaining_qty = max(0, rec.quantity - rec.delivered_qty)
 
     @api.onchange('requested_by_id')
     def _onchange_requested_by_id(self):
@@ -214,6 +223,7 @@ class HospitalAssetPurchaseRequest(models.Model):
     state = fields.Selection([
         ('draft', 'Draft'),
         ('submitted', 'Waiting Approval'),
+        ('partial', 'Partially Fulfilled & Ordered'),
         ('ready', 'Ready for Pickup'),
         ('ordered', 'Approved for Ordering'),
         ('received', 'Received'),
@@ -253,18 +263,34 @@ class HospitalAssetPurchaseRequest(models.Model):
         return self.env.ref('hospital_hr_asset.action_asset_purchase_request').sudo().read()[0]
 
     def action_accept_ready(self):
+        outward = False
         for rec in self:
             rec.state = 'ready'
+            rec.delivered_qty = rec.quantity
             # Auto-create draft outward record
-            self.env['hospital.asset.outward'].create({
+            outward = self.env['hospital.asset.outward'].create({
                 'assigned_to': rec.requested_by_id.id,
+                'request_id': rec.id,
                 'line_ids': [(0, 0, {
                     'item_id': rec.item_id.id,
                     'quantity': rec.quantity
                 })]
             })
+            rec.outward_id = outward.id
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Request Accepted!',
+                'message': f'Outward Delivery {outward.name if outward else ""} created for all items.',
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'}
+            }
+        }
 
     def action_approve_order(self):
+        purchase = False
         for rec in self:
             # Check if there is a vendor connected to this item
             vendor_id = False
@@ -299,21 +325,211 @@ class HospitalAssetPurchaseRequest(models.Model):
             }
             purchase = self.env['hospital.pharmacy.purchase'].create(po_vals)
             rec.purchase_id = purchase.id
+            rec.ordered_qty = rec.quantity
             rec.state = 'ordered'
             
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Purchase Order Created!',
+                'message': f'Draft Purchase Order {purchase.name if purchase else ""} created for {self.quantity} units.',
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'}
+            }
+        }
+
+    def action_open_split_wizard(self):
+        self.ensure_one()
+        return {
+            'name': 'Partial Delivery & Purchase Allocation',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hospital.asset.request.split.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_request_id': self.id,
+            }
+        }
+
+    def action_deliver_remaining(self):
+        for rec in self:
+            needed = rec.remaining_qty
+            if needed <= 0:
+                raise ValidationError("All requested items have already been delivered.")
+            if rec.item_id.total_stock < needed:
+                raise ValidationError(f"Insufficient stock to deliver remaining {needed} units. Current stock is {int(rec.item_id.total_stock)}. Please inward items from the Purchase Order first.")
+            
+            outward = self.env['hospital.asset.outward'].create({
+                'assigned_to': rec.requested_by_id.id,
+                'request_id': rec.id,
+                'line_ids': [(0, 0, {
+                    'item_id': rec.item_id.id,
+                    'quantity': needed
+                })]
+            })
+            rec.delivered_qty += needed
+            rec.state = 'received'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Remaining Items Dispatched!',
+                    'message': f'Outward Delivery {outward.name} created for remaining {needed} units. Request is now fully fulfilled!',
+                    'type': 'success',
+                    'sticky': False,
+                    'next': {'type': 'ir.actions.client', 'tag': 'reload'}
+                }
+            }
+
+    def action_view_purchase_order(self):
+        self.ensure_one()
+        if self.purchase_id:
             return {
                 'name': 'Purchase Order',
                 'type': 'ir.actions.act_window',
                 'res_model': 'hospital.pharmacy.purchase',
                 'view_mode': 'form',
-                'views': [(self.env.ref('hospital_management.view_hospital_pharmacy_purchase_form').id, 'form')],
-                'res_id': purchase.id,
+                'res_id': self.purchase_id.id,
+                'target': 'current',
+            }
+
+    def action_view_outward(self):
+        self.ensure_one()
+        if self.outward_id:
+            return {
+                'name': 'Outward Delivery',
+                'type': 'ir.actions.act_window',
+                'res_model': 'hospital.asset.outward',
+                'view_mode': 'form',
+                'res_id': self.outward_id.id,
                 'target': 'current',
             }
 
     def action_reject(self):
         for rec in self:
             rec.state = 'rejected'
+
+class HospitalAssetRequestSplitWizard(models.TransientModel):
+    _name = 'hospital.asset.request.split.wizard'
+    _description = 'Partial Delivery & Purchase Allocation Wizard'
+
+    request_id = fields.Many2one('hospital.asset.purchase.request', string='Request', required=True)
+    item_id = fields.Many2one('hospital.pharmacy.stock', related='request_id.item_id', string='Requested Item', readonly=True)
+    total_requested = fields.Integer(related='request_id.quantity', string='Total Requested', readonly=True)
+    available_stock = fields.Float(related='request_id.available_stock', string='Current In-Stock', readonly=True)
+    
+    deliver_qty = fields.Integer(string='Deliver Now (From In-Stock)', required=True)
+    order_qty = fields.Integer(string='Order from Vendor (Purchase Order)', required=True)
+    
+    supplier_id = fields.Many2one('res.partner', string='Supplier / Vendor', domain="['|', ('is_pharmacy_vendor', '=', True), ('supplier_rank', '>', 0)]")
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        req_id = res.get('request_id') or self.env.context.get('default_request_id')
+        if req_id:
+            req = self.env['hospital.asset.purchase.request'].browse(req_id)
+            res['request_id'] = req.id
+            avail = int(req.available_stock) if req.available_stock > 0 else 0
+            needed = req.quantity
+            deliver = min(avail, needed)
+            res['deliver_qty'] = deliver
+            res['order_qty'] = max(0, needed - deliver)
+            if req.item_id.vendor_ids:
+                res['supplier_id'] = req.item_id.vendor_ids[0].id
+        return res
+
+    @api.onchange('deliver_qty')
+    def _onchange_deliver_qty(self):
+        if self.request_id and self.deliver_qty is not None:
+            if self.deliver_qty > self.available_stock:
+                self.deliver_qty = int(self.available_stock)
+            if self.deliver_qty < 0:
+                self.deliver_qty = 0
+            self.order_qty = max(0, self.request_id.quantity - self.deliver_qty)
+
+    def action_confirm(self):
+        self.ensure_one()
+        req = self.request_id
+        
+        if self.deliver_qty < 0 or self.order_qty < 0:
+            raise ValidationError("Quantities cannot be negative.")
+        if self.deliver_qty > req.available_stock:
+            raise ValidationError(f"Cannot deliver {self.deliver_qty} units. Only {int(req.available_stock)} units are currently in stock.")
+        if self.deliver_qty == 0 and self.order_qty == 0:
+            raise ValidationError("Please specify a quantity to deliver or order.")
+
+        created_msgs = []
+        
+        # 1. Handle Deliver Now -> Outward
+        if self.deliver_qty > 0:
+            outward = self.env['hospital.asset.outward'].create({
+                'assigned_to': req.requested_by_id.id,
+                'request_id': req.id,
+                'line_ids': [(0, 0, {
+                    'item_id': req.item_id.id,
+                    'quantity': self.deliver_qty
+                })]
+            })
+            req.outward_id = outward.id
+            req.delivered_qty = self.deliver_qty
+            created_msgs.append(f"Outward Delivery ({self.deliver_qty} units)")
+
+        # 2. Handle Order from Vendor -> Purchase Order
+        if self.order_qty > 0:
+            vendor = self.supplier_id or (req.item_id.vendor_ids and req.item_id.vendor_ids[0]) or False
+            vendor_id = vendor.id if vendor else False
+            mobile = vendor.phone if vendor else ''
+            address = ""
+            if vendor:
+                parts = []
+                if vendor.street: parts.append(vendor.street)
+                if vendor.street2: parts.append(vendor.street2)
+                if vendor.city: parts.append(vendor.city)
+                if vendor.state_id: parts.append(vendor.state_id.name)
+                address = ", ".join(parts)
+
+            order_type = 'pharmacy' if req.department and 'pharmac' in req.department.lower() else 'asset'
+            po_vals = {
+                'order_type': order_type,
+                'state': 'draft',
+                'supplier_id': vendor_id,
+                'mobile_number': mobile or '',
+                'address': address or '',
+                'request_id': req.id,
+                'line_ids': [(0, 0, {
+                    'medicine_id': req.item_id.id,
+                    'qty': float(self.order_qty),
+                    'purchase_price': req.item_id.purchase_price or 0.0,
+                })]
+            }
+            purchase = self.env['hospital.pharmacy.purchase'].create(po_vals)
+            req.purchase_id = purchase.id
+            req.ordered_qty = self.order_qty
+            created_msgs.append(f"Purchase Order {purchase.name} ({self.order_qty} units)")
+
+        # 3. Update Request State
+        if self.deliver_qty > 0 and self.order_qty > 0:
+            req.state = 'partial'
+        elif self.deliver_qty > 0 and self.order_qty == 0:
+            req.state = 'ready'
+        else:
+            req.state = 'ordered'
+
+        msg = " and ".join(created_msgs) + " created successfully!"
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Allocation Confirmed!',
+                'message': msg,
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'}
+            }
+        }
 
 class HospitalAssetPo(models.Model):
     _name = 'hospital.asset.po'
@@ -531,9 +747,21 @@ class HospitalAssetOutward(models.Model):
 
     name = fields.Char(string='Name', required=True, readonly=True, default='New')
     assigned_to = fields.Many2one('res.users', string='Assigned To', required=True)
+    department = fields.Char(string='Department', compute='_compute_department', store=True, readonly=True, index=True)
+    request_id = fields.Many2one('hospital.asset.purchase.request', string='Origin Request', readonly=True)
     date_outward = fields.Date(string='Date Outward', default=fields.Date.context_today)
     state = fields.Selection([('draft', 'Draft'), ('done', 'Done')], string='Status', default='draft')
     line_ids = fields.One2many('hospital.asset.outward.line', 'outward_id', string='Lines')
+
+    @api.depends('assigned_to', 'request_id', 'request_id.department')
+    def _compute_department(self):
+        for rec in self:
+            if rec.request_id and rec.request_id.department:
+                rec.department = rec.request_id.department
+            elif rec.assigned_to:
+                rec.department = self.env['hospital.asset.purchase.request']._get_user_department(rec.assigned_to)
+            else:
+                rec.department = 'General'
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -545,19 +773,25 @@ class HospitalAssetOutward(models.Model):
     def action_validate(self):
         for rec in self:
             for line in rec.line_ids:
-                if line.item_id.quantity < line.quantity:
+                if line.item_id.total_stock < line.quantity:
                     raise ValidationError(f"Not enough stock for item {line.item_id.medicine_name}")
                 line.item_id.total_stock -= line.quantity
                 
-                # Update any matching pending requests to 'received'
-                matching_requests = self.env['hospital.asset.purchase.request'].search([
-                    ('item_id', '=', line.item_id.id),
-                    ('requested_by_id', '=', rec.assigned_to.id),
-                    ('state', 'in', ['submitted', 'ordered', 'ready'])
-                ])
-                for req in matching_requests:
-                    # We just fulfill the first match we find if they requested this item
-                    req.state = 'received'
+            if rec.request_id:
+                if rec.request_id.delivered_qty >= rec.request_id.quantity:
+                    rec.request_id.state = 'received'
+                elif rec.request_id.delivered_qty > 0:
+                    rec.request_id.state = 'partial'
+            else:
+                for line in rec.line_ids:
+                    matching_requests = self.env['hospital.asset.purchase.request'].search([
+                        ('item_id', '=', line.item_id.id),
+                        ('requested_by_id', '=', rec.assigned_to.id),
+                        ('state', 'in', ['submitted', 'ready'])
+                    ], limit=1)
+                    for req in matching_requests:
+                        if req.delivered_qty >= req.quantity:
+                            req.state = 'received'
                     
             rec.state = 'done'
             if rec.name == 'New':

@@ -1,29 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        <!-- Pharmacy Categories -->
-        <record id="cat_pharmacy_tablet" model="hospital.category.master">
-            <field name="name">Tablet</field>
-            <field name="category_type">pharmacy_category</field>
-        </record>
-        <record id="cat_pharmacy_syrup" model="hospital.category.master">
-            <field name="name">Syrup</field>
-            <field name="category_type">pharmacy_category</field>
-        </record>
-        <record id="cat_pharmacy_capsule" model="hospital.category.master">
-            <field name="name">Capsules</field>
-            <field name="category_type">pharmacy_category</field>
-        </record>
-        <record id="cat_pharmacy_lotions" model="hospital.category.master">
-            <field name="name">Lotions</field>
-            <field name="category_type">pharmacy_category</field>
-        </record>
-        <record id="cat_pharmacy_other" model="hospital.category.master">
-            <field name="name">Other</field>
-            <field name="category_type">pharmacy_category</field>
+    <data noupdate="0">
+        <!-- ========================================== -->
+        <!-- 1. PRIMARY CATEGORIES (DEPARTMENTS)        -->
+        <!-- ========================================== -->
+        <record id="cat_pri_receptionist" model="hospital.category.master">
+            <field name="name">Receptionist</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
         </record>
 
-        <!-- Pharmacy Item Categories -->
+        <record id="cat_pri_pharmacy" model="hospital.category.master">
+            <field name="name">Pharmacy</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
+        </record>
+
+        <record id="cat_pri_casualty" model="hospital.category.master">
+            <field name="name">Casualty</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
+        </record>
+
+        <record id="cat_pri_ward" model="hospital.category.master">
+            <field name="name">Ward</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
+        </record>
+
+        <record id="cat_pri_lab" model="hospital.category.master">
+            <field name="name">Lab</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
+        </record>
+
+        <record id="cat_pri_electricity" model="hospital.category.master">
+            <field name="name">Electricity</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" eval="False"/>
+        </record>
+
+        <!-- ========================================== -->
+        <!-- 2. SECONDARY CATEGORIES (GROUPS)           -->
+        <!-- ========================================== -->
+        <!-- Receptionist: Electronics, Stationary -->
+        <record id="cat_sec_receptionist_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_receptionist"/>
+        </record>
+        <record id="cat_sec_receptionist_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_receptionist"/>
+        </record>
+
+        <!-- Pharmacy: Electronics, Stationary, Medicines -->
+        <record id="cat_sec_pharmacy_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_pharmacy"/>
+        </record>
+        <record id="cat_sec_pharmacy_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_pharmacy"/>
+        </record>
+        <record id="cat_sec_pharmacy_medicines" model="hospital.category.master">
+            <field name="name">Medicines</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_pharmacy"/>
+        </record>
+
+        <!-- Casualty: Electronics, Stationary, Furniture -->
+        <record id="cat_sec_casualty_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_casualty"/>
+        </record>
+        <record id="cat_sec_casualty_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_casualty"/>
+        </record>
+        <record id="cat_sec_casualty_furniture" model="hospital.category.master">
+            <field name="name">Furniture</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_casualty"/>
+        </record>
+
+        <!-- Ward: Electronics, Stationary, Furniture -->
+        <record id="cat_sec_ward_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_ward"/>
+        </record>
+        <record id="cat_sec_ward_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_ward"/>
+        </record>
+        <record id="cat_sec_ward_furniture" model="hospital.category.master">
+            <field name="name">Furniture</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_ward"/>
+        </record>
+
+        <!-- Lab: Electronics, Stationary -->
+        <record id="cat_sec_lab_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_lab"/>
+        </record>
+        <record id="cat_sec_lab_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_lab"/>
+        </record>
+
+        <!-- Electricity: Electronics, Stationary -->
+        <record id="cat_sec_electricity_electronics" model="hospital.category.master">
+            <field name="name">Electronics</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_electricity"/>
+        </record>
+        <record id="cat_sec_electricity_stationary" model="hospital.category.master">
+            <field name="name">Stationary</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_pri_electricity"/>
+        </record>
+
+        <!-- ========================================== -->
+        <!-- 3. ITEM CATEGORIES (22 ITEMS)              -->
+        <!-- Under Pharmacy -> Medicines                -->
+        <!-- ========================================== -->
+        <record id="cat_item_med_gel" model="hospital.category.master">
+            <field name="name">Gel</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_capsules" model="hospital.category.master">
+            <field name="name">Capsules</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_eye_drops" model="hospital.category.master">
+            <field name="name">Eye Drops</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_oral_suspension" model="hospital.category.master">
+            <field name="name">Oral Suspension</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_jar_povidone" model="hospital.category.master">
+            <field name="name">Jar [Povidone]</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_cream" model="hospital.category.master">
+            <field name="name">Cream</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_drops" model="hospital.category.master">
+            <field name="name">Drops</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_iv_fluids" model="hospital.category.master">
+            <field name="name">IV fluids</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_card" model="hospital.category.master">
+            <field name="name">Card</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_solution" model="hospital.category.master">
+            <field name="name">Solution</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_scrub" model="hospital.category.master">
+            <field name="name">Scrub</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_spray" model="hospital.category.master">
+            <field name="name">Spray</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_vial" model="hospital.category.master">
+            <field name="name">Vial</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_venflon" model="hospital.category.master">
+            <field name="name">Venflon</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_ampule" model="hospital.category.master">
+            <field name="name">Ampule</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_gelly" model="hospital.category.master">
+            <field name="name">Gelly</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_sterile_water" model="hospital.category.master">
+            <field name="name">Sterile water</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_handwash" model="hospital.category.master">
+            <field name="name">Handwash</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_ors_liquid" model="hospital.category.master">
+            <field name="name">ORS - Liquid</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_ors_pack" model="hospital.category.master">
+            <field name="name">ORS - Pack</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_liquid" model="hospital.category.master">
+            <field name="name">Liquid</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+        <record id="cat_item_med_lotions" model="hospital.category.master">
+            <field name="name">Lotions</field>
+            <field name="category_type">item_primary_category</field>
+            <field name="parent_id" ref="cat_sec_pharmacy_medicines"/>
+        </record>
+
+        <!-- ========================================== -->
+        <!-- 4. PACKAGING CATEGORIES (PRICING SECTION)  -->
+        <!-- ========================================== -->
         <record id="cat_item_strip" model="hospital.category.master">
             <field name="name">Strips</field>
             <field name="category_type">pharmacy_item_category</field>
@@ -49,7 +273,9 @@
             <field name="category_type">pharmacy_item_category</field>
         </record>
 
-        <!-- Lab Categories -->
+        <!-- ========================================== -->
+        <!-- 5. LAB TEST CATEGORIES                     -->
+        <!-- ========================================== -->
         <record id="cat_lab_hematology" model="hospital.category.master">
             <field name="name">Hematology</field>
             <field name="category_type">lab_category</field>
@@ -74,6 +300,5 @@
             <field name="name">Other Testing</field>
             <field name="category_type">lab_category</field>
         </record>
-
-            </data>
+    </data>
 </odoo>

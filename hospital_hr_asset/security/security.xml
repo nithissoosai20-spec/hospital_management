@@ -15,5 +15,9 @@
         </field>
     </record>
 
+    <!-- Hospital Admin inherits Asset Manager -->
+    <record id="hospital_management.group_hospital_admin" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_hospital_asset_manager'))]"/>
+    </record>
     
 </odoo>

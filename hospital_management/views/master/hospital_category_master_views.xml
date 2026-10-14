@@ -5,17 +5,15 @@
         <field name="model">hospital.category.master</field>
         <field name="arch" type="xml">
             <list multi_edit="1">
-                <field name="category_type"/>
-                <field name="name"/>
+                <field name="name" string="Category Name"/>
+                <field name="category_type" string="Module / Type" widget="badge"/>
+                <field name="selected_primary_id" string="Primary Category"/>
+                <field name="parent_id" string="Parent Category"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>
         </field>
     </record>
 
-    
-    
-    
-    
     <record id="view_hospital_category_master_form" model="ir.ui.view">
         <field name="name">hospital.category.master.form</field>
         <field name="model">hospital.category.master</field>
@@ -23,12 +21,16 @@
             <form>
                 <sheet>
                     <field name="id" invisible="1"/>
+                    <field name="parent_id" invisible="1"/>
+                    <field name="pharmacy_category_type" invisible="1"/>
+                    <field name="category_level" invisible="1"/>
                     <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active == True"/>
                     
                     <div class="row align-items-center mb-4 pb-3 border-bottom">
                         <div class="col-8">
                             <h2 class="text-primary mb-0" style="color: #1e3a8a !important; font-weight: 600;">
-                                <i class="fa fa-tags me-2"></i>Category Configuration
+                                <i class="fa fa-tags me-2"></i>
+                                <span>Category Configuration</span>
                             </h2>
                         </div>
                         <div class="col-4 text-end">
@@ -39,18 +41,59 @@
                     
                     <div class="px-3 py-2">
                         <group>
-                            <group>
-                                <field name="category_type" invisible="context.get('pharmacy_view')" required="not context.get('pharmacy_view')" class="fw-bold"/>
-                                <field name="pharmacy_category_type" invisible="not context.get('pharmacy_view')" required="context.get('pharmacy_view')" class="fw-bold"/>
-                                <field name="name" required="1" placeholder="e.g. Tablets" class="fw-bold"/>
-                            </group>
-                            <group>
-                                <!-- Empty group to prevent taking full width -->
-                            </group>
+                            <!-- Top Dropdown (Module / Type) -->
+                            <field name="category_type" 
+                                   string="Module / Type" 
+                                   required="1"
+                                   invisible="context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create')"/>
+                            
+                            <!-- Primary Category Dropdown -->
+                            <field name="selected_primary_id" 
+                                   string="Primary Category" 
+                                   can_create="1"
+                                   options="{'no_create': False, 'no_quick_create': False}"
+                                   context="{'default_category_type': 'item_primary_category', 'default_parent_id': False, 'is_primary_create': True}"
+                                   readonly="context.get('is_secondary_create') or context.get('is_item_create')"
+                                   invisible="category_type != 'item_primary_category' or context.get('is_primary_create')"/>
+                            
+                            <!-- Secondary Category Dropdown -->
+                            <field name="selected_secondary_id" 
+                                   string="Secondary Category" 
+                                   can_create="1"
+                                   options="{'no_create': False, 'no_quick_create': False}"
+                                   context="{'default_category_type': 'item_primary_category', 'default_parent_id': selected_primary_id, 'is_secondary_create': True}"
+                                   readonly="context.get('is_item_create')"
+                                   invisible="category_type != 'item_primary_category' or context.get('is_primary_create') or context.get('is_secondary_create')"/>
+                            
+                            <!-- Item Category Dropdown -->
+                            <field name="selected_item_id" 
+                                   string="Item Category" 
+                                   can_create="1"
+                                   options="{'no_create': False, 'no_quick_create': False}"
+                                   context="{'default_category_type': 'item_primary_category', 'default_parent_id': selected_secondary_id, 'is_item_create': True}"
+                                   invisible="category_type != 'item_primary_category' or context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create')"/>
+                            
+                            <!-- Category Name -->
+                            <field name="name" 
+                                   string="Category Name" 
+                                   placeholder="Enter Category Name..." 
+                                   class="fw-bold"
+                                   required="context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create') or category_type != 'item_primary_category'"
+                                   invisible="category_type == 'item_primary_category' and not (context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create'))"/>
                         </group>
                     </div>
+
+                    <!-- 3 Buttons in Right Side Bottom Corner -->
+                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" 
+                         style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;"
+                         invisible="context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create')">
+                        <button name="action_clear" string="Clear" type="object" class="btn btn-secondary" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
+                        <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 90px; color: white; background-color: #dc3545; border-color: #dc3545; padding: 6px 16px; border-radius: 4px;"/>
+                        <button name="action_save" string="Save" type="object" class="btn btn-primary oe_highlight" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
+                    </div>
                     
-                    <footer>
+                    <!-- Footer for modal popup mode only -->
+                    <footer invisible="not (context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create'))">
                         <div class="d-flex justify-content-end w-100 gap-2">
                             <button special="save" data-hotkey="s" string="Save" class="btn-primary"/>
                             <button special="cancel" data-hotkey="x" string="Discard" class="btn-secondary"/>
@@ -61,37 +104,42 @@
         </field>
     </record>
 
-
-
-
     <record id="view_hospital_category_master_search" model="ir.ui.view">
         <field name="name">hospital.category.master.search</field>
         <field name="model">hospital.category.master</field>
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
-                <field name="category_type"/>
+                <field name="parent_id"/>
+                <field name="selected_primary_id"/>
+                <separator/>
+                <filter string="Primary Categories" name="filter_primary" domain="[('parent_id', '=', False)]"/>
+                <filter string="Secondary Categories" name="filter_secondary" domain="[('category_level', '=', 'secondary')]"/>
+                <filter string="Item Categories" name="filter_item" domain="[('category_level', '=', 'item')]"/>
+                <separator/>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
                 <group>
-                    <filter string="Category Type" name="group_by_type" context="{'group_by': 'category_type'}"/>
+                    <filter string="Primary Category" name="group_by_primary" context="{'group_by': 'selected_primary_id'}"/>
+                    <filter string="Parent Category" name="group_by_parent" context="{'group_by': 'parent_id'}"/>
+                    <filter string="Module / Type" name="group_by_type" context="{'group_by': 'category_type'}"/>
                 </group>
             </search>
         </field>
     </record>
 
     <record id="action_hospital_category_master" model="ir.actions.act_window">
-        <field name="name">Master Categories</field>
+        <field name="name">Categories</field>
         <field name="res_model">hospital.category.master</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('category_type', 'not in', ['lab_category', 'pharmacy_item_category'])]</field>
         <field name="context">{}</field>
     </record>
-
 
     <record id="action_hospital_pharmacy_category" model="ir.actions.act_window">
         <field name="name">Pharmacy Categories</field>
         <field name="res_model">hospital.category.master</field>
         <field name="view_mode">list,form</field>
-        <field name="domain">[('category_type', 'in', ['pharmacy_category', 'pharmacy_item_category'])]</field>
-        <field name="context">{'default_category_type': 'pharmacy_category', 'pharmacy_view': True}</field>
+        <field name="domain">[('category_type', 'in', ['item_primary_category', 'pharmacy_item_category'])]</field>
+        <field name="context">{'default_category_type': 'item_primary_category', 'pharmacy_view': True}</field>
     </record>
 </odoo>
