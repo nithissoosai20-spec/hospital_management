@@ -58,6 +58,16 @@ class HospitalCategoryMaster(models.Model):
         ('name_parent_uniq', 'unique (name, parent_id)', 'Category name must be unique within the same parent category!')
     ]
 
+    def init(self):
+        super().init()
+        # Automatically migrate any old category types on upgrade across any machine
+        self.env.cr.execute("""
+            UPDATE hospital_category_master 
+            SET category_type = 'item_primary_category' 
+            WHERE category_type IN ('item_additional_category', 'pharmacy_category');
+        """)
+
+
     @api.constrains('name', 'parent_id')
     def _check_unique_name(self):
         if self.env.context.get('install_mode'):

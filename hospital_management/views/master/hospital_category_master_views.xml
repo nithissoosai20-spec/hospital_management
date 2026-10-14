@@ -7,7 +7,6 @@
             <list multi_edit="1">
                 <field name="name" string="Category Name"/>
                 <field name="category_type" string="Module / Type" widget="badge"/>
-                <field name="selected_primary_id" string="Primary Category"/>
                 <field name="parent_id" string="Parent Category"/>
                 <field name="active" widget="boolean_toggle"/>
             </list>
@@ -111,7 +110,7 @@
             <search>
                 <field name="name"/>
                 <field name="parent_id"/>
-                <field name="selected_primary_id"/>
+                <field name="primary_parent_id"/>
                 <separator/>
                 <filter string="Primary Categories" name="filter_primary" domain="[('parent_id', '=', False)]"/>
                 <filter string="Secondary Categories" name="filter_secondary" domain="[('category_level', '=', 'secondary')]"/>
@@ -119,7 +118,7 @@
                 <separator/>
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
                 <group>
-                    <filter string="Primary Category" name="group_by_primary" context="{'group_by': 'selected_primary_id'}"/>
+                    <filter string="Primary Category" name="group_by_primary" context="{'group_by': 'primary_parent_id'}"/>
                     <filter string="Parent Category" name="group_by_parent" context="{'group_by': 'parent_id'}"/>
                     <filter string="Module / Type" name="group_by_type" context="{'group_by': 'category_type'}"/>
                 </group>
