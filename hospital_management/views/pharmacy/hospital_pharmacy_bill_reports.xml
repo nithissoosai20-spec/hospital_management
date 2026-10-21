@@ -47,7 +47,7 @@
                             <div class="col-6">
                                 <h5 style="color: #000;"><strong>Pharmacy Bill: </strong> <span t-field="doc.name"/></h5>
                                 <t t-if="doc.customer_type == 'patient'">
-                                    <strong>Patient Name:</strong> <span t-field="doc.patient_id.name"/><br/>
+                                    <strong>Patient Name:</strong> <span t-out="doc.get_patient_title_name()"/><br/>
                                     <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/>
                                 </t>
                                 <t t-else="">
@@ -56,8 +56,8 @@
                                 </t>
                             </div>
                             <div class="col-6 text-end">
-                                <strong>Date:</strong> <span t-field="doc.create_date" t-options='{"widget": "datetime", "format": "dd-MMM-yyyy HH:mm"}'/><br/>
-                                <strong>Doctor Name:</strong> <span t-field="doc.doctor_id.name"/><br/>
+                                <strong>Date:</strong> <span t-out="doc.get_exact_current_time()"/><br/>
+                                <strong>Doctor Name:</strong> <span t-out="doc.get_doctor_title_name()"/><br/>
                                 <strong>Department:</strong> <span t-field="doc.doctor_department_id.name"/><br/>
                                 <strong>Payment Mode:</strong> <span style="text-transform:uppercase;" t-field="doc.payment_mode"/>
                             </div>

@@ -225,14 +225,18 @@
                         </page>
                     </notebook>
 
-                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px;">
-                        <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary"/>
-                        <button
-                            name="action_save_user"
-                            string="Save"
-                            type="object"
-                            class="btn-primary"
-                        />
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" style="width: 100%;">
+                        <div>
+                            <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary"/>
+                        </div>
+                        <div>
+                            <button
+                                name="action_save_user"
+                                string="Save"
+                                type="object"
+                                class="btn-primary"
+                            />
+                        </div>
                     </div>
                 </sheet>
 

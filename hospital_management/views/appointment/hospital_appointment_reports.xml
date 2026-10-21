@@ -44,6 +44,18 @@
                     <style>
                         .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
                         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .patient-info-table,
+                        .patient-info-table tr,
+                        .patient-info-table td {
+                            border: none !important;
+                            border-top: none !important;
+                            border-bottom: none !important;
+                            border-left: none !important;
+                            border-right: none !important;
+                            outline: none !important;
+                            box-shadow: none !important;
+                            background: transparent !important;
+                        }
                     </style>
 
                     <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
@@ -57,77 +69,96 @@
 
                             <!-- CONTENT WRAPPER -->
                             <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
-                                <div class="row pt-2" style="font-size: 12px; color: #333;">
+                                                                <!-- PATIENT DETAILS (3 COLUMNS WITH CLEAN COLON ALIGNMENT, NO TABLE) -->
+                                <div class="row pt-2" style="font-size: 12px; color: #333; line-height: 22px;">
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Patient Name</div>
-                                            <div class="col-7"><span t-field="doc.patient_name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Patient Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_patient_title_name()"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Mobile Number</div>
-                                            <div class="col-7"><span t-field="doc.patient_phone"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Mobile Number</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.patient_phone"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Age / Gender</div>
-                                            <div class="col-7">
-                                                <t t-if="doc.patient_id.age"><span t-field="doc.patient_id.age"/> / </t>
-                                                <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
-                                            </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Age / Gender</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.patient_id and doc.patient_id.age"><span t-field="doc.patient_id.age"/> / </t>
+                                                <t t-elif="doc.new_patient_age"><span t-field="doc.new_patient_age"/> / </t>
+                                                <t t-if="doc.patient_id and doc.patient_id.gender">
+                                                    <span style="text-transform: capitalize;" t-field="doc.patient_id.gender"/>
+                                                </t>
+                                                <t t-elif="doc.new_patient_gender">
+                                                    <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
+                                                </t>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-center">Doctor</div>
-                                            <div class="col-7"><span t-field="doc.doctor_id.name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Doctor Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_doctor_title_name()"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-center">Department</div>
-                                            <div class="col-7"><span t-field="doc.department_id.name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Department</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.department_id.name"/></span>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Date / Time</div>
-                                            <div class="col-7 text-end">
-                                                <span t-field="doc.appointment_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/>
-                                                <span t-field="doc.appointment_time_am_pm"/>
-                                            </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 80px;">Date / Time</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/>
+                                                <span t-out="doc.get_exact_current_time()"/>
+                                            </span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Patient ID</div>
-                                            <div class="col-7 text-end"><span t-field="doc.patient_id.patient_id"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 80px;">Patient ID</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.patient_id and doc.patient_id.patient_id">
+                                                    <span t-field="doc.patient_id.patient_id"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="doc.patient_code"/>
+                                                </t>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row mt-3" style="font-size: 12px; color: #333; border-top: 1px solid #ddd; padding-top: 15px;">
-                                    <div class="col-8"/>
+                                <!-- VITALS TABLE (5 ROWS: BP, SPO2, PR, Temp, RBS) -->
+                                <div class="row mt-3">
+                                    <div class="col-8"></div>
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Height</div>
-                                            <div class="col-7 text-end">________</div>
-                                        </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Weight</div>
-                                            <div class="col-7 text-end">________</div>
-                                        </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">BP</div>
-                                            <div class="col-7 text-end">________</div>
-                                        </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Temp</div>
-                                            <div class="col-7 text-end">________</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-4">
-                                    <div class="col-12 text-center">
-                                        <div style="font-size:14px; font-weight:bold; color:#555;">TOKEN NUMBER</div>
-                                        <div style="font-size:24px; font-weight:bold; color:#1e3a8a; margin-top: 5px;">
-                                            <span t-field="doc.token_number"/>
-                                        </div>
+                                        <table style="width: 140px; margin-left: auto; border-collapse: collapse; border: 1.5px solid #333; font-size: 11px;">
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; width: 50px; background-color: #f8fafc;">BP</td>
+                                                <td style="border: 1px solid #555; width: 90px;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">SPO2</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">PR</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">Temp</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">RBS</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
 
@@ -168,6 +199,18 @@
                     <style>
                         .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
                         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .patient-info-table,
+                        .patient-info-table tr,
+                        .patient-info-table td {
+                            border: none !important;
+                            border-top: none !important;
+                            border-bottom: none !important;
+                            border-left: none !important;
+                            border-right: none !important;
+                            outline: none !important;
+                            box-shadow: none !important;
+                            background: transparent !important;
+                        }
                     </style>
 
                     <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
@@ -180,55 +223,96 @@
 
                             <!-- CONTENT WRAPPER -->
                             <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
-                                <div class="row pt-2" style="font-size: 12px; color: #333;">
+                                                                <!-- PATIENT DETAILS (3 COLUMNS WITH CLEAN COLON ALIGNMENT, NO TABLE) -->
+                                <div class="row pt-2" style="font-size: 12px; color: #333; line-height: 22px;">
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Patient Name</div>
-                                            <div class="col-7"><span t-field="doc.patient_name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Patient Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_patient_title_name()"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Mobile Number</div>
-                                            <div class="col-7"><span t-field="doc.patient_phone"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Mobile Number</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.patient_phone"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold">Age / Gender</div>
-                                            <div class="col-7">
-                                                <t t-if="doc.patient_id.age"><span t-field="doc.patient_id.age"/> / </t>
-                                                <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
-                                            </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Age / Gender</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.patient_id and doc.patient_id.age"><span t-field="doc.patient_id.age"/> / </t>
+                                                <t t-elif="doc.new_patient_age"><span t-field="doc.new_patient_age"/> / </t>
+                                                <t t-if="doc.patient_id and doc.patient_id.gender">
+                                                    <span style="text-transform: capitalize;" t-field="doc.patient_id.gender"/>
+                                                </t>
+                                                <t t-elif="doc.new_patient_gender">
+                                                    <span style="text-transform: capitalize;" t-field="doc.new_patient_gender"/>
+                                                </t>
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-center">Doctor</div>
-                                            <div class="col-7"><span t-field="doc.doctor_id.name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Doctor Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_doctor_title_name()"/></span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-center">Department</div>
-                                            <div class="col-7"><span t-field="doc.department_id.name"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Department</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.department_id.name"/></span>
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Date / Time</div>
-                                            <div class="col-7 text-end">
-                                                <span t-field="doc.appointment_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/>
-                                                <span t-field="doc.appointment_time_am_pm"/>
-                                            </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 80px;">Date / Time</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/>
+                                                <span t-out="doc.get_exact_current_time()"/>
+                                            </span>
                                         </div>
-                                        <div class="row mb-2">
-                                            <div class="col-5 fw-bold text-end">Patient ID</div>
-                                            <div class="col-7 text-end"><span t-field="doc.patient_id.patient_id"/></div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 80px;">Patient ID</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.patient_id and doc.patient_id.patient_id">
+                                                    <span t-field="doc.patient_id.patient_id"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span t-field="doc.patient_code"/>
+                                                </t>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row mt-4">
-                                    <div class="col-12 text-center">
-                                        <div style="display: inline-block; padding: 5px 15px; border: 2px solid #1e3a8a; border-radius: 5px; background-color: #f1f5f9;">
-                                            <span style="font-size:12px; font-weight:bold; color:#555; margin-right: 10px;">TOKEN NUMBER:</span>
-                                            <span style="font-size:18px; font-weight:bold; color:#1e3a8a;" t-field="doc.token_number"/>
-                                        </div>
+                                <!-- VITALS TABLE (5 ROWS: BP, SPO2, PR, Temp, RBS) -->
+                                <div class="row mt-3">
+                                    <div class="col-8"></div>
+                                    <div class="col-4">
+                                        <table style="width: 140px; margin-left: auto; border-collapse: collapse; border: 1.5px solid #333; font-size: 11px;">
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; width: 50px; background-color: #f8fafc;">BP</td>
+                                                <td style="border: 1px solid #555; width: 90px;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">SPO2</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">PR</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">Temp</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                            <tr style="height: 24px;">
+                                                <td style="border: 1px solid #555; padding: 2px 8px; font-weight: bold; background-color: #f8fafc;">RBS</td>
+                                                <td style="border: 1px solid #555;"></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

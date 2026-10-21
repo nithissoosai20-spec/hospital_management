@@ -99,6 +99,9 @@ export class HospitalAppointmentListController extends ListController {
             res_model: "hospital.appointment",
             views: [[false, "form"]],
             target: "current",
+            context: {
+                is_new_booking: true,
+            },
         });
     }
 

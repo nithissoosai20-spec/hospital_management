@@ -808,69 +808,84 @@
 
                     <!-- ACTION BUTTONS -->
 
-                    <div class="hospital_action_buttons" style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                    <div class="hospital_action_buttons" style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:10px; flex-wrap:wrap;">
 
-                        <!-- CANCEL -->
-                        <button
-                            name="action_cancel"
-                            string="Cancel"
-                            type="object"
-                            class="btn-danger"
-                            icon="fa-times"
-                            invisible="context.get('view_only') or state not in ('draft','booked')"
-                        />
+                        <!-- LEFT: CLOSE & CANCEL -->
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <!-- CLOSE -->
+                            <button
+                                name="action_close_form"
+                                type="object"
+                                string="Close"
+                                class="btn-secondary"
+                                icon="fa-arrow-left"
+                            />
 
-                        <!-- GENERATE TOKEN -->
-                        <button
-                            name="action_generate_token"
-                            string="Generate Token"
-                            type="object"
-                            class="btn-primary"
-                            icon="fa-ticket"
-                            invisible="context.get('view_only') or state not in ('draft','booked') or token_generated"
-                        />
+                            <!-- CANCEL -->
+                            <button
+                                name="action_cancel"
+                                string="Cancel"
+                                type="object"
+                                class="btn-danger"
+                                icon="fa-times"
+                                invisible="context.get('view_only') or state not in ('draft','booked')"
+                            />
+                        </div>
 
-                        <!-- LAB FEES -->
-                        <button
-                            name="action_set_lab_fees"
-                            string="Lab Fees"
-                            type="object"
-                            class="btn-primary"
-                            icon="fa-flask"
-                            invisible="context.get('view_only') or state not in ('booked', 'completed') or not token_generated"
-                        />
+                        <!-- RIGHT: SAVE & WORKFLOW ACTIONS -->
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                            <!-- SAVE -->
+                            <button
+                                name="action_save_appointment"
+                                string="Save"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-save"
+                                invisible="context.get('view_only') or context.get('is_new_booking') or state != 'draft'"
+                            />
 
-                        <!-- PRINT TOKEN -->
-                        <button
-                            name="action_print_token"
-                            string="Print Token"
-                            type="object"
-                            class="btn-success"
-                            icon="fa-ticket"
-                            invisible="state not in ('booked','completed') or not token_number"
-                        />
+                            <!-- GENERATE TOKEN -->
+                            <button
+                                name="action_generate_token"
+                                string="Generate Token"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-ticket"
+                                invisible="context.get('view_only') or state not in ('draft','booked') or token_generated"
+                            />
 
-                        <!-- PRINT RECEIPT -->
-                        <button
-                            name="action_print_receipt"
-                            string="Print Receipt"
-                            type="object"
-                            class="btn-success"
-                            icon="fa-print"
-                            invisible="state not in ('booked','completed') or not token_generated"
-                        />
+                            <!-- LAB FEES -->
+                            <button
+                                name="action_set_lab_fees"
+                                string="Lab Fees"
+                                type="object"
+                                class="btn-primary"
+                                icon="fa-flask"
+                                invisible="context.get('view_only') or state not in ('booked', 'completed') or not token_generated"
+                            />
 
-                        <!-- CLOSE -->
-                        <button
-                            name="action_close_form"
-                            type="object"
-                            string="Close"
-                            class="btn-secondary"
-                            icon="fa-arrow-left"
-                        />
+                            <!-- PRINT TOKEN -->
+                            <button
+                                name="action_print_token"
+                                string="Print Token"
+                                type="object"
+                                class="btn-success"
+                                icon="fa-ticket"
+                                invisible="state not in ('booked','completed') or not token_number"
+                            />
+
+                            <!-- PRINT RECEIPT -->
+                            <button
+                                name="action_print_receipt"
+                                string="Print Receipt"
+                                type="object"
+                                class="btn-success"
+                                icon="fa-print"
+                                invisible="state not in ('booked','completed') or not token_generated"
+                            />
+                        </div>
 
                     </div>
-
                 </sheet>
 
             </form>

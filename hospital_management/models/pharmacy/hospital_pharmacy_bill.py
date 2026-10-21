@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 
@@ -478,3 +480,37 @@ class HospitalPharmacyBillLine(models.Model):
             line.igst = i_amt
             line.gst_amount = c_amt + s_amt + i_amt
             line.total_amount = taxable + line.gst_amount
+
+    def get_patient_title_name(self):
+        self.ensure_one()
+        name = (self.patient_id.name if self.patient_id else self.walkin_name) or ''
+        name = name.strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('mr.', 'mr ', 'mrs.', 'mrs ', 'ms.', 'ms ', 'dr.', 'dr ')):
+            return name
+        gender = (self.patient_id.gender or '').lower() if self.patient_id else ''
+        if gender == 'male':
+            return f"Mr. {name}"
+        elif gender == 'female':
+            return f"Mrs. {name}"
+        return name
+
+    def get_doctor_title_name(self):
+        self.ensure_one()
+        name = (self.doctor_id.name or '').strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('dr.', 'dr ')):
+            return name
+        return f"Dr. {name}"
+
+    def get_exact_current_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%d-%b-%Y %I:%M %p')

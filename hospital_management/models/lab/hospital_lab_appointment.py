@@ -114,10 +114,53 @@ class HospitalLabAppointment(models.Model):
         default=fields.Date.today
     )
 
+
+    def _default_appointment_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%H:%M')
+
+    def get_patient_title_name(self):
+        self.ensure_one()
+        name = (self.patient_id.name if self.patient_id else '') or ''
+        name = name.strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('mr.', 'mr ', 'mrs.', 'mrs ', 'ms.', 'ms ', 'dr.', 'dr ')):
+            return name
+        gender = (self.patient_id.gender or '').lower() if self.patient_id else ''
+        if gender == 'male':
+            return f"Mr. {name}"
+        elif gender == 'female':
+            return f"Mrs. {name}"
+        return name
+
+    def get_doctor_title_name(self):
+        self.ensure_one()
+        name = (self.doctor_id.name or '').strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('dr.', 'dr ')):
+            return name
+        return f"Dr. {name}"
+
+    def get_exact_current_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%I:%M %p')
+
     appointment_time = fields.Char(
         string='Appointment Time',
         required=True,
-        default='10:30'
+        default=_default_appointment_time
     )
 
     doctor_id = fields.Many2one(

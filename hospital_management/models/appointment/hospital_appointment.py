@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 from odoo import models, fields, api
 from odoo.exceptions import UserError, AccessError
 
@@ -137,9 +139,51 @@ class HospitalAppointment(models.Model):
         default=fields.Date.today
     )
 
+
+    def _default_appointment_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%H:%M')
+
+    def get_patient_title_name(self):
+        self.ensure_one()
+        name = (self.patient_name or '').strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('mr.', 'mr ', 'mrs.', 'mrs ', 'ms.', 'ms ', 'dr.', 'dr ')):
+            return name
+        gender = (self.patient_gender or self.new_patient_gender or (self.patient_id.gender if self.patient_id else False) or '').lower()
+        if gender == 'male':
+            return f"Mr. {name}"
+        elif gender == 'female':
+            return f"Mrs. {name}"
+        return name
+
+    def get_doctor_title_name(self):
+        self.ensure_one()
+        name = (self.doctor_id.name or '').strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('dr.', 'dr ')):
+            return name
+        return f"Dr. {name}"
+
+    def get_exact_current_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%I:%M %p')
+
     appointment_time = fields.Char(
         string='Appointment Time',
-        default='10:30'
+        default=_default_appointment_time
     )
 
     appointment_time_am_pm = fields.Char(
@@ -621,6 +665,48 @@ class HospitalAppointment(models.Model):
         self._compute_consultation_fee()
         self._compute_net_amount()
 
+    @api.onchange('search_patient')
+    def _onchange_search_patient(self):
+        if self.search_patient:
+            self._do_search_patient()
+        elif not self.patient_found:
+            self.visit_type = 'new'
+
+    @api.onchange('new_patient_phone')
+    def _onchange_new_patient_phone(self):
+        if self.new_patient_phone and not self.patient_found:
+            phone = self.new_patient_phone.strip()
+            existing_patient = self.env['hospital.patient'].search([('phone', '=', phone)], limit=1)
+            if existing_patient:
+                self.patient_id = existing_patient.id
+                self.patient_found = True
+                self.visit_type = 'followup'
+                self.new_patient_name = existing_patient.name
+                self.new_patient_age = existing_patient.age
+                self.new_patient_gender = existing_patient.gender
+                self.new_patient_blood_group = existing_patient.blood_group
+                self.new_patient_email = existing_patient.email
+                self.new_patient_address = existing_patient.address
+                last_appointment = self.env['hospital.appointment'].search(
+                    [('patient_id', '=', existing_patient.id), ('state', '!=', 'draft'), ('id', '!=', self.id)],
+                    order='appointment_date desc, id desc',
+                    limit=1
+                )
+                if last_appointment:
+                    if last_appointment.doctor_id:
+                        self.doctor_id = last_appointment.doctor_id.id
+                    if last_appointment.department_id:
+                        self.department_id = last_appointment.department_id.id
+            else:
+                self.visit_type = 'new'
+
+    @api.onchange('patient_id')
+    def _onchange_patient_id(self):
+        if self.patient_id:
+            self.visit_type = 'followup'
+        else:
+            self.visit_type = 'new'
+
 
 
 
@@ -636,7 +722,14 @@ class HospitalAppointment(models.Model):
 
 
 
-    # CREATE
+    # DEFAULT / CREATE
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        if 'visit_type' in fields_list and not res.get('visit_type'):
+            res['visit_type'] = 'new'
+        return res
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -669,6 +762,7 @@ class HospitalAppointment(models.Model):
             'search_patient': False,
             'patient_id': False,
             'patient_found': False,
+            'visit_type': 'new',
 
             # -------------------------------------------------
             # NEW PATIENT DETAILS
@@ -717,6 +811,7 @@ class HospitalAppointment(models.Model):
         if not value:
             self.patient_id = False
             self.patient_found = False
+            self.visit_type = 'new'
             return None
 
         Patient = self.env['hospital.patient']
@@ -819,7 +914,8 @@ class HospitalAppointment(models.Model):
 
             self.patient_id = existing.id
             self.patient_found = True
-            self.visit_type = 'followup'
+            if not self.visit_type:
+                self.visit_type = 'followup'
 
             return existing
 
@@ -1402,6 +1498,8 @@ class HospitalAppointment(models.Model):
 
             'context': {
                 'view_only': False,
+                'is_new_booking': False,
+                'is_editing': True,
             },
         }
 
@@ -1422,6 +1520,22 @@ class HospitalAppointment(models.Model):
         return self.env.ref(
             'hospital_management.action_report_hospital_appointment_token'
         ).report_action(self)
+
+    def action_save_appointment(self):
+        """Save the appointment and keep the user on the current form without redirecting."""
+        self.ensure_one()
+        if not self.patient_id and self.new_patient_name and self.new_patient_phone:
+            self._create_patient_from_appointment()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Saved',
+                'message': 'Appointment saved successfully!',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
 
     def action_close_form(self):
         """Navigate back to the appointment list view."""

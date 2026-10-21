@@ -4,12 +4,70 @@ import { FormController } from "@web/views/form/form_controller";
 import { formView } from "@web/views/form/form_view";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { onMounted, onPatched } from "@odoo/owl";
 
 export class AppointmentFormController extends FormController {
     setup() {
         super.setup();
         this.notification = useService("notification");
         this.actionService = useService("action");
+
+        this.isNewBooking = Boolean(
+            this.props.context?.is_new_booking ||
+            (!this.props.resId && this.model.root.isNew)
+        );
+
+        onMounted(() => {
+            this.updateSaveButton();
+            const formEl = document.querySelector('.hospital_appointment_form');
+            if (formEl) {
+                formEl.addEventListener('input', () => this._onFormDirtyChange());
+                formEl.addEventListener('change', () => this._onFormDirtyChange());
+            }
+        });
+
+        onPatched(() => {
+            this.updateSaveButton();
+        });
+    }
+
+    _onFormDirtyChange() {
+        setTimeout(() => {
+            this.updateSaveButton();
+        }, 50);
+    }
+
+    updateSaveButton() {
+        const saveBtn = document.querySelector('button[name="action_save_appointment"]');
+        if (!saveBtn) return;
+
+        // 1. View only mode -> hide
+        if (this.props.context?.view_only) {
+            saveBtn.style.setProperty('display', 'none', 'important');
+            return;
+        }
+
+        // 2. Not draft state -> hide
+        const state = this.model.root?.data?.state;
+        if (state && state !== 'draft') {
+            saveBtn.style.setProperty('display', 'none', 'important');
+            return;
+        }
+
+        // 3. New Appointment booking flow -> hide
+        if (this.isNewBooking || this.props.context?.is_new_booking) {
+            saveBtn.style.setProperty('display', 'none', 'important');
+            return;
+        }
+
+        // 4. Editing an existing draft appointment:
+        // Show ONLY if the user has modified/unsaved changes (dirty)
+        const isDirty = Boolean(this.model.root?.dirty);
+        if (isDirty) {
+            saveBtn.style.removeProperty('display');
+        } else {
+            saveBtn.style.setProperty('display', 'none', 'important');
+        }
     }
 
     displayName() {
@@ -23,6 +81,12 @@ export class AppointmentFormController extends FormController {
                 clearBreadcrumbs: true,
             });
             return false;
+        }
+
+        if (clickParams.name === 'action_save_appointment') {
+            const res = await super.beforeExecuteActionButton(clickParams);
+            setTimeout(() => this.updateSaveButton(), 150);
+            return res;
         }
         
         if (clickParams.name === 'action_generate_token') {

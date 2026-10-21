@@ -82,13 +82,17 @@
                         </group>
                     </div>
 
-                    <!-- 3 Buttons in Right Side Bottom Corner -->
-                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2" 
-                         style="margin-left: auto !important; justify-content: flex-end; display: flex; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;"
+                    <!-- Action Buttons: Close/Clear Left, Save Right -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" 
+                         style="border-top: 1px solid #e2e8f0; padding-top: 15px;"
                          invisible="context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create')">
-                        <button name="action_clear" string="Clear" type="object" class="btn btn-secondary" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
-                        <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 90px; color: white; background-color: #dc3545; border-color: #dc3545; padding: 6px 16px; border-radius: 4px;"/>
-                        <button name="action_save" string="Save" type="object" class="btn btn-primary oe_highlight" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
+                        <div class="d-flex gap-2">
+                            <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 90px; color: white; background-color: #dc3545; border-color: #dc3545; padding: 6px 16px; border-radius: 4px;"/>
+                            <button name="action_clear" string="Clear" type="object" class="btn btn-secondary" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
+                        </div>
+                        <div>
+                            <button name="action_save" string="Save" type="object" class="btn btn-primary oe_highlight" style="min-width: 90px; padding: 6px 16px; border-radius: 4px;"/>
+                        </div>
                     </div>
                     
                     <!-- Footer for modal popup mode only -->

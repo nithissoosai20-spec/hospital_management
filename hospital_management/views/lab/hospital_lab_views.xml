@@ -235,11 +235,15 @@
                 
                     
                 
-                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
-                        <button name="action_tech_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="state == 'completed' or payment_status != 'paid'" />
-                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="state != 'draft'" />
-                        <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
-                        <button name="%(action_report_hospital_lab_result)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="receipt_ready == False" />
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" style="width: 100%;">
+                        <div class="d-flex gap-2">
+                            <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
+                            <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="state != 'draft'" />
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button name="action_tech_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="state == 'completed' or payment_status != 'paid'" />
+                            <button name="%(action_report_hospital_lab_result)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="receipt_ready == False" />
+                        </div>
                     </div>
                 </sheet>
 
@@ -319,11 +323,15 @@
                 
                     
                 
-                    <div class="d-flex justify-content-end mt-4 mb-2 gap-2">
-                        <button name="action_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="payment_status == 'paid'" />
-                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="payment_status == 'paid'" />
-                        <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
-                        <button name="%(action_report_hospital_lab_receipt)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="payment_status == 'pending'" />
+                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" style="width: 100%;">
+                        <div class="d-flex gap-2">
+                            <button name="action_close_to_appointments" type="object" string="Close" class="btn-secondary" icon="fa-arrow-left" />
+                            <button name="action_cancel" type="object" string="Cancel" class="btn-danger hospital-cancel-btn" icon="fa-times" invisible="payment_status == 'paid'" />
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button name="action_save_lab_appointment" type="object" string="Save" class="btn-primary hospital-save-btn" icon="fa-save" invisible="payment_status == 'paid'" />
+                            <button name="%(action_report_hospital_lab_receipt)d" type="action" string="Print" class="btn-info" icon="fa-print" invisible="payment_status == 'pending'" />
+                        </div>
                     </div>
                 </sheet>
 
