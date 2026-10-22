@@ -22,14 +22,6 @@
     <!-- Create the Nav Items directly under the Hospital app -->
     <menuitem id="menu_asset_inv_items" name="Items" parent="hospital_management.menu_hospital_management" action="hospital_management.action_hospital_pharmacy_stock_records" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="10"/>
 
-    <!-- Obsolete menus disabled: Item Specification is now embedded in Item form, and Purchase Intent is merged into Item Requests -->
-    <record id="menu_asset_inv_specs" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    <record id="menu_asset_inv_intent" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    
     <menuitem id="menu_asset_my_requests" name="Item Request" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_router" groups="hospital_management.group_hospital_user" sequence="32"/>
     <menuitem id="menu_asset_all_requests" name="All Item Requests" parent="hospital_management.menu_hospital_management" action="hospital_hr_asset.action_asset_purchase_request_manager" groups="hospital_hr_asset.group_hospital_asset_manager" sequence="35"/>
 
