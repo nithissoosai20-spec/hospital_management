@@ -4,6 +4,7 @@ from datetime import timedelta
 
 class HospitalAdminDashboard(models.Model):
     _name = 'hospital.admin.dashboard'
+    _inherit = ['hospital.staff.self.service.mixin']
     _description = 'Hospital Admin Dashboard'
 
 

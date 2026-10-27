@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ACTION: ALL ATTENDANCE RECORDS (DEFAULT VIEW FOR ATTENDANCES MENU) -->
+    <record id="action_hospital_all_attendances" model="ir.actions.act_window">
+        <field name="name">Attendance Records</field>
+        <field name="path">attendance-records</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="hr_attendance.hr_attendance_view_filter"/>
+        <field name="context">
+            {
+                "search_default_groupby_name": 1,
+                "search_default_employee": 2,
+                "clear_breadcrumbs": True
+            }
+        </field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No attendance records found yet
+            </p>
+            <p>
+                Staff check-ins and check-outs will appear here. Click &quot;New&quot; to log a record manually.
+            </p>
+        </field>
+    </record>
+
+    <!-- ATTENDANCE LIST VIEW EXTENSION (SHOW EXPECTED SHIFT & TIMING STATUS) -->
+    <record id="view_hospital_attendance_tree_inherit" model="ir.ui.view">
+        <field name="name">hospital.attendance.list.inherit</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.view_attendance_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='worked_hours']" position="after">
+                <field name="expected_shift_hours" widget="float_time" optional="show" string="Standard Shift"/>
+                <field name="shift_status" widget="badge" optional="show" string="Shift Outcome"
+                       decoration-success="shift_status in ['overtime', 'on_time']"
+                       decoration-danger="shift_status == 'early'"
+                       decoration-info="shift_status == 'on_duty'"/>
+                <field name="shift_variance_text" optional="show" string="Variance"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- PROFESSIONAL HOSPITAL ATTENDANCE FORM VIEW -->
+    <record id="view_hospital_hr_attendance_form_inherit" model="ir.ui.view">
+        <field name="name">hospital.hr.attendance.form.inherit</field>
+        <field name="model">hr.attendance</field>
+        <field name="inherit_id" ref="hr_attendance.hr_attendance_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_approve_overtime"
+                        type="object"
+                        string="Approve Extra Hours"
+                        class="btn btn-sm btn-success fw-bold"
+                        icon="fa-check"
+                        invisible="overtime_status not in ['to_approve', 'refused'] or not is_manager"
+                        groups="hr_attendance.group_hr_attendance_officer"/>
+                <button name="action_refuse_overtime"
+                        type="object"
+                        string="Refuse Extra Hours"
+                        class="btn btn-sm btn-outline-danger fw-bold"
+                        icon="fa-times"
+                        invisible="overtime_status not in ['to_approve', 'approved'] or not overtime_status or not is_manager"
+                        groups="hr_attendance.group_hr_attendance_officer"/>
+            </xpath>
+
+            <!-- REMOVE RIGHT-SIDE CHATTER / LOG DIALOGUE BOX -->
+            <xpath expr="//chatter" position="replace"/>
+
+            <xpath expr="//sheet" position="replace">
+                <sheet class="hospital_attendance_sheet" style="padding: 24px 32px !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; box-sizing: border-box !important;">
+                    <field name="id" invisible="1"/>
+                    <field name="is_manager" invisible="1"/>
+                    <field name="device_tracking_enabled" invisible="1"/>
+                    <field name="overtime_status" invisible="1"/>
+                    <field name="shift_status" invisible="1"/>
+
+                    <!-- EXECUTIVE HERO BANNER -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-3 mb-4 rounded-3 bg-white border"
+                         style="border-color: #e2e8f0 !important; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);">
+                        <div class="d-flex align-items-center gap-3">
+                            <div>
+                                <field id="employee_no_officer"
+                                       name="employee_id"
+                                       widget="many2one_avatar_employee"
+                                       readonly="1"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       groups="!hr_attendance.group_hr_attendance_officer"
+                                       class="fs-4 fw-bold text-dark"/>
+                                <field id="employee_no_manager"
+                                       name="employee_id"
+                                       widget="many2one_avatar_employee"
+                                       readonly="id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       domain="[('attendance_manager_id', '=', uid), ('company_id', 'in', allowed_company_ids)]"
+                                       groups="hr_attendance.group_hr_attendance_officer,!hr_attendance.group_hr_attendance_user"
+                                       class="fs-4 fw-bold text-dark"/>
+                                <field id="employee_manager"
+                                       name="employee_id"
+                                       widget="many2one_avatar_employee"
+                                       readonly="id"
+                                       options="{'no_open': True, 'no_create': True}"
+                                       domain="[('company_id', 'in', allowed_company_ids)]"
+                                       groups="hr_attendance.group_hr_attendance_user"
+                                       class="fs-4 fw-bold text-dark"/>
+                                <div class="d-flex align-items-center gap-2 mt-2">
+                                    <span class="badge rounded-pill bg-light text-secondary border px-3 py-1" style="pointer-events: none !important; cursor: default !important;">
+                                        <i class="fa fa-hospital-o me-1" title="Department" aria-label="Department"></i>
+                                        <field name="department_id" readonly="1" nolabel="1" options="{'no_open': True, 'no_create': True}"/>
+                                    </span>
+                                    <span invisible="not hospital_role_id" class="badge rounded-pill bg-light text-primary border px-3 py-1" style="pointer-events: none !important; cursor: default !important;">
+                                        <i class="fa fa-id-badge me-1" title="Role" aria-label="Role"></i>
+                                        <field name="hospital_role_id" readonly="1" nolabel="1" options="{'no_open': True, 'no_create': True}"/>
+                                    </span>
+                                    <span class="badge rounded-pill bg-light text-secondary border px-3 py-1" style="pointer-events: none !important; cursor: default !important;">
+                                        <i class="fa fa-calendar me-1" title="Date" aria-label="Date"></i>
+                                        <field name="date" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-column align-items-end mt-2 mt-sm-0">
+                            <!-- Smart Dynamic Status Badges -->
+                            <span invisible="shift_status != 'overtime'"
+                                  class="badge rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                                  style="background-color: #ecfdf5; color: #047857; font-size: 13px; border: 1px solid #a7f3d0;">
+                                <i class="fa fa-arrow-circle-up" title="Overtime" aria-label="Overtime" style="color: #10b981; font-size: 13px;"></i>
+                                OVERTIME / EXCEEDED SHIFT
+                            </span>
+                            <span invisible="shift_status != 'early'"
+                                  class="badge rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                                  style="background-color: #fff1f2; color: #be123c; font-size: 13px; border: 1px solid #fecdd3;">
+                                <i class="fa fa-arrow-circle-down" title="Under Shift" aria-label="Under Shift" style="color: #f43f5e; font-size: 13px;"></i>
+                                EARLY DEPARTURE / UNDER SHIFT
+                            </span>
+                            <span invisible="shift_status != 'on_time'"
+                                  class="badge rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                                  style="background-color: #eff6ff; color: #1e40af; font-size: 13px; border: 1px solid #bfdbfe;">
+                                <i class="fa fa-check-circle" title="On Time" aria-label="On Time" style="color: #3b82f6; font-size: 13px;"></i>
+                                COMPLETED ON TIME
+                            </span>
+                            <span invisible="shift_status != 'on_duty'"
+                                  class="badge rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                                  style="background-color: #f0fdf4; color: #166534; font-size: 13px; border: 1px solid #86efac;">
+                                <i class="fa fa-circle" title="On Duty" aria-label="On Duty" style="color: #22c55e; font-size: 9px;"></i>
+                                CURRENTLY WORKING (ON DUTY)
+                            </span>
+
+                            <!-- Total Worked Hours -->
+                            <div class="mt-2 text-end">
+                                <span class="text-muted small fw-bold text-uppercase me-2" style="letter-spacing: 0.5px;">Total Worked Time:</span>
+                                <span class="fs-4 fw-bold text-primary" style="font-family: monospace;">
+                                    <field name="worked_hours" widget="float_time" readonly="1"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ROLE-BASED SHIFT TIMING ANALYSIS CARD -->
+                    <div class="p-3 mb-4 rounded-3 bg-white border"
+                         style="border-color: #cbd5e1 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                        <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                     style="width: 32px; height: 32px; background-color: #eff6ff; color: #2563eb;">
+                                    <i class="fa fa-hourglass-half" title="Shift Timing" aria-label="Shift Timing" style="font-size: 15px;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">Shift Performance &amp; Timing Analysis</h6>
+                                    <small class="text-muted">Calculated against standard role shift hours (Doctors: 5 hrs, Nurses: 7 hrs, Staff: 8 hrs)</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge rounded-pill px-3 py-1 fw-semibold border"
+                                      style="background-color: #f8fafc; color: #334155; font-size: 12px;">
+                                    <field name="shift_status_badge" readonly="1"/>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 4 Stat Metric Columns -->
+                        <div class="row g-3 text-center">
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <div class="p-3 rounded-3 bg-light border" style="border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Standard Shift</div>
+                                    <div class="fs-4 fw-bold text-dark mt-1" style="font-family: monospace;">
+                                        <field name="expected_shift_hours" widget="float_time" readonly="1"/>
+                                    </div>
+                                    <small class="text-muted"><field name="hospital_role_id" readonly="1" options="{'no_open': True}"/></small>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <div class="p-3 rounded-3 bg-light border" style="border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Actual Worked</div>
+                                    <div class="fs-4 fw-bold text-primary mt-1" style="font-family: monospace;">
+                                        <field name="worked_hours" widget="float_time" readonly="1"/>
+                                    </div>
+                                    <small class="text-muted">Logged Duration</small>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <div class="p-3 rounded-3 bg-light border" style="border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Shift Variance</div>
+                                    <div class="fs-4 fw-bold mt-1" style="font-family: monospace;">
+                                        <field name="shift_variance_text" readonly="1"/>
+                                    </div>
+                                    <small class="text-muted">Difference from Shift</small>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-3">
+                                <div class="p-3 rounded-3 bg-light border" style="border-color: #e2e8f0 !important;">
+                                    <div class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">Timing Outcome</div>
+                                    <div class="mt-2">
+                                        <field name="shift_status" widget="badge" readonly="1"
+                                               decoration-success="shift_status in ['overtime', 'on_time']"
+                                               decoration-danger="shift_status == 'early'"
+                                               decoration-info="shift_status == 'on_duty'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DUAL CARDS: CHECK-IN & CHECK-OUT (READONLY) -->
+                    <div class="row g-4 mb-4">
+                        <!-- CHECK-IN CARD -->
+                        <div class="col-12 col-md-6">
+                            <div class="h-100 p-3 bg-white rounded-3 border"
+                                 style="border-color: #bbf7d0 !important; border-top: 4px solid #10b981 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                                <div class="d-flex align-items-center gap-2 pb-2 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 32px; height: 32px; background-color: #dcfce7; color: #15803d;">
+                                        <i class="fa fa-sign-in" title="Check-In" aria-label="Check-In" style="font-size: 15px;"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark">Check-In Details</h6>
+                                        <small class="text-muted">Arrival &amp; Shift Initiation</small>
+                                    </div>
+                                </div>
+                                <group>
+                                    <field name="check_in"
+                                           string="Check-In Time"
+                                           readonly="1"
+                                           class="fw-semibold text-dark"/>
+                                    <field name="in_mode" string="Check-In Mode" readonly="1"/>
+                                    <field name="in_ip_address"
+                                           string="IP Address"
+                                           invisible="in_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                    <field name="in_browser"
+                                           string="Browser"
+                                           invisible="in_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                    <field name="in_location"
+                                           string="Location"
+                                           invisible="in_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+
+                        <!-- CHECK-OUT CARD -->
+                        <div class="col-12 col-md-6">
+                            <div class="h-100 p-3 bg-white rounded-3 border"
+                                 style="border-color: #bfdbfe !important; border-top: 4px solid #3b82f6 !important; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                                <div class="d-flex align-items-center gap-2 pb-2 mb-3 border-bottom" style="border-color: #f1f5f9 !important;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                         style="width: 32px; height: 32px; background-color: #eff6ff; color: #1d4ed8;">
+                                        <i class="fa fa-sign-out" title="Check-Out" aria-label="Check-Out" style="font-size: 15px;"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold text-dark">Check-Out Details</h6>
+                                        <small class="text-muted">Departure &amp; Shift Completion</small>
+                                    </div>
+                                </div>
+                                <group>
+                                    <field name="check_out"
+                                           string="Check-Out Time"
+                                           placeholder="Currently On Duty"
+                                           readonly="1"
+                                           class="fw-semibold text-dark"/>
+                                    <field name="out_mode" string="Check-Out Mode" readonly="1"/>
+                                    <field name="out_ip_address"
+                                           string="IP Address"
+                                           invisible="out_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                    <field name="out_browser"
+                                           string="Browser"
+                                           invisible="out_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                    <field name="out_location"
+                                           string="Location"
+                                           invisible="out_mode == 'manual' or not device_tracking_enabled"
+                                           readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OVERTIME & EXTRA HOURS (CONDITIONAL) -->
+                    <div invisible="not overtime_hours and not validated_overtime_hours and not overtime_status"
+                         class="p-3 mb-3 rounded-3 border"
+                         style="background-color: #fffaf0; border-color: #feebc8 !important; border-left: 4px solid #dd6b20 !important;">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="fa fa-hourglass-half text-warning fs-5" title="Overtime &amp; Extra Hours" aria-label="Overtime"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-bold text-dark">Overtime &amp; Extra Hours</h6>
+                                    <small class="text-muted">Additional time logged beyond standard schedule</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mt-2 mt-sm-0">
+                                <div>
+                                    <span class="text-muted small fw-semibold me-1">Logged Extra:</span>
+                                    <span class="fw-bold text-dark"><field name="overtime_hours" widget="float_time"/></span>
+                                </div>
+                                <div>
+                                    <span class="text-muted small fw-semibold me-1">Approved Extra:</span>
+                                    <span class="fw-bold text-success"><field name="validated_overtime_hours" widget="float_time"/></span>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-success fw-bold"
+                                            string="Approve"
+                                            help="Approve overtime for this employee"
+                                            invisible="not is_manager or overtime_status not in ['to_approve', 'refused'] or not overtime_status"
+                                            name="action_approve_overtime"
+                                            icon="fa-check"
+                                            type="object"/>
+                                    <button class="btn btn-sm btn-outline-danger fw-bold ms-1"
+                                            string="Refuse"
+                                            help="Refuse overtime for this employee"
+                                            invisible="not is_manager or overtime_status not in ['to_approve', 'approved'] or not overtime_status"
+                                            name="action_refuse_overtime"
+                                            icon="fa-times"
+                                            type="object"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ROLE SHIFT HOURS TREE & FORM -->
+    <record id="view_hospital_role_shift_tree" model="ir.ui.view">
+        <field name="name">hospital.role.shift.list</field>
+        <field name="model">hospital.role</field>
+        <field name="arch" type="xml">
+            <list string="Hospital Roles &amp; Shift Hours">
+                <field name="name" string="Role"/>
+                <field name="shift_hours" widget="float_time" string="Standard Shift Hours"/>
+                <field name="department_ids" widget="many2many_tags" string="Departments"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hospital_role_shift_form" model="ir.ui.view">
+        <field name="name">hospital.role.shift.form</field>
+        <field name="model">hospital.role</field>
+        <field name="arch" type="xml">
+            <form string="Hospital Role &amp; Shift Hours">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Role Name"/>
+                        <h1><field name="name" placeholder="e.g. Doctor, Nurse, Staff"/></h1>
+                    </div>
+                    <group>
+                        <group string="Shift Configuration">
+                            <field name="shift_hours" widget="float_time" string="Standard Shift Hours" help="Daily required shift duration in hours (e.g. 5.0 for Doctors, 7.0 for Nurses, 8.0 for Staff)"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Departments">
+                            <field name="department_ids" widget="many2many_tags" placeholder="Select departments..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hospital_role_shift_hours" model="ir.actions.act_window">
+        <field name="name">Role Shift Hours</field>
+        <field name="res_model">hospital.role</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_hospital_role_shift_tree"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define Shift Hours for Hospital Roles
+            </p>
+            <p>
+                Configure standard daily shift hours by role (e.g., Doctors: 5 hrs, Nurses: 7 hrs, Staff: 8 hrs).
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_hospital_role_shift_hours"
+              name="Role Shift Hours"
+              parent="hr_attendance.menu_hr_attendance_configuration"
+              action="action_hospital_role_shift_hours"
+              sequence="50"
+              groups="hr_attendance.group_hr_attendance_manager"/>
+
+</odoo>

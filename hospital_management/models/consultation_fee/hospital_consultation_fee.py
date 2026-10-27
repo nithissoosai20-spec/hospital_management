@@ -29,9 +29,10 @@ class HospitalConsultationFee(models.Model):
                 parts.append(f"Dr. {rec.doctor_id.name}")
             rec.display_name = " - ".join(parts) if parts else "Consultation Fee"
 
-    _sql_constraints = [
-        ('check_amount_positive', 'CHECK(amount >= 0)', 'Consultation Fee cannot be negative.'),
-    ]
+    _check_amount_positive = models.Constraint(
+        'CHECK(amount >= 0)',
+        'Consultation Fee cannot be negative.',
+    )
 
     department_id = fields.Many2one(
         'hospital.department',

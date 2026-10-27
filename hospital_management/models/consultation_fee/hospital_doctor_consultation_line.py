@@ -27,9 +27,10 @@ class HospitalDoctorConsultationLine(models.Model):
         default=0.0,
     )
 
-    _sql_constraints = [
-        ('check_fee_positive', 'CHECK(fee >= 0)', 'Doctor Fee cannot be negative.'),
-    ]
+    _check_fee_positive = models.Constraint(
+        'CHECK(fee >= 0)',
+        'Doctor Fee cannot be negative.',
+    )
 
     @api.onchange('consultation_type_id')
     def _onchange_consultation_type_id(self):

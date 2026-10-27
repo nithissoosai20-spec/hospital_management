@@ -111,6 +111,7 @@
         'views/user/hospital_user_views.xml',
         'views/user/hospital_user_activity_views.xml',
 
+        'views/hr/hospital_attendance_views.xml',
         'views/dashboard/hospital_lab_dashboard_views.xml',
         'views/dashboard/hospital_reception_actions.xml',
         'views/dashboard/hospital_dashboard_views.xml',
@@ -118,6 +119,7 @@
         'views/dashboard/hospital_pharmacy_dashboard.xml',
         'views/dashboard/hospital_pharmacy_dashboard_form.xml',
         'views/dashboard/hospital_doctor_dashboard.xml',
+        'views/dashboard/hospital_hr_dashboard_views.xml',
 
         'views/login/hospital_login.xml',
         'views/login/hospital_web_login.xml',

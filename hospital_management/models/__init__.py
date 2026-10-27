@@ -7,5 +7,6 @@ from . import consultation_fee
 from . import pharmacy
 from . import lab
 from . import dashboard
+from . import hr
 from . import activity
 from . import master

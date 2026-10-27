@@ -65,7 +65,7 @@ class HospitalLabAppointment(models.Model):
 
     
     test_names = fields.Char(
-        string='Lab Tests',
+        string='Test Names',
         compute='_compute_test_names',
     )
 
@@ -538,10 +538,6 @@ class HospitalLabAppointment(models.Model):
         return self.env['ir.actions.act_window']._for_xml_id('hospital_management.action_hospital_appointment')
 
 
-    _sql_constraints = [
-        ('unique_lab_appointment_test', 'UNIQUE(lab_appointment_id, lab_test_id)',
-         'This Lab Test has already been selected.'),
-    ]
 
 # LAB APPOINTMENT LINE
 
@@ -671,7 +667,7 @@ class HospitalLabAppointmentLine(models.Model):
             else:
                 rec.display_test_name = rec.lab_test_id.name
 
-    display_test_code = fields.Char(string='Code', compute='_compute_display_test_code')
+    display_test_code = fields.Char(string='Display Code', compute='_compute_display_test_code')
     
     @api.depends('lab_test_id', 'subtest_id')
     def _compute_test_details(self):
@@ -761,14 +757,6 @@ class HospitalLabAppointmentLine(models.Model):
     )
 
     category = fields.Selection(
-        [
-            ('hematology', 'Hematology'),
-            ('biochemistry', 'Biochemistry'),
-            ('microbiology', 'Microbiology'),
-            ('pathology', 'Pathology'),
-            ('cardiology', 'Cardiology'),
-            ('other', 'Other Testing'),
-        ],
         related='lab_test_id.category',
         string='Old Category',
         readonly=True,
@@ -780,12 +768,6 @@ class HospitalLabAppointmentLine(models.Model):
     )
 
     sample_type = fields.Selection(
-        [
-            ('blood', 'Blood Testing'),
-            ('urine', 'Urine Testing'),
-            ('serum', 'Serum Testing'),
-            ('other', 'Other Testing'),
-        ],
         related='lab_test_id.sample_type',
         string='Old Sub Category',
         readonly=True,

@@ -122,6 +122,10 @@
                     <field name="is_doctor" invisible="1"/>
                     <field name="existing_consultation_type_ids" invisible="1"/>
 
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_hr_employee" type="object" class="oe_stat_button" icon="fa-id-card" string="HR Profile" invisible="not hr_employee_id"/>
+                        <button name="action_view_history" type="object" class="oe_stat_button" icon="fa-history" string="Login History"/>
+                    </div>
                     <notebook>
                         <page string="General Info" name="general_info">
                             <div class="custom-section-title">1. Personal Information</div>
@@ -185,6 +189,10 @@
                                     <label for="reporting_to_id" class="custom-label">Reporting To</label>
                                     <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
                                 </div>
+                                <div class="col-md-4 custom-field-container">
+                                    <label for="hr_employee_id" class="custom-label">Linked HR Employee</label>
+                                    <field name="hr_employee_id" class="w-100" readonly="1"/>
+                                </div>
                             </div>
 
                             <div class="custom-section-title">3. Access &amp; Security</div>
@@ -203,6 +211,139 @@
                                 <div class="col-md-5 custom-field-container">
                                     <label for="password_confirm" class="custom-label">Re-enter Password</label>
                                     <field name="password_confirm" class="w-100" password="True" required="not id"/>
+                                </div>
+                            </div>
+                        </page>
+
+                        <page string="Access &amp; Permissions" name="access_permissions">
+                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                                <div>
+                                    <div class="custom-section-title mt-0 mb-1">
+                                        <i class="fa fa-shield text-primary me-2" title="Permissions"></i> Role &amp; Access Control (Approach 3)
+                                    </div>
+                                    <small class="text-muted">Permissions are automatically populated from the user's role and can be customized per user by the Administrator.</small>
+                                </div>
+                                <div>
+                                    <button name="action_reset_permissions" type="object" string="Reset to Role Defaults" class="btn btn-sm btn-outline-secondary rounded-pill px-3" icon="fa-undo"/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- COLUMN 1: PAGE & MODULE VISIBILITY -->
+                                <div class="col-md-7 pe-md-4 border-end">
+                                    <div class="custom-section-title mt-0">
+                                        <i class="fa fa-desktop me-1" title="Modules"></i> Module &amp; Menu Visibility
+                                    </div>
+                                    <p class="text-muted small mb-3">Controls which apps and menus this user is permitted to view and access.</p>
+
+                                    <div class="row g-2">
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_dashboard" class="custom-label">Main Dashboard</label>
+                                            <field name="perm_dashboard" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_appointments" class="custom-label">Appointments &amp; Booking</label>
+                                            <field name="perm_appointments" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_patients" class="custom-label">Patients Directory &amp; Queue</label>
+                                            <field name="perm_patients" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_billing" class="custom-label">Billing &amp; Invoices</label>
+                                            <field name="perm_billing" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_pharmacy" class="custom-label">Pharmacy &amp; Stock</label>
+                                            <field name="perm_pharmacy" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_lab" class="custom-label">Laboratory &amp; Tests</label>
+                                            <field name="perm_lab" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_hr_employees" class="custom-label">Employees Directory</label>
+                                            <field name="perm_hr_employees" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_attendance" class="custom-label">Staff Attendances</label>
+                                            <field name="perm_attendance" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_time_off" class="custom-label">Time Off / Leaves</label>
+                                            <field name="perm_time_off" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_expenses" class="custom-label">Expense Claims</label>
+                                            <field name="perm_expenses" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_asset_items" class="custom-label">Assets &amp; Equipment</label>
+                                            <field name="perm_asset_items" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_asset_requests" class="custom-label">Asset Requests &amp; Purchases</label>
+                                            <field name="perm_asset_requests" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_masters" class="custom-label">Master Data &amp; Fees</label>
+                                            <field name="perm_masters" widget="boolean_toggle"/>
+                                        </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_users" class="custom-label">User Management</label>
+                                            <field name="perm_users" widget="boolean_toggle"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- COLUMN 2: ACTION & AUTHORITY RIGHTS -->
+                                <div class="col-md-5 ps-md-4">
+                                    <div class="custom-section-title mt-0">
+                                        <i class="fa fa-lock me-1" title="Actions"></i> Action &amp; Operational Rights
+                                    </div>
+                                    <p class="text-muted small mb-3">Controls functional actions this user is authorized to perform.</p>
+
+                                    <div class="d-flex flex-column gap-3 mt-2">
+                                        <div class="p-2 border rounded bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong class="text-dark">Can Delete Records</strong>
+                                                    <small class="text-muted d-block">Authorize user to delete records</small>
+                                                </div>
+                                                <field name="perm_can_delete" widget="boolean_toggle"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2 border rounded bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong class="text-dark">Can Approve Requests</strong>
+                                                    <small class="text-muted d-block">Approve leaves, expenses, and asset requests</small>
+                                                </div>
+                                                <field name="perm_can_approve" widget="boolean_toggle"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2 border rounded bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong class="text-dark">Can Collect Cash / Settle</strong>
+                                                    <small class="text-muted d-block">Confirm payments &amp; cash collections</small>
+                                                </div>
+                                                <field name="perm_can_collect_cash" widget="boolean_toggle"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2 border rounded bg-light">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong class="text-dark">Can Export Data</strong>
+                                                    <small class="text-muted d-block">Allow exporting lists &amp; tables to Excel / CSV</small>
+                                                </div>
+                                                <field name="perm_can_export" widget="boolean_toggle"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </page>

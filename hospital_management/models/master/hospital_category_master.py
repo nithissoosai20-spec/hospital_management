@@ -29,7 +29,7 @@ class HospitalCategoryMaster(models.Model):
     # Cascading Dropdown Fields on Form View
     selected_primary_id = fields.Many2one(
         'hospital.category.master',
-        string='Primary Category',
+        string='Selected Primary Category',
         domain="[('parent_id', '=', False), ('category_type', 'not in', ['lab_category', 'pharmacy_item_category'])]",
         compute='_compute_selected_categories',
         store=True,
@@ -54,9 +54,10 @@ class HospitalCategoryMaster(models.Model):
         readonly=False,
     )
 
-    _sql_constraints = [
-        ('name_parent_uniq', 'unique (name, parent_id)', 'Category name must be unique within the same parent category!')
-    ]
+    _name_parent_uniq = models.Constraint(
+        'unique (name, parent_id)',
+        'Category name must be unique within the same parent category!'
+    )
 
     def init(self):
         super().init()
@@ -216,7 +217,7 @@ class HospitalCategoryMaster(models.Model):
     pharmacy_category_type = fields.Selection([
         ('item_primary_category', 'Primary Category'),
         ('pharmacy_item_category', 'Category (Packaging)')
-    ], string='Module / Type', compute='_compute_pharmacy_type', inverse='_inverse_pharmacy_type')
+    ], string='Pharmacy Category Type', compute='_compute_pharmacy_type', inverse='_inverse_pharmacy_type')
 
     @api.depends('category_type')
     def _compute_pharmacy_type(self):

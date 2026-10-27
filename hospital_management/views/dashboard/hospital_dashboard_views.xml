@@ -690,7 +690,7 @@ elif env.user.has_group('hospital_management.group_hospital_pharmacist'):
 elif env.user.has_group('hospital_hr_asset.group_hospital_asset_manager'):
     action = env.ref('maintenance.hr_equipment_action').sudo().read()[0]
 elif env.user.has_group('hospital_management.group_hospital_hr'):
-    action = env.ref('hr.open_view_employee_list_my').sudo().read()[0]
+    action = env.ref('hospital_management.action_hospital_hr_dashboard').sudo().read()[0]
 else:
     # Fallback
     action = env.ref('hospital_management.action_hospital_admin_dashboard_window').sudo().read()[0]

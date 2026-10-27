@@ -3,6 +3,7 @@
     'version': '19.0.1.0.0',
     'category': 'Healthcare',
     'summary': 'Hospital-specific HR and Asset Management customizations',
+    'author': 'Sathya Technologies',
     'depends': [
         'hospital_management',
         'hr',

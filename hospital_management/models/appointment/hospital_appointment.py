@@ -59,7 +59,7 @@ class HospitalAppointment(models.Model):
     )
 
     new_patient_blood_group = fields.Char(
-        string='Blood Group'
+        string='New Patient Blood Group'
     )
 
     new_patient_email = fields.Char(

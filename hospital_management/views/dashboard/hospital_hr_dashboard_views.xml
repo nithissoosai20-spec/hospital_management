@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_hr_dashboard_form" model="ir.ui.view">
+        <field name="name">hospital.hr.dashboard.form</field>
+        <field name="model">hospital.hr.dashboard</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0" class="hrdb-form">
+                <sheet class="hrdb-sheet">
+                    <style>
+                        .hrdb-form,
+                        .o_form_view:has(.hrdb-sheet),
+                        .o_form_view:has(.hrdb-sheet) .o_form_renderer,
+                        .o_form_view:has(.hrdb-sheet) .o_form_sheet_bg,
+                        .o_form_view:has(.hrdb-sheet) .o_form_sheet {
+                            background-color: #f8fafc !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            padding: 0 !important;
+                            margin: 0 !important;
+                            width: 100% !important;
+                            max-width: 100% !important;
+                            min-width: 100% !important;
+                        }
+                        .hrdb-sheet {
+                            background-color: transparent !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            padding: 24px 32px !important;
+                            max-width: 100% !important;
+                            width: 100% !important;
+                            margin: 0 !important;
+                            box-sizing: border-box !important;
+                        }
+                        .hrdb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
+                        .hrdb-title { font-size: 24px; font-weight: 700; color: #1e3a8a; margin: 0; display: flex; align-items: center; gap: 10px; }
+                        .hrdb-subtitle { font-size: 14px; color: #64748b; margin-top: 4px; }
+                        
+                        /* KPI GRID - 5 COLUMNS ACROSS THE SCREEN */
+                        .hrdb-kpi-grid { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 18px !important; margin-bottom: 30px !important; width: 100% !important; }
+                        @media (max-width: 1200px) {
+                            .hrdb-kpi-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important; }
+                        }
+                        
+                        /* SELF-SERVICE ACTIONS - 3 COLUMNS ACROSS */
+                        .hrdb-self-service-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; width: 100% !important; }
+                        
+                        /* QUICK ACTIONS - 4 COLUMNS ACROSS */
+                        .hrdb-actions-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 15px !important; width: 100% !important; }
+                        @media (max-width: 1200px) {
+                            .hrdb-actions-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important; }
+                        }
+                        .hrdb-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; }
+                        .hrdb-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+                        
+                        .hrdb-card-info h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #64748b; margin: 0 0 6px 0; letter-spacing: 0.5px; }
+                        .hrdb-card-info .hrdb-num { font-size: 28px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1; }
+                        .hrdb-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+                        
+                        /* CARD THEMES */
+                        .hrdb-card-blue .hrdb-icon { background: #eff6ff; color: #2563eb; }
+                        .hrdb-card-purple .hrdb-icon { background: #faf5ff; color: #9333ea; }
+                        .hrdb-card-green .hrdb-icon { background: #f0fdf4; color: #16a34a; }
+                        .hrdb-card-orange .hrdb-icon { background: #fff7ed; color: #ea580c; }
+                        .hrdb-card-red .hrdb-icon { background: #fef2f2; color: #dc2626; }
+                        
+                        /* QUICK ACTIONS */
+                        .hrdb-section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 15px; }
+                        .hrdb-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+                        .hrdb-action-btn { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; text-align: left; display: flex; align-items: center; gap: 14px; transition: all 0.2s; color: #1e293b; cursor: pointer; text-decoration: none; width: 100%; }
+                        .hrdb-action-btn:hover { border-color: #2563eb; background: #f8fafc; }
+                        .hrdb-action-btn i { font-size: 20px; color: #2563eb; }
+                        .hrdb-action-btn div strong { display: block; font-size: 15px; color: #1e293b; }
+                        .hrdb-action-btn div span { font-size: 12px; color: #64748b; }
+                    </style>
+
+                    <div class="hrdb-header">
+                        <div>
+                            <h1 class="hrdb-title"><i class="fa fa-users text-primary" title="HR Dashboard"></i> HR Management Dashboard</h1>
+                            <div class="hrdb-subtitle">Overview of hospital employees, attendance, leaves, and expenses</div>
+                        </div>
+                    </div>
+
+                    <!-- STAFF SELF-SERVICE (Attendance / Leave / Expense) -->
+                    <div style="background: #ffffff; border-radius: 12px; padding: 16px 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                        <field name="my_attendance_state" invisible="1"/>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                                    <i class="fa fa-id-badge" title="Self Service"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 15px; color: #1e293b;">Staff Self-Service Portal</div>
+                                    <div style="font-size: 12px; color: #64748b;">Clock in/out, request leaves, and submit expense claims</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span invisible="my_attendance_state != 'checked_in'" class="badge rounded-pill" style="background-color: #dcfce7; color: #15803d; font-size: 12px; padding: 6px 14px; font-weight: 600; border: 1px solid #bbf7d0;">
+                                    <i class="fa fa-circle text-success me-1"></i> Checked In <field name="my_check_in_time" readonly="1" invisible="not my_check_in_time"/>
+                                </span>
+                                <span invisible="my_attendance_state == 'checked_in'" class="badge rounded-pill" style="background-color: #f1f5f9; color: #64748b; font-size: 12px; padding: 6px 14px; font-weight: 600; border: 1px solid #e2e8f0;">
+                                    <i class="fa fa-circle-o text-muted me-1"></i> Checked Out
+                                </span>
+                            </div>
+                        </div>
+                        <div class="hrdb-self-service-grid">
+                            <button name="action_toggle_attendance" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
+                                <i class="fa fa-clock-o text-primary" style="font-size: 16px;" title="Attendance"></i>
+                                <span invisible="my_attendance_state == 'checked_in'">Clock In (Check In)</span>
+                                <span invisible="my_attendance_state != 'checked_in'">Clock Out (Check Out)</span>
+                            </button>
+                            <button name="action_request_leave" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
+                                <i class="fa fa-calendar-plus-o text-info" style="font-size: 16px;" title="Leave"></i>
+                                <span>Apply for Leave</span>
+                            </button>
+                            <button name="action_submit_expense" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
+                                <i class="fa fa-file-text-o text-warning" style="font-size: 16px;" title="Expense"></i>
+                                <span>Submit Expense</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPI CARDS -->
+                    <div class="hrdb-kpi-grid">
+                        <button name="%(hr.open_view_employee_list_my)d" type="action" class="hrdb-card hrdb-card-blue">
+                            <div class="hrdb-card-info">
+                                <h3>Total Staff</h3>
+                                <div class="hrdb-num"><field name="total_employees" nolabel="1"/></div>
+                            </div>
+                            <div class="hrdb-icon"><i class="fa fa-id-card" title="Staff"></i></div>
+                        </button>
+
+                        <button name="%(hr.open_view_employee_list_my)d" type="action" class="hrdb-card hrdb-card-purple">
+                            <div class="hrdb-card-info">
+                                <h3>Departments</h3>
+                                <div class="hrdb-num"><field name="total_departments" nolabel="1"/></div>
+                            </div>
+                            <div class="hrdb-icon"><i class="fa fa-sitemap" title="Departments"></i></div>
+                        </button>
+
+                        <button name="%(hospital_management.action_hospital_all_attendances)d" type="action" class="hrdb-card hrdb-card-green">
+                            <div class="hrdb-card-info">
+                                <h3>Present Today</h3>
+                                <div class="hrdb-num"><field name="today_attendances" nolabel="1"/></div>
+                            </div>
+                            <div class="hrdb-icon"><i class="fa fa-clock-o" title="Attendance"></i></div>
+                        </button>
+
+                        <button name="%(hr_holidays.hr_leave_action_action_approve_department)d" type="action" class="hrdb-card hrdb-card-orange">
+                            <div class="hrdb-card-info">
+                                <h3>Pending Leaves</h3>
+                                <div class="hrdb-num"><field name="pending_leaves" nolabel="1"/></div>
+                            </div>
+                            <div class="hrdb-icon"><i class="fa fa-calendar-times-o" title="Leaves"></i></div>
+                        </button>
+
+                        <button name="%(hr_expense.hr_expense_actions_all)d" type="action" class="hrdb-card hrdb-card-red">
+                            <div class="hrdb-card-info">
+                                <h3>Pending Expenses</h3>
+                                <div class="hrdb-num"><field name="pending_expenses" nolabel="1"/></div>
+                            </div>
+                            <div class="hrdb-icon"><i class="fa fa-credit-card" title="Expenses"></i></div>
+                        </button>
+                    </div>
+
+                    <!-- QUICK ACTIONS -->
+                    <div class="hrdb-section-title">Quick Actions</div>
+                    <div class="hrdb-actions-grid">
+                        <button name="%(hr.open_view_employee_list_my)d" type="action" class="hrdb-action-btn">
+                            <i class="fa fa-user-plus" title="Employees"></i>
+                            <div>
+                                <strong>Manage Employees</strong>
+                                <span>View and register hospital staff</span>
+                            </div>
+                        </button>
+
+                        <button name="%(hospital_management.action_hospital_all_attendances)d" type="action" class="hrdb-action-btn">
+                            <i class="fa fa-check-circle" title="Attendance"></i>
+                            <div>
+                                <strong>Attendance Records</strong>
+                                <span>Track staff check-ins and check-outs</span>
+                            </div>
+                        </button>
+
+                        <button name="%(hr_holidays.hr_leave_action_action_approve_department)d" type="action" class="hrdb-action-btn">
+                            <i class="fa fa-calendar-check-o" title="Leaves"></i>
+                            <div>
+                                <strong>Leave Approvals</strong>
+                                <span>Review pending time off requests</span>
+                            </div>
+                        </button>
+
+                        <button name="%(hr_expense.hr_expense_actions_all)d" type="action" class="hrdb-action-btn">
+                            <i class="fa fa-file-text-o" title="Expenses"></i>
+                            <div>
+                                <strong>Expense Claims</strong>
+                                <span>Review staff expense claims</span>
+                            </div>
+                        </button>
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Singleton Record -->
+    <record id="hr_dashboard_record" model="hospital.hr.dashboard">
+        <field name="name">HR Dashboard</field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_hospital_hr_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">hospital.hr.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="res_id" ref="hr_dashboard_record"/>
+        <field name="view_id" ref="view_hospital_hr_dashboard_form"/>
+        <field name="path">hr-dashboard</field>
+        <field name="target">current</field>
+    </record>
+</odoo>
+

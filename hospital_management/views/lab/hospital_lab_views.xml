@@ -416,7 +416,7 @@
                 
                 <div style="background:#1e3a8a; color:white; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
                     <h3 style="margin:0; font-size:18px; font-weight:700; color:white;">Collect Payment</h3>
-                    <button special="cancel" class="btn btn-link" style="color:white; font-size:22px; font-weight:bold; line-height:1; padding:0; text-decoration:none;"><i class="fa fa-times" /></button>
+                    <button special="cancel" class="btn btn-link" style="color:white; font-size:22px; font-weight:bold; line-height:1; padding:0; text-decoration:none;"><i class="fa fa-times" title="Close"/></button>
                 </div>
 
                 <div style="padding:20px; background: white;">

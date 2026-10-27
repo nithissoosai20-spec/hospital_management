@@ -789,4 +789,57 @@ async function _fetchAndNavigate(xmlId) {
         setTimeout(() => filterDoctorConsultationDropdown(input), 150);
         setTimeout(() => filterDoctorConsultationDropdown(input), 300);
     });
+
+    // ─── PASSWORD VISIBILITY EYE TOGGLE ───────────────────────────────────────
+    function initPasswordToggles() {
+        const passwordWidgets = document.querySelectorAll('div[name="password"], div[name="password_confirm"]');
+        passwordWidgets.forEach((widget) => {
+            const input = widget.querySelector('input');
+            if (!input) return;
+            if (widget.querySelector('.password-toggle-btn')) return;
+
+            widget.style.position = 'relative';
+            widget.style.display = 'block';
+            input.style.paddingRight = '36px';
+
+            const toggleBtn = document.createElement('span');
+            toggleBtn.className = 'password-toggle-btn';
+            toggleBtn.innerHTML = '<i class="fa fa-eye" title="Show/Hide Password"></i>';
+            toggleBtn.title = 'Show / Hide Password';
+            toggleBtn.style.position = 'absolute';
+            toggleBtn.style.right = '12px';
+            toggleBtn.style.top = '50%';
+            toggleBtn.style.transform = 'translateY(-50%)';
+            toggleBtn.style.cursor = 'pointer';
+            toggleBtn.style.color = '#64748b';
+            toggleBtn.style.zIndex = '10';
+            toggleBtn.style.padding = '4px';
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const icon = toggleBtn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fa fa-eye-slash';
+                    toggleBtn.style.color = '#2563eb';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fa fa-eye';
+                    toggleBtn.style.color = '#64748b';
+                }
+            });
+
+            widget.appendChild(toggleBtn);
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPasswordToggles);
+    } else {
+        initPasswordToggles();
+    }
+    const pwdObserver = new MutationObserver(initPasswordToggles);
+    pwdObserver.observe(document.documentElement, { childList: true, subtree: true });
+
 })();

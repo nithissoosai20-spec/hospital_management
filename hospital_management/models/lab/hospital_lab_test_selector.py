@@ -21,14 +21,6 @@ class HospitalLabTestSelectorLine(models.TransientModel):
         readonly=True
     )
     category = fields.Selection(
-        [
-            ('hematology', 'Hematology'),
-            ('biochemistry', 'Biochemistry'),
-            ('microbiology', 'Microbiology'),
-            ('pathology', 'Pathology'),
-            ('cardiology', 'Cardiology'),
-            ('other', 'Other Testing'),
-        ],
         related='test_id.category',
         string='Old Category',
         readonly=True
@@ -39,12 +31,6 @@ class HospitalLabTestSelectorLine(models.TransientModel):
         readonly=True
     )
     sample_type = fields.Selection(
-        [
-            ('blood', 'Blood Testing'),
-            ('urine', 'Urine Testing'),
-            ('serum', 'Serum Testing'),
-            ('other', 'Other Testing'),
-        ],
         related='test_id.sample_type',
         string='Old Sub Category',
         readonly=True

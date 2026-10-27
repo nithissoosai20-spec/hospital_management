@@ -196,6 +196,15 @@ class HospitalUser(models.Model):
         ondelete='restrict'
     )
 
+    hr_employee_id = fields.Many2one(
+        'hr.employee',
+        string='HR Employee Record',
+        readonly=True,
+        copy=False,
+        ondelete='set null'
+    )
+
+
     # ACCOUNT STATUS
 
     active = fields.Boolean(
@@ -213,6 +222,101 @@ class HospitalUser(models.Model):
         default='available',
         required=True
     )
+
+    # ACCESS & PERMISSIONS (Admin Configurable)
+    perm_dashboard = fields.Boolean(
+        string='Dashboard',
+        default=True,
+        help='Allow access to Main Role / Hospital Dashboard'
+    )
+    perm_appointments = fields.Boolean(
+        string='Appointments & Queue',
+        default=False,
+        help='Allow booking appointments and viewing doctor patient queues'
+    )
+    perm_patients = fields.Boolean(
+        string='Patients Directory',
+        default=False,
+        help='Allow viewing and managing patient records'
+    )
+    perm_billing = fields.Boolean(
+        string='Billing & Invoices',
+        default=False,
+        help='Allow viewing and creating patient bills & invoices'
+    )
+    perm_pharmacy = fields.Boolean(
+        string='Pharmacy & Stock',
+        default=False,
+        help='Allow access to pharmacy items, medicine stock, and dispensing'
+    )
+    perm_lab = fields.Boolean(
+        string='Laboratory & Tests',
+        default=False,
+        help='Allow viewing lab test requests, entering results, and printing lab reports'
+    )
+    perm_hr_employees = fields.Boolean(
+        string='HR Employees',
+        default=False,
+        help='Allow viewing and managing hospital staff and employee directory'
+    )
+    perm_attendance = fields.Boolean(
+        string='Staff Attendances',
+        default=False,
+        help='Allow viewing staff check-in/out records'
+    )
+    perm_time_off = fields.Boolean(
+        string='Time Off / Leaves',
+        default=False,
+        help='Allow viewing staff leave requests'
+    )
+    perm_expenses = fields.Boolean(
+        string='Staff Expenses',
+        default=False,
+        help='Allow viewing employee expense claims'
+    )
+    perm_asset_items = fields.Boolean(
+        string='Hospital Assets',
+        default=False,
+        help='Allow viewing medical equipment and asset inventory'
+    )
+    perm_asset_requests = fields.Boolean(
+        string='Asset Requests & Purchases',
+        default=False,
+        help='Allow viewing item requests, purchase orders, and supplier invoices'
+    )
+    perm_masters = fields.Boolean(
+        string='Master Data & Configuration',
+        default=False,
+        help='Allow configuring categories, consultation types, and fee rules'
+    )
+    perm_users = fields.Boolean(
+        string='User Management',
+        default=False,
+        help='Allow creating hospital users and managing permissions'
+    )
+
+    # ACTION / CAPABILITY PERMISSIONS (Admin Configurable)
+    perm_can_delete = fields.Boolean(
+        string='Can Delete Records',
+        default=False,
+        help='Allow permanently deleting hospital records'
+    )
+    perm_can_approve = fields.Boolean(
+        string='Can Approve Requests',
+        default=False,
+        help='Allow approving leave requests, expense claims, and purchase requests'
+    )
+    perm_can_collect_cash = fields.Boolean(
+        string='Can Collect Cash / Settle Bills',
+        default=False,
+        help='Allow confirming payments and settling patient bills'
+    )
+    perm_can_export = fields.Boolean(
+        string='Can Export Data (Excel/CSV)',
+        default=False,
+        help='Allow exporting data from lists and reports to Excel or CSV'
+    )
+
 
     # COMPUTE
 
@@ -269,6 +373,7 @@ class HospitalUser(models.Model):
             'admin': 'group_hospital_admin',
             'administrator': 'group_hospital_admin',
             'hr executive': 'group_hospital_hr',
+            'hr manager': 'group_hospital_hr',
             'super admin': 'group_hospital_super_admin',
         }
         xml_id = role_group_map.get(role_name)
@@ -315,7 +420,11 @@ class HospitalUser(models.Model):
 
         role_group = self._get_odoo_group_for_role()
 
-        dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
+        role_name = (self.role_id.name or '').strip().lower()
+        if role_name in ['hr manager', 'hr executive']:
+            dashboard_action = self.env.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+        else:
+            dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
         action_id = dashboard_action.id if dashboard_action else False
 
         user_vals = {
@@ -348,23 +457,302 @@ class HospitalUser(models.Model):
                 'password': password,
             })
 
-    # UPDATE ODOO USER GROUP
+
+    # -------------------------------------------------
+    # PERMISSION DEFAULTS & ROLE MAPPING
+    # -------------------------------------------------
+
+    def _get_default_permissions_for_role(self, role_name):
+        role_norm = (role_name or '').strip().lower()
+        defaults = {
+            'perm_dashboard': True,
+            'perm_appointments': False,
+            'perm_patients': False,
+            'perm_billing': False,
+            'perm_pharmacy': False,
+            'perm_lab': False,
+            'perm_hr_employees': False,
+            'perm_attendance': False,
+            'perm_time_off': False,
+            'perm_expenses': False,
+            'perm_asset_items': False,
+            'perm_asset_requests': False,
+            'perm_masters': False,
+            'perm_users': False,
+            'perm_can_delete': False,
+            'perm_can_approve': False,
+            'perm_can_collect_cash': False,
+            'perm_can_export': False,
+        }
+
+        if role_norm in ['admin', 'administrator', 'super admin']:
+            for k in defaults:
+                defaults[k] = True
+        elif role_norm == 'doctor':
+            defaults.update({
+                'perm_appointments': True,
+                'perm_patients': True,
+                'perm_lab': True,
+                'perm_can_export': True,
+            })
+        elif role_norm == 'receptionist':
+            defaults.update({
+                'perm_appointments': True,
+                'perm_patients': True,
+                'perm_billing': True,
+                'perm_can_collect_cash': True,
+            })
+        elif role_norm == 'pharmacist':
+            defaults.update({
+                'perm_pharmacy': True,
+                'perm_billing': True,
+                'perm_can_collect_cash': True,
+            })
+        elif role_norm in ['lab technician', 'lab manager', 'lab master']:
+            defaults.update({
+                'perm_lab': True,
+                'perm_can_export': True,
+            })
+        elif role_norm in ['hr manager', 'hr executive']:
+            defaults.update({
+                'perm_hr_employees': True,
+                'perm_attendance': True,
+                'perm_time_off': True,
+                'perm_expenses': True,
+                'perm_can_approve': True,
+                'perm_can_export': True,
+            })
+        elif role_norm == 'asset manager':
+            defaults.update({
+                'perm_asset_items': True,
+                'perm_asset_requests': True,
+                'perm_can_approve': True,
+                'perm_can_export': True,
+            })
+        return defaults
+
+    def action_reset_permissions(self):
+        self.ensure_one()
+        role_name = self.role_id.name if self.role_id else ''
+        defaults = self._get_default_permissions_for_role(role_name)
+        self.write(defaults)
+        self._sync_permissions_to_odoo_user()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Permissions Reset',
+                'message': f"Permissions for {self.name} have been reset to defaults for role '{role_name}'.",
+                'type': 'info',
+                'sticky': False,
+            }
+        }
+
+    # -------------------------------------------------
+    # SYNC PERMISSIONS TO ODOO USER (GROUPS & ACTION)
+    # -------------------------------------------------
+
+    def _sync_permissions_to_odoo_user(self):
+        for rec in self:
+            if not rec.odoo_user_id:
+                continue
+
+            user = rec.odoo_user_id.sudo()
+            group_ids = set()
+
+            # Always Internal User
+            internal_user_group = self.env.ref('base.group_user', raise_if_not_found=False)
+            if internal_user_group:
+                group_ids.add(internal_user_group.id)
+
+            # Primary Role group
+            primary_group = rec._get_odoo_group_for_role()
+            if primary_group:
+                group_ids.add(primary_group.id)
+
+            # Export
+            if rec.perm_can_export:
+                g = self.env.ref('base.group_allow_export', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Billing
+            if rec.perm_billing:
+                g = self.env.ref('hospital_management.group_hospital_billing', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Pharmacy
+            if rec.perm_pharmacy:
+                g = self.env.ref('hospital_management.group_hospital_pharmacist', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Lab
+            if rec.perm_lab:
+                g = self.env.ref('hospital_management.group_hospital_lab_technician', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Appointments
+            if rec.perm_appointments:
+                g = self.env.ref('hospital_management.group_hospital_receptionist', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Patients
+            if rec.perm_patients:
+                g = self.env.ref('hospital_management.group_hospital_doctor', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # HR Employees
+            if rec.perm_hr_employees:
+                g = self.env.ref('hr.group_hr_manager' if rec.perm_can_approve else 'hr.group_hr_user', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+                g_hr = self.env.ref('hospital_management.group_hospital_hr', raise_if_not_found=False)
+                if g_hr:
+                    group_ids.add(g_hr.id)
+
+            # Attendance
+            if rec.perm_attendance:
+                g = self.env.ref('hr_attendance.group_hr_attendance_manager' if rec.perm_can_approve else 'hr_attendance.group_hr_attendance_user', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Time Off
+            if rec.perm_time_off:
+                g = self.env.ref('hr_holidays.group_hr_holidays_manager' if rec.perm_can_approve else 'hr_holidays.group_hr_holidays_user', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Expenses
+            if rec.perm_expenses:
+                g = self.env.ref('hr_expense.group_hr_expense_manager' if rec.perm_can_approve else 'hr_expense.group_hr_expense_team_approver', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Asset Items
+            if rec.perm_asset_items:
+                g = self.env.ref('maintenance.group_equipment_manager', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Asset Requests
+            if rec.perm_asset_requests:
+                g = self.env.ref('hospital_hr_asset.group_hospital_asset_manager', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Masters / Users / Admin
+            if rec.perm_masters and rec.perm_users:
+                g = self.env.ref('hospital_management.group_hospital_admin', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
+            # Route & Landing Action
+            role_name = (rec.role_id.name or '').strip().lower()
+            if role_name in ['hr manager', 'hr executive'] or (rec.perm_hr_employees and not any([rec.perm_appointments, rec.perm_patients, rec.perm_pharmacy, rec.perm_lab])):
+                dashboard_action = self.env.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+            else:
+                dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
+
+            write_vals = {
+                'group_ids': [(6, 0, list(group_ids))]
+            }
+            if dashboard_action:
+                write_vals['action_id'] = dashboard_action.id
+
+            user.write(write_vals)
 
     def _update_odoo_user_group(self):
         self.ensure_one()
+        self._sync_permissions_to_odoo_user()
 
-        if not self.odoo_user_id:
-            return
+    # -------------------------------------------------
+    # HR EMPLOYEE BI-DIRECTIONAL LINK & SYNC
+    # -------------------------------------------------
 
-        group = self._get_odoo_group_for_role()
+    def _get_or_create_hr_department(self, hospital_department):
+        if not hospital_department:
+            return False
+        HrDepartment = self.env['hr.department'].sudo()
+        name = hospital_department.name.strip()
+        dept = HrDepartment.search([('name', '=ilike', name)], limit=1)
+        if not dept:
+            dept = HrDepartment.create({'name': name})
+        return dept.id
 
-        self.odoo_user_id.sudo().write({
-            'group_ids': [
-                (5, 0, 0),
-                (4, self.env.ref('base.group_user').id),
-                (4, group.id),
-            ],
-        })
+    def _get_or_create_hr_job(self, hospital_designation, hr_department_id=False):
+        if not hospital_designation:
+            return False
+        HrJob = self.env['hr.job'].sudo()
+        name = hospital_designation.name.strip()
+        job = HrJob.search([('name', '=ilike', name)], limit=1)
+        if not job:
+            vals = {'name': name}
+            if hr_department_id:
+                vals['department_id'] = hr_department_id
+            job = HrJob.create(vals)
+        return job.id
+
+    def _sync_hr_employee(self):
+        HrEmployee = self.env['hr.employee'].sudo()
+        for rec in self:
+            emp = rec.hr_employee_id
+            if not emp and rec.odoo_user_id:
+                emp = HrEmployee.search([('user_id', '=', rec.odoo_user_id.id)], limit=1)
+            if not emp and rec.login:
+                emp = HrEmployee.search([
+                    '|',
+                    ('work_email', '=', rec.email or rec.login),
+                    ('name', '=ilike', rec.name.strip())
+                ], limit=1)
+
+            dept_id = rec._get_or_create_hr_department(rec.department_id) if rec.department_id else False
+            job_id = rec._get_or_create_hr_job(rec.designation_id, dept_id) if rec.designation_id else False
+
+            vals = {
+                'name': rec.name,
+                'work_email': rec.email or (rec.odoo_user_id.email if rec.odoo_user_id else rec.login),
+                'work_phone': rec.mobile or False,
+                'active': rec.active,
+            }
+            if rec.odoo_user_id:
+                vals['user_id'] = rec.odoo_user_id.id
+            if dept_id:
+                vals['department_id'] = dept_id
+            if job_id:
+                vals['job_id'] = job_id
+            if rec.gender:
+                if 'sex' in HrEmployee._fields: vals['sex'] = rec.gender
+            if rec.date_of_birth:
+                vals['birthday'] = rec.date_of_birth
+
+            if emp:
+                emp.write(vals)
+            else:
+                emp = HrEmployee.create(vals)
+
+            if rec.hr_employee_id != emp:
+                rec.sudo().write({'hr_employee_id': emp.id})
+
+    def action_open_hr_employee(self):
+        self.ensure_one()
+        if not self.hr_employee_id:
+            self._sync_hr_employee()
+        if not self.hr_employee_id:
+            raise ValidationError("No linked HR Employee record found.")
+        return {
+            'name': 'HR Employee Profile',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr.employee',
+            'res_id': self.hr_employee_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
 
     # UPDATE ODOO USER ACCOUNT
 
@@ -409,6 +797,10 @@ class HospitalUser(models.Model):
         self.department_id = False
         self.designation_id = False
         self.reporting_to_id = False
+        if self.role_id:
+            defaults = self._get_default_permissions_for_role(self.role_id.name)
+            for k, v in defaults.items():
+                setattr(self, k, v)
 
     @api.onchange('department_id')
     def _onchange_department_id(self):
@@ -506,6 +898,13 @@ class HospitalUser(models.Model):
 
             # Create actual Odoo login account
             record._create_odoo_user(password)
+
+            # Initialize role defaults if permissions were not passed
+            if not any(k.startswith('perm_') for k in vals):
+                defaults = record._get_default_permissions_for_role(record.role_id.name if record.role_id else '')
+                record.sudo().write(defaults)
+            record._sync_permissions_to_odoo_user()
+            record._sync_hr_employee()
 
             # Remove plain password from hospital.user
             record.sudo().write({
@@ -880,6 +1279,18 @@ class HospitalUser(models.Model):
                     previous_value=old_value,
                     new_value=new_value,
                 )
+
+        # Sync permissions if role or permissions changed
+        perm_keys = [k for k in vals if k.startswith('perm_') or k == 'role_id']
+        if perm_keys:
+            for record in self:
+                record._sync_permissions_to_odoo_user()
+
+        # Sync HR employee if personal or work details changed
+        hr_keys = ['name', 'email', 'mobile', 'department_id', 'designation_id', 'active', 'gender', 'date_of_birth', 'role_id']
+        if any(k in vals for k in hr_keys):
+            for record in self:
+                record._sync_hr_employee()
 
         return result
 

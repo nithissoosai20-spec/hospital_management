@@ -13,6 +13,18 @@
     />
 
 
+    <!-- HR DASHBOARD -->
+    <!-- HR MANAGER ONLY -->
+    <menuitem
+        id="menu_hospital_dashboard_hr"
+        name="Dashboard"
+        parent="menu_hospital_management"
+        action="action_hospital_hr_dashboard"
+        sequence="5"
+        groups="hospital_management.group_hospital_hr"
+    />
+
+
     <!-- ADMIN DASHBOARD -->
     <!-- ADMIN + SUPER ADMIN -->
 
@@ -333,6 +345,34 @@
     </record>
 
     <record id="account.menu_finance" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+        <!-- HIDE SECONDARY MODULE DASHBOARDS (KEEP ONLY MAIN DASHBOARD) -->
+    <!-- ATTENDANCES NAVIGATION CONFIGURATION -->
+    <menuitem id="menu_hospital_attendance_records"
+              name="Attendance Records"
+              parent="hr_attendance.menu_hr_attendance_root"
+              action="action_hospital_all_attendances"
+              sequence="1"
+              groups="hr_attendance.group_hr_attendance_officer"/>
+
+    <!-- Rename Management to Overtime Approvals to avoid confusion -->
+    <record id="hr_attendance.menu_hr_attendance_view_attendances_management" model="ir.ui.menu">
+        <field name="name">Overtime Approvals</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Hide redundant Overview sub-folder -->
+    <record id="hr_attendance.menu_hr_attendance_overview" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="hr_attendance.menu_hr_attendance_view_dashboard" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <record id="hr_holidays.hr_leave_menu_new_request" model="ir.ui.menu">
         <field name="active" eval="False"/>
     </record>
 

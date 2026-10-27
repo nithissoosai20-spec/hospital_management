@@ -65,6 +65,7 @@
 
     <record id="role_doctor" model="hospital.role">
         <field name="name">Doctor</field>
+        <field name="shift_hours">5.0</field>
 
         <field name="department_ids" eval="[(6, 0, [
             ref('department_general_medicine'),
@@ -80,6 +81,7 @@
 
     <record id="role_nurse" model="hospital.role">
         <field name="name">Nurse</field>
+        <field name="shift_hours">7.0</field>
 
         <field name="department_ids" eval="[(6, 0, [
             ref('department_nursing')
@@ -89,6 +91,7 @@
 
     <record id="role_receptionist" model="hospital.role">
         <field name="name">Receptionist</field>
+        <field name="shift_hours">8.0</field>
 
         <field name="department_ids" eval="[(6, 0, [
             ref('department_administration')
@@ -98,6 +101,7 @@
 
     <record id="role_pharmacist" model="hospital.role">
         <field name="name">Pharmacist</field>
+        <field name="shift_hours">8.0</field>
 
         <field name="department_ids" eval="[(6, 0, [
             ref('department_pharmacy')
@@ -107,6 +111,7 @@
 
     <record id="role_staff" model="hospital.role">
         <field name="name">Staff</field>
+        <field name="shift_hours">8.0</field>
 
         <field name="department_ids" eval="[(6, 0, [
             ref('department_operations'),
@@ -116,6 +121,7 @@
 
     <record id="role_hr_manager" model="hospital.role">
         <field name="name">HR Manager</field>
+        <field name="shift_hours">8.0</field>
         <field name="department_ids" eval="[(6, 0, [
             ref('department_human_resources')
         ])]"/>
@@ -123,6 +129,7 @@
 
     <record id="role_asset_manager" model="hospital.role">
         <field name="name">Asset Manager</field>
+        <field name="shift_hours">8.0</field>
         <field name="department_ids" eval="[(6, 0, [
             ref('department_maintenance')
         ])]"/>

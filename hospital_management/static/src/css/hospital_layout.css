@@ -336,7 +336,7 @@
  */
 
 
-/* 1. FORM VIEW / RENDERER */
+/* 1. FORM VIEW / RENDERER - FULL APPLICATION WIDTH */
 
 .o_form_view {
     width: 100% !important;
@@ -350,11 +350,10 @@
     max-width: 100% !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
-    overflow-x: hidden !important;
 }
 
 
-/* 2. REMOVE ODOO SHEET SIDE SPACE */
+/* 2. REMOVE ODOO SHEET SIDE SPACE - FULL WIDTH CANVAS */
 
 .o_form_view .o_form_sheet_bg {
     width: 100% !important;
@@ -362,24 +361,17 @@
     min-width: 0 !important;
 
     margin: 0 !important;
-    padding-left: 3px !important;
-    padding-right: 3px !important;
+    padding: 0 !important;
 
     box-sizing: border-box !important;
-    overflow-x: hidden !important;
 }
 
 .o_form_view .o_form_sheet_bg .o_form_sheet {
     width: 100% !important;
-    max-width: none !important;
+    max-width: 100% !important;
     min-width: 0 !important;
 
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-
+    margin: 0 !important;
     box-sizing: border-box !important;
 }
 
@@ -473,13 +465,13 @@
 }
 
 
-/* 9. NO HORIZONTAL SCROLL */
+/* 9. NO HORIZONTAL SCROLL (APPOINTMENT FORM ONLY) */
 
-.o_form_view,
-.o_form_view .o_form_sheet_bg,
-.o_form_view .o_form_sheet,
-.o_form_view .hospital_appointment_sheet,
-.o_form_view .o_form_renderer {
+.hospital_appointment_form.o_form_view,
+.hospital_appointment_form .o_form_sheet_bg,
+.hospital_appointment_form .o_form_sheet,
+.hospital_appointment_form .hospital_appointment_sheet,
+.hospital_appointment_form .o_form_renderer {
     overflow-x: hidden !important;
 }
 
@@ -523,16 +515,16 @@
 }
 
 
-/* 13. WIDE DESKTOP */
+/* 13. WIDE DESKTOP (APPOINTMENT FORM ONLY) */
 
 @media (min-width: 1200px) {
 
-    .o_form_view .o_form_sheet_bg {
+    .hospital_appointment_form .o_form_sheet_bg {
         padding-left: 2px !important;
         padding-right: 2px !important;
     }
 
-    .o_form_view .hospital_appointment_sheet {
+    .hospital_appointment_form .hospital_appointment_sheet {
         width: 100% !important;
         max-width: none !important;
     }
@@ -542,25 +534,25 @@
 
 
 /* ------------------------------------------------------------
-   1. REMOVE EXTRA OUTER FORM SPACE
+   1. REMOVE EXTRA OUTER FORM SPACE (APPOINTMENT FORM ONLY)
    ------------------------------------------------------------ */
 
-.o_form_view {
+.hospital_appointment_form.o_form_view {
     padding: 0 !important;
     margin: 0 !important;
 }
 
-.o_form_view .o_form_renderer {
+.hospital_appointment_form .o_form_renderer {
     padding: 0 !important;
     margin: 0 !important;
 }
 
-.o_form_view .o_form_sheet_bg {
+.hospital_appointment_form .o_form_sheet_bg {
     padding: 2px 4px !important;
     margin: 0 !important;
 }
 
-.o_form_view .o_form_sheet {
+.hospital_appointment_form .o_form_sheet {
     margin: 0 !important;
     padding: 4px 6px !important;
     width: 100% !important;
@@ -812,55 +804,55 @@
 
 
 /* ------------------------------------------------------------
-   15. REMOVE ODD BLANK SPACE CREATED BY ODOO
+   15. REMOVE ODD BLANK SPACE CREATED BY ODOO (APPOINTMENT ONLY)
    ------------------------------------------------------------ */
 
-.o_form_view .o_form_sheet .o_inner_group,
-.o_form_view .o_form_sheet .o_group {
+.hospital_appointment_form .o_form_sheet .o_inner_group,
+.hospital_appointment_form .o_form_sheet .o_group {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
 
 
 /* ------------------------------------------------------------
-   16. NO HORIZONTAL SCROLL
+   16. NO HORIZONTAL SCROLL (APPOINTMENT ONLY)
    ------------------------------------------------------------ */
 
-.o_form_view,
-.o_form_view .o_form_renderer,
-.o_form_view .o_form_sheet_bg,
-.o_form_view .o_form_sheet {
+.hospital_appointment_form.o_form_view,
+.hospital_appointment_form .o_form_renderer,
+.hospital_appointment_form .o_form_sheet_bg,
+.hospital_appointment_form .o_form_sheet {
     overflow-x: hidden !important;
 }
 
 
 /* ------------------------------------------------------------
-   17. USE EVERY PIXEL OF AVAILABLE WIDTH
+   17. USE EVERY PIXEL OF AVAILABLE WIDTH (APPOINTMENT ONLY)
    ------------------------------------------------------------ */
 
-.o_form_view .o_form_sheet_bg {
+.hospital_appointment_form .o_form_sheet_bg {
     width: 100% !important;
     max-width: 100% !important;
 }
 
-.o_form_view .o_form_sheet {
+.hospital_appointment_form .o_form_sheet {
     width: 100% !important;
     max-width: 100% !important;
 }
 
 
 /* ------------------------------------------------------------
-   18. DESKTOP
+   18. DESKTOP (APPOINTMENT ONLY)
    ------------------------------------------------------------ */
 
 @media (min-width: 1200px) {
 
-    .o_form_view .o_form_sheet_bg {
+    .hospital_appointment_form .o_form_sheet_bg {
         padding-left: 2px !important;
         padding-right: 2px !important;
     }
 
-    .o_form_view .o_form_sheet {
+    .hospital_appointment_form .o_form_sheet {
         padding-left: 5px !important;
         padding-right: 5px !important;
     }
@@ -1037,11 +1029,51 @@ html body:has(.rdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active {
    ============================================================ */
 
 /* Form sheet layout - light grey background with white panels */
-.o_form_view .o_form_sheet_bg {
+.o_form_view:not(:has(.hrdb-sheet)):not(:has(.hrdb-form)):not(:has(.adb)):not(:has(.ddb)):not(:has(.rdb)):not(:has(.pdb)) .o_form_sheet_bg {
     background-color: #f4f5f7 !important;
+    padding: 16px 24px !important;
+    overflow: visible !important;
 }
 
-.o_form_view .o_form_sheet {
+/* DASHBOARDS - 100% FULL WIDTH, BORDERLESS, NO CARD BOX */
+.o_form_view:has(.hrdb-sheet),
+.o_form_view:has(.hrdb-sheet) .o_form_renderer,
+.o_form_view:has(.hrdb-sheet) .o_form_sheet_bg,
+.o_form_view:has(.hrdb-sheet) .o_form_sheet,
+.o_form_view:has(.hrdb-form),
+.o_form_view:has(.hrdb-form) .o_form_renderer,
+.o_form_view:has(.hrdb-form) .o_form_sheet_bg,
+.o_form_view:has(.hrdb-form) .o_form_sheet,
+.o_form_view:has(.adb) .o_form_sheet,
+.o_form_view:has(.ddb) .o_form_sheet,
+.o_form_view:has(.rdb) .o_form_sheet,
+.o_form_view:has(.pdb) .o_form_sheet,
+.hrdb-sheet,
+.hrdb-form {
+    background-color: #f8fafc !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+}
+
+/* Regular forms (Patient, Employee, User, Attendance) - Clean Full Width with comfortable padding */
+.o_form_view:not(.hospital_appointment_form):not(:has(.hrdb-sheet)):not(:has(.hrdb-form)):not(:has(.adb)):not(:has(.ddb)):not(:has(.rdb)):not(:has(.pdb)) .o_form_sheet {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    padding: 24px 32px !important;
+    border-radius: 6px !important;
+    overflow: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+.hospital_appointment_form .o_form_sheet {
     background-color: #ffffff !important;
     border: 1px solid #d1d5db !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
@@ -1098,7 +1130,10 @@ html body:has(.rdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active {
     border: none !important;
     background-color: transparent !important;
     padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     margin-bottom: 12px !important;
+    overflow: visible !important;
 }
 
 /* Inner groups (columns) within groups */
@@ -1106,14 +1141,20 @@ html body:has(.rdb) .o_control_panel .o_breadcrumb .breadcrumb-item.active {
     border: none !important;
     background-color: transparent !important;
     padding: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: visible !important;
 }
 
-/* Ensure labels are properly aligned to the left/right in columns */
+/* Ensure labels are properly aligned to the left/right in columns without clipping */
 .o_form_view .o_form_sheet .o_form_label {
     font-weight: 600 !important;
     color: #4b5563 !important;
+    padding-left: 2px !important;
     padding-right: 12px !important;
+    margin-left: 0 !important;
     white-space: nowrap !important;
+    overflow: visible !important;
 }
 
 /* Notebook (tabs container) */

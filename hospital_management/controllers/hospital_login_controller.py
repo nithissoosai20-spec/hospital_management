@@ -1,6 +1,7 @@
 from odoo import http, fields
 from odoo.http import request
 from odoo.addons.web.controllers.session import Session
+from odoo.addons.web.controllers.home import Home
 
 class HospitalSession(Session):
 
@@ -34,3 +35,30 @@ class HospitalSession(Session):
                 pass
                 
         return super(HospitalSession, self).logout(redirect=redirect)
+
+
+class HospitalHome(Home):
+
+    def _login_redirect(self, uid, redirect=None):
+        user = request.env['res.users'].sudo().browse(uid)
+
+        action = user.action_id
+        if not action:
+            h_user = request.env['hospital.user'].sudo().search([('odoo_user_id', '=', user.id)], limit=1)
+            if h_user and h_user.role_id:
+                rname = (h_user.role_id.name or '').strip().lower()
+                if rname in ['hr manager', 'hr executive']:
+                    action = request.env.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+                else:
+                    action = request.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
+
+        # Strip stale app redirects that stick to the URL when logging out or refreshing
+        if redirect and any(stale in redirect.lower() for stale in ['time off', 'time%20off', 'time-off']):
+            redirect = None
+
+        if not redirect and action:
+            if action.path:
+                return f"/odoo/{action.path}"
+            return f"/odoo/action-{action.id}"
+
+        return super()._login_redirect(uid, redirect=redirect)

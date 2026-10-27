@@ -2,6 +2,7 @@ from odoo import models, fields
 
 class HospitalLabDashboard(models.Model):
     _name = 'hospital.lab.dashboard'
+    _inherit = ['hospital.staff.self.service.mixin']
     _description = 'Lab Dashboard'
 
     name = fields.Char(default='Lab Dashboard', readonly=True)

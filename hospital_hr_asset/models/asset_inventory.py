@@ -48,9 +48,10 @@ class HospitalAssetItem(models.Model):
     _description = 'Asset Item'
     _rec_name = 'item_name'
 
-    _sql_constraints = [
-        ('item_code_uniq', 'UNIQUE(item_code)', 'This Item Code already exists! Please use a unique Item Code.')
-    ]
+    _item_code_uniq = models.Constraint(
+        'UNIQUE(item_code)',
+        'This Item Code already exists! Please use a unique Item Code.'
+    )
 
     @api.constrains('batch_number')
     def _check_unique_batch_number(self):
