@@ -294,6 +294,11 @@ class HospitalUser(models.Model):
         default=False,
         help='Allow creating hospital users and managing permissions'
     )
+    perm_emergency = fields.Boolean(
+        string='Emergency Treatment',
+        default=False,
+        help='Allow viewing and managing Emergency Treatment & Inpatient admissions'
+    )
 
     # ACTION / CAPABILITY PERMISSIONS (Admin Configurable)
     perm_can_delete = fields.Boolean(
@@ -374,6 +379,8 @@ class HospitalUser(models.Model):
             'administrator': 'group_hospital_admin',
             'hr executive': 'group_hospital_hr',
             'hr manager': 'group_hospital_hr',
+            'emergency ward': 'group_hospital_emergency_ward',
+            'observation ward': 'group_hospital_emergency_ward',
             'super admin': 'group_hospital_super_admin',
         }
         xml_id = role_group_map.get(role_name)
@@ -389,6 +396,11 @@ class HospitalUser(models.Model):
         return self.env.ref(
             'hospital_management.group_hospital_user'
         )
+
+    @api.onchange('password')
+    def _onchange_password(self):
+        if self.password:
+            self.password_confirm = self.password
 
     # CREATE ODOO USER
 
@@ -423,6 +435,16 @@ class HospitalUser(models.Model):
         role_name = (self.role_id.name or '').strip().lower()
         if role_name in ['hr manager', 'hr executive']:
             dashboard_action = self.env.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+        elif role_name == 'receptionist':
+            dashboard_action = self.env.ref('hospital_management.action_hospital_reception_dashboard', raise_if_not_found=False)
+        elif role_name == 'doctor':
+            dashboard_action = self.env.ref('hospital_management.action_hospital_doctor_dashboard', raise_if_not_found=False)
+        elif role_name == 'lab technician':
+            dashboard_action = self.env.ref('hospital_management.action_hospital_lab_dashboard', raise_if_not_found=False)
+        elif role_name == 'pharmacist':
+            dashboard_action = self.env.ref('hospital_management.action_hospital_pharmacy_dashboard_form', raise_if_not_found=False)
+        elif role_name in ['admin', 'administrator', 'super admin']:
+            dashboard_action = self.env.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
         else:
             dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
         action_id = dashboard_action.id if dashboard_action else False
@@ -479,6 +501,7 @@ class HospitalUser(models.Model):
             'perm_asset_requests': False,
             'perm_masters': False,
             'perm_users': False,
+            'perm_emergency': False,
             'perm_can_delete': False,
             'perm_can_approve': False,
             'perm_can_collect_cash': False,
@@ -500,7 +523,13 @@ class HospitalUser(models.Model):
                 'perm_appointments': True,
                 'perm_patients': True,
                 'perm_billing': True,
+                'perm_emergency': True,
                 'perm_can_collect_cash': True,
+            })
+        elif role_norm in ['emergency ward', 'observation ward']:
+            defaults.update({
+                'perm_emergency': True,
+                'perm_patients': True,
             })
         elif role_norm == 'pharmacist':
             defaults.update({
@@ -582,29 +611,8 @@ class HospitalUser(models.Model):
                 if g:
                     group_ids.add(g.id)
 
-            # Pharmacy
-            if rec.perm_pharmacy:
-                g = self.env.ref('hospital_management.group_hospital_pharmacist', raise_if_not_found=False)
-                if g:
-                    group_ids.add(g.id)
-
-            # Lab
-            if rec.perm_lab:
-                g = self.env.ref('hospital_management.group_hospital_lab_technician', raise_if_not_found=False)
-                if g:
-                    group_ids.add(g.id)
-
-            # Appointments
-            if rec.perm_appointments:
-                g = self.env.ref('hospital_management.group_hospital_receptionist', raise_if_not_found=False)
-                if g:
-                    group_ids.add(g.id)
-
-            # Patients
-            if rec.perm_patients:
-                g = self.env.ref('hospital_management.group_hospital_doctor', raise_if_not_found=False)
-                if g:
-                    group_ids.add(g.id)
+            # Role-specific access groups are determined by primary role above (_get_odoo_group_for_role).
+            # Feature permissions must not cross-contaminate other roles' primary groups.
 
             # HR Employees
             if rec.perm_hr_employees:
@@ -651,10 +659,26 @@ class HospitalUser(models.Model):
                 if g:
                     group_ids.add(g.id)
 
+            # Emergency Treatment
+            if rec.perm_emergency:
+                g = self.env.ref('hospital_management.group_hospital_emergency_ward', raise_if_not_found=False)
+                if g:
+                    group_ids.add(g.id)
+
             # Route & Landing Action
             role_name = (rec.role_id.name or '').strip().lower()
             if role_name in ['hr manager', 'hr executive'] or (rec.perm_hr_employees and not any([rec.perm_appointments, rec.perm_patients, rec.perm_pharmacy, rec.perm_lab])):
                 dashboard_action = self.env.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+            elif role_name == 'receptionist':
+                dashboard_action = self.env.ref('hospital_management.action_hospital_reception_dashboard', raise_if_not_found=False)
+            elif role_name == 'doctor':
+                dashboard_action = self.env.ref('hospital_management.action_hospital_doctor_dashboard', raise_if_not_found=False)
+            elif role_name == 'lab technician':
+                dashboard_action = self.env.ref('hospital_management.action_hospital_lab_dashboard', raise_if_not_found=False)
+            elif role_name == 'pharmacist':
+                dashboard_action = self.env.ref('hospital_management.action_hospital_pharmacy_dashboard_form', raise_if_not_found=False)
+            elif role_name in ['admin', 'administrator', 'super admin']:
+                dashboard_action = self.env.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
             else:
                 dashboard_action = self.env.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
 
@@ -906,9 +930,10 @@ class HospitalUser(models.Model):
             record._sync_permissions_to_odoo_user()
             record._sync_hr_employee()
 
-            # Remove plain password from hospital.user
+            # Keep synchronized password on hospital.user
             record.sudo().write({
-                'password': False,
+                'password': password,
+                'password_confirm': password,
                 'password_last_changed': fields.Datetime.now(),
             })
 
@@ -1040,23 +1065,26 @@ class HospitalUser(models.Model):
         # Update actual Odoo login password
         # -------------------------------------------------
 
-        if password:
-            if password != password_confirm and password_confirm is not False:
+        new_password = password or password_confirm
+        if new_password:
+            if password and password_confirm and password != password_confirm:
                 raise ValidationError("Passwords do not match!")
-            self._validate_password_strength(password)
+            self._validate_password_strength(new_password)
 
             for record in self:
 
                 if record.odoo_user_id:
-
                     record._update_odoo_user_password(
-                        password
+                        new_password
                     )
+                else:
+                    record._create_odoo_user(new_password)
 
-                record.sudo().write({
-                    'password_last_changed':
-                        fields.Datetime.now(),
-                })
+                self.env.cr.execute(
+                    "UPDATE hospital_user SET password = %s, password_confirm = %s, password_last_changed = %s WHERE id = %s",
+                    (new_password, new_password, fields.Datetime.now(), record.id)
+                )
+                record.invalidate_recordset(['password', 'password_confirm', 'password_last_changed'])
 
                 record._create_activity(
                     action='password_changed',

@@ -1,0 +1,11 @@
+.o_lab_billing {
+    user-select: none;
+}
+.o_lab_billing input[type="text"],
+.o_lab_billing input[type="number"],
+.o_lab_billing select {
+    box-shadow: none !important;
+}
+.o_lab_billing .table th {
+    white-space: nowrap;
+}

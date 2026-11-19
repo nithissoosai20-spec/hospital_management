@@ -264,20 +264,30 @@ function injectPageTitle() {
 
 let observerTimer = null;
 function startObserving() {
-    const targetNode = document.body;
+    const actionManager = document.querySelector('.o_action_manager');
+    if (!actionManager) {
+        setTimeout(startObserving, 200);
+        return;
+    }
     const config = { childList: true, subtree: true };
 
-    const callback = function(mutationsList, observer) {
+    const callback = function(mutationsList) {
+        // Ignore mutations within banner itself to avoid loops
+        const onlyBannerMutations = mutationsList.every(m => 
+            m.target.closest && m.target.closest('.hospital-page-title-banner')
+        );
+        if (onlyBannerMutations) return;
+
         if (observerTimer) clearTimeout(observerTimer);
         observerTimer = setTimeout(() => {
             if (document.querySelector('.o_action_manager')) {
                 injectPageTitle();
             }
-        }, 50);
+        }, 120);
     };
 
     const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
+    observer.observe(actionManager, config);
 }
 
 if (document.readyState === 'loading') {
@@ -587,13 +597,24 @@ async function _fetchAndNavigate(xmlId) {
         });
     }
 
+    let vendorTimer = null;
     const observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType !== 1) return;
-                setTimeout(function() { injectNewVendorBtn(node); }, 80);
-            });
-        });
+        let hasModal = false;
+        for (let i = 0; i < mutations.length; i++) {
+            const added = mutations[i].addedNodes;
+            for (let j = 0; j < added.length; j++) {
+                const node = added[j];
+                if (node.nodeType === 1 && (node.classList?.contains('modal') || node.querySelector?.('.modal'))) {
+                    hasModal = true;
+                    break;
+                }
+            }
+            if (hasModal) break;
+        }
+        if (hasModal) {
+            if (vendorTimer) clearTimeout(vendorTimer);
+            vendorTimer = setTimeout(function() { injectNewVendorBtn(document.body); }, 80);
+        }
     });
 
     function startObserving() {
@@ -669,75 +690,58 @@ async function _fetchAndNavigate(xmlId) {
     }, true); // true = capture phase so we intercept before Odoo's router
 })();
 
+// --- DYNAMIC NEW BUTTON TEXT (Hospital UI Tweak - Safe & Debounced) ---
 (function() {
-    document.addEventListener('DOMContentLoaded', () => {
-        const observer = new MutationObserver((mutations) => {
-            const breadcrumbs = document.querySelector('.o_control_panel_breadcrumbs .breadcrumb-item.active, .o_breadcrumb .active, .o_last_breadcrumb_item');
-            if (breadcrumbs) {
-                const title = breadcrumbs.textContent.trim().toUpperCase();
-                const newBtn = document.querySelector('.o_list_button_add, .o_control_panel_main_buttons button.btn-primary');
-                
-                if (newBtn && newBtn.textContent.trim() === 'New') {
-                    if (title === 'PURCHASE INVOICES') {
-                        newBtn.textContent = 'New Purchase Invoice';
-                    } else if (title === 'VENDOR PAYMENTS') {
-                        newBtn.textContent = 'New Payment';
-                    } else if (title === 'CONSULTATION FEES') {
-                        newBtn.textContent = 'New Consultation Fees';
-                    } else if (title === 'CONSULTATION TYPES') {
-                        newBtn.textContent = 'New Consultation Type';
-                    } else if (title === 'LAB FEES') {
-                        newBtn.textContent = 'New Lab Fees';
-                    } else if (title === 'USERS') {
-                        newBtn.textContent = 'New User';
-                    } else if (title === 'PHARMACY STOCK') {
-                        newBtn.textContent = 'New Stock';
-                    }
-                }
-            }
-
-        });
-        if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
-        }
-    });
-})();
-
-// --- DYNAMIC NEW BUTTON TEXT (Hospital UI Tweak) ---
-(function() {
+    let updateTimer = null;
     function updateNewButtons() {
-        let modelName = '';
-        const breadcrumbs = document.querySelectorAll('.o_control_panel_breadcrumbs .breadcrumb-item, .o_breadcrumb li');
-        if (breadcrumbs.length > 0) {
-            modelName = breadcrumbs[0].textContent.trim();
+        const breadcrumbEl = document.querySelector('.o_control_panel_breadcrumbs .breadcrumb-item.active, .o_breadcrumb .active, .o_last_breadcrumb_item, .breadcrumb-item');
+        let title = breadcrumbEl ? breadcrumbEl.textContent.trim() : '';
+        if (!title) {
+            const pageBanner = document.querySelector('.hospital-page-title-banner span');
+            if (pageBanner) title = pageBanner.textContent.trim();
         }
-        if (!modelName) {
-            let fullTitle = document.title || '';
-            modelName = fullTitle.split(' - ')[0].trim();
+        if (!title && document.title) {
+            title = document.title.split('-')[0].trim();
         }
         
-        if (!modelName || modelName === 'Odoo') return;
-        
-        if (modelName.toLowerCase().includes('specification')) modelName = 'Specification';
-        else if (modelName === 'Items') modelName = 'Item';
-        else if (modelName.includes('Requests')) modelName = 'Asset Request';
-        else if (modelName.includes('Damaged')) modelName = 'Damage Record';
-        else if (modelName.endsWith('s') && modelName !== 'Asset PO') modelName = modelName.substring(0, modelName.length - 1);
-        
-        const listBtn = document.querySelector('.o_list_button_add');
-        const formBtn = document.querySelector('.o_form_button_create');
-        
-        if (listBtn && listBtn.textContent.trim() === 'New') listBtn.textContent = 'New ' + modelName;
-        if (formBtn && formBtn.textContent.trim() === 'New') formBtn.textContent = 'New ' + modelName;
+        const upper = title.toUpperCase();
+        let targetText = '';
+        if (upper === 'PURCHASE INVOICES') targetText = 'New Purchase Invoice';
+        else if (upper === 'VENDOR PAYMENTS') targetText = 'New Payment';
+        else if (upper === 'CONSULTATION FEES') targetText = 'New Consultation Fees';
+        else if (upper === 'CONSULTATION TYPES') targetText = 'New Consultation Type';
+        else if (upper === 'LAB FEES') targetText = 'New Lab Fees';
+        else if (upper === 'USERS') targetText = 'New User';
+        else if (upper === 'PHARMACY STOCK') targetText = 'New Stock';
+        else if (upper === 'MY PATIENTS QUEUE' || upper.includes('PATIENTS QUEUE')) targetText = 'New Patient';
+        else if (upper === 'PATIENTS') targetText = 'New Patient';
+        else if (upper === 'ITEMS') targetText = 'New Item';
+        else if (upper.includes('SPECIFICATION')) targetText = 'New Specification';
+        else if (upper.includes('REQUESTS')) targetText = 'New Asset Request';
+        else if (upper.includes('DAMAGED')) targetText = 'New Damage Record';
+
+        if (!targetText) return;
+
+        const buttons = document.querySelectorAll('.o_list_button_add, .o_control_panel_main_buttons button.btn-primary');
+        buttons.forEach(btn => {
+            if (btn && btn.textContent.trim() !== targetText) {
+                btn.textContent = targetText;
+            }
+        });
     }
 
-    const observer = new MutationObserver(() => { updateNewButtons(); });
+    const observer = new MutationObserver(() => {
+        if (updateTimer) clearTimeout(updateTimer);
+        updateTimer = setTimeout(updateNewButtons, 120);
+    });
+
     const initInterval = setInterval(() => {
-        if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+        const targetNode = document.querySelector('.o_action_manager') || document.body;
+        if (targetNode) {
+            observer.observe(targetNode, { childList: true, subtree: true });
             clearInterval(initInterval);
         }
-    }, 100);
+    }, 200);
 })();
 
 // ============================================================
@@ -834,12 +838,24 @@ async function _fetchAndNavigate(xmlId) {
         });
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPasswordToggles);
-    } else {
-        initPasswordToggles();
+    let pwdTimer = null;
+    function debouncedPasswordToggles() {
+        if (pwdTimer) clearTimeout(pwdTimer);
+        pwdTimer = setTimeout(initPasswordToggles, 150);
     }
-    const pwdObserver = new MutationObserver(initPasswordToggles);
-    pwdObserver.observe(document.documentElement, { childList: true, subtree: true });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', debouncedPasswordToggles);
+    } else {
+        debouncedPasswordToggles();
+    }
+    const pwdObserver = new MutationObserver(debouncedPasswordToggles);
+    const pwdInitInterval = setInterval(() => {
+        const actionManager = document.querySelector('.o_action_manager');
+        if (actionManager) {
+            pwdObserver.observe(actionManager, { childList: true, subtree: true });
+            clearInterval(pwdInitInterval);
+        }
+    }, 200);
 
 })();

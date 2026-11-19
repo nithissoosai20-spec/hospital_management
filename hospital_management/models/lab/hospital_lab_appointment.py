@@ -1,4 +1,5 @@
 import base64
+import pytz
 from pathlib import Path
 
 from odoo import models, fields, api
@@ -258,6 +259,7 @@ class HospitalLabAppointment(models.Model):
     payment_mode = fields.Selection(
         [
             ('none', 'None'),
+            ('cash', 'Cash'),
             ('card', 'Card'),
             ('upi', 'UPI'),
             ('bank', 'Bank Transfer'),
@@ -616,7 +618,7 @@ class HospitalLabAppointmentLine(models.Model):
         return lines
 
     def unlink(self):
-        # When a main test is deleted, also delete its auto-generated subtests
+        # When a main test is deleted, also delete its auto-generated subtests and sync draft bill
         for line in self:
             if not line.is_parameter and line.lab_test_id:
                 children = self.search([
@@ -625,6 +627,18 @@ class HospitalLabAppointmentLine(models.Model):
                     ('is_parameter', '=', True)
                 ])
                 children.unlink()
+                # Also remove from draft lab bill if exists
+                if line.lab_appointment_id:
+                    draft_bills = self.env['hospital.lab.bill'].search([
+                        ('lab_appointment_id', '=', line.lab_appointment_id.id),
+                        ('state', '=', 'draft')
+                    ])
+                    for db in draft_bills:
+                        b_lines = db.line_ids.filtered(lambda bl: bl.lab_test_id == line.lab_test_id)
+                        if b_lines:
+                            b_lines.unlink()
+                        if not db.line_ids:
+                            db.unlink()
         return super(HospitalLabAppointmentLine, self).unlink()
 
 

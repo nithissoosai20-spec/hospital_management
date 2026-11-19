@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="hospital_management.LabBilling">
+        <div class="o_lab_billing" style="padding:8px 15px 50px 15px; background:white; min-height:calc(100vh - 60px); box-sizing:border-box; font-family:sans-serif; font-size:11px; color:#1e293b; display:flex; flex-direction:column; overflow-y:auto;">
+            
+            <!-- SECTION 1: Patient Details & Admission Type -->
+            <div style="margin-bottom:2px; flex-shrink:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <h4 style="margin:0; color:#2563eb; font-size:13px; font-weight:700;">1. Patient / Admission Details</h4>
+                    <span t-if="state.currentBillId" style="font-weight:700; color:#2563eb; font-size:12px;">
+                        Bill No: <t t-esc="state.invoiceNo"/>
+                    </span>
+                </div>
+
+                <!-- WITH ADMISSION -->
+                <div t-if="state.admissionType === 'with_admission'">
+                    <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-bottom:4px;">
+                        <!-- Col 1: Admission Type -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Admission Type</label>
+                            <div style="display:flex; gap:10px; font-weight:600; color:#2563eb; align-items:center; height:26px;">
+                                <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
+                                    <input type="radio" name="labAdmissionType" t-model="state.admissionType" value="with_admission"/> With Admission
+                                </label>
+                                <label style="display:flex; align-items:center; gap:3px; cursor:pointer; color:#64748b;">
+                                    <input type="radio" name="labAdmissionType" t-model="state.admissionType" value="without_admission"/> Without Admission
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Patient ID -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Patient ID <span style="color:red;">*</span></label>
+                            <div style="display:flex;">
+                                <input type="text" class="form-control form-control-sm" t-model="state.patientSearchTerm" t-on-keydown="(ev) => this.onPatientSearchKeyDown(ev)" placeholder="Enter Patient ID (e.g. PT00014)..." style="height:26px; font-size:11px;"/>
+                                <button class="btn btn-sm btn-primary" t-on-click="searchPatient" style="height:26px; border-radius:0 4px 4px 0; background:#2563eb; border:none; padding:0 8px;">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Patient Name -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Patient Name</label>
+                            <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? state.patient.name : ''" readonly="readonly" style="height:26px; font-size:11px; background:#f1f5f9;"/>
+                        </div>
+
+                        <!-- Col 4: Gender / Age -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Gender / Age</label>
+                            <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? (state.patient.gender + ' / ' + state.patient.age + ' Yrs') : ''" readonly="readonly" style="height:26px; font-size:11px; background:#f1f5f9;"/>
+                        </div>
+
+                        <!-- Col 5: Referring Doctor -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Referring Doctor</label>
+                            <select class="form-select form-select-sm" t-model="state.selectedDoctor" style="height:26px; font-size:11px;">
+                                <option value="">-- Select Doctor --</option>
+                                <t t-foreach="state.doctors || []" t-as="doc" t-key="doc.id">
+                                    <option t-att-value="doc.id">Dr. <t t-esc="doc.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <!-- Row 2 -->
+                        <div style="grid-column: span 2;">
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Address</label>
+                            <input type="text" class="form-control form-control-sm" t-att-value="state.patient ? state.patient.address : ''" readonly="readonly" style="height:26px; font-size:11px; background:#f1f5f9;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Department</label>
+                            <select class="form-select form-select-sm" t-model="state.selectedDepartment" style="height:26px; font-size:11px;">
+                                <option value="">-- Select Department --</option>
+                                <t t-foreach="state.departments || []" t-as="dept" t-key="dept.id">
+                                    <option t-att-value="dept.id"><t t-esc="dept.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Bill Date</label>
+                            <input type="date" readonly="1" class="form-control form-control-sm" t-model="state.billDate" style="height:26px; font-size:11px; background:#f1f5f9; pointer-events:none;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Bill Time</label>
+                            <input type="time" readonly="1" class="form-control form-control-sm" t-model="state.billTime" style="height:26px; font-size:11px; background:#f1f5f9; pointer-events:none;"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WITHOUT ADMISSION (WALK-IN) -->
+                <div t-if="state.admissionType === 'without_admission'">
+                    <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:8px; margin-bottom:4px;">
+                        <!-- Col 1: Admission Type -->
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Admission Type</label>
+                            <div style="display:flex; gap:10px; font-weight:600; color:#2563eb; align-items:center; height:26px;">
+                                <label style="display:flex; align-items:center; gap:3px; cursor:pointer; color:#64748b;">
+                                    <input type="radio" name="labAdmissionTypeWalkin" t-model="state.admissionType" value="with_admission"/> With Admission
+                                </label>
+                                <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
+                                    <input type="radio" name="labAdmissionTypeWalkin" t-model="state.admissionType" value="without_admission"/> Without Admission
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Patient Name <span style="color:red;">*</span></label>
+                            <input type="text" class="form-control form-control-sm" t-model="state.walkinName" placeholder="Enter patient name..." style="height:26px; font-size:11px;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Phone Number</label>
+                            <input type="text" class="form-control form-control-sm" t-model="state.walkinPhone" placeholder="Enter phone..." style="height:26px; font-size:11px;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Gender / Age</label>
+                            <div style="display:flex; gap:6px;">
+                                <select class="form-select form-select-sm" t-model="state.walkinGender" style="height:26px; font-size:11px; width:60%;">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <input type="number" class="form-control form-control-sm" t-model="state.walkinAge" placeholder="Age" style="height:26px; font-size:11px; width:40%;"/>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Referring Doctor</label>
+                            <select class="form-select form-select-sm" t-model="state.selectedDoctor" style="height:26px; font-size:11px;">
+                                <option value="">-- Select Doctor (Optional) --</option>
+                                <t t-foreach="state.doctors || []" t-as="doc" t-key="doc.id">
+                                    <option t-att-value="doc.id">Dr. <t t-esc="doc.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+
+                        <!-- Row 2 Walkin -->
+                        <div style="grid-column: span 3;">
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Address</label>
+                            <input type="text" class="form-control form-control-sm" t-model="state.walkinAddress" placeholder="Enter residential address..." style="height:26px; font-size:11px;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Bill Date</label>
+                            <input type="date" readonly="1" class="form-control form-control-sm" t-model="state.billDate" style="height:26px; font-size:11px; background:#f1f5f9; pointer-events:none;"/>
+                        </div>
+
+                        <div>
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Bill Time</label>
+                            <input type="time" readonly="1" class="form-control form-control-sm" t-model="state.billTime" style="height:26px; font-size:11px; background:#f1f5f9; pointer-events:none;"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin:2px 0 6px 0; border-color:#e2e8f0; border-style:solid; border-width:1px 0 0 0; flex-shrink:0;"/>
+
+            <!-- SECTION 2: Add Laboratory Tests -->
+            <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                <h4 style="margin:0 0 4px 0; color:#2563eb; font-size:13px; font-weight:700; flex-shrink:0;">2. Laboratory Tests</h4>
+                
+                <!-- LOWER GRIDS -->
+                <div style="display:flex; flex-direction:column; gap:6px; flex:1; min-height:0;">
+                    
+                    <!-- Search Bar Row (Clean horizontal flex) -->
+                    <div style="display:flex; gap:10px; align-items:flex-end; margin-bottom:2px; flex-shrink:0;">
+                        <div style="flex:2; position:relative;">
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Item (By Name / Code)</label>
+                            <div style="display:flex;">
+                                <input type="text" class="form-control form-control-sm" t-att-value="state.testSearchTerm" t-on-input="(ev) => this.onTestSearchInput(ev)" placeholder="Search lab test by name or code..." style="height:26px; font-size:11px;"/>
+                            </div>
+                            
+                            <!-- Suggestions Dropdown -->
+                            <div t-if="state.showTestSuggestions and state.testSuggestions.length > 0" 
+                                 style="position:absolute; top:100%; left:0; width:100%; background:white; border:1px solid #cbd5e1; border-radius:4px; z-index:1000; max-height:220px; overflow-y:auto; box-shadow:0 6px 12px rgba(0,0,0,0.15);">
+                                 <ul style="list-style:none; margin:0; padding:0;">
+                                     <li t-foreach="state.testSuggestions" t-as="ts" t-key="ts.id"
+                                         style="padding:6px 10px; cursor:pointer; border-bottom:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center;"
+                                         t-on-click="() => this.selectTest(ts)">
+                                         <div>
+                                             <strong style="color:#1e293b;"><t t-esc="ts.name"/></strong>
+                                             <span style="color:#64748b; font-size:10px; margin-left:8px;">Code: <t t-esc="ts.code || '--'"/></span>
+                                         </div>
+                                         <span style="color:#16a34a; font-weight:bold; font-size:11px;">₹ <t t-esc="ts.price"/></span>
+                                     </li>
+                                 </ul>
+                            </div>
+                        </div>
+
+                        <div style="flex:1;">
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Category</label>
+                            <input type="text" class="form-control form-control-sm" t-att-value="state.selectedTest ? state.selectedTest.category : '--'" readonly="1" style="height:26px; font-size:11px; background:#f1f5f9;"/>
+                        </div>
+
+                        <div style="flex:0.8;">
+                            <label style="color:#0f172a; font-weight:700; font-size:10px; display:block; margin-bottom:2px;">Rate (₹)</label>
+                            <input type="text" class="form-control form-control-sm" t-att-value="state.selectedTest ? state.selectedTest.price : '0.00'" readonly="1" style="height:26px; font-size:11px; background:#f1f5f9; font-weight:bold;"/>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" style="height:26px; font-weight:700; color:#2563eb; border-color:#2563eb; padding:0 20px; border-radius:4px; white-space:nowrap; min-width: 110px;" t-on-click="addSelectedTestToBill" t-att-disabled="state.isReadOnly">
+                                + Add to Bill
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tests Table Area (Flexibly takes available vertical space and scrolls) -->
+                    <div style="flex:1 1 auto; max-height:140px; min-height:70px; border:1px solid #e2e8f0; border-radius:4px; overflow-y:auto; overflow-x:hidden; position:relative;">
+                        <table class="table" style="font-size:10px; text-align:center; vertical-align:middle; margin:0; width:100%; white-space:nowrap;">
+                            <thead style="background:#f8fafc; color:#0f172a; font-weight:700; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10;">
+                                <tr>
+                                    <th style="padding:4px 8px; width:40px;">#</th>
+                                    <th style="padding:4px 8px; width:100px;">Test Code</th>
+                                    <th style="text-align:left; padding:4px 10px;">Test Description</th>
+                                    <th style="padding:4px 8px;">Category</th>
+                                    <th style="padding:4px 8px; width:100px;">Rate (₹)</th>
+                                    <th style="padding:4px 8px; width:70px;">Disc (%)</th>
+                                    <th style="padding:4px 8px; width:120px;">Total Amount (₹)</th>
+                                    <th style="padding:4px 8px; width:80px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="state.tests.length === 0">
+                                    <tr>
+                                        <td colspan="8" style="padding:20px; color:#94a3b8; font-style:italic;">
+                                            No tests added. For patients with admission, enter Patient ID above to auto-load tests prescribed by doctor, or search tests directly.
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr t-foreach="state.tests || []" t-as="t" t-key="t.id" style="border-bottom:1px solid #e2e8f0;">
+                                    <td style="padding:4px 8px; font-weight:600;"><t t-esc="t_index + 1"/></td>
+                                    <td style="color:#64748b; padding:4px 8px;"><t t-esc="t.code"/></td>
+                                    <td style="text-align:left; font-weight:700; color:#1e293b; padding:4px 10px;"><t t-esc="t.name"/></td>
+                                    <td style="padding:4px 8px; color:#475569;"><t t-esc="t.category"/></td>
+                                    <td style="padding:4px 8px; font-weight:600;">₹ <t t-esc="t.price.toFixed(2)"/></td>
+                                    <td style="padding:4px 8px;">
+                                        <input type="number" min="0" max="100" t-att-value="t.discount" t-att-disabled="state.isReadOnly" style="width:50px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; font-size:10px; padding:2px;" t-on-change="(ev) => this.updateLineDiscount(t.id, ev.target.value)"/>
+                                    </td>
+                                    <td style="font-weight:700; color:#0f172a; padding:4px 8px;">₹ <t t-esc="t.total_amount ? t.total_amount.toFixed(2) : t.price.toFixed(2)"/></td>
+                                    <td style="padding:4px 8px;">
+                                        <span t-if="!state.isReadOnly" style="cursor:pointer; color:#ef4444; font-size:11px; font-weight:600;" t-on-click="() => this.removeTest(t.id)">Remove</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- BOTTOM ACTION BAR (MATCHES PHARMACY BILLING EXACTLY) -->
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; padding:6px 0 0 0; margin-top:10px; margin-bottom:15px; flex-shrink:0;">
+                        
+                        <!-- Net Amount Box -->
+                        <div style="background:#f0fdf4; border:1px solid #16a34a; padding:6px 20px; border-radius:6px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 4px rgba(0,0,0,0.05); min-width:350px;">
+                            <span style="color:#16a34a; font-weight:700; font-size:15px;">Net Amount (INR)</span>
+                            <span style="color:#16a34a; font-weight:800; font-size:22px;">₹ <t t-esc="state.netAmount.toFixed(2)"/></span>
+                        </div>
+
+                        <!-- Action Buttons Row -->
+                        <div style="display:flex; gap:8px; min-width:350px;">
+                            <button t-if="!state.isReadOnly" class="btn btn-success" style="font-weight:700; padding:6px 0; background:#16a34a; border-color:#16a34a; font-size:13px; box-shadow:0 2px 4px rgba(22,163,74,0.2); flex:1;" t-on-click="openPaymentModal">
+                                Generate Bill (Pay)
+                            </button>
+                            <button t-if="state.isReadOnly" class="btn btn-secondary" style="font-weight:700; padding:6px 0; font-size:13px; flex:1;" disabled="1">
+                                PAID
+                            </button>
+
+                            <button t-if="!state.isReadOnly" class="btn btn-light" style="border:1px solid #cbd5e1; font-weight:700; color:#475569; padding:6px 0; font-size:13px; background:white; flex:1;" t-on-click="clearBill">
+                                Clear
+                            </button>
+
+                            <button t-if="state.isReadOnly" class="btn btn-info" style="font-weight:700; padding:6px 0; font-size:13px; color:white; flex:1;" t-on-click="printReceipt">
+                                Print
+                            </button>
+
+                            <button class="btn btn-outline-danger" style="border:1px solid #dc2626; color:#dc2626; font-weight:700; padding:6px 0; font-size:13px; background:white; flex:1;" t-on-click="closePOS">
+                                Close
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PAYMENT MODAL -->
+            <div t-if="state.showPaymentModal" style="position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.55); z-index:1040; display:flex; justify-content:center; align-items:center;">
+                <div style="background:white; width:900px; max-width:96vw; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.25); overflow:hidden;">
+
+                    <!-- MODAL HEADER -->
+                    <div style="background:#1e3a8a; color:white; padding:14px 20px; display:flex; justify-content:space-between; align-items:center;">
+                        <h3 style="margin:0; font-size:18px; font-weight:700; color:white;">Collect Payment</h3>
+                        <span style="cursor:pointer; font-size:22px; font-weight:bold; line-height:1;" t-on-click="closePaymentModal">X</span>
+                    </div>
+
+                    <t t-if="!state.paymentSuccess">
+                    <div style="padding:20px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <div style="display: flex; align-items: center;">
+                                    <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Type of Digital Payment:</span>
+                                    <select class="form-select" style="display:inline-block; width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px;" t-model="state.paymentMode">
+                                        <option value="none">None</option>
+                                        <option value="upi">UPI</option>
+                                        <option value="card">Card</option>
+                                        <option value="credit">Credit</option>
+                                    </select>
+
+                                    <span style="font-weight:600; color:#334155; margin-left: 20px; margin-right: 10px;">Transaction ID:</span>
+                                    <input type="text" t-att-value="state.transactionId" t-on-change="(ev) => state.transactionId = ev.target.value" t-att-disabled="state.paymentMode === 'none'" style="width:150px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px;"/>
+                                </div>
+                                <div style="display: flex; align-items: center;">
+                                    <span style="font-weight:600; color:#334155; display:inline-block; width:160px;">Online Paid Amount:</span>
+                                    <input type="number" min="0" t-att-value="state.paidAmount" t-on-change="(ev) => this.onDigiPayInput(ev.target.value)" t-att-disabled="state.paymentMode === 'none'" style="width:120px; border:1px solid #cbd5e1; border-radius:4px; padding:2px; height:30px; text-align:right;"/>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-weight:700; font-size:16px; color:#1e293b;">Net amount: </span>
+                                <strong style="color:#2563eb; font-size:24px;"><t t-esc="state.netAmount ? state.netAmount.toFixed(2) : '0.00'"/></strong>
+                            </div>
+                        </div>
+
+                        <table style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
+                            <thead>
+                                <tr style="background:#e2e8f0; color:#334155; font-weight:bold;">
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Denomination</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Received Count</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Received Amount</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Repay Count</th>
+                                    <th style="border:1px solid #cbd5e1; padding:8px;">Repay Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- 500 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">500 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d500r" t-on-change="(ev) => this.onDenomInput('d500r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d500r * 500"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d500p" t-on-change="(ev) => this.onDenomInput('d500p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d500p * 500"/></td>
+                                </tr>
+                                <!-- 200 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">200 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d200r" t-on-change="(ev) => this.onDenomInput('d200r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d200r * 200"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d200p" t-on-change="(ev) => this.onDenomInput('d200p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d200p * 200"/></td>
+                                </tr>
+                                <!-- 100 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">100 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d100r" t-on-change="(ev) => this.onDenomInput('d100r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d100r * 100"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d100p" t-on-change="(ev) => this.onDenomInput('d100p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d100p * 100"/></td>
+                                </tr>
+                                <!-- 50 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">50 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d50r" t-on-change="(ev) => this.onDenomInput('d50r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d50r * 50"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d50p" t-on-change="(ev) => this.onDenomInput('d50p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d50p * 50"/></td>
+                                </tr>
+                                <!-- 20 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">20 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d20r" t-on-change="(ev) => this.onDenomInput('d20r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d20r * 20"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d20p" t-on-change="(ev) => this.onDenomInput('d20p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d20p * 20"/></td>
+                                </tr>
+                                <!-- 10 -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">10 X</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d10r" t-on-change="(ev) => this.onDenomInput('d10r', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d10r * 10"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.d10p" t-on-change="(ev) => this.onDenomInput('d10p', ev.target.value)" style="width:70px; text-align:center; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><t t-esc="state.d10p * 10"/></td>
+                                </tr>
+                                <!-- Coins -->
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; font-weight:bold;">Coins</td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; background:#f8fafc;"></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.coinsR" t-on-change="(ev) => this.onDenomInput('coinsR', ev.target.value)" style="width:80px; text-align:right; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px; background:#f8fafc;"></td>
+                                    <td style="border:1px solid #cbd5e1; padding:6px;"><input type="number" min="0" t-att-value="state.coinsP" t-on-change="(ev) => this.onDenomInput('coinsP', ev.target.value)" style="width:80px; text-align:right; border:1px solid #cbd5e1; border-radius:4px; padding:2px;"/></td>
+                                </tr>
+                                <!-- Total -->
+                                <tr style="background:#f1f5f9; font-weight:bold;">
+                                    <td style="border:1px solid #cbd5e1; padding:8px;">Total</td>
+                                    <td style="border:1px solid #cbd5e1; padding:8px;"></td>
+                                    <td style="border:1px solid #cbd5e1; padding:8px;"><t t-esc="state.denomTotalReceived"/></td>
+                                    <td style="border:1px solid #cbd5e1; padding:8px;"></td>
+                                    <td style="border:1px solid #cbd5e1; padding:8px;"><t t-esc="state.denomTotalRepay"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="margin-top:20px; font-size:15px; font-weight:bold; display:flex; flex-direction:column; gap:8px;">
+                            <div>Balance Amount: <span style="color:#ef4444;"><t t-esc="state.balanceAmount ? state.balanceAmount.toFixed(2) : '0.00'"/></span></div>
+                            <div>Total Received Payment: <span style="color:#16a34a;"><t t-esc="state.totalAmountPaid ? state.totalAmountPaid.toFixed(2) : '0.00'"/></span></div>
+                        </div>
+
+                        <!-- ROUND OFF ROW -->
+                        <div t-if="state.autoRoundOff !== 0" style="margin-top:14px; padding:10px 16px; background:#fefce8; border:1px solid #fde047; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:700; color:#92400e; font-size:14px;">⬆ Round Off Applied</span>
+                            <span style="font-weight:800; color:#92400e; font-size:16px;"><t t-esc="(state.autoRoundOff >= 0 ? '+' : '') + state.autoRoundOff.toFixed(2)"/></span>
+                        </div>
+
+                        <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                            <button class="btn btn-outline-secondary" t-on-click="closePaymentModal">Cancel</button>
+                            <button class="btn btn-warning" style="background:#eab308; color:white; border:none; padding:8px 24px;" t-on-click="saveAsHold">Hold</button>
+                            <button class="btn btn-success" style="background:#16a34a; border:none; padding:8px 24px;" t-on-click="collectPayment">Confirm and Pay</button>
+                        </div>
+                    </div>
+                    </t>
+
+                    <!-- SUCCESS STATE -->
+                    <t t-if="state.paymentSuccess">
+                        <div style="padding:40px; text-align:center;">
+                            <div style="font-size:48px; margin-bottom:10px;">SUCCESS</div>
+                            <h3 style="color:#16a34a; margin-bottom:10px;">Bill Generated Successfully!</h3>
+                            <p style="color:#475569; margin-bottom:20px;">Bill ID: <strong t-esc="state.invoiceNo"></strong></p>
+                            <div style="display:flex; justify-content:center; gap:10px;">
+                                <button class="btn btn-primary" t-on-click="printReceipt">Print Bill</button>
+                                <button class="btn btn-outline-secondary" t-on-click="startNewBill">Close</button>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+
+        </div>
+    </t>
+
+</templates>

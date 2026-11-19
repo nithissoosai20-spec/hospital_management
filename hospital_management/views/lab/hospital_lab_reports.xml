@@ -30,6 +30,11 @@
                     <style>
                         .o_report_footer, footer, .o_footer, #wkhtmltopdf-footer, .footer-block { display: none !important; }
                         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .lab-info-table td {
+                            padding: 2px 0;
+                            font-size: 12px;
+                            color: #333;
+                        }
                     </style>
 
                     <div class="article" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
@@ -38,77 +43,191 @@
                             <!-- BACKGROUND & BORDERS -->
                             <div style="position: absolute; top: 3mm; right: 6mm; bottom: 3mm; left: 3mm; width: auto; height: auto; z-index: 0; overflow: hidden;">
                                 <img src="/hospital_management/static/src/img/purchase_bg.png" style="display: block; width: 100%; height: 100%; max-width: none; object-fit: fill; opacity: 1.0;"/>
-                                </div>
+                            </div>
 
                             <!-- CONTENT WRAPPER -->
                             <div style="position: relative; z-index: 1; padding-top: 75mm; padding-left: 15mm; padding-right: 15mm; padding-bottom: 15mm; height: 100%; overflow: hidden; box-sizing: border-box;">
-                                <div class="row mb-4">
-                                    <div class="col-6">
-                                        <strong>Patient Name:</strong> <span t-out="doc.get_patient_title_name()"/><br/>
-                                        <strong>Patient ID:</strong> <span t-field="doc.patient_id.patient_id"/><br/>
-                                        <strong>Mobile Number:</strong> <span t-field="doc.patient_id.phone"/>
+                                
+                                <!-- RECEIPT TITLE -->
+                                <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid #29398f; padding-bottom: 6px;">
+                                    <h4 style="margin: 0; font-weight: bold; color: #29398f; letter-spacing: 1.5px; font-size: 16px;">
+                                        LABORATORY PAYMENT RECEIPT
+                                    </h4>
+                                </div>
+
+                                <!-- PATIENT & RECEIPT DETAILS -->
+                                <div class="row pt-1" style="font-size: 12px; color: #333; line-height: 22px;">
+                                    <div class="col-4">
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Patient Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_patient_title_name()"/></span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Patient ID</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.patient_id.patient_id"/></span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Age / Gender</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.patient_id and doc.patient_id.age"><span t-field="doc.patient_id.age"/> Y / </t>
+                                                <t t-if="doc.patient_id and doc.patient_id.gender">
+                                                    <span style="text-transform: capitalize;" t-field="doc.patient_id.gender"/>
+                                                </t>
+                                            </span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Mobile Number</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.patient_id.phone"/></span>
+                                        </div>
                                     </div>
-                                    <div class="col-6 text-end">
-                                        <strong>Date and Time:</strong> <span t-field="doc.appointment_date" t-options="{&quot;widget&quot;: &quot;date&quot;, &quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/> <span t-out="doc.get_exact_current_time()"/><br/>
-                                        <strong>Doctor Name:</strong> <span t-out="doc.get_doctor_title_name()"/><br/>
-                                        <strong>Payment Mode:</strong>
-                                        <t t-if="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received &gt; 0">
-                                            <span t-field="doc.payment_mode"/> and Cash
-                                        </t>
-                                        <t t-elif="(not doc.payment_mode or doc.payment_mode == 'none') and doc.total_cash_received &gt; 0">
-                                            Cash
-                                        </t>
-                                        <t t-elif="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received == 0">
-                                            <span t-field="doc.payment_mode"/>
-                                        </t>
-                                        <t t-else="">None</t>
+
+                                    <div class="col-4">
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Doctor Name</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-out="doc.get_doctor_title_name()"/></span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Department</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span><span t-field="doc.doctor_id.department_id.name"/></span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Token Ref</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <t t-if="doc.hospital_appointment_id">
+                                                    <span t-field="doc.hospital_appointment_id.token_number"/>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Receipt No</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span style="font-weight: bold;"><span t-field="doc.name"/></span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Date &amp; Time</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span>
+                                                <span t-field="doc.appointment_date" t-options='{"widget": "date", "format": "dd/MM/yyyy"}'/>
+                                                <span t-out="doc.get_exact_current_time()"/>
+                                            </span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Payment Mode</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span style="text-transform: capitalize;">
+                                                <t t-if="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received &gt; 0">
+                                                    <span t-field="doc.payment_mode"/> + Cash
+                                                </t>
+                                                <t t-elif="(not doc.payment_mode or doc.payment_mode == 'none') and doc.total_cash_received &gt; 0">
+                                                    Cash
+                                                </t>
+                                                <t t-elif="doc.payment_mode and doc.payment_mode != 'none' and doc.total_cash_received == 0">
+                                                    <span t-field="doc.payment_mode"/>
+                                                </t>
+                                                <t t-else="">Cash</t>
+                                            </span>
+                                        </div>
+                                        <div style="height: 22px; white-space: nowrap;">
+                                            <span style="font-weight: bold; display: inline-block; width: 95px;">Status</span>
+                                            <span style="font-weight: bold; display: inline-block; width: 12px; text-align: center;">:</span>
+                                            <span style="background-color: #22c55e; color: #ffffff; padding: 2px 10px; border-radius: 3px; font-weight: bold; font-size: 11px;">
+                                                PAID
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <table class="table table-sm mt-4" style="width: 100%; border-collapse: collapse; border: 1px solid #888; font-size: 13px;">
+                                <!-- BILLED LAB TESTS TABLE -->
+                                <table class="table table-sm mt-3" style="width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid #cbd5e1;">
                                     <thead>
-                                        <tr>
-                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Test Details</th>
-                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Units</th>
-                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Normal Range</th>
-                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000;">Analysed Value</th>
-                                            <th style="padding: 6px 8px; border: 1px solid #888; background: #fff; color: #000; text-align: center;">N/&#8593;/&#8595;</th>
+                                        <tr style="background-color: #f1f5f9; color: #1e293b; border-bottom: 2px solid #29398f;">
+                                            <th style="padding: 6px 10px; width: 8%; text-align: center; border: 1px solid #cbd5e1;">S.No</th>
+                                            <th style="padding: 6px 10px; width: 52%; text-align: left; border: 1px solid #cbd5e1;">Investigation / Test Details</th>
+                                            <th style="padding: 6px 10px; width: 22%; text-align: left; border: 1px solid #cbd5e1;">Category</th>
+                                            <th style="padding: 6px 10px; width: 18%; text-align: right; border: 1px solid #cbd5e1;">Amount (Rs.)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <t t-foreach="doc.result_line_ids" t-as="line">
+                                        <t t-set="sno" t-value="1"/>
+                                        <t t-foreach="doc.billing_line_ids" t-as="line">
                                             <t t-if="line.display_type == 'line_section'">
-                                                <tr>
-                                                    <td colspan="5" style="background-color: #e2e8f0; font-weight: bold; font-size: 14px; padding: 6px 10px; border: 1px solid #888; color: #000;">
+                                                <tr style="background-color: #e2e8f0; font-weight: bold; color: #29398f;">
+                                                    <td colspan="4" style="padding: 5px 10px; border: 1px solid #cbd5e1; text-transform: uppercase;">
                                                         <span t-field="line.name"/>
                                                     </td>
                                                 </tr>
                                             </t>
                                             <t t-else="">
                                                 <tr>
-                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.subtest_id.name"/></td>
-                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.unit"/></td>
-                                                    <td style="padding: 6px 8px; border: 1px solid #888;"><span t-field="line.normal_range_display"/></td>
-                                                    <td style="padding: 6px 8px; border: 1px solid #888; font-weight: bold;"><span t-field="line.result_value"/></td>
-                                                    <td style="padding: 6px 8px; border: 1px solid #888; text-align: center;"><span t-field="line.result_indicator"/></td>
+                                                    <td style="padding: 5px 10px; text-align: center; border: 1px solid #cbd5e1;"><t t-esc="sno"/></td>
+                                                    <td style="padding: 5px 10px; border: 1px solid #cbd5e1; font-weight: 500;">
+                                                        <span t-esc="line.lab_test_id.name if line.lab_test_id else line.name"/>
+                                                    </td>
+                                                    <td style="padding: 5px 10px; border: 1px solid #cbd5e1; color: #475569;">
+                                                        <span t-esc="line.lab_category_id.name if line.lab_category_id else (line.lab_test_id.category if line.lab_test_id else '')"/>
+                                                    </td>
+                                                    <td style="padding: 5px 10px; text-align: right; border: 1px solid #cbd5e1; font-weight: bold;">
+                                                        <span t-esc="'%.2f' % line.price"/>
+                                                    </td>
                                                 </tr>
+                                                <t t-set="sno" t-value="sno + 1"/>
                                             </t>
                                         </t>
                                     </tbody>
                                 </table>
 
-                                <div class="row justify-content-end mt-3">
+                                <!-- SUMMARY & TOTALS -->
+                                <div class="row mt-3 justify-content-end">
                                     <div class="col-5">
-                                        <table class="table table-sm table-borderless" style="width: 100%;">
-                                            <tr style="border-top: 1px solid black;">
-                                                <td style="padding-top: 10px;"><strong>Total Amount:</strong></td>
-                                                <td class="text-end" style="padding-top: 10px;">
-                                                    <strong><span t-field="doc.amount"/></strong>
+                                        <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-left: auto;">
+                                            <tr style="border-top: 2px solid #29398f; font-weight: bold; font-size: 13px;">
+                                                <td style="padding: 6px 6px;">Total Billed Amount:</td>
+                                                <td style="padding: 6px 6px; text-align: right;">Rs. <span t-esc="'%.2f' % doc.amount"/></td>
+                                            </tr>
+                                            <tr style="font-weight: bold; color: #16a34a;">
+                                                <td style="padding: 4px 6px;">Amount Received:</td>
+                                                <td style="padding: 4px 6px; text-align: right;">Rs. <span t-esc="'%.2f' % doc.amount"/></td>
+                                            </tr>
+                                            <tr style="color: #64748b;">
+                                                <td style="padding: 4px 6px;">Balance Due:</td>
+                                                <td style="padding: 4px 6px; text-align: right;">Rs. 0.00</td>
+                                            </tr>
+                                            <tr style="border-top: 1px solid #e2e8f0;">
+                                                <td style="padding: 6px 6px; font-weight: bold;">Payment Status:</td>
+                                                <td style="padding: 6px 6px; text-align: right;">
+                                                    <span style="background-color: #22c55e; color: white; padding: 2px 10px; border-radius: 3px; font-weight: bold; font-size: 11px;">
+                                                        PAID
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
                                 </div>
+
+                                <!-- SIGNATURES & NOTICE -->
+                                <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #475569; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
+                                    <div>
+                                        <span>* Thank you for choosing RIALKG Medical Center &amp; Hospital.</span><br/>
+                                        <span>* This is a computer generated payment receipt.</span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: bold; color: #1e293b; margin-top: 20px;">
+                                            Cashier / Reception Signature
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

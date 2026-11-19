@@ -13,64 +13,58 @@
     />
 
 
-    <!-- HR DASHBOARD -->
-    <!-- HR MANAGER ONLY -->
-    <menuitem
-        id="menu_hospital_dashboard_hr"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_hr_dashboard"
-        sequence="5"
-        groups="hospital_management.group_hospital_hr"
-    />
+    <!-- ROLE-SPECIFIC DASHBOARD MENUS (SEQUENCE 1) -->
+    <!-- Each role sees exactly ONE Dashboard menu linked directly to their action -->
 
+    <!-- 1. Admin & Super Admin Dashboard -->
+    <record id="menu_hospital_dashboard" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_admin_dashboard_window"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
+    </record>
 
-    <!-- ADMIN DASHBOARD -->
-    <!-- ADMIN + SUPER ADMIN -->
+    <!-- 2. Receptionist Dashboard -->
+    <record id="menu_hospital_dashboard_reception" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_reception_dashboard"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_receptionist')])]"/>
+    </record>
 
-    <menuitem
-        id="menu_hospital_dashboard"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_dashboard"
-        sequence="10"
-        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
-    />
+    <!-- 3. Doctor Dashboard -->
+    <record id="menu_hospital_dashboard_doctor" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_doctor_dashboard"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_doctor')])]"/>
+    </record>
 
+    <!-- 4. Lab Technician Dashboard -->
+    <record id="menu_hospital_dashboard_lab_tech" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_lab_dashboard"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_lab_technician')])]"/>
+    </record>
 
-    <!-- RECEPTION DASHBOARD -->
-    <!-- RECEPTIONIST ONLY -->
-
-    <menuitem
-        id="menu_hospital_dashboard_reception"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_reception_dashboard"
-        sequence="10"
-        groups="hospital_management.group_hospital_receptionist"
-    />
-
-
-    <!-- DOCTOR DASHBOARD -->
-    <!-- DOCTOR ONLY -->
-
-        <menuitem
-        id="menu_hospital_dashboard_lab_tech"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_lab_dashboard"
-        sequence="10"
-        groups="hospital_management.group_hospital_lab_technician"
-    />
-
-    <menuitem
-        id="menu_hospital_dashboard_doctor"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_doctor_dashboard"
-        sequence="10"
-        groups="hospital_management.group_hospital_doctor"
-    />
+    <!-- 5. HR Dashboard -->
+    <record id="menu_hospital_dashboard_hr" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_hr_dashboard"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_hr')])]"/>
+    </record>
 
 
     <!-- USERS -->
@@ -145,6 +139,17 @@
         groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_receptionist"
     />
 
+    <!-- EMERGENCY TREATMENT -->
+    <!-- RECEPTIONIST + ADMIN + SUPER ADMIN + EMERGENCY WARD -->
+    <menuitem
+        id="menu_hospital_emergency_treatment"
+        name="Emergency Treatment"
+        parent="menu_hospital_management"
+        action="action_hospital_emergency_treatment"
+        sequence="45"
+        groups="hospital_management.group_hospital_receptionist,hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_emergency_ward"
+    />
+
 
     
 
@@ -156,6 +161,16 @@
 
 
     
+    <!-- LAB BILLING MENU -->
+    <menuitem
+        id="menu_hospital_lab_billing"
+        name="Lab Billing"
+        parent="menu_hospital_management"
+        action="action_hospital_lab_bill_window"
+        sequence="20"
+        groups="hospital_management.group_hospital_lab_technician,hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
+    />
+
     <!-- LAB REPORT DIRECT MENU (LAB TECH ONLY) -->
     <menuitem
         id="menu_hospital_lab_report_root"
@@ -169,14 +184,15 @@
 
     <!-- PHARMACY -->
 
-    <menuitem
-        id="menu_hospital_pharmacy_dashboard"
-        name="Dashboard"
-        parent="menu_hospital_management"
-        action="action_hospital_pharmacy_dashboard_form"
-        sequence="10"
-        groups="hospital_management.group_hospital_pharmacist"
-    />
+    <!-- 6. Pharmacist Dashboard -->
+    <record id="menu_hospital_pharmacy_dashboard" model="ir.ui.menu">
+        <field name="name">Dashboard</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_pharmacy_dashboard_form"/>
+        <field name="sequence">1</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_management.group_hospital_pharmacist')])]"/>
+    </record>
 
 
     <menuitem

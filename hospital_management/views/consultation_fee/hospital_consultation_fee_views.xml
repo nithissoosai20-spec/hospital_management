@@ -61,7 +61,7 @@
                             </group>
                         </group>
 
-                        <div class="d-flex justify-content-between align-items-center mt-4" style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2 pb-2" style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
                             <div class="d-flex gap-2">
                                 <button name="action_close" string="Close" type="object" class="btn-danger"/>
                                 <button name="action_clear" string="Clear" type="object" class="btn-secondary"/>
@@ -135,7 +135,7 @@
                             <field name="description" placeholder="Brief details about this consultation type..."/>
                         </group>
 
-                        <div class="d-flex justify-content-between align-items-center mt-4" style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-2 pb-2" style="border-top: 1px solid #e2e8f0; padding-top: 10px;">
                             <div class="d-flex gap-2">
                                 <button name="action_close" string="Close" type="object" class="btn-danger"/>
                                 <button name="action_clear" string="Clear" type="object" class="btn-secondary"/>

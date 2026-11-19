@@ -3,6 +3,7 @@ from odoo import models, fields, api
 
 class HospitalPharmacyDashboard(models.Model):
     _name = 'hospital.pharmacy.dashboard'
+    _inherit = ['hospital.staff.self.service.mixin']
     _description = 'Hospital Pharmacy Dashboard'
 
     name = fields.Char(

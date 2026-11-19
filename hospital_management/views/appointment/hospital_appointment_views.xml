@@ -854,14 +854,14 @@
                                 invisible="context.get('view_only') or state not in ('draft','booked') or token_generated"
                             />
 
-                            <!-- LAB FEES -->
+                            <!-- LAB FEES (HIDDEN - LAB BILLING HANDLED DIRECTLY IN LAB) -->
                             <button
                                 name="action_set_lab_fees"
                                 string="Lab Fees"
                                 type="object"
                                 class="btn-primary"
                                 icon="fa-flask"
-                                invisible="context.get('view_only') or state not in ('booked', 'completed') or not token_generated"
+                                invisible="1"
                             />
 
                             <!-- PRINT TOKEN -->

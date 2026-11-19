@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- LAB BILL SEARCH -->
+    <record id="view_hospital_lab_bill_search" model="ir.ui.view">
+        <field name="name">hospital.lab.bill.search</field>
+        <field name="model">hospital.lab.bill</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Search Bill or Patient" filter_domain="['|', ('name', 'ilike', self), ('customer_name', 'ilike', self)]"/>
+                <field name="patient_id"/>
+                <field name="doctor_id"/>
+                <filter string="With Admission" name="filter_with_admission" domain="[('admission_type', '=', 'with_admission')]"/>
+                <filter string="Without Admission" name="filter_without_admission" domain="[('admission_type', '=', 'without_admission')]"/>
+                <filter string="Paid" name="filter_paid" domain="[('state', '=', 'paid')]"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- LAB BILL LIST -->
+    <record id="view_hospital_lab_bill_list" model="ir.ui.view">
+        <field name="name">hospital.lab.bill.list</field>
+        <field name="model">hospital.lab.bill</field>
+        <field name="arch" type="xml">
+            <list limit="14"
+                decoration-info="state == 'draft'"
+                decoration-success="state == 'paid'"
+                decoration-warning="state == 'held'"
+                decoration-danger="state == 'cancelled'"
+                js_class="lab_billing_list"
+            >
+                <field name="name"/>
+                <field name="admission_type" widget="badge" decoration-info="admission_type == 'with_admission'" decoration-muted="admission_type == 'without_admission'"/>
+                <field name="customer_name"/>
+                <field name="doctor_id" string="Referring Doctor"/>
+                <field name="doctor_department_id" string="Department"/>
+                <field name="bill_date"/>
+                <field name="payment_mode"/>
+                <field name="total_amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- LAB BILL FORM -->
+    <record id="view_hospital_lab_bill_form" model="ir.ui.view">
+        <field name="name">hospital.lab.bill.form</field>
+        <field name="model">hospital.lab.bill</field>
+        <field name="arch" type="xml">
+            <form class="lab_bill_form">
+                <header>
+                    <button name="action_collect_payment" string="Collect Payment" type="object" class="btn btn-success" invisible="state == 'paid'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,held,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:900; color:#2563eb; font-size:18px;">
+                            Lab Bill No: <field name="name" readonly="1" nolabel="1"/>
+                        </span>
+                        <button name="%(action_report_hospital_lab_bill)d" string="Print Receipt" type="action" class="btn btn-primary" icon="fa-print"/>
+                    </div>
+
+                    <div style="display:flex; gap:20px; width:100%;">
+                        <div style="flex: 0 0 320px;">
+                            <group>
+                                <field name="admission_type" widget="radio" readonly="state == 'paid'"/>
+                                <field name="patient_id" invisible="admission_type != 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="patient_id_display" invisible="admission_type != 'with_admission'"/>
+                                <field name="walkin_name" invisible="admission_type == 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="walkin_phone" invisible="admission_type == 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="walkin_gender" invisible="admission_type == 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="walkin_age" invisible="admission_type == 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="walkin_address" invisible="admission_type == 'with_admission'" readonly="state == 'paid'"/>
+                                <field name="doctor_id" readonly="state == 'paid'"/>
+                                <field name="doctor_department_id" readonly="1"/>
+                                <field name="bill_date" readonly="state == 'paid'"/>
+                                <field name="payment_mode" readonly="state == 'paid'"/>
+                                <field name="paid_amount" readonly="state == 'paid'"/>
+                            </group>
+                            <separator string="Notes" style="margin-top:10px;"/>
+                            <field name="notes" readonly="state == 'paid'" placeholder="Internal notes..."/>
+                        </div>
+
+                        <div style="flex: 1; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+                            <separator string="Laboratory Tests" style="margin-bottom:5px; font-size:16px; color:#2563eb; font-weight:bold;"/>
+                            <field name="line_ids" readonly="state == 'paid'">
+                                <list editable="bottom">
+                                    <field name="lab_test_id" string="Test" options="{'no_create': True}"/>
+                                    <field name="test_code" readonly="1"/>
+                                    <field name="test_name" readonly="1"/>
+                                    <field name="category_name" readonly="1"/>
+                                    <field name="price"/>
+                                    <field name="discount"/>
+                                    <field name="discount_amount" readonly="1" force_save="1"/>
+                                    <field name="total_amount" readonly="1" force_save="1"/>
+                                </list>
+                            </field>
+
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:15px;">
+                                <div></div>
+                                <div style="min-width:300px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:12px;">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                        <span>Subtotal:</span>
+                                        <strong>₹ <field name="subtotal" readonly="1" nolabel="1"/></strong>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                        <span>Bill Discount:</span>
+                                        <field name="bill_discount" nolabel="1"/>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                        <span>Discount Amount:</span>
+                                        <strong style="color:red;">- ₹ <field name="discount_amount" readonly="1" nolabel="1"/></strong>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                        <span>Round Off:</span>
+                                        <strong>₹ <field name="round_off" readonly="1" nolabel="1"/></strong>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:2px solid #2563eb; font-size:16px; color:#1e3a8a;">
+                                        <span>Total Amount:</span>
+                                        <strong>₹ <field name="total_amount" readonly="1" nolabel="1"/></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LAB BILL ACTION -->
+    <record id="action_hospital_lab_bill_window" model="ir.actions.act_window">
+        <field name="name">Lab Billing</field>
+        <field name="res_model">hospital.lab.bill</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hospital_lab_bill_search"/>
+        <field name="context">{'search_default_filter_paid': 0}</field>
+    </record>
+
+    <!-- NEW LAB BILL BUTTON CLIENT ACTION (POS style) -->
+    <record id="action_hospital_lab_billing" model="ir.actions.client">
+        <field name="name">Lab Billing</field>
+        <field name="tag">hospital_lab_billing</field>
+    </record>
+
+</odoo>

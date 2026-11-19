@@ -88,6 +88,8 @@
                                         options="{'no_create': True}"
                                     />
                                     <field name="medicine_name" readonly="1"/>
+                                    <field name="dosage" readonly="1" string="Dosage / Timing" optional="show"/>
+                                    <field name="instructions" readonly="1" string="Instructions" optional="show"/>
                                     <field name="batch" readonly="1"/>
                                     <field name="expiry" readonly="1"/>
                                     <field name="available_stock" readonly="1" string="Stock"/>

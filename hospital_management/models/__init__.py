@@ -4,9 +4,10 @@ from . import role
 from . import department
 from . import appointment
 from . import consultation_fee
+from . import dashboard
 from . import pharmacy
 from . import lab
-from . import dashboard
 from . import hr
 from . import activity
 from . import master
+from . import emergency

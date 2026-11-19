@@ -25,36 +25,36 @@
                             background-color: transparent !important;
                             border: none !important;
                             box-shadow: none !important;
-                            padding: 24px 32px !important;
+                            padding: 10px 16px !important;
                             max-width: 100% !important;
                             width: 100% !important;
                             margin: 0 !important;
                             box-sizing: border-box !important;
                         }
-                        .hrdb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; }
-                        .hrdb-title { font-size: 24px; font-weight: 700; color: #1e3a8a; margin: 0; display: flex; align-items: center; gap: 10px; }
-                        .hrdb-subtitle { font-size: 14px; color: #64748b; margin-top: 4px; }
+                        .hrdb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #e2e8f0; }
+                        .hrdb-title { font-size: 16px; font-weight: 700; color: #1e3a8a; margin: 0; display: flex; align-items: center; gap: 8px; }
+                        .hrdb-subtitle { font-size: 11px; color: #64748b; margin-top: 2px; }
                         
                         /* KPI GRID - 5 COLUMNS ACROSS THE SCREEN */
-                        .hrdb-kpi-grid { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 18px !important; margin-bottom: 30px !important; width: 100% !important; }
+                        .hrdb-kpi-grid { display: grid !important; grid-template-columns: repeat(5, minmax(0, 1fr)) !important; gap: 8px !important; margin-bottom: 12px !important; width: 100% !important; }
                         @media (max-width: 1200px) {
                             .hrdb-kpi-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important; }
                         }
                         
                         /* SELF-SERVICE ACTIONS - 3 COLUMNS ACROSS */
-                        .hrdb-self-service-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 12px !important; width: 100% !important; }
+                        .hrdb-self-service-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 8px !important; width: 100% !important; }
                         
                         /* QUICK ACTIONS - 4 COLUMNS ACROSS */
-                        .hrdb-actions-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 15px !important; width: 100% !important; }
+                        .hrdb-actions-grid { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)) !important; gap: 10px !important; width: 100% !important; }
                         @media (max-width: 1200px) {
                             .hrdb-actions-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important; }
                         }
-                        .hrdb-card { background: #ffffff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; }
-                        .hrdb-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+                        .hrdb-card { background: #ffffff; border-radius: 8px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; text-decoration: none; display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; }
+                        .hrdb-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
                         
-                        .hrdb-card-info h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #64748b; margin: 0 0 6px 0; letter-spacing: 0.5px; }
-                        .hrdb-card-info .hrdb-num { font-size: 28px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1; }
-                        .hrdb-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+                        .hrdb-card-info h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin: 0 0 2px 0; letter-spacing: 0.5px; }
+                        .hrdb-card-info .hrdb-num { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1; }
+                        .hrdb-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
                         
                         /* CARD THEMES */
                         .hrdb-card-blue .hrdb-icon { background: #eff6ff; color: #2563eb; }
@@ -64,13 +64,13 @@
                         .hrdb-card-red .hrdb-icon { background: #fef2f2; color: #dc2626; }
                         
                         /* QUICK ACTIONS */
-                        .hrdb-section-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 15px; }
-                        .hrdb-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
-                        .hrdb-action-btn { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; text-align: left; display: flex; align-items: center; gap: 14px; transition: all 0.2s; color: #1e293b; cursor: pointer; text-decoration: none; width: 100%; }
+                        .hrdb-section-title { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+                        .hrdb-actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+                        .hrdb-action-btn { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; text-align: left; display: flex; align-items: center; gap: 10px; transition: all 0.2s; color: #1e293b; cursor: pointer; text-decoration: none; width: 100%; }
                         .hrdb-action-btn:hover { border-color: #2563eb; background: #f8fafc; }
-                        .hrdb-action-btn i { font-size: 20px; color: #2563eb; }
-                        .hrdb-action-btn div strong { display: block; font-size: 15px; color: #1e293b; }
-                        .hrdb-action-btn div span { font-size: 12px; color: #64748b; }
+                        .hrdb-action-btn i { font-size: 16px; color: #2563eb; }
+                        .hrdb-action-btn div strong { display: block; font-size: 13px; color: #1e293b; }
+                        .hrdb-action-btn div span { font-size: 11px; color: #64748b; }
                     </style>
 
                     <div class="hrdb-header">
@@ -81,39 +81,31 @@
                     </div>
 
                     <!-- STAFF SELF-SERVICE (Attendance / Leave / Expense) -->
-                    <div style="background: #ffffff; border-radius: 12px; padding: 16px 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                    <div class="hrdb-self-service" style="background: #ffffff; border-radius: 8px; padding: 4px 12px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                         <field name="my_attendance_state" invisible="1"/>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 36px; height: 36px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 18px;">
-                                    <i class="fa fa-id-badge" title="Self Service"></i>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 700; font-size: 15px; color: #1e293b;">Staff Self-Service Portal</div>
-                                    <div style="font-size: 12px; color: #64748b;">Clock in/out, request leaves, and submit expense claims</div>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span invisible="my_attendance_state != 'checked_in'" class="badge rounded-pill" style="background-color: #dcfce7; color: #15803d; font-size: 12px; padding: 6px 14px; font-weight: 600; border: 1px solid #bbf7d0;">
-                                    <i class="fa fa-circle text-success me-1"></i> Checked In <field name="my_check_in_time" readonly="1" invisible="not my_check_in_time"/>
-                                </span>
-                                <span invisible="my_attendance_state == 'checked_in'" class="badge rounded-pill" style="background-color: #f1f5f9; color: #64748b; font-size: 12px; padding: 6px 14px; font-weight: 600; border: 1px solid #e2e8f0;">
-                                    <i class="fa fa-circle-o text-muted me-1"></i> Checked Out
-                                </span>
-                            </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight: 700; font-size: 11.5px; color: #334155; display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa fa-id-badge text-primary" style="font-size: 13px;" title="Self Service"></i> Staff Portal:
+                            </span>
+                            <span invisible="my_attendance_state != 'checked_in'" class="badge rounded-pill" style="background-color: #dcfce7; color: #15803d; font-size: 11px; padding: 2px 8px; font-weight: 600; border: 1px solid #bbf7d0;">
+                                <i class="fa fa-circle text-success me-1" style="font-size: 8px;" title="Active"></i> Checked In <field name="my_check_in_time" readonly="1" invisible="not my_check_in_time"/>
+                            </span>
+                            <span invisible="my_attendance_state == 'checked_in'" class="badge rounded-pill" style="background-color: #f1f5f9; color: #64748b; font-size: 11px; padding: 2px 8px; font-weight: 600; border: 1px solid #e2e8f0;">
+                                <i class="fa fa-circle-o text-muted me-1" style="font-size: 8px;" title="Inactive"></i> Checked Out
+                            </span>
                         </div>
-                        <div class="hrdb-self-service-grid">
-                            <button name="action_toggle_attendance" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
-                                <i class="fa fa-clock-o text-primary" style="font-size: 16px;" title="Attendance"></i>
-                                <span invisible="my_attendance_state == 'checked_in'">Clock In (Check In)</span>
-                                <span invisible="my_attendance_state != 'checked_in'">Clock Out (Check Out)</span>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button name="action_toggle_attendance" type="object" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11.5px; font-weight: 600; color: #1e293b; display: inline-flex; align-items: center; gap: 5px; line-height: 1.2;">
+                                <i class="fa fa-clock-o text-primary" style="font-size: 12px;" title="Attendance"></i>
+                                <span invisible="my_attendance_state == 'checked_in'">Clock In</span>
+                                <span invisible="my_attendance_state != 'checked_in'">Clock Out</span>
                             </button>
-                            <button name="action_request_leave" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
-                                <i class="fa fa-calendar-plus-o text-info" style="font-size: 16px;" title="Leave"></i>
+                            <button name="action_request_leave" type="object" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11.5px; font-weight: 600; color: #1e293b; display: inline-flex; align-items: center; gap: 5px; line-height: 1.2;">
+                                <i class="fa fa-calendar-plus-o text-info" style="font-size: 12px;" title="Leave"></i>
                                 <span>Apply for Leave</span>
                             </button>
-                            <button name="action_submit_expense" type="object" class="btn" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 600; color: #1e293b;">
-                                <i class="fa fa-file-text-o text-warning" style="font-size: 16px;" title="Expense"></i>
+                            <button name="action_submit_expense" type="object" class="btn btn-sm" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11.5px; font-weight: 600; color: #1e293b; display: inline-flex; align-items: center; gap: 5px; line-height: 1.2;">
+                                <i class="fa fa-file-text-o text-warning" style="font-size: 12px;" title="Expense"></i>
                                 <span>Submit Expense</span>
                             </button>
                         </div>

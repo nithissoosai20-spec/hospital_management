@@ -11,21 +11,21 @@
     box-shadow: none !important;
     border: none !important;
     background: #f8fafc !important;
-    overflow: hidden !important;
     height: 100% !important;
 }
 
 .ddb {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    gap: 6px;
-    padding: 8px 10px;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 5px;
+    padding: 6px 10px;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f8fafc;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /* HEADER */
@@ -43,7 +43,7 @@
 }
 
 .ddb-subtitle {
-    font-size: 12px;
+    font-size: 11px;
     color: #64748b;
     margin-top: 1px;
 }
@@ -60,9 +60,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
-    padding: 10px 12px;
+    padding: 6px 10px;
+    min-height: 54px;
+    max-height: 66px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     text-align: left;
     transition: transform 0.15s ease, filter 0.15s ease;
@@ -73,10 +75,10 @@
     filter: brightness(1.1);
 }
 
-.ddb-tile-icon { font-size: 20px; line-height: 1; }
+.ddb-tile-icon { font-size: 16px; line-height: 1; }
 
 .ddb-tile-num {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 900;
     color: #1e293b;
     line-height: 1;
@@ -84,13 +86,13 @@
 
 .ddb-tile-num .o_field_widget,
 .ddb-tile-num span {
-    font-size: 28px !important;
+    font-size: 20px !important;
     font-weight: 900 !important;
     color: #1e293b !important;
 }
 
 .ddb-tile-lbl {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     color: #64748b;
     line-height: 1.2;
@@ -160,7 +162,7 @@
 }
 
 .ddb-s-num {
-    font-size: 30px;
+    font-size: 20px;
     font-weight: 900;
     color: #1e293b;
     line-height: 1;
@@ -168,7 +170,7 @@
 
 .ddb-s-num .o_field_widget,
 .ddb-s-num span {
-    font-size: 30px !important;
+    font-size: 20px !important;
     font-weight: 900 !important;
     color: #1e293b !important;
 }
@@ -210,7 +212,7 @@
 }
 
 .ddb-pstat-num {
-    font-size: 32px;
+    font-size: 20px;
     font-weight: 900;
     color: #1e293b;
     line-height: 1;
@@ -218,7 +220,7 @@
 
 .ddb-pstat-num .o_field_widget,
 .ddb-pstat-num span {
-    font-size: 32px !important;
+    font-size: 20px !important;
     font-weight: 900 !important;
     color: #1e293b !important;
 }
@@ -267,7 +269,7 @@
 }
 
 .ddb-summary-num {
-    font-size: 30px;
+    font-size: 20px;
     font-weight: 900;
     color: #1e293b;
     line-height: 1;
@@ -275,7 +277,7 @@
 
 .ddb-summary-num .o_field_widget,
 .ddb-summary-num span {
-    font-size: 30px !important;
+    font-size: 20px !important;
     font-weight: 900 !important;
     color: #1e293b !important;
 }

@@ -312,16 +312,58 @@ class HospitalPharmacyBill(models.Model):
             elif bill.paid_amount < bill.total_amount:
                 raise UserError('Please enter a Paid Amount equal to or greater than the Total Amount.')
 
-            # Deduct from Total Stock
-            for line in bill.bill_line_ids:
-                if line.stock_id:
-                    if line.stock_id.total_stock < line.qty:
-                        raise UserError(f'Not enough stock for {line.stock_id.medicine_name}.')
-                    line.stock_id.total_stock -= line.qty
+            # Check stock availability
+            for line in bill.line_ids:
+                stock = line.stock_id
+                if not stock and line.medicine_name:
+                    stock = self.env['hospital.pharmacy.stock'].search([
+                        '|',
+                        ('medicine_name', '=', line.medicine_name),
+                        ('medicine_code', '=', line.medicine_name),
+                    ], limit=1)
+                if stock and stock.total_stock < line.qty:
+                    raise UserError(f'Not enough stock for {stock.medicine_name}. Available: {stock.total_stock}, Required: {line.qty}')
 
-            bill.state = 'paid'
+            bill.write({
+                'state': 'paid',
+                'paid_amount': bill.paid_amount or bill.total_amount,
+            })
             bill.prescription_ids.write({'state': 'billed'})
         return True
+
+    def get_patient_title_name(self):
+        self.ensure_one()
+        name = (self.patient_id.name if self.patient_id else self.walkin_name) or ''
+        name = name.strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('mr.', 'mr ', 'mrs.', 'mrs ', 'ms.', 'ms ', 'dr.', 'dr ')):
+            return name
+        gender = (self.patient_id.gender or '').lower() if self.patient_id else ''
+        if gender == 'male':
+            return f"Mr. {name}"
+        elif gender == 'female':
+            return f"Mrs. {name}"
+        return name
+
+    def get_doctor_title_name(self):
+        self.ensure_one()
+        name = (self.doctor_id.name or '').strip()
+        if not name:
+            return ''
+        lower_name = name.lower()
+        if lower_name.startswith(('dr.', 'dr ')):
+            return name
+        return f"Dr. {name}"
+
+    def get_exact_current_time(self):
+        user_tz = self.env.user.tz or 'Asia/Kolkata'
+        try:
+            user_pytz = pytz.timezone(user_tz)
+        except Exception:
+            user_pytz = pytz.timezone('Asia/Kolkata')
+        return datetime.now(user_pytz).strftime('%d-%b-%Y %I:%M %p')
 
 
 
@@ -379,6 +421,14 @@ class HospitalPharmacyBillLine(models.Model):
     unit = fields.Char(
         string='Unit',
         default='Tab',
+    )
+
+    dosage = fields.Char(
+        string='Dosage / Timing',
+    )
+
+    instructions = fields.Char(
+        string='Instructions',
     )
 
     mrp = fields.Float(

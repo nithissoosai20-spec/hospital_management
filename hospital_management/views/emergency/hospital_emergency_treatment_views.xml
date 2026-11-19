@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- EMERGENCY TREATMENT LIST VIEW -->
+    <record id="view_hospital_emergency_treatment_tree" model="ir.ui.view">
+        <field name="name">hospital.emergency.treatment.list</field>
+        <field name="model">hospital.emergency.treatment</field>
+        <field name="arch" type="xml">
+            <list string="Emergency Treatment &amp; Admissions"
+                  decoration-danger="triage_level == 'red'"
+                  decoration-warning="triage_level == 'yellow'"
+                  decoration-success="triage_level == 'green'">
+                <field name="name" string="Emergency Code" decoration-bf="1"/>
+                <field name="admission_date" string="Arrival Date"/>
+                <field name="patient_name" string="Patient Name" decoration-bf="1"/>
+                <field name="age" string="Age"/>
+                <field name="gender" string="Gender"/>
+                <field name="phone" string="Phone"/>
+                <field name="entry_source" widget="badge" string="Entry Source"
+                       decoration-info="entry_source in ['op', 'direct']"
+                       decoration-warning="entry_source in ['referred_doctor', 'other_hospital']"
+                       decoration-danger="entry_source == 'emergency'"/>
+                <field name="coverage_type" widget="badge" string="Coverage"
+                       decoration-primary="coverage_type in ['mediclaim', 'private_insurance']"
+                       decoration-success="coverage_type in ['state_govt', 'central_govt']"
+                       decoration-muted="coverage_type == 'self_pay'"/>
+                <field name="triage_level" widget="badge" string="Triage"
+                       decoration-danger="triage_level == 'red'"
+                       decoration-warning="triage_level == 'yellow'"
+                       decoration-success="triage_level == 'green'"/>
+                <field name="state" widget="badge" string="Status"
+                       decoration-info="state == 'pre_admission'"
+                       decoration-warning="state == 'observation'"
+                       decoration-primary="state == 'admitted'"
+                       decoration-success="state == 'discharged'"
+                       decoration-muted="state == 'transferred'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- EMERGENCY TREATMENT FORM VIEW (PROFESSIONAL 3-COLUMN LAYOUT) -->
+    <record id="view_hospital_emergency_treatment_form" model="ir.ui.view">
+        <field name="name">hospital.emergency.treatment.form</field>
+        <field name="model">hospital.emergency.treatment</field>
+        <field name="arch" type="xml">
+            <form string="Emergency Treatment" js_class="hospital_emergency_treatment_form_view">
+                <sheet>
+                    <field name="has_insurance" invisible="1"/>
+
+                    <!-- TOP BAR: PATIENT SEARCH / CODE / ACTIVE TOGGLE -->
+                    <div class="oe_title" style="margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 15px;">
+                            <div style="display: flex; align-items: center; flex-grow: 1;">
+                                <label for="patient_id" string="Existing Patient" style="font-weight: 600; margin-right: 12px; white-space: nowrap; font-size: 14px;"/>
+                                <div style="flex-grow: 1;">
+                                    <field name="patient_id" options="{'no_create': True}" placeholder="Search registered patient (optional)..." style="width: 100% !important;"/>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span class="badge bg-danger fs-6 px-3 py-1 fw-bold">
+                                    <field name="name" readonly="1"/>
+                                </span>
+                                <div style="display: flex; align-items: center;">
+                                    <label for="active" string="Active" style="font-weight: 600; margin-right: 8px; font-size: 14px;"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3-COLUMN PROFESSIONAL LAYOUT (MATCHING ITEMS MENU) -->
+                    <div class="row" style="margin-top: 6px !important;">
+
+                        <!-- COLUMN 1: PATIENT DETAILS -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-2" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">
+                                Patient Details
+                            </h5>
+                            <group>
+                                <field name="patient_name" placeholder="Full name of patient"/>
+                                <field name="age"/>
+                                <field name="gender"/>
+                                <field name="phone" placeholder="Contact number"/>
+                                <field name="blood_group" placeholder="e.g. O+, B+, A-..."/>
+                                <field name="admission_date" readonly="1" string="Arrival Date"/>
+                            </group>
+                        </div>
+
+                        <!-- COLUMN 2: ADMISSION ENTRY SOURCE & ATTENDER -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-2" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">
+                                Admission Entry Source &amp; Attender
+                            </h5>
+                            <group>
+                                <field name="entry_source" widget="radio"/>
+                                <field name="attender_name" placeholder="Name of attender" invisible="entry_source not in ['emergency', 'direct', 'other_hospital']"/>
+                                <field name="attender_relation" invisible="entry_source not in ['emergency', 'direct', 'other_hospital']"/>
+                                <field name="attender_phone" placeholder="Attender mobile number" invisible="entry_source not in ['emergency', 'direct', 'other_hospital']"/>
+                                <field name="referring_doctor" placeholder="Dr. Name / Clinic" invisible="entry_source != 'referred_doctor'"/>
+                                <field name="transferring_hospital" placeholder="Hospital name" invisible="entry_source != 'other_hospital'"/>
+                                <field name="referral_notes" placeholder="Referral diagnosis / notes" invisible="entry_source not in ['referred_doctor', 'other_hospital']"/>
+                            </group>
+                        </div>
+
+                        <!-- COLUMN 3: CLIENT COVERAGE & CLINICAL -->
+                        <div class="col-md-4">
+                            <h5 class="fw-bold mb-2" style="color: #29398f; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; padding-bottom: 4px;">
+                                Client Coverage &amp; Clinical
+                            </h5>
+                            <group>
+                                <field name="coverage_type"/>
+                                <field name="insurance_provider" placeholder="Insurance / TPA Name" invisible="coverage_type == 'self_pay'"/>
+                                <field name="policy_number" placeholder="Card / Policy No" invisible="coverage_type == 'self_pay'"/>
+                                <field name="mediclaim_number" placeholder="Pre-Auth Reference" invisible="coverage_type == 'self_pay'"/>
+                                <field name="claim_status" invisible="coverage_type == 'self_pay'"/>
+                                <field name="triage_level"/>
+                                <field name="state" string="Status"/>
+                                <field name="chief_complaint" placeholder="Emergency symptoms / condition..."/>
+                                <field name="treatment_notes" placeholder="Immediate treatment given..."/>
+                            </group>
+                        </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS: CLOSE & CLEAR (LEFT), SAVE (RIGHT) (EXACTLY LIKE ITEMS FORM) -->
+                    <div class="d-flex justify-content-between align-items-center mt-2 mb-2 pb-2" style="width: 100%;">
+                        <div style="display: flex; gap: 10px;">
+                            <a role="button" class="btn btn-danger btn-custom-close" style="color: white; background-color: #dc3545; border-color: #dc3545; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem; font-weight: bold;">
+                                Close
+                            </a>
+                            <a role="button" class="btn btn-secondary btn-custom-clear" style="color: white; background-color: #6c757d; border-color: #6c757d; cursor: pointer; padding: 0.375rem 0.75rem; border-radius: 0.25rem; font-weight: bold;">
+                                Clear
+                            </a>
+                        </div>
+                        <div>
+                            <button name="action_save" string="Save" type="object" class="btn btn-primary oe_highlight" style="min-width: 100px; font-weight: bold;"/>
+                        </div>
+                    </div>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- EMERGENCY TREATMENT SEARCH VIEW -->
+    <record id="view_hospital_emergency_treatment_search" model="ir.ui.view">
+        <field name="name">hospital.emergency.treatment.search</field>
+        <field name="model">hospital.emergency.treatment</field>
+        <field name="arch" type="xml">
+            <search string="Search Emergency Admissions">
+                <field name="name" string="Emergency Code"/>
+                <field name="patient_name" string="Patient"/>
+                <field name="phone" string="Phone"/>
+                <field name="attender_name" string="Attender"/>
+                <field name="insurance_provider" string="Insurance / TPA"/>
+
+                <!-- Filters -->
+                <filter name="filter_critical" string="Critical" domain="[('triage_level', '=', 'red')]"/>
+                <filter name="filter_emergency" string="Emergency Arrival" domain="[('entry_source', '=', 'emergency')]"/>
+                <filter name="filter_direct" string="Direct Walk-in" domain="[('entry_source', '=', 'direct')]"/>
+                <filter name="filter_pre_admission" string="Pre-Admission" domain="[('state', '=', 'pre_admission')]"/>
+                <filter name="filter_observation" string="Under Observation" domain="[('state', '=', 'observation')]"/>
+                <filter name="filter_admitted" string="Admitted to IP" domain="[('state', '=', 'admitted')]"/>
+                <separator/>
+                <filter name="filter_insurance" string="Has Insurance / Mediclaim" domain="[('has_insurance', '=', True)]"/>
+
+                <!-- Group By -->
+                <group>
+                    <filter name="group_entry_source" string="Entry Source" context="{'group_by': 'entry_source'}"/>
+                    <filter name="group_coverage" string="Coverage Type" context="{'group_by': 'coverage_type'}"/>
+                    <filter name="group_triage" string="Triage Priority" context="{'group_by': 'triage_level'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- WINDOW ACTION -->
+    <record id="action_hospital_emergency_treatment" model="ir.actions.act_window">
+        <field name="name">Emergency Treatment</field>
+        <field name="res_model">hospital.emergency.treatment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_hospital_emergency_treatment_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Log a New Emergency Patient / Inpatient Admission
+            </p>
+            <p>
+                Record emergency walk-ins, doctor referrals, ambulance arrivals, attender details, and mediclaim / insurance coverage.
+            </p>
+        </field>
+    </record>
+
+</odoo>

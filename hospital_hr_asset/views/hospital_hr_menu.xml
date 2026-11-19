@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Hide the default Maintenance app menus -->
-    <record id="maintenance.menu_m_dashboard" model="ir.ui.menu">
+    <!-- Hide the default Maintenance app title and unused menus -->
+    <record id="maintenance.menu_maintenance_title" model="ir.ui.menu">
         <field name="active" eval="False"/>
     </record>
-    <record id="maintenance.menu_equipment_form" model="ir.ui.menu">
+    <record id="maintenance.menu_m_dashboard" model="ir.ui.menu">
         <field name="active" eval="False"/>
     </record>
     <record id="maintenance.maintenance_reporting" model="ir.ui.menu">
@@ -17,6 +17,15 @@
     <!-- Hide the old hospital menus -->
     <record id="maintenance.menu_m_request" model="ir.ui.menu">
         <field name="active" eval="False"/>
+    </record>
+
+    <!-- Keep Equipment menu accessible directly on the Hospital navbar -->
+    <record id="maintenance.menu_equipment_form" model="ir.ui.menu">
+        <field name="name">Equipment</field>
+        <field name="sequence">5</field>
+        <field name="parent_id" ref="hospital_management.menu_hospital_management"/>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [ref('hospital_hr_asset.group_hospital_asset_manager'), ref('hospital_management.group_hospital_admin'), ref('hospital_management.group_hospital_super_admin')])]"/>
     </record>
 
     <!-- Create the Nav Items directly under the Hospital app -->

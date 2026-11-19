@@ -10,7 +10,10 @@
                     <field name="patient_id" invisible="1"/>
                     <field name="line_ids">
                         <list editable="bottom">
-                            <field name="medicine_id" />
+                            <control>
+                                <create string="Add Medicines"/>
+                            </control>
+                            <field name="medicine_id" options="{'no_open': True, 'no_create': True, 'no_create_edit': True}"/>
                             <field name="qty" />
                             <field name="morning" widget="boolean_toggle"/>
                             <field name="afternoon" widget="boolean_toggle"/>

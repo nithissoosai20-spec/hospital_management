@@ -81,7 +81,12 @@
                                 <t t-foreach="doc.line_ids" t-as="line">
                                     <tr>
                                         <td style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><t t-esc="sno"/></td>
-                                        <td style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.medicine_name"/></td>
+                                        <td style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;">
+                                            <span t-field="line.medicine_name"/>
+                                            <t t-if="line.dosage">
+                                                <br/><span style="font-size: 10px; color: #4b5563;">Dosage: <strong t-field="line.dosage"/> <t t-if="line.instructions">(<span t-field="line.instructions"/>)</t></span>
+                                            </t>
+                                        </td>
                                         <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.qty"/></td>
                                         <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;"><span t-field="line.mrp"/></td>
                                         <td class="text-end" style="padding: 4px; border: none; border-bottom: 1px solid #ddd !important;">0.00</td>

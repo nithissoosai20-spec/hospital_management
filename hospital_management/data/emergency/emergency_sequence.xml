@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_hospital_emergency_treatment" model="ir.sequence">
+        <field name="name">Emergency Treatment Sequence</field>
+        <field name="code">hospital.emergency.treatment</field>
+        <field name="prefix">EMG/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

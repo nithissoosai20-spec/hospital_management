@@ -160,14 +160,19 @@ class HospitalLabTestSelector(models.TransientModel):
                 active_h_appt = self.env['hospital.appointment'].search([
                     ('patient_id', '=', self.patient_id.id),
                     ('state', 'in', ['draft', 'booked'])
-                ], limit=1)
+                ], order='id desc', limit=1)
                 
                 doctor = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
+                if not doctor and active_h_appt and active_h_appt.doctor_id:
+                    doctor = active_h_appt.doctor_id
+
                 appointment = self.env['hospital.lab.appointment'].create({
                     'patient_id': self.patient_id.id,
                     'doctor_id': doctor.id if doctor else False,
                     'hospital_appointment_id': active_h_appt.id if active_h_appt else False,
                     'state': 'draft',
+                    'payment_status': 'pending',
+                    'payment_mode': 'none',
                     'appointment_date': fields.Datetime.now()
                 })
             else:
@@ -176,9 +181,15 @@ class HospitalLabTestSelector(models.TransientModel):
                     active_h_appt = self.env['hospital.appointment'].search([
                         ('patient_id', '=', self.patient_id.id),
                         ('state', 'in', ['draft', 'booked'])
-                    ], limit=1)
+                    ], order='id desc', limit=1)
                     if active_h_appt:
                         appointment.hospital_appointment_id = active_h_appt.id
+                if not appointment.doctor_id:
+                    doctor = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
+                    if not doctor and appointment.hospital_appointment_id and appointment.hospital_appointment_id.doctor_id:
+                        doctor = appointment.hospital_appointment_id.doctor_id
+                    if doctor:
+                        appointment.doctor_id = doctor.id
                         
         if not appointment:
             return {'type': 'ir.actions.act_window_close'}
@@ -216,6 +227,72 @@ class HospitalLabTestSelector(models.TransientModel):
 
         if new_lines:
             appointment.write({'line_ids': new_lines})
+
+        # Automatically create or sync draft Lab Bill so it appears directly in Lab User login (Lab Billing)
+        patient_rec = self.patient_id or appointment.patient_id
+        if patient_rec:
+            doctor_rec = appointment.doctor_id
+            if not doctor_rec:
+                doctor_rec = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
+
+            lab_bill = False
+            if appointment.hospital_appointment_id:
+                lab_bill = self.env['hospital.lab.bill'].search([
+                    ('appointment_id', '=', appointment.hospital_appointment_id.id),
+                    ('state', '=', 'draft')
+                ], limit=1)
+            if not lab_bill and appointment.id:
+                lab_bill = self.env['hospital.lab.bill'].search([
+                    ('lab_appointment_id', '=', appointment.id),
+                    ('state', '=', 'draft')
+                ], limit=1)
+            if not lab_bill:
+                lab_bill = self.env['hospital.lab.bill'].search([
+                    ('patient_id', '=', patient_rec.id),
+                    ('state', '=', 'draft')
+                ], order='id desc', limit=1)
+
+            main_tests = [line.test_id for line in selected_lines if line.test_id]
+
+            if not main_tests:
+                if lab_bill:
+                    lab_bill.line_ids.unlink()
+            else:
+                if not lab_bill:
+                    lab_bill = self.env['hospital.lab.bill'].create({
+                        'patient_id': patient_rec.id,
+                        'admission_type': 'with_admission',
+                        'doctor_id': doctor_rec.id if doctor_rec else False,
+                        'doctor_department_id': doctor_rec.department_id.id if doctor_rec and doctor_rec.department_id else False,
+                        'appointment_id': appointment.hospital_appointment_id.id if appointment.hospital_appointment_id else False,
+                        'lab_appointment_id': appointment.id,
+                        'state': 'draft',
+                    })
+                else:
+                    bill_vals = {
+                        'lab_appointment_id': appointment.id,
+                    }
+                    if not lab_bill.doctor_id and doctor_rec:
+                        bill_vals['doctor_id'] = doctor_rec.id
+                        if doctor_rec.department_id:
+                            bill_vals['doctor_department_id'] = doctor_rec.department_id.id
+                    if not lab_bill.appointment_id and appointment.hospital_appointment_id:
+                        bill_vals['appointment_id'] = appointment.hospital_appointment_id.id
+                    lab_bill.write(bill_vals)
+                    lab_bill.line_ids.unlink()
+
+                bill_lines = []
+                for t in main_tests:
+                    bill_lines.append((0, 0, {
+                        'lab_test_id': t.id,
+                        'test_name': t.name,
+                        'test_code': t.code or '',
+                        'category_name': t.lab_category_id.name if t.lab_category_id else '',
+                        'price': t.price or 0.0,
+                        'discount': 0.0,
+                        'total_amount': t.price or 0.0,
+                    }))
+                lab_bill.write({'line_ids': bill_lines})
 
         # Always reload to refresh the underlying view (patient dashboard or lab appointment)
         return {'type': 'ir.actions.client', 'tag': 'reload'}

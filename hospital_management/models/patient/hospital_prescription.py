@@ -94,3 +94,15 @@ class HospitalPrescriptionLine(models.Model):
         ('after', 'After Meal')
     ], string='Instructions', default='after')
 
+    dosage_display = fields.Char(string='Dosage / Timing', compute='_compute_dosage_display')
+
+    @api.depends('morning', 'afternoon', 'evening', 'night', 'timing')
+    def _compute_dosage_display(self):
+        for rec in self:
+            m = '1' if rec.morning else '0'
+            a = '1' if rec.afternoon else '0'
+            e = '1' if rec.evening else '0'
+            n = '1' if rec.night else '0'
+            timing_str = 'Before Meal' if rec.timing == 'before' else 'After Meal'
+            rec.dosage_display = f"{m}-{a}-{e}-{n} ({timing_str})"
+

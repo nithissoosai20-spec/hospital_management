@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo.exceptions import AccessDenied
 
 
@@ -7,8 +7,24 @@ class ResUsersLoginTracking(models.Model):
     Extends res.users to capture login events and log them
     to hospital.user.activity so admins can see when each
     hospital user last logged in and a full login history.
+    Also handles manual IM presence (online/away/busy/offline).
     """
     _inherit = 'res.users'
+
+    manual_im_status = fields.Selection(
+        selection_add=[('online', 'Online')],
+        ondelete={'online': 'set null'}
+    )
+
+    @api.depends("manual_im_status", "presence_ids.status")
+    def _compute_im_status(self):
+        for user in self:
+            if user.manual_im_status:
+                user.im_status = user.manual_im_status
+            elif user.presence_ids.status and user.presence_ids.status != "offline":
+                user.im_status = user.presence_ids.status
+            else:
+                user.im_status = "online"
 
     def _check_credentials(self, password, env):
         """
@@ -82,4 +98,30 @@ class ResUsersLoginTracking(models.Model):
                 'activity_date': fields.Datetime.now(),
                 'status': status,
             })
+
+
+class ResPartnerImStatus(models.Model):
+    _inherit = 'res.partner'
+
+    @api.depends("user_ids.manual_im_status", "user_ids.presence_ids.status")
+    def _compute_im_status(self):
+        for partner in self:
+            statuses = []
+            for u in partner.user_ids:
+                if u.manual_im_status:
+                    statuses.append(u.manual_im_status)
+                elif u.presence_ids.status and u.presence_ids.status != 'offline':
+                    statuses.append(u.presence_ids.status)
+                else:
+                    statuses.append('online')
+            if 'online' in statuses:
+                partner.im_status = 'online'
+            elif 'away' in statuses:
+                partner.im_status = 'away'
+            elif 'busy' in statuses:
+                partner.im_status = 'busy'
+            elif 'offline' in statuses:
+                partner.im_status = 'offline'
+            else:
+                partner.im_status = 'online'
 

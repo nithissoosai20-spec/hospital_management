@@ -83,8 +83,8 @@
                     </div>
 
                     <!-- Action Buttons: Close/Clear Left, Save Right -->
-                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" 
-                         style="border-top: 1px solid #e2e8f0; padding-top: 15px;"
+                    <div class="d-flex justify-content-between align-items-center mt-2 mb-2 pb-2" 
+                         style="border-top: 1px solid #e2e8f0; padding-top: 10px;"
                          invisible="context.get('is_primary_create') or context.get('is_secondary_create') or context.get('is_item_create')">
                         <div class="d-flex gap-2">
                             <button name="action_close" string="Close" type="object" class="btn btn-danger" style="min-width: 90px; color: white; background-color: #dc3545; border-color: #dc3545; padding: 6px 16px; border-radius: 4px;"/>

@@ -272,11 +272,14 @@
                             <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px; max-height: 300px; overflow-y: auto; overflow-x: hidden;">
                                 <div class="pro-title" style="margin-bottom: 10px;">💊 Prescribed Medicines</div>
                                 <field name="current_prescription_line_ids" readonly="1">
-                                    <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                    <list no_open="1" create="0" edit="0" delete="0" decoration-info="state == 'draft'" decoration-success="state == 'done'">
                                         <field name="date_prescribed" string="Date" />
                                         <field name="medicine_id" string="Medicine" options="{'no_open': True, 'no_create': True}" />
+                                        <field name="qty" string="Qty" />
+                                        <field name="dosage_display" string="Dosage / Timing" />
                                         <field name="state" string="Status" widget="badge" />
-                                    <button name="unlink" type="object" icon="fa-trash" /></list>
+                                        <button name="unlink" type="object" icon="fa-trash" />
+                                    </list>
                                 </field>
                             </div>
                             
@@ -284,7 +287,7 @@
                             <div class="pro-card pro-list-container" style="flex: 1; margin: 0; padding: 15px; max-height: 300px; overflow-y: auto; overflow-x: hidden;">
                                 <div class="pro-title" style="margin-bottom: 10px;">🧬 Prescribed Lab Tests</div>
                                 <field name="current_lab_line_ids" readonly="1">
-                                    <list decoration-info="state == 'draft'" decoration-success="state == 'done'">
+                                    <list no_open="1" create="0" edit="0" delete="0" decoration-info="state == 'draft'" decoration-success="state == 'done'">
                                         <control /><field name="display_type" column_invisible="1" /><field name="name" widget="section_and_note_text" optional="show" /><field name="appointment_date" string="Date" /><field name="lab_test_id" string="Test" options="{'no_open': True, 'no_create': True}" /><field name="state" string="Status" widget="badge" /><button name="unlink" type="object" icon="fa-trash" /></list>
                                 </field>
                             </div>

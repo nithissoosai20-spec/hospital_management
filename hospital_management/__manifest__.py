@@ -18,8 +18,6 @@
 
     'assets': {
         'web.assets_backend': [
-
-            'hospital_management/static/src/xml/list_view_override.xml',
             'hospital_management/static/src/css/reception_dashboard.css',
             'hospital_management/static/src/css/admin_dashboard.css',
             'hospital_management/static/src/css/hide_systray.css',
@@ -29,8 +27,11 @@
             'hospital_management/static/src/css/doctor_dashboard.css',
 
             'hospital_management/static/src/global_ui_tweaks.js',
+            'hospital_management/static/src/js/navbar_fix.js',
+            'hospital_management/static/src/js/im_status_patch.js',
             'hospital_management/static/src/js/hospital_user_form.js',
             'hospital_management/static/src/js/hospital_pharmacy_stock_form.js',
+            'hospital_management/static/src/js/hospital_emergency_treatment_form.js',
             'hospital_management/static/src/js/number_spinner_field.js',
             'hospital_management/static/src/js/number_spinner_field.xml',
             'hospital_management/static/src/hospital_layout/hospital_layout.js',
@@ -49,6 +50,10 @@
             'hospital_management/static/src/appointment_list/appointment_search_enter.js',
             'hospital_management/static/src/billing_list/billing_list.js',
             'hospital_management/static/src/billing_list/purchase_list.js',
+            'hospital_management/static/src/billing_list/lab_billing_list.js',
+            'hospital_management/static/src/lab_billing/lab_billing.js',
+            'hospital_management/static/src/lab_billing/lab_billing.xml',
+            'hospital_management/static/src/lab_billing/lab_billing.css',
             'hospital_management/static/src/appointment_list/appointment_list.xml',
         'hospital_management/static/src/js/appointment_form.js',
             'hospital_management/static/src/js/lab_form.js',
@@ -79,7 +84,9 @@
         'data/pharmacy/pharmacy_cron.xml',
         'data/hospital_demo_data.xml',
         'data/master_category_data.xml',
+        'data/emergency/emergency_sequence.xml',
         'data/lab/lab_appointment_sequence.xml',
+        'data/lab/lab_bill_sequence.xml',
         'data/lab/lab_test_master_data.xml',
         'data/consultation_fee/consultation_fee_data.xml',
 
@@ -101,6 +108,8 @@
         'views/appointment/hospital_appointment_booking_wizard_views.xml',
         'views/appointment/hospital_appointment_reports.xml',
         'views/lab/hospital_lab_reports.xml',
+        'views/lab/hospital_lab_bill_reports.xml',
+        'views/lab/hospital_lab_bill_views.xml',
         'views/lab/hospital_lab_views.xml',
         'views/lab/hospital_lab_subtest_views.xml',
         'wizard/hospital_lab_subtest_wizard_views.xml',
@@ -120,6 +129,7 @@
         'views/dashboard/hospital_pharmacy_dashboard_form.xml',
         'views/dashboard/hospital_doctor_dashboard.xml',
         'views/dashboard/hospital_hr_dashboard_views.xml',
+        'views/emergency/hospital_emergency_treatment_views.xml',
 
         'views/login/hospital_login.xml',
         'views/login/hospital_web_login.xml',

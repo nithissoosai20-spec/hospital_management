@@ -40,9 +40,22 @@
 
             <form js_class="hospital_user_form_view" class="hospital_user_form">
 
-                <!-- SAVE BUTTON IN HEADER                 -->
-
-                
+                <header>
+                    <button
+                        name="action_save_user"
+                        string="Save"
+                        type="object"
+                        class="btn btn-primary px-4 py-1"
+                        style="font-weight: 600; min-width: 100px; border-radius: 6px;"
+                    />
+                    <button
+                        name="action_close_user_form"
+                        type="object"
+                        string="Close"
+                        class="btn btn-secondary px-4 py-1"
+                        style="font-weight: 600; border-radius: 6px;"
+                    />
+                </header>
 
                 <sheet>
                     <style>
@@ -126,91 +139,137 @@
                         <button name="action_open_hr_employee" type="object" class="oe_stat_button" icon="fa-id-card" string="HR Profile" invisible="not hr_employee_id"/>
                         <button name="action_view_history" type="object" class="oe_stat_button" icon="fa-history" string="Login History"/>
                     </div>
+
+                    <!-- TOP ACTION TOOLBAR -->
+                    <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom user-form-toolbar">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary px-3 py-2" style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">
+                                <i class="fa fa-user-circle me-1"></i> USER DETAILS
+                            </span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <button name="action_close_user_form" type="object" string="Close" class="btn btn-sm btn-secondary px-3" style="font-weight: 600; border-radius: 5px; font-size: 13px;"/>
+                            <button name="action_save_user" type="object" string="Save" class="btn btn-sm btn-primary px-4" style="font-weight: 600; border-radius: 5px; font-size: 13px; min-width: 95px;"/>
+                        </div>
+                    </div>
+
                     <notebook>
                         <page string="General Info" name="general_info">
-                            <div class="custom-section-title">1. Personal Information</div>
-                            <div class="row">
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="name" class="custom-label">Full Name *</label>
-                                    <field name="name" class="w-100" placeholder="Enter full name"/>
+                            <div class="row g-3">
+                                <!-- LEFT COLUMN: PERSONAL INFORMATION -->
+                                <div class="col-lg-6">
+                                    <div class="user-form-card h-100">
+                                        <div class="user-card-header">
+                                            <i class="fa fa-user text-primary me-2"></i> 1. Personal Details
+                                        </div>
+                                        <div class="user-card-body">
+                                            <div class="row g-2">
+                                                <div class="col-md-7 custom-field-container">
+                                                    <label for="name" class="custom-label">Full Name *</label>
+                                                    <field name="name" class="w-100" placeholder="Enter full name"/>
+                                                </div>
+                                                <div class="col-md-5 custom-field-container">
+                                                    <label for="employee_id" class="custom-label">Employee ID</label>
+                                                    <field name="employee_id" class="w-100" placeholder="e.g. EMP-001"/>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="login" class="custom-label">Username *</label>
+                                                    <field name="login" class="w-100" placeholder="Enter username"/>
+                                                </div>
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="email" class="custom-label">Email Address</label>
+                                                    <field name="email" class="w-100" placeholder="user@hospital.com"/>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-md-4 custom-field-container">
+                                                    <label for="mobile" class="custom-label">Mobile Number</label>
+                                                    <field name="mobile" class="w-100" placeholder="Mobile no."/>
+                                                </div>
+                                                <div class="col-md-4 custom-field-container">
+                                                    <label for="gender" class="custom-label">Gender *</label>
+                                                    <field name="gender" class="w-100" required="1"/>
+                                                </div>
+                                                <div class="col-md-4 custom-field-container">
+                                                    <label for="date_of_birth" class="custom-label">Date of Birth</label>
+                                                    <field name="date_of_birth" class="w-100"/>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-md-12 custom-field-container mb-0">
+                                                    <label for="address" class="custom-label">Address</label>
+                                                    <field name="address" class="w-100" placeholder="Enter full address"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="employee_id" class="custom-label">Employee ID</label>
-                                    <field name="employee_id" class="w-100" placeholder="e.g. EMP-001"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="login" class="custom-label">Username *</label>
-                                    <field name="login" class="w-100" placeholder="Enter username"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="email" class="custom-label">Email Address</label>
-                                    <field name="email" class="w-100" placeholder="example@hospital.com"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="mobile" class="custom-label">Mobile Number</label>
-                                    <field name="mobile" class="w-100" placeholder="Enter mobile number"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="date_of_birth" class="custom-label">Date of Birth</label>
-                                    <field name="date_of_birth" class="w-100"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="gender" class="custom-label">Gender</label>
-                                    <field name="gender" class="w-100" required="1"/>
-                                </div>
-                                <div class="col-md-8 custom-field-container">
-                                    <label for="address" class="custom-label">Address</label>
-                                    <field name="address" class="w-100" placeholder="Enter full address"/>
-                                </div>
-                            </div>
 
-                            <div class="custom-section-title">2. Work Information</div>
-                            <field name="allowed_department_ids" invisible="1"/>
-                            <div class="row">
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="role_id" class="custom-label">Role</label>
-                                    <field name="role_id" class="w-100" options="{'no_create': True}" required="1"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="department_id" class="custom-label">Department</label>
-                                    <field name="department_id" class="w-100" domain="[('id', 'in', allowed_department_ids)]" options="{'no_create': True}"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="designation_id" class="custom-label">Designation</label>
-                                    <field name="designation_id" class="w-100" domain="[('department_id', '=', department_id)]" options="{'no_create': True}"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="reporting_to_id" class="custom-label">Reporting To</label>
-                                    <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
-                                </div>
-                                <div class="col-md-4 custom-field-container">
-                                    <label for="hr_employee_id" class="custom-label">Linked HR Employee</label>
-                                    <field name="hr_employee_id" class="w-100" readonly="1"/>
-                                </div>
-                            </div>
+                                <!-- RIGHT COLUMN: WORK & SECURITY -->
+                                <div class="col-lg-6 d-flex flex-column gap-3">
+                                    <!-- WORK INFORMATION CARD -->
+                                    <div class="user-form-card flex-fill">
+                                        <div class="user-card-header">
+                                            <i class="fa fa-briefcase text-primary me-2"></i> 2. Work Information
+                                        </div>
+                                        <div class="user-card-body">
+                                            <field name="allowed_department_ids" invisible="1"/>
+                                            <div class="row g-2">
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="role_id" class="custom-label">Role *</label>
+                                                    <field name="role_id" class="w-100" options="{'no_create': True}" required="1"/>
+                                                </div>
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="department_id" class="custom-label">Department</label>
+                                                    <field name="department_id" class="w-100" domain="[('id', 'in', allowed_department_ids)]" options="{'no_create': True}"/>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="designation_id" class="custom-label">Designation</label>
+                                                    <field name="designation_id" class="w-100" domain="[('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                                                </div>
+                                                <div class="col-md-6 custom-field-container">
+                                                    <label for="reporting_to_id" class="custom-label">Reporting To</label>
+                                                    <field name="reporting_to_id" class="w-100" domain="[('id', '!=', id), ('role_id', '=', role_id), ('department_id', '=', department_id)]" options="{'no_create': True}"/>
+                                                </div>
+                                            </div>
+                                            <div class="row g-2" invisible="not hr_employee_id">
+                                                <div class="col-md-12 custom-field-container mb-0">
+                                                    <label for="hr_employee_id" class="custom-label">Linked HR Employee</label>
+                                                    <field name="hr_employee_id" class="w-100" readonly="1"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="custom-section-title">3. Access &amp; Security</div>
-                            <div class="row">
-                                <div class="col-md-2 custom-field-container">
-                                    <label for="active" class="custom-label">Active</label>
-                                    <field name="active" widget="boolean_toggle"/>
-                                </div>
-                                <div class="col-md-5 custom-field-container">
-                                    <label for="password" class="custom-label">Password</label>
-                                    <field name="password" class="w-100" password="True" required="not id"/>
-                                    <small class="pwd-helper">
-                                        Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
-                                    </small>
-                                </div>
-                                <div class="col-md-5 custom-field-container">
-                                    <label for="password_confirm" class="custom-label">Re-enter Password</label>
-                                    <field name="password_confirm" class="w-100" password="True" required="not id"/>
+                                    <!-- ACCESS & SECURITY CARD -->
+                                    <div class="user-form-card">
+                                        <div class="user-card-header">
+                                            <i class="fa fa-lock text-primary me-2"></i> 3. Access &amp; Security
+                                        </div>
+                                        <div class="user-card-body">
+                                            <div class="row g-2 align-items-center">
+                                                <div class="col-md-3 custom-field-container">
+                                                    <label for="active" class="custom-label">Active Status</label>
+                                                    <field name="active" widget="boolean_toggle"/>
+                                                </div>
+                                                <div class="col-md-4 custom-field-container">
+                                                    <label for="password" class="custom-label">Password</label>
+                                                    <field name="password" class="w-100" password="True" required="not id"/>
+                                                </div>
+                                                <div class="col-md-5 custom-field-container">
+                                                    <label for="password_confirm" class="custom-label">Re-enter Password</label>
+                                                    <field name="password_confirm" class="w-100" password="True" required="not id"/>
+                                                </div>
+                                            </div>
+                                            <small class="pwd-helper">
+                                                Must be at least 8 characters containing a capital letter, small letter, number, and special symbol.
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </page>
@@ -293,6 +352,10 @@
                                             <label for="perm_users" class="custom-label">User Management</label>
                                             <field name="perm_users" widget="boolean_toggle"/>
                                         </div>
+                                        <div class="col-md-6 custom-field-container">
+                                            <label for="perm_emergency" class="custom-label">Emergency Treatment</label>
+                                            <field name="perm_emergency" widget="boolean_toggle"/>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -366,16 +429,17 @@
                         </page>
                     </notebook>
 
-                    <div class="d-flex justify-content-between align-items-center mt-4 mb-2" style="width: 100%;">
+                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top" style="width: 100%;">
                         <div>
-                            <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary"/>
+                            <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary px-4 py-2" style="font-weight: 600; border-radius: 6px;"/>
                         </div>
                         <div>
                             <button
                                 name="action_save_user"
                                 string="Save"
                                 type="object"
-                                class="btn-primary"
+                                class="btn btn-primary px-4 py-2"
+                                style="font-weight: 600; min-width: 110px; border-radius: 6px;"
                             />
                         </div>
                     </div>
