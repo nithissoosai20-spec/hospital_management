@@ -26,6 +26,33 @@ class ResUsersLoginTracking(models.Model):
             else:
                 user.im_status = "online"
 
+    @api.model
+    def get_current_user_designation(self):
+        user = self.env.user
+        h_user = self.env['hospital.user'].sudo().search([('odoo_user_id', '=', user.id)], limit=1)
+        designation = ''
+        if h_user:
+            if h_user.role_id and h_user.role_id.name:
+                designation = h_user.role_id.name
+            elif h_user.designation_id and h_user.designation_id.name:
+                designation = h_user.designation_id.name
+        if not designation:
+            if user.has_group('hospital_management.group_hospital_super_admin'):
+                designation = 'Super Admin'
+            elif user.has_group('hospital_management.group_hospital_admin'):
+                designation = 'Administrator'
+            elif user.has_group('hospital_management.group_hospital_doctor'):
+                designation = 'Doctor'
+            elif user.has_group('hospital_management.group_hospital_receptionist'):
+                designation = 'Receptionist'
+            elif user.has_group('hospital_management.group_hospital_pharmacist'):
+                designation = 'Pharmacist'
+            elif user.has_group('hospital_management.group_hospital_lab_technician'):
+                designation = 'Lab Technician'
+            elif user.has_group('hospital_management.group_hospital_hr'):
+                designation = 'HR Manager'
+        return designation
+
     def _check_credentials(self, password, env):
         """
         Override Odoo's credential check to log login events.
@@ -124,4 +151,43 @@ class ResPartnerImStatus(models.Model):
                 partner.im_status = 'offline'
             else:
                 partner.im_status = 'online'
+
+
+import logging
+_logger = logging.getLogger(__name__)
+
+class IrHttp(models.AbstractModel):
+    _inherit = 'ir.http'
+
+    def session_info(self):
+        _logger.warning(">>> HOSPITAL IR.HTTP SESSION_INFO CALLED! <<<")
+        result = super().session_info()
+        user = self.env.user
+        h_user = self.env['hospital.user'].sudo().search([('odoo_user_id', '=', user.id)], limit=1)
+        designation = ''
+        if h_user:
+            if h_user.role_id and h_user.role_id.name:
+                designation = h_user.role_id.name
+            elif h_user.designation_id and h_user.designation_id.name:
+                designation = h_user.designation_id.name
+        if not designation:
+            if user.has_group('hospital_management.group_hospital_super_admin'):
+                designation = 'Super Admin'
+            elif user.has_group('hospital_management.group_hospital_admin'):
+                designation = 'Administrator'
+            elif user.has_group('hospital_management.group_hospital_doctor'):
+                designation = 'Doctor'
+            elif user.has_group('hospital_management.group_hospital_receptionist'):
+                designation = 'Receptionist'
+            elif user.has_group('hospital_management.group_hospital_pharmacist'):
+                designation = 'Pharmacist'
+            elif user.has_group('hospital_management.group_hospital_lab_technician'):
+                designation = 'Lab Technician'
+            elif user.has_group('hospital_management.group_hospital_hr'):
+                designation = 'HR Manager'
+        result['hospital_user_designation'] = designation
+        result['user_designation'] = designation
+        _logger.warning(">>> HOSPITAL IR.HTTP DESIGNATION: %s <<<", designation)
+        return result
+
 

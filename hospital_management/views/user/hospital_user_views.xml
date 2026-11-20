@@ -40,23 +40,6 @@
 
             <form js_class="hospital_user_form_view" class="hospital_user_form">
 
-                <header>
-                    <button
-                        name="action_save_user"
-                        string="Save"
-                        type="object"
-                        class="btn btn-primary px-4 py-1"
-                        style="font-weight: 600; min-width: 100px; border-radius: 6px;"
-                    />
-                    <button
-                        name="action_close_user_form"
-                        type="object"
-                        string="Close"
-                        class="btn btn-secondary px-4 py-1"
-                        style="font-weight: 600; border-radius: 6px;"
-                    />
-                </header>
-
                 <sheet>
                     <style>
                         .pwd-helper {
@@ -137,20 +120,7 @@
 
                     <div class="oe_button_box" name="button_box">
                         <button name="action_open_hr_employee" type="object" class="oe_stat_button" icon="fa-id-card" string="HR Profile" invisible="not hr_employee_id"/>
-                        <button name="action_view_history" type="object" class="oe_stat_button" icon="fa-history" string="Login History"/>
-                    </div>
-
-                    <!-- TOP ACTION TOOLBAR -->
-                    <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom user-form-toolbar">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-primary px-3 py-2" style="font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">
-                                <i class="fa fa-user-circle me-1"></i> USER DETAILS
-                            </span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <button name="action_close_user_form" type="object" string="Close" class="btn btn-sm btn-secondary px-3" style="font-weight: 600; border-radius: 5px; font-size: 13px;"/>
-                            <button name="action_save_user" type="object" string="Save" class="btn btn-sm btn-primary px-4" style="font-weight: 600; border-radius: 5px; font-size: 13px; min-width: 95px;"/>
-                        </div>
+                        <button name="action_view_history" type="object" class="oe_stat_button" icon="fa-history" string="Login History" invisible="not id"/>
                     </div>
 
                     <notebook>
@@ -275,9 +245,9 @@
                         </page>
 
                         <page string="Access &amp; Permissions" name="access_permissions">
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom">
                                 <div>
-                                    <div class="custom-section-title mt-0 mb-1">
+                                    <div class="custom-section-title mt-0 mb-1" style="font-size: 14px; margin-top: 5px; margin-bottom: 3px; padding-bottom: 2px;">
                                         <i class="fa fa-shield text-primary me-2" title="Permissions"></i> Role &amp; Access Control (Approach 3)
                                     </div>
                                     <small class="text-muted">Permissions are automatically populated from the user's role and can be customized per user by the Administrator.</small>
@@ -290,10 +260,10 @@
                             <div class="row">
                                 <!-- COLUMN 1: PAGE & MODULE VISIBILITY -->
                                 <div class="col-md-7 pe-md-4 border-end">
-                                    <div class="custom-section-title mt-0">
+                                    <div class="custom-section-title mt-0 mb-1" style="font-size: 13px; margin-top: 5px; margin-bottom: 3px; padding-bottom: 2px;">
                                         <i class="fa fa-desktop me-1" title="Modules"></i> Module &amp; Menu Visibility
                                     </div>
-                                    <p class="text-muted small mb-3">Controls which apps and menus this user is permitted to view and access.</p>
+                                    <p class="text-muted small mb-2">Controls which apps and menus this user is permitted to view and access.</p>
 
                                     <div class="row g-2">
                                         <div class="col-md-6 custom-field-container">
@@ -361,12 +331,12 @@
 
                                 <!-- COLUMN 2: ACTION & AUTHORITY RIGHTS -->
                                 <div class="col-md-5 ps-md-4">
-                                    <div class="custom-section-title mt-0">
+                                    <div class="custom-section-title mt-0 mb-1" style="font-size: 13px; margin-top: 5px; margin-bottom: 3px; padding-bottom: 2px;">
                                         <i class="fa fa-lock me-1" title="Actions"></i> Action &amp; Operational Rights
                                     </div>
-                                    <p class="text-muted small mb-3">Controls functional actions this user is authorized to perform.</p>
+                                    <p class="text-muted small mb-2">Controls functional actions this user is authorized to perform.</p>
 
-                                    <div class="d-flex flex-column gap-3 mt-2">
+                                    <div class="d-flex flex-column gap-2 mt-1">
                                         <div class="p-2 border rounded bg-light">
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
@@ -429,7 +399,7 @@
                         </page>
                     </notebook>
 
-                    <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top" style="width: 100%;">
+                    <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top" style="width: 100%;">
                         <div>
                             <button name="action_close_user_form" type="object" string="Close" class="btn btn-secondary px-4 py-2" style="font-weight: 600; border-radius: 6px;"/>
                         </div>

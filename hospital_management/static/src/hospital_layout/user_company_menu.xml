@@ -8,14 +8,25 @@
         <xpath expr="//span[contains(@class, 'oe_topbar_name')]"
                position="replace">
 
-            <span
-                class="oe_topbar_name d-none d-lg-block text-truncate"
-                t-esc="user.name"
-            />
+            <div class="d-none d-lg-inline-flex flex-column text-end justify-content-center me-1" style="vertical-align: middle; line-height: 1.15; max-width: 180px;">
+                <span class="oe_topbar_name text-truncate fw-bold text-white" style="font-size: 13px;" t-esc="user.name"/>
+                <span t-if="userDesignation" class="oe_topbar_designation text-truncate" style="font-size: 10.5px; font-weight: 500; letter-spacing: 0.2px; color: #dbeafe;" t-esc="userDesignation"/>
+            </div>
 
         </xpath>
 
     </t>
 
-</templates>
+    <t t-inherit="web.UserMenu"
+       t-inherit-mode="extension">
 
+        <xpath expr="//t[@t-foreach='getElements()']" position="before">
+            <div t-if="userDesignation" class="px-3 py-2 border-bottom" style="background:#f8fafc;">
+                <div class="fw-bold text-dark text-truncate" style="font-size: 13px;" t-esc="userName"/>
+                <div class="badge rounded-pill" style="font-size: 10px; font-weight: 600; background: #2563eb; color: #ffffff;" t-esc="userDesignation"/>
+            </div>
+        </xpath>
+
+    </t>
+
+</templates>

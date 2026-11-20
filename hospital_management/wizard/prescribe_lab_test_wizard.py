@@ -29,7 +29,7 @@ class PrescribeLabTestWizard(models.TransientModel):
             })
 
         # Also create draft Lab Bill for direct Lab fulfillment & payment
-        lab_bill = self.env['hospital.lab.bill'].create({
+        lab_bill = self.env['hospital.lab.bill'].sudo().create({
             'patient_id': self.patient_id.id,
             'admission_type': 'with_admission',
             'doctor_id': doctor.id if doctor else False,
@@ -48,7 +48,7 @@ class PrescribeLabTestWizard(models.TransientModel):
                 'discount': 0.0,
                 'total_amount': test.price or 0.0,
             }))
-        lab_bill.write({'line_ids': bill_lines})
+        lab_bill.sudo().write({'line_ids': bill_lines})
             
         return {'type': 'ir.actions.act_window_close'}
 

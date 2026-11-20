@@ -5,6 +5,31 @@ from odoo.addons.web.controllers.home import Home
 from odoo.addons.web.controllers.database import Database
 from odoo.addons.mail.controllers.im_status import ImStatusController
 
+def get_user_hospital_designation(env, user):
+    designation = ''
+    h_user = env['hospital.user'].sudo().search([('odoo_user_id', '=', user.id)], limit=1)
+    if h_user:
+        if h_user.role_id and h_user.role_id.name:
+            designation = h_user.role_id.name
+        elif h_user.designation_id and h_user.designation_id.name:
+            designation = h_user.designation_id.name
+    if not designation:
+        if user.has_group('hospital_management.group_hospital_super_admin'):
+            designation = 'Super Admin'
+        elif user.has_group('hospital_management.group_hospital_admin'):
+            designation = 'Administrator'
+        elif user.has_group('hospital_management.group_hospital_doctor'):
+            designation = 'Doctor'
+        elif user.has_group('hospital_management.group_hospital_receptionist'):
+            designation = 'Receptionist'
+        elif user.has_group('hospital_management.group_hospital_pharmacist'):
+            designation = 'Pharmacist'
+        elif user.has_group('hospital_management.group_hospital_lab_technician'):
+            designation = 'Lab Technician'
+        elif user.has_group('hospital_management.group_hospital_hr'):
+            designation = 'HR Manager'
+    return designation
+
 class HospitalDatabase(Database):
 
     @http.route('/web/database/selector', type='http', auth="none")
@@ -44,8 +69,31 @@ class HospitalSession(Session):
                     request.env['mail.presence'].sudo().create({'user_id': user.id, 'status': 'online', 'last_poll': now, 'last_presence': now})
             except Exception:
                 pass
+
+            if isinstance(res, dict):
+                desig = get_user_hospital_designation(request.env, user)
+                res['hospital_user_designation'] = desig
+                res['user_designation'] = desig
                 
         return res
+
+    @http.route('/web/session/get_session_info', type='jsonrpc', auth='user', readonly=True)
+    def get_session_info(self):
+        res = super(HospitalSession, self).get_session_info()
+        if isinstance(res, dict) and request.session.uid:
+            user = request.env['res.users'].sudo().browse(request.session.uid)
+            desig = get_user_hospital_designation(request.env, user)
+            res['hospital_user_designation'] = desig
+            res['user_designation'] = desig
+        return res
+
+    @http.route('/hospital/get_my_designation', type='jsonrpc', auth='user', readonly=True)
+    def get_my_designation(self):
+        if request.session.uid:
+            user = request.env['res.users'].sudo().browse(request.session.uid)
+            desig = get_user_hospital_designation(request.env, user)
+            return {'designation': desig}
+        return {'designation': ''}
 
     @http.route('/web/session/logout', type='http', auth='none', readonly=True)
     def logout(self, redirect='/web/login'):
@@ -148,3 +196,15 @@ class HospitalHome(Home):
                 return f"/odoo/action-{action.id}"
 
         return super()._login_redirect(uid, redirect=redirect)
+
+    @http.route('/odoo', type='http', auth="none")
+    @http.route('/odoo/<path:subpath>', type='http', auth="none")
+    @http.route('/web', type='http', auth="none")
+    def web_client(self, s_action=None, **kw):
+        res = super().web_client(s_action=s_action, **kw)
+        if hasattr(res, 'qcontext') and res.qcontext and 'session_info' in res.qcontext and request.session.uid:
+            user = request.env['res.users'].sudo().browse(request.session.uid)
+            desig = get_user_hospital_designation(request.env, user)
+            res.qcontext['session_info']['hospital_user_designation'] = desig
+            res.qcontext['session_info']['user_designation'] = desig
+        return res

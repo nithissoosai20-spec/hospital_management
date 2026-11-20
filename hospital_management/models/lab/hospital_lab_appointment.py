@@ -629,16 +629,16 @@ class HospitalLabAppointmentLine(models.Model):
                 children.unlink()
                 # Also remove from draft lab bill if exists
                 if line.lab_appointment_id:
-                    draft_bills = self.env['hospital.lab.bill'].search([
+                    draft_bills = self.env['hospital.lab.bill'].sudo().search([
                         ('lab_appointment_id', '=', line.lab_appointment_id.id),
                         ('state', '=', 'draft')
                     ])
                     for db in draft_bills:
                         b_lines = db.line_ids.filtered(lambda bl: bl.lab_test_id == line.lab_test_id)
                         if b_lines:
-                            b_lines.unlink()
+                            b_lines.sudo().unlink()
                         if not db.line_ids:
-                            db.unlink()
+                            db.sudo().unlink()
         return super(HospitalLabAppointmentLine, self).unlink()
 
 

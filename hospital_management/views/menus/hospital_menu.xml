@@ -308,12 +308,21 @@
         sequence="90"
         groups="hospital_management.group_hospital_super_admin,hospital_management.group_hospital_admin"
     />
+    <!-- MASTER ROOT MENU -->
+    <menuitem
+        id="menu_hospital_master_root"
+        name="Master"
+        parent="menu_hospital_management"
+        sequence="25"
+        groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_lab_technician"
+    />
+
     <menuitem
         id="menu_hospital_lab_subtest"
         name="Lab Sub-Tests"
-        parent="menu_hospital_management"
+        parent="menu_hospital_master_root"
         action="action_hospital_lab_subtests"
-        sequence="25"
+        sequence="10"
         groups="hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin,hospital_management.group_hospital_lab_technician"
     />
 

@@ -233,21 +233,22 @@ class HospitalLabTestSelector(models.TransientModel):
         if patient_rec:
             doctor_rec = appointment.doctor_id
             if not doctor_rec:
-                doctor_rec = self.env['hospital.user'].search([('odoo_user_id', '=', self.env.user.id)], limit=1)
+                doctor_rec = self.env['hospital.user'].sudo().search([('odoo_user_id', '=', self.env.user.id)], limit=1)
 
+            LabBill = self.env['hospital.lab.bill'].sudo()
             lab_bill = False
             if appointment.hospital_appointment_id:
-                lab_bill = self.env['hospital.lab.bill'].search([
+                lab_bill = LabBill.search([
                     ('appointment_id', '=', appointment.hospital_appointment_id.id),
                     ('state', '=', 'draft')
                 ], limit=1)
             if not lab_bill and appointment.id:
-                lab_bill = self.env['hospital.lab.bill'].search([
+                lab_bill = LabBill.search([
                     ('lab_appointment_id', '=', appointment.id),
                     ('state', '=', 'draft')
                 ], limit=1)
             if not lab_bill:
-                lab_bill = self.env['hospital.lab.bill'].search([
+                lab_bill = LabBill.search([
                     ('patient_id', '=', patient_rec.id),
                     ('state', '=', 'draft')
                 ], order='id desc', limit=1)
@@ -259,7 +260,7 @@ class HospitalLabTestSelector(models.TransientModel):
                     lab_bill.line_ids.unlink()
             else:
                 if not lab_bill:
-                    lab_bill = self.env['hospital.lab.bill'].create({
+                    lab_bill = LabBill.create({
                         'patient_id': patient_rec.id,
                         'admission_type': 'with_admission',
                         'doctor_id': doctor_rec.id if doctor_rec else False,
