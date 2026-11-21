@@ -182,24 +182,43 @@ class HospitalHome(Home):
             elif rname in ['admin', 'administrator', 'super admin']:
                 action = env_sudo.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
 
+        # Fallback to user groups if hospital.user record is not configured
         if not action:
-            action = user.action_id or env_sudo.ref('hospital_management.action_hospital_dashboard', raise_if_not_found=False)
+            if user.has_group('hospital_management.group_hospital_super_admin') or user.has_group('hospital_management.group_hospital_admin'):
+                action = env_sudo.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
+            elif user.has_group('hospital_management.group_hospital_doctor'):
+                action = env_sudo.ref('hospital_management.action_hospital_doctor_dashboard', raise_if_not_found=False)
+            elif user.has_group('hospital_management.group_hospital_receptionist'):
+                action = env_sudo.ref('hospital_management.action_hospital_reception_dashboard', raise_if_not_found=False)
+            elif user.has_group('hospital_management.group_hospital_lab_technician'):
+                action = env_sudo.ref('hospital_management.action_hospital_lab_dashboard', raise_if_not_found=False)
+            elif user.has_group('hospital_management.group_hospital_pharmacist'):
+                action = env_sudo.ref('hospital_management.action_hospital_pharmacy_dashboard_form', raise_if_not_found=False)
+            elif user.has_group('hospital_management.group_hospital_hr'):
+                action = env_sudo.ref('hospital_management.action_hospital_hr_dashboard', raise_if_not_found=False)
+
+        if not action:
+            action = user.action_id
+            if action and action._name == 'ir.actions.server':
+                action = env_sudo.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
+
+        if not action:
+            action = env_sudo.ref('hospital_management.action_hospital_admin_dashboard_window', raise_if_not_found=False)
 
         # Always redirect to role Dashboard on login so users land on Dashboard as their first page
         if action:
             try:
                 action_sudo = action.sudo()
-                if action_sudo.path:
-                    return f"/odoo/{action_sudo.path}"
-                return f"/odoo/action-{action_sudo.id}"
+                if action_sudo._name in ('ir.actions.act_window', 'ir.actions.client'):
+                    if action_sudo.path:
+                        return f"/odoo/{action_sudo.path}"
+                    return f"/odoo/action-{action_sudo.id}"
             except Exception:
-                return f"/odoo/action-{action.id}"
+                pass
 
         return super()._login_redirect(uid, redirect=redirect)
 
-    @http.route('/odoo', type='http', auth="none")
-    @http.route('/odoo/<path:subpath>', type='http', auth="none")
-    @http.route('/web', type='http', auth="none")
+    @http.route()
     def web_client(self, s_action=None, **kw):
         res = super().web_client(s_action=s_action, **kw)
         if hasattr(res, 'qcontext') and res.qcontext and 'session_info' in res.qcontext and request.session.uid:
