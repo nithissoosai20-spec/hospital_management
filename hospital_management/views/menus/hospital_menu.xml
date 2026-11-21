@@ -162,14 +162,18 @@
 
     
     <!-- LAB BILLING MENU -->
-    <menuitem
-        id="menu_hospital_lab_billing"
-        name="Lab Billing"
-        parent="menu_hospital_management"
-        action="action_hospital_lab_bill_window"
-        sequence="20"
-        groups="hospital_management.group_hospital_lab_technician,hospital_management.group_hospital_admin,hospital_management.group_hospital_super_admin"
-    />
+    <record id="menu_hospital_lab_billing" model="ir.ui.menu">
+        <field name="name">Lab Billing</field>
+        <field name="parent_id" ref="menu_hospital_management"/>
+        <field name="action" ref="action_hospital_lab_bill_window"/>
+        <field name="sequence">42</field>
+        <field name="active" eval="True"/>
+        <field name="group_ids" eval="[(6, 0, [
+            ref('hospital_management.group_hospital_receptionist'),
+            ref('hospital_management.group_hospital_admin'),
+            ref('hospital_management.group_hospital_super_admin')
+        ])]"/>
+    </record>
 
     <!-- LAB REPORT DIRECT MENU (LAB TECH ONLY) -->
     <menuitem
